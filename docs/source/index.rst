@@ -1,8 +1,10 @@
-Welcome to Happi Deck's documentation!
-======================================
+HAPPI - Heuristic Access to Positions of Photon Instruments
+===========================================================
+
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: User Documentation
 
    device.rst
+   client.rst

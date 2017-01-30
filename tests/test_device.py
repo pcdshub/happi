@@ -6,11 +6,7 @@ from happi.device import EntryInfo
 
 logger = logging.getLogger(__name__)
 
-def test_mandatory():
-    with pytest.raises(EntryError):
-        d = Device()
-
-class ExampleDevice(Device):
+class TestDevice(Device):
     optional  = EntryInfo()
     default   = EntryInfo(default=True)
     enforced  = EntryInfo(enforce=int,default=1)
@@ -34,7 +30,7 @@ def test_set(device):
     assert device.alias == 'new_alias'
 
 def test_optional(device):
-    device.optional = None
+    device.optional == None
 
 def test_default(device):
     assert device.default == True
@@ -43,3 +39,6 @@ def test_enforce(device):
     with pytest.raises(ValueError):
         device.enforced = 'non-integer'
 
+def test_post(device):
+    post = device.post()
+    assert post['type'] == 'TestDevice'
