@@ -86,7 +86,7 @@ class Client:
         #Load database
         conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
         self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
-        self._db     = client[self._db] 
+        self._db     = client[db] 
 
         #Load collection
         try:
@@ -94,7 +94,7 @@ class Client:
                 raise DatabaseError('Unable to locate collection {} '
                                     'in database'.format(self._collection))
 
-            self._collection = self._db[self._collection]
+            self._collection = self._db[self._coll_name]
 
         #Unable to view collection names
         except OperationFailure as e:
@@ -170,7 +170,7 @@ class Client:
 
         Raises
         ------
-        ValueError:
+        TypeError:
             If the provided class is not a subclass of :class:`.Device`
 
 
@@ -192,7 +192,7 @@ class Client:
 
         #Check that this is a valid Container
         if not issubclass(device_cls, Device):
-            raise ValueError('{!r} is not a subclass of '
+            raise TypeError('{!r} is not a subclass of '
                              'Device'.format(device_cls))
 
         device = device_cls(**kwargs)
@@ -261,9 +261,14 @@ class Client:
         post :
             Information to pertinent to the device 
 
+        Raises
+        ------
+        SearchError
+            If no match for the given information is found
+
         Returns
         -------
-        device : :class:`.Device` or None
+        device : :class:`.Device`
             A device that matches the characteristics given
         """
         logger.debug("Gathering information about the device ...")
@@ -274,7 +279,7 @@ class Client:
         try:
             device = self.create_device(post['type'], **post)
 
-        except (KeyError, ValueError):
+        except (KeyError, TypeError):
             raise EntryError('The information relating to the device class has '
                              'been modified to the point where the object can not '
                              'be initialized, please load the corresponding '
@@ -397,11 +402,14 @@ class Client:
         #If beamline position matters
         if start or end:
 
+            if not end:
+                end = np.inf
+
+            if start >= end:
+                raise ValueError("Invalid beamline range")
+
             #Define range 
             def in_range(val):
-                if not end:
-                    end = np.inf
-
                 return start <=  val < end
 
             cur = [info for info in cur if in_range(info['z'])]
@@ -463,8 +471,9 @@ class Client:
         #Check that device is in the database
         try:
             info = device.post()
-            self.find_document(**info)
+            self.find_document(**info) #Will raise SearchError if not present
 
+        #Log and re-raise
         except SearchError:
             logger.exception(e)
             raise
