@@ -15,7 +15,8 @@ from pymongo.errors import DuplicateKeyError
 from . import device
 from . import containers
 from .device import Device
-from .errors import PermissionError, SearchError, DuplicateError
+from .errors import DatabaseError, PermissionError, SearchError
+from .errors import EntryError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
@@ -52,12 +53,12 @@ class Client:
     _pw         = 'happi'   #Password
     _id         = 'base'    #Attribute name to use as unique id
     _db_name    = 'happi'   #MongoDB name
-    _coll_name  = 'devices' #Relevant Collection name
+    _coll_name  = 'beamline' #Relevant Collection name
     _timeout    = 5         #Connection timeout
     _conn_str   = 'mongodb://{user}:{pw}@{host}/{db}' #String for login
 
     #Device information
-    _client_attrs = ['_id', 'type', 'creation', 'last_edit']
+    _client_attrs = ['id', 'type', 'creation', 'last_edit']
     _fixed_attrs  = ['base', 'alias']
     device_types  = {'Device' : Device}
 
@@ -86,13 +87,13 @@ class Client:
         #Load database
         conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
         self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
-        self._db     = client[db] 
+        self._db     = self._client[db] 
 
         #Load collection
         try:
             if self._coll_name not in self._db.collection_names():
                 raise DatabaseError('Unable to locate collection {} '
-                                    'in database'.format(self._collection))
+                                    'in database'.format(self._coll_name))
 
             self._collection = self._db[self._coll_name]
 
@@ -139,7 +140,7 @@ class Client:
         """
         #Separated for increased speed
         if self._id in kwargs:
-            post = self._collection.find_one({'_id': kwargs[self._id]})
+            post = self._collection.find_one({'id': kwargs[self._id]})
 
         else:
             post = self._collection.find_one(kwargs)
@@ -243,7 +244,7 @@ class Client:
                     })
 
         #Store post
-        self._store(post)
+        self._store(post, insert=True)
 
         #Log success
         logger.info('Device {!r} has been succesfully added to the '
@@ -293,8 +294,8 @@ class Client:
         #Create the save method
         def save():
             #Check if a fixed attribute has been changed
-            diff = [attr for key,value in fixed.items()
-                    if current[key] != getattr(device,key)]
+            diff = [key for key,value in fixed.items()
+                    if fixed[key] != getattr(device,key)]
 
             #Raise an error if changed
             if diff:
@@ -414,7 +415,10 @@ class Client:
 
             cur = [info for info in cur if in_range(info['z'])]
 
-        if as_dict:
+        if not cur:
+            return None
+
+        elif as_dict:
             return cur
 
         else:
@@ -475,11 +479,11 @@ class Client:
 
         #Log and re-raise
         except SearchError:
-            logger.exception(e)
+            logger.exception('Target device was not found in the database')
             raise
 
         else:
-            cursor = self._collection.delete_one({'_id':post.pop(self._id)})
+            cursor = self._collection.delete_one({'id':info.pop(self._id)})
 
             if cursor.deleted_count :
                 logging.info("{} successfully deleted from "
@@ -501,8 +505,9 @@ class Client:
         logger.debug('Checking mandatory information has been entered ...')
 
         #Check that all mandatory info has been entered
-        missing = [info for info in device.mandatory_info
-                   if device.default == getattr(device, info)]
+        missing = [info.key for info in device.entry_info
+                   if not info.optional and
+                   info.default== getattr(device, info.key)]
 
         #Abort initialization if missing mandatory info
         if missing:
@@ -545,7 +550,7 @@ class Client:
             post.update({'last_edit' : ttime.ctime()})
 
             #Add to database
-            result = self._collection.update_one({'_id'  : _id},
+            result = self._collection.update_one({'id'  : _id},
                                                  {'$set' : post},
                                                  upsert = insert)
 

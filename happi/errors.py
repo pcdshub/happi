@@ -1,3 +1,6 @@
+class DatabaseError(Exception):
+    pass
+
 class EntryError(Exception):
     pass
 

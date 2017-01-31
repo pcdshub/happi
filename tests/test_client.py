@@ -41,9 +41,8 @@ def test_create_device(client, device_info):
     assert device.beamline == device_info['beamline']
 
 def test_create_valve(client, device_info):
-    device = client.create_device(GateValve, **info)
+    device = client.create_device(GateValve, **device_info)
     assert isinstance(device, GateValve)
-    assert device.type     == 'GateValve'
     assert device.base     == device_info['base']
     assert device.alias    == device_info['alias']
     assert device.z        == device_info['z']
@@ -52,7 +51,6 @@ def test_create_valve(client, device_info):
 def test_create_valve_with_string(client, device_info):
     device = client.create_device('GateValve', **device_info)
     assert isinstance(device, GateValve)
-    assert device.type     == 'GateValve'
     assert device.base     == device_info['base']
     assert device.alias    == device_info['alias']
     assert device.z        == device_info['z']
@@ -61,7 +59,7 @@ def test_create_valve_with_string(client, device_info):
 
 def test_add_device(client, device2, device2_info):
     client.add_device(device2)
-    doc = client._session.find_one(device2_info)
+    doc = client._collection.find_one(device2_info)
     assert device2.base     == device2_info['base']
     assert device2.alias    == device2_info['alias']
     assert device2.z        == device2_info['z']
@@ -83,11 +81,17 @@ def test_load_device(client, device_info):
 
 def test_load_and_save(client, device_info):
     device = client.load_device(**device_info)
-    device.alias = 'new_alias'
-    device_info['alias'] = 'new_alias'
+    device.stand = 'DG3'
+    device_info['stand'] = 'DG3'
     device.save()
     loaded_device = client.load_device(**device_info)
     assert loaded_device.alias == device.alias
+
+def test_load_and_save_fail_on_fixed_change(client, device_info):
+    device = client.load_device(**device_info)
+    device.alias = 'new_alias'
+    with pytest.raises(EntryError):
+        device.save()
 
 
 def test_validate(client):
@@ -116,7 +120,7 @@ def test_dict_search(client, device, device_info):
     assert loaded_device['z']        == device_info['z']
     assert loaded_device['beamline'] == device_info['beamline']
 
-def test_z_search_in(client):
+def test_z_search_in(client,device_info):
     res = client.search(start=0, end=500)
     assert len(res) == 1
     loaded_device = res[0]

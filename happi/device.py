@@ -106,7 +106,10 @@ class EntryInfo:
 
 
     def __set__(self, instance, value):
-        if self.enforce:
+
+        #Enforce type unless it is a mandatory attribute who
+        #has not been set (value=None)
+        if self.enforce and not (not self.optional and value==None):
             value = self.enforce(value)
 
         instance.__dict__[self.key] = value
@@ -220,7 +223,8 @@ class Device(metaclass=InfoMeta):
     """
     #Entry Info
     alias           = EntryInfo('Shorthand alias for the device',optional=False)
-    z               = EntryInfo('Beamline position of the device',optional=False,enforce=float)
+    z               = EntryInfo('Beamline position of the device',
+                                 optional=False,enforce=float)
     base            = EntryInfo('A base PV for all related records',optional=False)
     beamline        = EntryInfo('Section of beamline the device belongs',optional=False)
     stand           = EntryInfo('Acronym for stand')
@@ -280,7 +284,7 @@ class Device(metaclass=InfoMeta):
 
         #Add additional metadata
         if self.extraneous:
-            post.update(extraneous)
+            post.update(self.extraneous)
 
         return post
 

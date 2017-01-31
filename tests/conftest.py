@@ -5,7 +5,8 @@ from happi.device import EntryInfo
 @pytest.fixture(scope='function')
 def device_info():
     return {'alias':'alias', 'z':400, 'id':'BASE:PV',
-            'base':'BASE:PV', 'beamline':'LCLS'}
+            'base':'BASE:PV', 'beamline':'LCLS',
+            'type':'Device'}
 
 @pytest.fixture(scope='function')
 def device(device_info):
