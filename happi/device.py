@@ -9,7 +9,7 @@ from collections import OrderedDict
 ###################
 # Module Packages
 ###################
-from .utils import ContainerError
+from .errors import ContainerError
 
 logger = logging.getLogger(__name__)
 

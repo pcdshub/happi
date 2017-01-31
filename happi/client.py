@@ -15,7 +15,7 @@ from pymongo.errors import DuplicateKeyError
 from . import device
 from . import containers
 from .device import Device
-from .utils  import PermissionError, SearchError, DuplicateError
+from .errors import PermissionError, SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
@@ -470,7 +470,6 @@ class Client:
             raise
 
         else:
-            #Deleted
             cursor = self._collection.delete_one({'_id':post.pop(self._id)})
 
             if cursor.deleted_count :

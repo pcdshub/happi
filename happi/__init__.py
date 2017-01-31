@@ -7,5 +7,3 @@ logger.addHandler(logging.NullHandler())
 from .device     import Device
 from .client     import Client
 
-#Exceptions
-from .utils  import *
