@@ -1,38 +1,37 @@
 import logging
 import pytest
 
-from happi        import Device, EntryError
+from happi        import Device
+from happi.errors import EntryError
 from happi.device import EntryInfo
-
-#For Doc Testing
-from conftest import ExampleDevice
 
 logger = logging.getLogger(__name__)
 
 
-def test_doc():
-    assert ExampleDevice.doc.__doc__ == 'docstring'
+def test_get(device, device_info):
+    assert device.alias == device_info['alias']
 
-def test_get(device):
-    assert device.alias == 'alias'
+def test_init(device, device_info):
+    assert device.base     == device_info['base']
+    assert device.alias    == device_info['alias']
+    assert device.z        == device_info['z']
+    assert device.beamline == device_info['beamline']
 
 def test_set(device):
     device.alias = 'new_alias'
     assert device.alias == 'new_alias'
 
 def test_optional(device):
-    assert device.optional == None
-
-def test_default(device):
-    assert device.default == True
+    assert device.parent == None
 
 def test_enforce(device):
     with pytest.raises(ValueError):
-        device.enforced = 'non-integer'
+        device.z = 'Non-Float'
 
-def test_post(device):
+def test_post(device, device_info):
     post = device.post()
-    assert post['alias']    == 'alias'
-    assert post['z']        ==  400
-    assert post['base']     == 'BASE:PV'
-    assert post['beamline'] == 'LCLS'
+    assert post['base']     == device_info['base']
+    assert post['alias']    == device_info['alias']
+    assert post['z']        == device_info['z']
+    assert post['beamline'] == device_info['beamline']
+

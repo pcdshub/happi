@@ -9,18 +9,18 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope='module')
-def client(device, device_info):
-    client = Client(user='test',pw='test',db='test')
-    print('client',client)
-    return client
+def base_client():
+    cl = Client(user='test',pw='test',db='test')
+    print('client',cl)
+    return cl
 
-#Ensure that each test start with a single device in the collection
-def setup_function(function):
-    client._collection.insert_one(device_info)
-
-def teardown_function(function):
+@pytest.fixture(scope='function')
+def client(base_client, device_info):
+    base_client._collection.insert_one(device_info)
+    yield base_client
     print("Tearing down client ...")
-    client._collection.delete_many({})
+    base_client._collection.delete_many({})
+
 
 def test_find_document(client, device_info):
     doc = client.find_document(**device_info)
