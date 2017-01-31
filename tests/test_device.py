@@ -32,4 +32,7 @@ def test_enforce(device):
 
 def test_post(device):
     post = device.post()
-    assert post['type'] == 'TestDevice'
+    assert post['alias']    == 'alias'
+    assert post['z']        ==  400
+    assert post['base']     == 'BASE:PV'
+    assert post['beamline'] == 'LCLS'

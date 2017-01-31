@@ -8,24 +8,33 @@ class ExampleDevice(Device):
     enforced  = EntryInfo(enforce=int,default=1)
     doc       = EntryInfo('docstring')
 
+
 @pytest.fixture(scope='function')
-def device():
-    t = ExampleDevice(alias='alias', z='400',
-                   base='BASE:PV',beamline='LCLS')
+def device_info():
+    return {alias='alias', z=400, id='BASE:PV'
+            base='BASE:PV', beamline='LCLS'}
+
+@pytest.fixture(scope='function')
+def device(device_info):
+    t = Device(**device_info)
     print('device',t)
     return t
 
+@pytest.fixture(scope='function'):
+def device2_info():
+    return {alias='name', z=300, id='BASE:PV2'
+            base='BASE:PV2', beamline='LCLS'}
+
 @pytest.fixture(scope='function')
-def device2():
-    t = ExampleDevice(alias='name', z='300',
-                   base='BASE:PV2',beamline='LCLS')
+def device2(device2_info):
+    t = Device(**device2_info)
     print('device',t)
     return t
 
 
 @pytest.fixture(scope='function')
 def inc_device():
-    t = ExampleDevice(alias='alias', z='400')
+    t = Device()
     print('device',t)
     return t
 
