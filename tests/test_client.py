@@ -3,10 +3,23 @@ import logging
 
 from happi            import Device, Client
 from happi.containers import GateValve
-from happi.errors     import EntryError, SearchError
+from happi.errors     import *
 
 logger = logging.getLogger(__name__)
 
+def test_wrong_host():
+    with pytest.raises(TimeoutError):
+        client = Client(host='nonsense')
+
+def test_wrong_pw():
+    with pytest.raises(PermissionError):
+        client = Client(pw='nonsense')
+
+def test_wrong_collection():
+    class WrongCollection(Client):
+        _coll_name = 'wrong'
+    with pytest.raises(DatabaseError):
+        client = WrongCollection()
 
 @pytest.fixture(scope='module')
 def base_client():
@@ -28,6 +41,16 @@ def test_find_document(client, device_info):
     assert doc.pop('alias')    == device_info['alias']
     assert doc.pop('z')        == device_info['z']
     assert doc.pop('beamline') == device_info['beamline']
+
+
+def test_find_document_without_id(client, device_info):
+    base = device_info.pop('base')
+    doc  = client.find_document(**device_info)
+    assert doc.pop('base')     == base
+    assert doc.pop('alias')    == device_info['alias']
+    assert doc.pop('z')        == device_info['z']
+    assert doc.pop('beamline') == device_info['beamline']
+
 
 def test_error_on_not_found_document(client):
     with pytest.raises(SearchError):
@@ -57,6 +80,20 @@ def test_create_valve_with_string(client, device_info):
     assert device.beamline == device_info['beamline']
 
 
+def test_create_and_save(client, device2_info):
+    device = client.create_device('Device',**device2_info)
+    device.save()
+    loaded_device = client.load_device(**device2_info)
+    assert loaded_device.base     == device2_info['base']
+    assert loaded_device.alias    == device2_info['alias']
+    assert loaded_device.z        == device2_info['z']
+    assert loaded_device.beamline == device2_info['beamline']
+
+
+def test_create_device_error(client):
+    with pytest.raises(TypeError):
+        client.create_device(int)
+
 def test_add_device(client, device2, device2_info):
     client.add_device(device2)
     doc = client._collection.find_one(device2_info)
@@ -64,6 +101,14 @@ def test_add_device(client, device2, device2_info):
     assert device2.alias    == device2_info['alias']
     assert device2.z        == device2_info['z']
     assert device2.beamline == device2_info['beamline']
+
+def test_add_and_load_device(client, device2, device2_info):
+    client.add_device(device2)
+    loaded_device = client.load_device(**device2_info)
+    assert loaded_device.base     == device2.base
+    assert loaded_device.alias    == device2.alias
+    assert loaded_device.z        == device2.z
+    assert loaded_device.beamline == device2.beamline
 
 def test_add_device_error_on_mandatory_info(client, inc_device):
     with pytest.raises(EntryError):
@@ -85,7 +130,17 @@ def test_load_and_save(client, device_info):
     device_info['stand'] = 'DG3'
     device.save()
     loaded_device = client.load_device(**device_info)
-    assert loaded_device.alias == device.alias
+    assert loaded_device.base     == device_info['base']
+    assert loaded_device.alias    == device_info['alias']
+    assert loaded_device.z        == device_info['z']
+    assert loaded_device.beamline == device_info['beamline']
+    assert loaded_device.stand    == device_info['stand']
+
+def test_bad_load(client):
+    bad = {'a':'b'}
+    client._collection.insert_one(bad)
+    with pytest.raises(EntryError):
+        client.load_device(**bad)
 
 def test_load_and_save_fail_on_fixed_change(client, device_info):
     device = client.load_device(**device_info)
@@ -99,7 +154,7 @@ def test_validate(client):
 
 
 def test_validate_failure(client):
-    client._collection.insert_one({'id':'bad'})
+    client._collection.insert_one({'_id':'bad'})
     assert client.validate() == ['bad']
 
 def test_search(client, device, device_info):

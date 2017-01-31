@@ -58,7 +58,7 @@ class Client:
     _conn_str   = 'mongodb://{user}:{pw}@{host}/{db}' #String for login
 
     #Device information
-    _client_attrs = ['id', 'type', 'creation', 'last_edit']
+    _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _fixed_attrs  = ['base', 'alias']
     device_types  = {'Device' : Device}
 
@@ -140,7 +140,7 @@ class Client:
         """
         #Separated for increased speed
         if self._id in kwargs:
-            post = self._collection.find_one({'id': kwargs[self._id]})
+            post = self._collection.find_one({'_id': kwargs[self._id]})
 
         else:
             post = self._collection.find_one(kwargs)
@@ -199,7 +199,7 @@ class Client:
         device = device_cls(**kwargs)
 
         #Add the method to the device
-        device.save = lambda dev : self.add_device(dev)
+        device.save = lambda : self.add_device(device)
 
         return device
 
@@ -222,29 +222,8 @@ class Client:
         """
         logger.info("Storing device {!r} ...".format(device))
 
-        #Validate device is ready for storage
-        self._validate_device(device)
-
-        #Grab information from device
-        post = device.post()
-
-        #Clean supplied information
-        [post.pop(key) for key in self._client_attrs if key in post]
-
-        #Note that device has some unrecognized metadata
-        if device.extraneous:
-            for key in device.extraneous.keys():
-                logger.info("Device {!r} defines an extra piece of information "
-                            "under the keyword {}".format(device, key))
-
-
-        #Add metadata from the Client Side
-        post.update({'type'     : device.__class__.__name__,
-                     'creation' : ttime.ctime(),
-                    })
-
         #Store post
-        self._store(post, insert=True)
+        self._store(device, insert=True)
 
         #Log success
         logger.info('Device {!r} has been succesfully added to the '
@@ -278,7 +257,7 @@ class Client:
         #Instantiate Device
         logger.debug("Instantiating device based on found information ...")
         try:
-            device = self.create_device(post['type'], **post)
+            device = self.create_device(doc['type'], **doc)
 
         except (KeyError, TypeError):
             raise EntryError('The information relating to the device class has '
@@ -291,7 +270,7 @@ class Client:
         fixed = dict([(attr, getattr(device, attr))
                       for attr in self._fixed_attrs])
 
-        #Create the save method
+        #Overwrite the save method
         def save():
             #Check if a fixed attribute has been changed
             diff = [key for key,value in fixed.items()
@@ -303,11 +282,8 @@ class Client:
                                  'should be entered as a new device.'
                                  ''.format(', '.join(diff)))
 
-            #Check that all mandatory information is filled
-            self._validate_device(device)
-
             #Return the storage function
-            return self._store(device.post(), insert=False)
+            return self._store(device, insert=False)
 
         #Add the method to the device
         device.save = save
@@ -336,7 +312,7 @@ class Client:
         logger.debug('Loading database to validate contained devices ...')
         for post in self._collection.find():
             #Device identification
-            _id = post['id']
+            _id = post['_id']
             logger.info('Attempting to validate {} ...'.format(_id))
 
             #Try and load device based on database info
@@ -483,7 +459,7 @@ class Client:
             raise
 
         else:
-            cursor = self._collection.delete_one({'id':info.pop(self._id)})
+            cursor = self._collection.delete_one({'_id':info.pop(self._id)})
 
             if cursor.deleted_count :
                 logging.info("{} successfully deleted from "
@@ -518,14 +494,14 @@ class Client:
 
                  
 
-    def _store(self, post, insert=False):
+    def _store(self, device, insert=False):
         """
         Store a document in the database
         
         Parameters
         ----------
-        post : dict
-            Information to place in the databse
+        post : :class:`.Device`
+            Device to save
 
         insert : bool, optional
             Set to True if this is a new entry
@@ -538,19 +514,40 @@ class Client:
         EntryError:
             If the device doesn't the correct information
         """
-        logger.debug('Loading a post into the collection ...') 
-        
-        
+        logger.debug('Loading a device into the collection ...')
+
+        #Validate device is ready for storage
+        self._validate_device(device)
+
+        #Grab information from device
+        post = device.post()
+
+        #Clean supplied information
+        [post.pop(key) for key in self._client_attrs if key in post]
+
+
+        #Note that device has some unrecognized metadata
+        for key in [key for key in post.keys() if key not in device.info_names]:
+            logger.info("Device {!r} defines an extra piece of information "
+                        "under the keyword {}".format(device, key))
+
+
+        #Add metadata from the Client Side
+        post.update({'type'     : device.__class__.__name__,
+                     'creation' : ttime.ctime(),
+                    })
+
         try:
             #Add some metadata
             _id = post[self._id]
 
             logger.info('Adding / Modifying information for {} ...'.format(_id))
 
+
             post.update({'last_edit' : ttime.ctime()})
 
             #Add to database
-            result = self._collection.update_one({'id'  : _id},
+            result = self._collection.update_one({'_id'  : _id},
                                                  {'$set' : post},
                                                  upsert = insert)
 
