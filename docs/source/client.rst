@@ -68,7 +68,7 @@ Editing Device Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The workflow for editing a device looks very similar to the code within
 :ref:`entry_code`, but instead of instantiating the device you use either
-`.Client.load_device` or :meth:`.Client.search` to grab an existing device from
+:meth:`.Client.load_device` or :meth:`.Client.search` to grab an existing device from
 the database. When the device is retreived this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
