@@ -9,10 +9,10 @@ put arbitrary key-value pair information into the databse. While this will make
 adding functionality easy in the future, it also means that any rules on the
 structure of the data we allow will need to be performed by the
 :class:`.happi.Client` itself. To make this intuitive, the client deals
-primarily with objects we will call Device Containers, see TODO in order to see
-more about how the devices are created. However the basic use cases for the
-client can be demonstrated without much knowledge of how the :class:`.Device`
-container works.
+primarily with objects we will call Device Containers, see :ref:`device_label`
+in order to see more about how the devices are created. However the basic use
+cases for the client can be demonstrated without much knowledge of how the
+:class:`.Device` container works.
 
 Authentication
 ^^^^^^^^^^^^^^
