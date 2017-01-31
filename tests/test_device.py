@@ -4,23 +4,14 @@ import pytest
 from happi        import Device, EntryError
 from happi.device import EntryInfo
 
+#For Doc Testing
+from conftest import ExampleDevice
+
 logger = logging.getLogger(__name__)
 
-class TestDevice(Device):
-    optional  = EntryInfo()
-    default   = EntryInfo(default=True)
-    enforced  = EntryInfo(enforce=int,default=1)
-    doc       = EntryInfo('docstring')
 
 def test_doc():
     assert ExampleDevice.doc.__doc__ == 'docstring'
-
-@pytest.fixture(scope='function')
-def device():
-    t = ExampleDevice(alias='alias', z='400',
-                   base='BASE:PV',beamline='LCLS')
-    print('device',t)
-    return t
 
 def test_get(device):
     assert device.alias == 'alias'
@@ -30,7 +21,7 @@ def test_set(device):
     assert device.alias == 'new_alias'
 
 def test_optional(device):
-    device.optional == None
+    assert device.optional == None
 
 def test_default(device):
     assert device.default == True

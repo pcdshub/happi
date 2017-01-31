@@ -6,13 +6,14 @@ import inspect
 import numpy as np #Could be removed if necessary
 import time  as ttime
 from pymongo import MongoClient
-from pymongo.errors import OpertaionFailure, DuplicateKeyError
+from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
+from pymongo.errors import DuplicateKeyError
 
 ###################
 # Module Packages #
 ###################
-import .device
-import .containers
+from . import device
+from . import containers
 from .device import Device
 from .utils  import PermissionError, SearchError, DuplicateError
 
@@ -33,29 +34,58 @@ class Client:
     host : str, optional
         Host of the MongoDB instance
 
+    db : str, optional
+        Database name within the MongoDB instance
+
     timeout : float, optional
         Time to wait for connection attempt
+
+    Attributes
+    ----------
+    device_types : dict
+        Mapping of Container aliases to class types 
     """
     #MongoDB information
-    self._host       = 'psdev03' #Hostname of MongoDB instance
-    self._port       = None      #Port of MongoDB instance
-    self._user       = 'happi'   #Username
-    self._pw         = 'happi'   #Password
-    self._conn_str   = 'mongodb://{user}:{pw}@{host}{db}' #String for login
-    self._id         = 'base'             #Attribute name to use as unique id
-    self._db_name    = 'test_db'          #MongoDB name
-    self._coll_name  = 'test_collection'  #Relevant Collection name
-    self._timeout    = 5                  #Connection timeout
+    _host       = 'psdev03' #Hostname of MongoDB instance
+    _port       = None      #Port of MongoDB instance
+    _user       = 'happi'   #Username
+    _pw         = 'happi'   #Password
+    _id         = 'base'    #Attribute name to use as unique id
+    _db_name    = 'happi'   #MongoDB name
+    _coll_name  = 'devices' #Relevant Collection name
+    _timeout    = 5         #Connection timeout
+    _conn_str   = 'mongodb://{user}:{pw}@{host}/{db}' #String for login
 
     #Device information
-    self._client_attrs = ['_id', 'type', 'creation', 'last_edit']
-    self._fixed_attrs  = ['base', 'alias']
-    self.device_types  = {'Device' : Device}
+    _client_attrs = ['_id', 'type', 'creation', 'last_edit']
+    _fixed_attrs  = ['base', 'alias']
+    device_types  = {'Device' : Device}
 
-    def __init__(self, host=None, port=None, user=None, pw=None, timeout=None):
+    def __init__(self, host=None, port=None, user=None,
+                 pw=None, db=None, timeout=None):
+
+        #Initialization info
+        if not host:
+            host = self._host
+
+        if not port:
+            port = self._port
+
+        if not user:
+            user = self._user
+
+        if not pw:
+            pw = self._pw
+
+        if not db:
+            db = self._db_name
+
+        if not timeout:
+            timeout = self._timeout
+
         #Load database
-        conn_str     = self._conn_str.format(**kwargs)
-        self._client = MongoClient(conn_str, connectTimeoutMS=self._timeout)
+        conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
+        self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
         self._db     = client[self._db] 
 
         #Load collection
@@ -64,10 +94,17 @@ class Client:
                 raise DatabaseError('Unable to locate collection {} '
                                     'in database'.format(self._collection))
 
-        except OperationFailure, e:
+            self._collection = self._db[self._collection]
+
+        #Unable to view collection names
+        except OperationFailure as e:
             raise PermissionError(e)
 
-        self._collection = self._db[self._collection]
+        #Unable to connect to MongoDB instance
+        except ServerSelectionTimeoutError:
+            raise TimeoutError('Unable to connect to MongoDB instance, check '
+                               'that the server is running on the host and port '
+                               'specified at startup')
 
         #Get Container Mapping
         self.device_types.update(dict([(name,cls) for (name,cls) in
@@ -79,8 +116,6 @@ class Client:
     def find_document(self, **kwargs):
         """
         Load a device document from the MongoDB
-
-        If multiple devices are found, only the first is returned. Order is
         based on the natural order inside the MongoDB instance
 
         Parameters
@@ -100,7 +135,7 @@ class Client:
 
         See Also
         --------
-        :meth:`.find_device`, :meth:`.search`
+        :meth:`.load_device`, :meth:`.search`
         """
         #Separated for increased speed
         if self._id in kwargs:
@@ -138,6 +173,14 @@ class Client:
         ValueError:
             If the provided class is not a subclass of :class:`.Device`
 
+
+        Example
+        -------
+        .. code::
+
+            device = client.create_device(Device,   alias='my_device' ...)
+            device = client.create_device('Device', alias='my_device',...)
+
         See Also
         --------
         :attr:`.device_types`
@@ -152,7 +195,12 @@ class Client:
             raise ValueError('{!r} is not a subclass of '
                              'Device'.format(device_cls))
 
-        return device_cls(**kwargs)
+        device = device_cls(**kwargs)
+
+        #Add the method to the device
+        device.save = lambda dev : self.add_device(dev)
+
+        return device
 
 
     def add_device(self, device):
@@ -190,16 +238,16 @@ class Client:
 
 
         #Add metadata from the Client Side
-        post.update({'type'     : device.__class__.__name__})
-                    'creation'  : ttime.ctime(),
+        post.update({'type'     : device.__class__.__name__,
+                     'creation' : ttime.ctime(),
                     })
 
         #Store post
         self._store(post)
 
         #Log success
-        logger.info({'Device {!r} has been succesfully added to the '
-                     'database'.format(device))
+        logger.info('Device {!r} has been succesfully added to the '
+                    'database'.format(device))
 
 
     def load_device(self, **post):
@@ -226,7 +274,7 @@ class Client:
         try:
             device = self.create_device(post['type'], **post)
 
-        except KeyError, ValueError:
+        except (KeyError, ValueError):
             raise EntryError('The information relating to the device class has '
                              'been modified to the point where the object can not '
                              'be initialized, please load the corresponding '
@@ -246,8 +294,8 @@ class Client:
             #Raise an error if changed
             if diff:
                 raise EntryError('Fixed entries {} have been modfied, this '
-                                 'should be entered as a new device.')
-                                 ''.format(', '.join(diff))
+                                 'should be entered as a new device.'
+                                 ''.format(', '.join(diff)))
 
             #Check that all mandatory information is filled
             self._validate_device(device)
@@ -262,7 +310,7 @@ class Client:
 
 
     def validate(self):
-       """
+        """
         Validate all of the devices in the database by attempting to initialize
         them and asserting their mandatory information is present. Information
         is written to the logger
@@ -330,12 +378,15 @@ class Client:
 
         Example
         -------
-        gate_valves = client.search(type='Valve')
-        hxr_valves  = client.search(type='Valve', beamline='HXR')
+        .. code::
+
+            gate_valves = client.search(type='Valve')
+            hxr_valves  = client.search(type='Valve', beamline='HXR')
 
         Todo
         ----
-        Search on regular expression
+        Search on regular expression, in general expose fancier MongoDB search
+        keys
         """
         try:
             cur = list(self._collection.find(kwargs))
@@ -350,18 +401,17 @@ class Client:
             def in_range(val):
                 if not end:
                     end = np.inf
-                    
+
                 return start <=  val < end
 
-            cur = [info for info in cur if in_range(info['z'])
+            cur = [info for info in cur if in_range(info['z'])]
 
         if as_dict:
             return cur
 
         else:
-            return [Device(info) for info in cur]
-       
-        
+            return [self.load_device(**info) for info in cur]
+
 
     def export(self, path=None, sep='\t', attrs=None):
         """
@@ -380,7 +430,7 @@ class Client:
         """
         #Load documents
         docs = list(self._collection.find())
-        
+
         logger.info('Creating file at {} ...'.format(path))
 
         #Load device information
@@ -424,7 +474,8 @@ class Client:
             cursor = self._collection.delete_one({'_id':post.pop(self._id)})
 
             if cursor.deleted_count :
-                logging.info("{} succesfully deleted from database"})
+                logging.info("{} successfully deleted from "
+                             "database".format(device))
 
 
     def _validate_device(self, device):
@@ -452,7 +503,7 @@ class Client:
 
         logger.debug('Device {!r} has been validated.'.format(device))
 
-
+                 
 
     def _store(self, post, insert=False):
         """
@@ -472,9 +523,11 @@ class Client:
             When _id already exists
 
         EntryError:
-            If the device doesn't 
+            If the device doesn't the correct information
         """
         logger.debug('Loading a post into the collection ...') 
+        
+        
         try:
             #Add some metadata
             _id = post[self._id]
@@ -506,7 +559,7 @@ class Client:
 
         if not insert and result.matched_count == 0:
             raise SearchError('No device found with id {} please, if this is a '
-                              'new device, set insert to True. If not, make '
+                              'new device, try add_device. If not, make '
                               'sure that the device information being sent is '
                               'correct'.format(_id))
 
