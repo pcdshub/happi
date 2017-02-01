@@ -88,16 +88,18 @@ class EntryInfo:
             #Try and convert to type, otherwise raise ValueError
             return self.enforce(value)
 
-        elif isinstance(self.enforce, list):
+        elif isinstance(self.enforce, (list,tuple)):
             #Check that value is in list, otherwise raise ValueError
-            self.enforce.index(value)
+            if value not in self.enforce:
+                raise ValueError('{} was not found in the enforce list {}'
+                                 ''.format(self.key, self.enforce))
             return value
 
         elif isinstance(self.enforce, re._pattern_type):
             #Try and match regex patttern, otherwise raise ValueError
             if not self.enforce.match(value):
-                raise ValueError('{} did not match the enforced pattern')
-
+                raise ValueError('{} did not match the enforced pattern {}'
+                                ''.format(self.key, self.enforce.pattern))
             return value
 
         #Invalid enforcement
