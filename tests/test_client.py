@@ -102,6 +102,11 @@ def test_add_device(client, device2, device2_info):
     assert device2.z        == device2_info['z']
     assert device2.beamline == device2_info['beamline']
 
+def test_add_duplicate(client, device):
+    with pytest.raises(DuplicateError):
+        client.add_device(device)
+
+
 def test_add_and_load_device(client, device2, device2_info):
     client.add_device(device2)
     loaded_device = client.load_device(**device2_info)
@@ -157,8 +162,9 @@ def test_validate_failure(client):
     client._collection.insert_one({'_id':'bad'})
     assert client.validate() == ['bad']
 
-def test_search(client, device, device_info):
-    res = client.search(**device_info)
+def test_search(client, device,device2, device_info):
+    client.add_device(device2)
+    res = client.search(alias=device_info['alias'])
     assert len(res) == 1
     loaded_device = res[0]
     assert loaded_device.base     == device_info['base']
@@ -166,6 +172,8 @@ def test_search(client, device, device_info):
     assert loaded_device.z        == device_info['z']
     assert loaded_device.beamline == device_info['beamline']
 
+def test_search_no_results(client):
+        assert client.search(alias='not') == None
 
 def test_dict_search(client, device, device_info):
     res = client.search(**device_info, as_dict=True)
@@ -188,6 +196,34 @@ def test_z_search_out(client):
     res = client.search(start=10000, end=500000)
     assert res == None
 
+def test_search_open(client, device_info):
+    res = client.search(start=0)
+    assert len(res) == 1
+    loaded_device = res[0]
+    assert loaded_device.base     == device_info['base']
+    assert loaded_device.alias    == device_info['alias']
+    assert loaded_device.z        == device_info['z']
+    assert loaded_device.beamline == device_info['beamline']
+
+def test_mulitple_search(client,device2):
+    client.add_device(device2)
+    res = client.search(beamline='LCLS')
+    assert len(res) == 2
+
+
+def test_invalid_search_range(client):
+        with pytest.raises(ValueError):
+            client.search(start=1000,end=5)
+
 def test_remove_device(client,device, device_info):
     client.remove_device(device)
     assert client._collection.find_one(device_info) == None
+
+def test_remove_failures(client, device2):
+    with pytest.raises(ValueError):
+        client.remove_device(5)
+
+    with pytest.raises(SearchError):
+        client.remove_device(device2)
+
+

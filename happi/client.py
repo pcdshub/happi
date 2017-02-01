@@ -513,6 +513,10 @@ class Client:
 
         EntryError:
             If the device doesn't the correct information
+
+        Todo
+        ----
+        Enforce parent is an already entered alias
         """
         logger.debug('Loading a device into the collection ...')
 

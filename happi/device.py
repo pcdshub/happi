@@ -76,7 +76,7 @@ class EntryInfo:
             self.default = None
 
         #Check that default value is correct type
-        if enforce and optional:
+        if enforce and self.default:
             try:
                 enforce(default)
             except ValueError:
@@ -107,9 +107,8 @@ class EntryInfo:
 
     def __set__(self, instance, value):
 
-        #Enforce type unless it is a mandatory attribute who
-        #has not been set (value=None)
-        if self.enforce and not (not self.optional and value==None):
+        #Enforce type unless it is has been set (value=None)
+        if self.enforce and value!=None:
             value = self.enforce(value)
 
         instance.__dict__[self.key] = value
