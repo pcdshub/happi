@@ -6,7 +6,7 @@ along the LCLS photon beamline.
 This is general purpose database for PCDS to organize information on any device
 along the beamline. The general structure of the Python API allows users to use
 :ref:`device_label` to enter structured information into the database, while
-still proivding the flexibility need for abitrary metadata.
+still proivding the flexibility needed for abitrary metadata.
 
 Before entering any information, please consult the :ref:`convention_label`
 page. While the client is intelligent enough to catch certain errors
