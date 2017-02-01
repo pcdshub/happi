@@ -1,3 +1,5 @@
+.. _client_label:
+
 Client 
 ******
 Users will interact with the database by using the :class:`happi.Client`, this
@@ -62,7 +64,26 @@ Searching the Database
 There are two ways to load information from the database
 :meth:`.Client.load_device` and :meth:`.Client.search`. The former should only
 be used to load one device at at a time. Both accept criteria in the from of
-keyword-value pairs to find the device or device/s you desire.
+keyword-value pairs to find the device or device/s you desire. Here are some
+example searches to demonstrate the power of the Happi Client
+
+.. code::
+
+    #All of gate valves in the database in object form
+    gate_valves = client.search(type='GateValve')
+
+    #All of the gate information as a list of dictionaries
+    valve_info  = client.search(type='GateValve', as_dict=True)
+
+    #Search multiple keys to limit your search
+    mfx_valves = client.search(type='GateValve', beamline='MFX')
+    
+    #Limit your search to an area along the beamline
+    xrt_valves = client.search(type='GateValve', start=214.4, end=284.6)
+    
+    #Use load device to ensure you only grab a single device
+    mfx_dg1_valve = client.load_device(base='MFX:DG1:VGC:01')
+
 
 Editing Device Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -72,6 +93,24 @@ The workflow for editing a device looks very similar to the code within
 the database. When the device is retreived this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
+
+.. code::
+
+    #Load motor from database
+    my_motor = client.load_device(base='XPP:SB1:MMS:01')
+    
+    #Change desired information
+    my_motor.alias = 'New Alias'
+    
+    #Save back to database
+    my_motor.save()
+
+.. note::
+
+    Because the database uses the ``base`` key as a device's identification you
+    can not edit this information in the same way. Instead you have to use
+    :meth:`.Client.add_device` to create a new entry. 
+    
 
 Client API
 ^^^^^^^^^^

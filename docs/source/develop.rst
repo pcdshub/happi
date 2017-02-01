@@ -25,23 +25,40 @@ class attributes as EntryInfo objects:
 
 .. code::
 
+    import re
     from happi.device import Device, EntryInfo
 
     class MyDevice(Device):
 
-        model_no = EntryInfo('Model Number of Device', optional=False)
-        count    = EntryInfo('Count of Device', enforce=int, default=0)
+        model_no      = EntryInfo('Model Number of Device', optional=False)
+        count         = EntryInfo('Count of Device', enforce=int, default=0)
+        choices       = EntryInfo('Choice Info', enforce=['a','b','c'])
+        no_whitespace = EntryInfo('Enforce no whitespace',
+                                   enforce = re.compile(r'[\S]*$')
 
 By default, EntryInfo will create an optional keyword, whose default is
 ``None`` with the same name as the class attribute. You can always see how this
 information will be put into the the database by looking at the output of the
 :meth:`.Device.post` method. As shown in the example above, using the EntryInfo
 keywords, you can put a short doc string to give a better explanation of the
-field, and also enforce a type. It is important to note that if you change the
-enforced type you should also change the default value. For instance in the
-above example, if we had kept the default as ``None``,  ``int(None)`` would
-have given a ``TypeError`` upon intialization. Finally, fields that are
-important to the device can be marked as mandatory. These should have no
-default value. The device methods will function fine without the mandatory
-information, however the database client will reject the device if these fields
-don't have values associated with them. 
+field, and also enforce that user enter a specific format of information.
+
+While the user will always be able to enter ``None`` for the attribute, if a
+real value is given it will be checked against the specified ``enforce``
+keyword, raising ``ValueError`` if invalid. Here is a table for how the
+:class:`.EntryInfo` check the type
+
+=======   ===========================
+Enforce   Method of enforcement
+=======   ===========================
+None      Any value will work
+type      type(value)
+list      list.index(value)
+regex     regex.match(value) != None
+=======   ===========================
+
+Finally, fields that are important to the device can be marked as mandatory.
+These should have no default value. When entering information you will not
+neccesarily see a difference in between optional and mandatory
+:class:`.EntryInfo`, however the database client will reject the device if
+these fields don't have values associated with them. 
