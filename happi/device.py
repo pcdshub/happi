@@ -88,7 +88,7 @@ class EntryInfo:
             #Try and convert to type, otherwise raise ValueError
             return self.enforce(value)
 
-        elif isinstance(self.enforce, (list,tuple)):
+        elif isinstance(self.enforce, (list,tuple,set)):
             #Check that value is in list, otherwise raise ValueError
             if value not in self.enforce:
                 raise ValueError('{} was not found in the enforce list {}'
