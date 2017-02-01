@@ -1,0 +1,23 @@
+{% set data = load_setup_py_data() %}
+
+package:
+    name    : happi
+    version : {{ data.get('version') }}
+
+source:
+    path: ..
+
+requirements:
+    build:
+       - python
+
+
+    run:
+      - numpy
+      - pymongo 
+      - python
+
+ test:
+     imports:
+      - pytest
+
