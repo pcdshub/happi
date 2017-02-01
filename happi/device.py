@@ -133,16 +133,10 @@ class EntryInfo:
 
 
     def __repr__(self):
-        if self.enforce:
-            enforce = self.enforce.__name__
 
-        else:
-            enforce = None
-
-        return 'EntryInfo {} (optional={}, type={}, default={})'.format(self.key,
-                                                                        self.optional,
-                                                                        enforce,
-                                                                        self.default)
+        return 'EntryInfo {} (optional={}, default={})'.format(self.key,
+                                                               self.optional,
+                                                               self.default)
 
 
 class InfoMeta(type):

@@ -147,13 +147,6 @@ def test_bad_load(client):
     with pytest.raises(EntryError):
         client.load_device(**bad)
 
-def test_load_and_save_fail_on_fixed_change(client, device_info):
-    device = client.load_device(**device_info)
-    device.alias = 'new_alias'
-    with pytest.raises(EntryError):
-        device.save()
-
-
 def test_validate(client):
     assert client.validate() == list()
 
