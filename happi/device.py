@@ -1,6 +1,7 @@
 ###################
 # Standard Packages
 ###################
+import re
 import logging
 import textwrap
 
@@ -31,11 +32,10 @@ class EntryInfo:
         By default all EntryInfo is optional, but in certain cases you may want
         to demand a particular piece of information upon initialization
 
-    enforce : type, optional
-        Specify that all entered information is of a specific Python type. The
-        device upon intialiation will try and convert the given value to the
-        enforced type, raises a ``ValueError`` if unsuccessful. If left
-        unspecified any type will be expected
+    enforce : type, list, compiled regex, optional
+        Specify that all entered information is entered in a specific format.
+        This can either by a Python type i.e. int, float e.t.c., a list of
+        acceptable values, or a compiled regex pattern i.e ``re.compile(...)``
 
     default : optional
         A default value for the trait to have if the user does not specify.
@@ -45,8 +45,9 @@ class EntryInfo:
     Raises
     ------
     ContainerError:
-        If the default value does not match the specified ``enforce`` type and
-        the EntryInfo is optional
+        If there is an error with the way the enforced value interacts with its
+        default value, or if the piece of information entered is unenforcable
+        based on the the settings
 
     Example
     ------
@@ -56,10 +57,6 @@ class EntryInfo:
 
             my_field = EntryInfo('My generated field')
             number   = EntryInfo('Device number', enforce=int, default=0)
-
-    Todo
-    ----
-    Add ability to enforce regex patterns with enforce
     """
     def __init__(self, doc=None, optional=True, enforce=None, default=None):
         self.key      = None #Set later by parent class
@@ -76,12 +73,37 @@ class EntryInfo:
             self.default = None
 
         #Check that default value is correct type
-        if enforce and self.default:
-            try:
-                enforce(default)
-            except ValueError:
-                raise ContainerError('Default value must match the enforced type')
+        try:
+            self.enforce_value(default)
 
+        except ValueError:
+            raise ContainerError('Default value must match the enforced type')
+
+
+    def enforce_value(self, value):
+        if not self.enforce or value == None:
+            return value
+
+        elif isinstance(self.enforce, type):
+            #Try and convert to type, otherwise raise ValueError
+            return self.enforce(value)
+
+        elif isinstance(self.enforce, list):
+            #Check that value is in list, otherwise raise ValueError
+            self.enforce.index(value)
+            return value
+
+        elif isinstance(self.enforce, re._pattern_type):
+            #Try and match regex patttern, otherwise raise ValueError
+            if not self.enforce.match(value):
+                raise ValueError('{} did not match the enforced pattern')
+
+            return value
+
+        #Invalid enforcement
+        else:
+            raise ContainerError('EntryInfo {} has an invalid enforce'
+                                 ''.format(self.key))
 
     def make_docstring(self, parent_class):
         if self.doc is not None:
@@ -107,11 +129,7 @@ class EntryInfo:
 
     def __set__(self, instance, value):
 
-        #Enforce type unless it is has been set (value=None)
-        if self.enforce and value!=None:
-            value = self.enforce(value)
-
-        instance.__dict__[self.key] = value
+        instance.__dict__[self.key] = self.enforce_value(value)
 
 
     def __repr__(self):
@@ -221,14 +239,21 @@ class Device(metaclass=InfoMeta):
                   )
     """
     #Entry Info
-    alias           = EntryInfo('Shorthand alias for the device',optional=False)
+    alias           = EntryInfo('Shorthand alias for the device',
+                                optional=False)
+    base            = EntryInfo('A base PV for all related records',
+                                optional=False)
+    beamline        = EntryInfo('Section of beamline the device belongs',
+                                optional=False)
     z               = EntryInfo('Beamline position of the device',
-                                 optional=False,enforce=float)
-    base            = EntryInfo('A base PV for all related records',optional=False)
-    beamline        = EntryInfo('Section of beamline the device belongs',optional=False)
-    stand           = EntryInfo('Acronym for stand')
+                                enforce=float, default = -1.0)
+    stand           = EntryInfo('Acronym for stand, must be three alphanumeric '
+                                'characters',
+                                enforce=re.compile(r'[A-Z0-9]{3}$'))
     main_screen     = EntryInfo('The absolute path to the main control screen')
     embedded_screen = EntryInfo('The absolute path to an embeddable screen')
+    system          = EntryInfo('The system the device is involved with, i.e '
+                                'Vacuum, Timing e.t.c')
     parent          = EntryInfo('If the device is a component of another, '
                                 'enter the alias')
 

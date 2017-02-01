@@ -45,6 +45,10 @@ class Client:
     ----------
     device_types : dict
         Mapping of Container aliases to class types 
+
+    Todo
+    ----
+    Add a rotating file handler to the logger
     """
     #MongoDB information
     _host       = 'psdev03' #Hostname of MongoDB instance
@@ -59,7 +63,6 @@ class Client:
 
     #Device information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
-    _fixed_attrs  = ['base', 'alias']
     device_types  = {'Device' : Device}
 
     def __init__(self, host=None, port=None, user=None,
@@ -265,28 +268,8 @@ class Client:
                              'be initialized, please load the corresponding '
                              'document')
 
-        #Record the fixed attributes
-        logger.debug("Creating save method for device ...")
-        fixed = dict([(attr, getattr(device, attr))
-                      for attr in self._fixed_attrs])
-
-        #Overwrite the save method
-        def save():
-            #Check if a fixed attribute has been changed
-            diff = [key for key,value in fixed.items()
-                    if fixed[key] != getattr(device,key)]
-
-            #Raise an error if changed
-            if diff:
-                raise EntryError('Fixed entries {} have been modfied, this '
-                                 'should be entered as a new device.'
-                                 ''.format(', '.join(diff)))
-
-            #Return the storage function
-            return self._store(device, insert=False)
-
-        #Add the method to the device
-        device.save = save
+        #Add the save method to the device
+        device.save = lambda : self._store(device, insert=False)
 
         return device
 
