@@ -151,7 +151,7 @@ class Client:
         #Check result, if not found let the user know
         if not post:
             raise SearchError('No device information found that '
-                              'matches the seach criteria')
+                              'matches the search criteria')
         return post
 
 

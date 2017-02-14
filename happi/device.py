@@ -233,7 +233,11 @@ class Device(metaclass=InfoMeta):
                    base  = 'CXI:DG2:DEV:01', #Base PV for device
                    note  = 'Example',        #Piece of arbitrary metadata
                   )
+    .. todo::
+
+        Add a PrettyTable output of current information
     """
+
     #Entry Info
     alias           = EntryInfo('Shorthand alias for the device',
                                 optional=False)

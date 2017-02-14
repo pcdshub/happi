@@ -34,21 +34,23 @@ A new device must be a subclass of the basic container :class:`.Device`.
 While you are free to initialized the object whereever you see fit, the client
 has a conveinent hook to create new devices.
 
-.. code::
+.. ipython:: python
 
     import happi
     
     client = happi.Client(user='test',pw='test',db='test')
 
     device = client.create_device("Device", alias='my_device',base='PV:BASE', beamline='XRT', z=345.5)
+    
     device.save()
 
 Alternatively, you can create the device separately and add the device
 explicitly using :meth:`.Client.save`
 
-.. code::
+.. ipython:: python
 
     device = happi.Device(alias='my_device2',base='PV:BASE2', beamline='MFX', z=355.5)
+   
     client.add_device(device)
 
 The main advantage of the first method is that all of the container classes are
@@ -69,32 +71,37 @@ example searches to demonstrate the power of the Happi Client
 First, lets look for all the devices of type generic ``Device``, as first their
 corresponding objects or as a dictionary
 
-.. code::
+.. ipython:: python
     
-    import happi
-    
-    client = happi.Client(user='test',pw='test',db='test')
-
     client.search(type='Device')
 
     client.search(type='Device', as_dict=True)
 
-    client.search(type='Device', beamline='MFX')
 
 There are also some more advance methods to search specific areas of the
 beamline
 
 
-.. code::
+.. ipython:: python
     
-   client.search(type='Device', start=314.4, end=348.6)
+    client.search(type='Device', beamline='MFX')
+   
+    client.search(type='Device', start=314.4, end=348.6)
 
-You can also explicitly load a single device
+You can also explicitly load a single device. The advantage of this method is
+you won't have to parse a list of returned devices. If nothing meets your given
+criterea, an ``SearchError`` will be raised 
 
-.. code::
+.. ipython:: python
 
    device =  client.load_device(base='PV:BASE2')
 
+   print(device.base, device.alias)
+
+   try:
+       client.load_device(alias='non-existant')
+   except Exception as e:
+       print(e)
 
 
 Editing Device Information
@@ -106,7 +113,7 @@ the database. When the device is retreived this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
 
-.. code::
+.. ipython:: python
 
     my_motor = client.load_device(base='PV:BASE')
     
@@ -117,9 +124,21 @@ the Device information.
 .. note::
 
     Because the database uses the ``base`` key as a device's identification you
-    can not edit this information in the same way. Instead you have to use
-    :meth:`.Client.add_device` to create a new entry. 
+    can not edit this information in the same way. Instead you must explicitly
+    remove the device and then use :meth:`.Client.add_device` to create a new
+    entry. 
     
+Finally, lets clean up our example objects by using :meth:`.Client.remove` to
+clean them from the database
+
+.. ipython:: python
+
+    device_1 = client.load_device(alias='my_device')
+    
+    device_2 = client.load_device(alias='my_device2')
+
+    for device in (device_1, device_2):
+        client.remove_device(device)
 
 Client API
 ^^^^^^^^^^
