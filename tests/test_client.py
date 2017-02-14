@@ -7,6 +7,20 @@ from happi.errors     import *
 
 logger = logging.getLogger(__name__)
 
+@pytest.fixture(scope='module')
+def base_client():
+    cl = Client(user='test',pw='test',db='test')
+    print('client',cl)
+    return cl
+
+@pytest.fixture(scope='function')
+def client(base_client, device_info):
+    base_client._collection.insert_one(device_info)
+    yield base_client
+    print("Tearing down client ...")
+    base_client._collection.delete_many({})
+
+
 def test_wrong_host():
     with pytest.raises(TimeoutError):
         client = Client(host='nonsense')
@@ -20,19 +34,6 @@ def test_wrong_collection():
         _coll_name = 'wrong'
     with pytest.raises(DatabaseError):
         client = WrongCollection()
-
-@pytest.fixture(scope='module')
-def base_client():
-    cl = Client(user='test',pw='test',db='test')
-    print('client',cl)
-    return cl
-
-@pytest.fixture(scope='function')
-def client(base_client, device_info):
-    base_client._collection.insert_one(device_info)
-    yield base_client
-    print("Tearing down client ...")
-    base_client._collection.delete_many({})
 
 
 def test_find_document(client, device_info):

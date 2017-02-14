@@ -39,6 +39,9 @@ base that more specific devices will inherit from.
 
 Containers
 ----------
+.. todo::
+
+    All of these specific classes need to populated with :class:`.EntryInfo`
 
 Slits
 +++++

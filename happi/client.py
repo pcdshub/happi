@@ -233,6 +233,7 @@ class Client:
                     'database'.format(device))
 
 
+            
     def load_device(self, **post):
         """
         Used to query the database for an individual Device
@@ -315,6 +316,13 @@ class Client:
                 logger.debug('Successfully validated {}'.format(_id))
 
         return bad
+
+    @property
+    def all_devices(self):
+        """
+        A list of all contained devices
+        """
+        return self.search()
 
 
     def search(self, start=0., end=None, as_dict=False, **kwargs):
