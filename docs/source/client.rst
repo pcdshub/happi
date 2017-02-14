@@ -45,7 +45,7 @@ has a conveinent hook to create new devices.
     device.save()
 
 Alternatively, you can create the device separately and add the device
-explicitly using :meth:`.Client.save`
+explicitly using :meth:`.Device.save`
 
 .. ipython:: python
 
@@ -90,7 +90,7 @@ beamline
 
 You can also explicitly load a single device. The advantage of this method is
 you won't have to parse a list of returned devices. If nothing meets your given
-criterea, an ``SearchError`` will be raised 
+criteria, an ``SearchError`` will be raised 
 
 .. ipython:: python
 
@@ -100,7 +100,7 @@ criterea, an ``SearchError`` will be raised
 
    try:
        client.load_device(alias='non-existant')
-   except Exception as e:
+   except happi.errors.SearchError as e:
        print(e)
 
 
@@ -128,8 +128,8 @@ the Device information.
     remove the device and then use :meth:`.Client.add_device` to create a new
     entry. 
     
-Finally, lets clean up our example objects by using :meth:`.Client.remove` to
-clean them from the database
+Finally, lets clean up our example objects by using
+:meth:`.Client.remove_device` to clean them from the database
 
 .. ipython:: python
 
