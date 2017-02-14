@@ -1,0 +1,7 @@
+[run]
+source =
+    lightpath
+[report]
+omit =
+    */tests/*
+    *test*
