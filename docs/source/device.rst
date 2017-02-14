@@ -9,14 +9,12 @@ class attributes, available to be manipulated like any other regular property
 
 Editing the information for a container is a simple as:
 
-.. code::
+.. ipython:: python
 
     from happi import Device
 
-    #Initialize
-    device = Device(alias='my_device',...)
+    device = Device(alias='my_device')
 
-    #Set a new value for the alias
     device.alias = 'new_alias'
 
 The :class:`.Device` class also supports extraneous data that may not have been

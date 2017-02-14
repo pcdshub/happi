@@ -32,24 +32,23 @@ Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
 A new device must be a subclass of the basic container :class:`.Device`.
 While you are free to initialized the object whereever you see fit, the client
-has a conveinent hook to create new devices. Here are two example workflows
-that have identical outcomes
-
+has a conveinent hook to create new devices.
 
 .. code::
 
     import happi
     
-    client = happi.Client()
-    
-    #First Method
-    #############
-    device = client.create_device("Device", alias='my_device',...)
+    client = happi.Client(user='test',pw='test',db='test')
+
+    device = client.create_device("Device", alias='my_device',base='PV:BASE', beamline='XRT', z=345.5)
     device.save()
 
-    #Second Method
-    ##############
-    device = happi.Device(alias='my_device',...)
+Alternatively, you can create the device separately and add the device
+explicitly using :meth:`.Client.save`
+
+.. code::
+
+    device = happi.Device(alias='my_device2',base='PV:BASE2', beamline='MFX', z=355.5)
     client.add_device(device)
 
 The main advantage of the first method is that all of the container classes are
@@ -58,7 +57,7 @@ easily accessed with a string. Keep in mind, that either way, all of the
 mandatory information needs to be given to the device before it can be loaded
 into the database. For more information on device creation see
 :ref:`device_label`.
-
+    
 Searching the Database
 ^^^^^^^^^^^^^^^^^^^^^^
 There are two ways to load information from the database
@@ -67,22 +66,35 @@ be used to load one device at at a time. Both accept criteria in the from of
 keyword-value pairs to find the device or device/s you desire. Here are some
 example searches to demonstrate the power of the Happi Client
 
+First, lets look for all the devices of type generic ``Device``, as first their
+corresponding objects or as a dictionary
+
+.. code::
+    
+    import happi
+    
+    client = happi.Client(user='test',pw='test',db='test')
+
+    client.search(type='Device')
+
+    client.search(type='Device', as_dict=True)
+
+    client.search(type='Device', beamline='MFX')
+
+There are also some more advance methods to search specific areas of the
+beamline
+
+
+.. code::
+    
+   client.search(type='Device', start=314.4, end=348.6)
+
+You can also explicitly load a single device
+
 .. code::
 
-    #All of gate valves in the database in object form
-    gate_valves = client.search(type='GateValve')
+   device =  client.load_device(base='PV:BASE2')
 
-    #All of the gate information as a list of dictionaries
-    valve_info  = client.search(type='GateValve', as_dict=True)
-
-    #Search multiple keys to limit your search
-    mfx_valves = client.search(type='GateValve', beamline='MFX')
-    
-    #Limit your search to an area along the beamline
-    xrt_valves = client.search(type='GateValve', start=214.4, end=284.6)
-    
-    #Use load device to ensure you only grab a single device
-    mfx_dg1_valve = client.load_device(base='MFX:DG1:VGC:01')
 
 
 Editing Device Information
@@ -96,13 +108,10 @@ the Device information.
 
 .. code::
 
-    #Load motor from database
-    my_motor = client.load_device(base='XPP:SB1:MMS:01')
+    my_motor = client.load_device(base='PV:BASE')
     
-    #Change desired information
-    my_motor.alias = 'New Alias'
+    my_motor.z = 425.4
     
-    #Save back to database
     my_motor.save()
 
 .. note::
