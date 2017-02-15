@@ -550,6 +550,12 @@ class Client:
             raise EntryError('Device did not supply the proper information to '
                              'interface with the database')
 
+
+        except DuplicateKeyError:
+            raise DuplicateError('Device with alias {} has already been entered into '
+                                 'the database, use load_device and save if you wish to make '
+                                 'changes to the device'.format(post['alias']))
+
         except OperationFailure:
             raise PermissionError("Unauthorized command, make sure you are "
                                   "using a user with write permissions")
