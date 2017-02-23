@@ -2,6 +2,7 @@
 Define subclasses of Device for specific hardware.
 """
 import re
+from copy import copy
 from .device import Device, EntryInfo
 
 
@@ -10,43 +11,38 @@ class MPS(Device):
     """
     Parent class for devices that are in MPS.
     """
+    system = copy(Device.system)
+    system.default = 'mps'
     mps = EntryInfo('MPS PV associated with the Device',
                     optional=False, enforce=str)
     veto = EntryInfo('Whether MPS considers this a veto device',
                      enforce=bool, default=False)
-    def __init__(self, *args, **kwargs):
-        self.system.default = 'mps'
-        super().__init__(*args, **kwargs)
 
 
 class Vacuum(Device):
     """
     Parent class for devices in the vacuum system.
     """
-    def __init__(self, *args, **kwargs):
-        self.system.default = 'vacuum'
-        super().__init__(*args, **kwargs)
+    system = copy(Device.system)
+    system.default = 'vacuum'
 
 
 class Diagnostic(Device):
     """
     Parent class for devices that are used as diagnostics.
     """
+    system = copy(Device.system)
+    system.default = 'diagnostic'
     data = EntryInfo('PV that gives us the diagnostic readback in EPICS.',
                      optional=False, enforce=str)
-
-    def __init__(self, *args, **kwargs):
-        self.system.default = 'diagnostic'
-        super().__init__(*args, **kwargs)
 
 
 class BeamControl(Device):
     """
     Parent class for devices that control any beam parameter.
     """
-    def __init__(self, *args, **kwargs):
-        self.system.default = 'beam control'
-        super().__init__(*args, **kwargs)
+    system = copy(Device.system)
+    system.default = 'beam control'
 
 
 class BeamSteering(BeamControl):
@@ -77,7 +73,7 @@ class ExtraStates(Device):
 
 
 # Basic classes that inherit from above
-class GateValve(MPS, Vacuum):
+class GateValve(Vacuum, MPS):
     """
     Standard MPS isolation valves. Generally, these close when there is a
     problem and beam is not allowed. Devices made with this class will be set
@@ -100,9 +96,8 @@ class GateValve(MPS, Vacuum):
     veto : bool
         Set this to True if the gate valve is a veto device.
     """
-    def __init__(self, *args, **kwargs):
-        self.base.enforce = re.compile(r'VGC')
-        super().__init__(self, *args, **kwargs)
+    base = copy(Vacuum.base)
+    base.enforce = re.compile(r'VGC')
 
 
 class Slits(BeamControl):
@@ -120,9 +115,8 @@ class Slits(BeamControl):
         should be "XCS:SB2:DS:JAWS". A regex will be used to check that "JAWS"
         is found in the base PV.
     """
-    def __init__(self, *args, **kwargs):
-        self.base.enforce = re.compile(r'JAWS')
-        super().__init__(self, *args, **kwargs)
+    base = copy(BeamControl.base)
+    base.enforce = re.compile(r'JAWS')
 
 
 class PIM(Diagnostic):
@@ -146,8 +140,8 @@ class PIM(Diagnostic):
         data is broadcast on "XCS:SB1:P6740:IMAGE1:ArrayData", the data base
         should be "XCS:SB1:P6740".
     """
-    def __init__(self, *args, **kwargs):
-        self.base.enforce = re.compile(r'PIM')
+    base = copy(Diagnostic.base)
+    base.enforce = re.compile(r'PIM')
 
 
 class IPM(Diagnostic):
@@ -178,8 +172,8 @@ class IPM(Diagnostic):
         If the diode and target have subtly different recorded z-positions, use
         the diode position for the purposes of this database.
     """
-    def __init__(self, *args, **kwargs):
-        self.base.enforce = re.compile(r'IPM')
+    base = copy(Diagnostic.base)
+    base.enforce = re.compile(r'IPM')
 
 
 class Attenuator(BeamControl):
@@ -197,8 +191,8 @@ class Attenuator(BeamControl):
         "XPP:ATT:COM:R_CUR", the base PV is "XPP:ATT:COM". A regex will be used
         to check that "ATT" is found in the base PV.
     """
-    def __init__(self, *args, **kwargs):
-        self.base.enforce = re.compile(r'ATT')
+    base = copy(BeamControl.base)
+    base.enforce = re.compile(r'ATT')
 
 
 class Stopper(MPS):
@@ -219,9 +213,8 @@ class Stopper(MPS):
         The mps PV should be the prefix for the lower mps logic PVs e.g.
         "HFX:UM6:STP_01".
     """
-    def __init__(self, *args, **kwargs):
-        self.veto.default = True
-        super().__init__(self, *args, **kwargs)
+    veto = copy(MPS.veto)
+    veto.default = True
 
 
 class Mirror(BeamSteering, ExtraState):

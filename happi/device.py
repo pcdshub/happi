@@ -140,6 +140,10 @@ class EntryInfo:
                                                                self.optional,
                                                                self.default)
 
+    def __copy__(self):
+        return EntryInfo(doc=self.doc, optional=self.optional,
+                         enforce=self.enforce, default=self.default)
+
 
 class InfoMeta(type):
 
