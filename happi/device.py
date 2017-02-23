@@ -240,22 +240,26 @@ class Device(metaclass=InfoMeta):
 
     #Entry Info
     alias           = EntryInfo('Shorthand alias for the device',
-                                optional=False)
+                                optional=False, enforce=str)
     base            = EntryInfo('A base PV for all related records',
-                                optional=False)
+                                optional=False, enforce=str)
     beamline        = EntryInfo('Section of beamline the device belongs',
-                                optional=False)
+                                optional=False, enforce=str)
     z               = EntryInfo('Beamline position of the device',
                                 enforce=float, default = -1.0)
     stand           = EntryInfo('Acronym for stand, must be three alphanumeric '
                                 'characters',
                                 enforce=re.compile(r'[A-Z0-9]{3}$'))
-    main_screen     = EntryInfo('The absolute path to the main control screen')
-    embedded_screen = EntryInfo('The absolute path to an embeddable screen')
+    main_screen     = EntryInfo('The absolute path to the main control screen',
+                                enforce=str)
+    embedded_screen = EntryInfo('The absolute path to an embeddable screen',
+                                enforce=str)
     system          = EntryInfo('The system the device is involved with, i.e '
-                                'Vacuum, Timing e.t.c')
+                                'Vacuum, Timing e.t.c',
+                                enforce=str)
     parent          = EntryInfo('If the device is a component of another, '
-                                'enter the alias')
+                                'enter the alias',
+                                enforce=str)
 
     def __init__(self, **kwargs):
         #Load given information into device class
