@@ -195,11 +195,11 @@ class Device(metaclass=InfoMeta):
     A Generic Device Container
 
     The class does not need to be intialized with any specific piece of
-    information, but all of the attributes listed by :attr:`.info_names` can be
-    used to assign values to :class:`.EntryInfo` upon initialization. Pieces of
-    information that are deemed mandatory by the class must be filled in before
-    the device is loaded into the database. See :attr:`.mandatory_info` to see
-    which attributes are neccesary.
+    information, but all of the attributes listed by :attr:`Device.info_names`
+    can be used to assign values to :class:`.EntryInfo` upon initialization.
+    Pieces of information that are deemed mandatory by the class must be filled
+    in before the device is loaded into the database. See
+    :attr:`Device.mandatory_info` to see which attributes are neccesary.
 
     Additional metadata can be given to the device in the form of keywords
     on initialization, this information is kept in the :attr:`.extraneous`
