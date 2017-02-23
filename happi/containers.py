@@ -232,15 +232,22 @@ class Mirror(BeamSteering, ExtraState):
         be relied on for alignment purposes, except for a guarantee that if a
         state is not active, then the beam is definitely not pointing to that
         state.
+        If the mirror is purely for alignment and not for steering, or it
+        doesn't make sense for the pitch to have states, this can be the pitch
+        control motor record base instead.
 
     states : str
         A basic in/out states pv that tells us whether the mirror is in the
         beam or not.
+        If the states pv doesn't exist yet, this can be the x control motor
+        record base instead.
 
     destinations: dict
         A mapping that matches the base pv's outputs with destinations. The
         keys should be enum states or indexes and the values should be beamline
         names. See :ref:`Conventions` for an explanation of beamline names.
+        If the mirror is purely for alignment and not for steering, this can be
+        an empty dict.
     """
     pass
 
