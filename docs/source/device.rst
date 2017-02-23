@@ -23,7 +23,7 @@ a keyword, or enter it into the :attr:`.Device.extraneous` dictionary.
 
 While you are free to play around with the device attributes, when loading the
 object into the database you will need to make sure that all of the
-:attr:`.Device.mandatory_information` has been entered, otherwise the client
+:attr:`.Device.mandatory_info` has been entered, otherwise the client
 will reject the device. 
 
 Device
@@ -37,51 +37,43 @@ base that more specific devices will inherit from.
 
 Containers
 ----------
-.. todo::
-
-    All of these specific classes need to populated with :class:`.EntryInfo`
-
-Slits
-+++++
-.. autoclass:: happi.containers.Slits
-   :members:
-
-PIM
-+++
-.. autoclass:: happi.containers.PIM
-   :members:
-
-IPM
-+++++
-.. autoclass:: happi.containers.IPM
-   :members:
-
-Attenuator
-++++++++++
-.. autoclass:: happi.containers.Attenuator
-   :members:
+Each of the containers below share the attributes and entries of the generic
+Device container. This section documents the entries when they either do not
+exist in the generic device or require further clarification on a case-by-case
+basis.
 
 Gate Valve
 ++++++++++
 .. autoclass:: happi.containers.GateValve
-   :members:
+
+Slits
++++++
+.. autoclass:: happi.containers.Slits
+
+PIM
++++
+.. autoclass:: happi.containers.PIM
+
+IPM
++++++
+.. autoclass:: happi.containers.IPM
+
+Attenuator
+++++++++++
+.. autoclass:: happi.containers.Attenuator
 
 Stopper
 +++++++
 .. autoclass:: happi.containers.Stopper
-   :members:
 
 Mirror
 ++++++
 .. autoclass:: happi.containers.Mirror
-   :members:
 
-Pulse Picker
+PulsePicker
 ++++++++++++
 .. autoclass:: happi.containers.PulsePicker
-   :members:
 
 LODCM
 +++++
 .. autoclass:: happi.containers.LODCM
-   :members:
