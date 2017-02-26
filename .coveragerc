@@ -3,5 +3,9 @@ source =
     happi 
 [report]
 omit =
+    #tests
     */tests/*
     *test*
+    #versioning
+    .*version.*
+    *_version.py
