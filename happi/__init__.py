@@ -7,3 +7,7 @@ logger.addHandler(logging.NullHandler())
 from .device     import Device
 from .client     import Client
 
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
