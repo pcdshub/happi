@@ -296,3 +296,35 @@ class LODCM(BeamSteering, ExtraStates):
         to that crystal, or an empty list if no such PVs exist.
     """
     pass
+
+class MovableStand(Device):
+    """
+    This class stores information about stands that move, like XPP's hand-crank
+    that moves SB2 and SB3 from the PINK to XPP lines and back. There is no
+    need to instantiate one of these for static stands.
+
+    Attributes
+    ----------
+    base : str
+        If there is a single PV with the stand's location, this should be the
+        base PV. In general, these devices will actually have multiple PVs
+        with binary outputs that have yes/no on the stand being in each
+        position. In these cases we pick the common prefix of these PVs.
+
+    beamline : dict
+        If the base PV is a real PV with an unambiguous location state, this
+        should be a mapping from that PV's values to which beamline the stand
+        is on. If the base PV is the common prefix of two PVs, this should be a
+        mapping from strings like "pv_suffix=high" to the beamline the stand is
+        on. This lets us capture the state when the stand hasn't been moved
+        all the way to a hard stop, which can cause problems.
+
+    stand : list
+        List of stands affected by table movement.
+    """
+    beamline = copy(Device.beamline)
+    beamline.enforce = dict
+    stand = copy(Device.stand)
+    stand.enforce = list
+    system = copy(Device.system)
+    system.default = 'changeover'
