@@ -77,3 +77,7 @@ PulsePicker
 LODCM
 +++++
 .. autoclass:: happi.containers.LODCM
+
+MoveableStand
++++++++++++++
+.. autoclass:: happi.containers.MoveableStand
