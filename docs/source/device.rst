@@ -78,6 +78,6 @@ LODCM
 +++++
 .. autoclass:: happi.containers.LODCM
 
-MoveableStand
+MovableStand
 +++++++++++++
-.. autoclass:: happi.containers.MoveableStand
+.. autoclass:: happi.containers.MovableStand
