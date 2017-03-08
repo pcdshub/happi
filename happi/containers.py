@@ -97,7 +97,7 @@ class GateValve(Vacuum, MPS):
         Set this to True if the gate valve is a veto device.
     """
     base = copy(Vacuum.base)
-    base.enforce = re.compile(r'VGC')
+    base.enforce = re.compile(r'.*VGC.*')
 
 
 class Slits(BeamControl):
@@ -116,7 +116,7 @@ class Slits(BeamControl):
         is found in the base PV.
     """
     base = copy(BeamControl.base)
-    base.enforce = re.compile(r'JAWS')
+    base.enforce = re.compile(r'.*JAWS.*')
 
 
 class PIM(Diagnostic):
@@ -141,7 +141,7 @@ class PIM(Diagnostic):
         should be "XCS:SB1:P6740".
     """
     base = copy(Diagnostic.base)
-    base.enforce = re.compile(r'PIM')
+    base.enforce = re.compile(r'.*PIM.*')
 
 
 class IPM(Diagnostic):
@@ -173,7 +173,7 @@ class IPM(Diagnostic):
         the diode position for the purposes of this database.
     """
     base = copy(Diagnostic.base)
-    base.enforce = re.compile(r'IPM')
+    base.enforce = re.compile(r'.*IPM.*')
 
 
 class Attenuator(BeamControl):
@@ -192,7 +192,7 @@ class Attenuator(BeamControl):
         to check that "ATT" is found in the base PV.
     """
     base = copy(BeamControl.base)
-    base.enforce = re.compile(r'ATT')
+    base.enforce = re.compile(r'.*ATT.*')
 
 
 class Stopper(MPS):
