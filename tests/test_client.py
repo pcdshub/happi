@@ -65,6 +65,7 @@ def test_create_device(client, device_info):
     assert device.beamline == device_info['beamline']
 
 def test_create_valve(client, device_info):
+    device_info['base'] =  'BASE:VGC:PV'
     device = client.create_device(GateValve, **device_info)
     assert isinstance(device, GateValve)
     assert device.base     == device_info['base']
@@ -73,6 +74,7 @@ def test_create_valve(client, device_info):
     assert device.beamline == device_info['beamline']
 
 def test_create_valve_with_string(client, device_info):
+    device_info['base'] =  'BASE:VGC:PV'
     device = client.create_device('GateValve', **device_info)
     assert isinstance(device, GateValve)
     assert device.base     == device_info['base']
