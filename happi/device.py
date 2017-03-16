@@ -258,6 +258,8 @@ class Device(metaclass=InfoMeta):
                                 enforce=str)
     embedded_screen = EntryInfo('The absolute path to an embeddable screen',
                                 enforce=str)
+    active          = EntryInfo('Whether the device is actively deployed',
+                                 enforce=bool)
     system          = EntryInfo('The system the device is involved with, i.e '
                                 'Vacuum, Timing e.t.c',
                                 enforce=str)
