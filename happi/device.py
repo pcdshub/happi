@@ -335,3 +335,7 @@ class Device(metaclass=InfoMeta):
                                               self.alias,
                                               self.base,
                                               self.z)
+
+
+    def __eq__(self, other):
+        return self.base, self.alias == other.base, other.alias
