@@ -1,13 +1,20 @@
+############
+# Standard #
+############
 import re
+
+###############
+# Third Party #
+###############
 import pytest
 import logging
 
+##########
+# Module #
+##########
 from happi        import Device
 from happi.errors import ContainerError, EntryError
 from happi.device import EntryInfo
-
-logger = logging.getLogger(__name__)
-
 
 def test_get(device, device_info):
     assert device.alias == device_info['alias']
@@ -18,17 +25,12 @@ def test_init(device, device_info):
     assert device.z        == device_info['z']
     assert device.beamline == device_info['beamline']
 
-
 def test_list_enforce():
     class MyDevice(Device):
         list_attr = EntryInfo(enforce=['a','b','c'])
 
     d = MyDevice()
     d.list_attr = 'b'
-
-def test_list_enforce_failure():
-    class MyDevice(Device):
-        list_attr = EntryInfo(enforce=['a','b','c'])
 
     d = MyDevice()
     with pytest.raises(ValueError):
@@ -40,10 +42,6 @@ def test_regex_enforce():
 
     d = MyDevice()
     d.re_attr = 'AB'
-
-def test_regex_enforce_failure():
-    class MyDevice(Device):
-        re_attr = EntryInfo(enforce=re.compile(r'[A-Z]{2}$'))
 
     d = MyDevice()
     with pytest.raises(ValueError):
@@ -73,7 +71,6 @@ def test_restricted_attr():
     with pytest.raises(TypeError):
         class MyDevice(Device):
             info_names = EntryInfo()
-
 
 def test_post(device, device_info):
     post = device.post()
