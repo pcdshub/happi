@@ -1,17 +1,22 @@
-#####################
-# Standard Packages #
-#####################
+############
+# Standard #
+############
+import sys
 import logging
 import inspect
-import numpy as np #Could be removed if necessary
 import time  as ttime
+
+###############
+# Third Party #
+###############
+import numpy as np #Could be removed if necessary
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
 from pymongo.errors import DuplicateKeyError
 
-###################
-# Module Packages #
-###################
+##########
+# Module #
+##########
 from . import device
 from . import containers
 from .device import Device
@@ -69,23 +74,12 @@ class Client:
                  pw=None, db=None, timeout=None):
 
         #Initialization info
-        if not host:
-            host = self._host
-
-        if not port:
-            port = self._port
-
-        if not user:
-            user = self._user
-
-        if not pw:
-            pw = self._pw
-
-        if not db:
-            db = self._db_name
-
-        if not timeout:
-            timeout = self._timeout
+        host = host or self._host
+        port = port or self._port
+        user = user or self._user
+        pw   = pw   or self._pw
+        db   = db   or self._db_name
+        timeout = timeout or self._timeout
 
         #Load database
         conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
@@ -317,6 +311,7 @@ class Client:
 
         return bad
 
+
     @property
     def all_devices(self):
         """
@@ -392,14 +387,14 @@ class Client:
             return [self.load_device(**info) for info in cur]
 
 
-    def export(self, path=None, sep='\t', attrs=None):
+    def export(self, path=sys.stdout, sep='\t', attrs=None):
         """
         Export the contents of the database into a text file
 
         Parameters
         ----------
-        path : str
-            Filepath to save text file
+        path : File Handle
+            File-like object to save text file
 
         sep : str
             Separator to place inbetween columns of information
@@ -408,20 +403,21 @@ class Client:
             Attributes to include, these will be a list of values
         """
         #Load documents
-        docs = list(self._collection.find())
-
+        devs = self.all_devices
         logger.info('Creating file at {} ...'.format(path))
 
         #Load device information
-        with open(path,'w+') as f:
-            for post in docs:
+        with path as f:
+            for dev in devs:
                 try:
-                    f.write(sep.join([post[attr] for attr in attrs]))
+                    f.write(sep.join([getattr(dev, attr)
+                                      for attr in attrs])
+                            +'\n')
 
                 except KeyError as e:
-                    logger.error("Device {} was missing "
-                                 "attribute {}".format(post['_id'],
-                                                       e))
+                    logger.error("Device {} was missing attribute {}"
+                                 "".format(dev.alias, e))
+
 
     def remove_device(self, device):
         """
