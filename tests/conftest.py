@@ -1,36 +1,73 @@
+############
+# Standard #
+############
+
+
+###############
+# Third Party #
+###############
 import pytest
-from happi import Device
-from happi.device import EntryInfo
+from mongomock import MongoClient
+
+##########
+# Module #
+##########
+from happi            import Client, Device
+from happi.containers import GateValve
 
 @pytest.fixture(scope='function')
 def device_info():
-    return {'alias':'alias', 'z':400, 'id':'BASE:PV',
-            'base':'BASE:PV', 'beamline':'LCLS',
-            'type':'Device', '_id':'BASE:PV'}
+    return {'alias' : 'alias',
+            'z'     : 400,
+            '_id'   : 'BASE:PV',
+            'base'  : 'BASE:PV',
+            'beamline' : 'LCLS',
+            'type'  : 'Device',}
 
 @pytest.fixture(scope='function')
 def device(device_info):
     t = Device(**device_info)
-    print('device',t)
     return t
 
 @pytest.fixture(scope='function')
-def device2_info():
-    return {'alias':'name', 'z':300, 'id':'BASE:PV2',
-            'base':'BASE:PV2', 'beamline':'LCLS'}
+def valve_info():
+    return {'alias' : 'name',
+            'z'     : 300,
+            'base'  : 'BASE:VGC:PV',
+            'beamline':'LCLS',
+            'mps' : 'MPS:VGC:PV'}
 
 @pytest.fixture(scope='function')
-def device2(device2_info):
-    t = Device(**device2_info)
-    print('device',t)
+def valve(valve_info):
+    t = Device(**valve_info)
     return t
 
 
-@pytest.fixture(scope='function')
-def inc_device():
-    t = Device()
-    print('device',t)
-    return t
+class MockClient(Client):
 
+
+    def __init__(self, *args, **kwargs):
+        try:
+            super().__init__(timeout=0.001)
+
+        except TimeoutError:
+            pass
+
+        finally:
+            self._client     = MongoClient(self._conn_str.format(user=self._user,
+                                                                 pw=self._pw,
+                                                                 host=self._host,
+                                                                 db=self._db))
+            self._db         = self._client['test']
+            self._collection = self._db['happi']
+            self.device_types = {'GateValve'  : GateValve,
+                                 'Device' : Device}
+
+
+@pytest.fixture(scope='function')
+def mockclient(device_info):
+    client = MockClient()
+    client._collection.insert_one(device_info)
+    return client
 
 
