@@ -263,6 +263,10 @@ class Device(metaclass=InfoMeta):
     system          = EntryInfo('The system the device is involved with, i.e '
                                 'Vacuum, Timing e.t.c',
                                 enforce=str)
+    macros          = EntryInfo("The EDM macro string asscociated with the "
+                                "with the device. By using a jinja2 template, "
+                                "this can reference other EntryInfo keywords.",
+                                enforce=str)
     parent          = EntryInfo('If the device is a component of another, '
                                 'enter the alias',
                                 enforce=str)
