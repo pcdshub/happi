@@ -31,14 +31,18 @@ keyword arguments.
 Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
 A new device must be a subclass of the basic container :class:`.Device`.
-While you are free to initialized the object whereever you see fit, the client
-has a conveinent hook to create new devices.
+While you are free to use the initialized object whereever you see fit, the client
+has a hook to create new devices. The examples belows use a ``MockClient`` so
+that the tutorial does not change actual database files.
 
 .. ipython:: python
 
     import happi
+
+    from tests import MockClient
     
-    client = happi.Client(user='test',pw='test',db='test')
+
+    client = MockClient(user='test',pw='test',db='test')
 
     device = client.create_device("Device", alias='my_device',base='PV:BASE', beamline='XRT', z=345.5)
     
