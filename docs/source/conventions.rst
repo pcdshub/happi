@@ -49,10 +49,6 @@ following beamline names for the branching paths:
 Mirrors and other steering devices should be the last element of a beamline.
 Note that this naming scheme will necessarily have to change for lcls 2.
 
-.. todo::
-    
-    Drawing for easy beamline assignment in branching
-
 z
 ++
 Position of the device on the z-axis in the lcls coordinates.
@@ -73,6 +69,50 @@ embedded_screen
 +++++++++++++++
 Path to an embeddable control screen for this device.
 
+macros
+++++++
+Most screens will require a set of macros to be provided at launch time. In
+order to prevent information being duplicated in this macro string and other
+EntryInfo, this can be given as a ``jinja2`` template. This may sound
+intimidating, but in practice it is very simple. Let us look at an example for
+a basic camera, who has a nice EDL screen that takes a ``CAM`` and
+an ``EVR`` macro substitution. Now every time we change the EVR trigger for
+this camera, we want to make sure we only need to change this in one place, so
+lets make a template that pulls the information from the Container itself. The
+below example creates a new container, adds a new macro templates then
+performs a quick test.
+
+The main thing to note is the use of keywords found within the repeated
+brackets. When this string is loaded as a ``Template``, we can easily
+substitute our EntryInfo in place of these brackets.
+
+.. ipython:: python 
+
+    import happi
+
+    #Create a new container
+    class Camera(happi.Device):
+        evr = happi.EntryInfo('EVR Trigger for Camera')
+
+    #Instantiate
+    cam = Camera(alias='Opal', base='BASE:CAM:PV',
+                 beamline='TST', evr='EVR:TRIG:PV')
+
+    #Link our EDL screens 
+    cam.main_screen = 'my_screens/camera.edl'
+
+    #Add our macros template
+    cam.macros = 'CAM={{base}}, EVR={{evr}}'
+
+    #Test rendering 
+    from jinja2 import Environment
+
+    env = Environment().from_string(cam.macros)
+
+    env.render(base=cam.base, evr=cam.evr)
+
+A succinct script exists in the ``examples`` section of the module that
+substitutes and launches the associated EDM screen provided the device alias.
 
 system
 ++++++
