@@ -38,11 +38,9 @@ that the tutorial does not change actual database files.
 .. ipython:: python
 
     import happi
-
-    from tests import MockClient
     
-
-    client = MockClient(user='test',pw='test',db='test')
+    import happi.tests 
+    client = happi.tests.MockClient(user='test',pw='test',db='test')
 
     device = client.create_device("Device", alias='my_device',base='PV:BASE', beamline='XRT', z=345.5)
     
