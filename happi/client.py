@@ -83,6 +83,7 @@ class Client:
 
         #Load database
         conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
+        logging.debug('Attempting connection using {} '.format(conn_str))
         self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
         self._db     = self._client[db] 
 
