@@ -27,7 +27,7 @@ install:
   - source activate test-environment
   - pip install codecov
   - pip install mongomock
-  - conda build conda-recipe
+  - conda-build conda-recipe
   - conda install happi --use-local
 
 script:
