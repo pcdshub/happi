@@ -104,11 +104,18 @@ substitute our EntryInfo in place of these brackets.
     #Add our macros template
     cam.macros = 'CAM={{base}}, EVR={{evr}}'
 
-    #Test rendering 
+That is all the neccesary information you need to provide, other scripts that
+utilize the information will do something similar to the script below to
+substitute device information into our template
+
+.. ipython:: python
+    
     from jinja2 import Environment
 
+    #Create new template
     env = Environment().from_string(cam.macros)
 
+    #Render our template given the device information
     env.render(base=cam.base, evr=cam.evr)
 
 A succinct script exists in the ``examples`` section of the module that
