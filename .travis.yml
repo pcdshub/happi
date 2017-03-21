@@ -5,6 +5,7 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
@@ -27,8 +28,7 @@ install:
   - source activate test-environment
   - pip install codecov
   - pip install mongomock
-  - conda-build conda-recipe
-  - conda install happi --use-local
+  - python setup.py install
 
 script:
   - coverage run run_tests.py
