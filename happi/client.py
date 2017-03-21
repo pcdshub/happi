@@ -25,7 +25,7 @@ from .errors import EntryError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
-class Client:
+class Client(object):
     """
     The client to control the contents of the Happi Database
     
@@ -101,9 +101,9 @@ class Client:
 
         #Unable to connect to MongoDB instance
         except ServerSelectionTimeoutError:
-            raise TimeoutError('Unable to connect to MongoDB instance, check '
-                               'that the server is running on the host and port '
-                               'specified at startup')
+            raise DatabaseError('Unable to connect to MongoDB instance, check '
+                                'that the server is running on the host and port '
+                                'specified at startup')
 
         #Get Container Mapping
         self.device_types.update(dict([(name,cls) for (name,cls) in
