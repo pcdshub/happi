@@ -1,6 +1,6 @@
 HAPPI 
 =====
-[![Build Status](https://travis-ci.org/slaclab/happi.svg)](https://travis-ci.org/slaclab/happi)
+[![Build Status](https://travis-ci.org/slaclab/happi.svg)](https://travis-ci.org/slaclab/happi)[![codecov.io](https://codecov.io/github/codecov/codecov-node/coverage.svg)
 
 Heuristic Access to Positioning of Photon Insturments
 
