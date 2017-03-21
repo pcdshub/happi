@@ -13,6 +13,7 @@ from mongomock import MongoClient
 # Module #
 ##########
 from happi            import Client, Device
+from happi.errors     import DatabaseError
 from happi.containers import GateValve
 
 @pytest.fixture(scope='function')
@@ -48,16 +49,16 @@ class MockClient(Client):
 
     def __init__(self, *args, **kwargs):
         try:
-            super().__init__(timeout=0.001)
+            super(MockClient, self).__init__(timeout=0.001)
 
-        except TimeoutError:
+        except DatabaseError:
             pass
 
         finally:
             self._client     = MongoClient(self._conn_str.format(user=self._user,
                                                                  pw=self._pw,
                                                                  host=self._host,
-                                                                 db=self._db))
+                                                                 db=self._db_name))
             self._db         = self._client['test']
             self._collection = self._db['happi']
             self.device_types = {'GateValve'  : GateValve,
