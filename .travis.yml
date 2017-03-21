@@ -1,6 +1,7 @@
 language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
+  - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
@@ -21,8 +22,6 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-
-  # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION coverage pip pymongo numpy pytest -c conda-forge 
   - source activate test-environment
   - pip install codecov
