@@ -13,6 +13,7 @@ requirements:
 
 
     run:
+      - six
       - numpy
       - pymongo 
       - python
