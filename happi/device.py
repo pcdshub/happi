@@ -2,10 +2,11 @@
 # Standard Packages
 ###################
 import re
+import six
 import logging
-import textwrap
 
 from collections import OrderedDict
+
 
 ###################
 # Module Packages
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 
-class EntryInfo:
+class EntryInfo(object):
     """
     A piece of information related to a specific device
 
@@ -116,7 +117,7 @@ class EntryInfo:
                '',
               ]
 
-        doc.append(textwrap.indent(repr(self), prefix =' '*4))
+        doc.append(repr(self))
         doc.append('')
         return '\n'.join(doc)
 
@@ -149,7 +150,7 @@ class InfoMeta(type):
 
 
     def __new__(cls, name, bases, clsdict):
-        clsobj = super().__new__(cls, name, bases, clsdict)
+        clsobj = super(InfoMeta, cls).__new__(cls, name, bases, clsdict)
 
         #These attributes are used by device so can not be overwritten
         RESERVED_ATTRS = ['info_names','entry_info',
@@ -194,7 +195,7 @@ class InfoMeta(type):
         return clsobj
 
 
-class Device(metaclass=InfoMeta):
+class Device(six.with_metaclass(InfoMeta, object)):
     """
     A Generic Device Container
 
