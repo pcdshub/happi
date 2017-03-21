@@ -153,7 +153,7 @@ def test_search(mockclient, device, valve, device_info, valve_info):
     assert mockclient.search(alias='not') == None
 
     #returned as dict
-    res = mockclient.search(**device_info, as_dict=True)
+    res = mockclient.search(as_dict=True, **device_info)
     loaded_device = res[0]
     assert loaded_device['base']     == device_info['base']
     assert loaded_device['alias']    == device_info['alias']
