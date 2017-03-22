@@ -15,6 +15,7 @@ requirements:
     run:
       - six
       - numpy
+      - prettytable
       - pymongo 
       - python
 
