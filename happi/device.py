@@ -3,10 +3,11 @@
 ###################
 import re
 import six
+import sys
 import logging
 
 from collections import OrderedDict
-
+from prettytable import PrettyTable 
 
 ###################
 # Module Packages
@@ -260,7 +261,7 @@ class Device(six.with_metaclass(InfoMeta, object)):
     embedded_screen = EntryInfo('The absolute path to an embeddable screen',
                                 enforce=str)
     active          = EntryInfo('Whether the device is actively deployed',
-                                 enforce=bool)
+                                 enforce=bool, default=True)
     system          = EntryInfo('The system the device is involved with, i.e '
                                 'Vacuum, Timing e.t.c',
                                 enforce=str)
@@ -306,6 +307,31 @@ class Device(six.with_metaclass(InfoMeta, object)):
         Mandatory information for the device to be initialized
         """
         return [info.key for info in self.entry_info if not info.optional]
+
+
+    def show_info(self, handle=sys.stdout):
+        """
+        Show the device information in a PrettyTable
+
+        Parameters
+        ----------
+        handle : file-like, optional
+            Option to write to a file-like object
+        """
+        pt = PrettyTable(['EntryInfo', 'Value'])
+        pt.align = 'r'
+        pt.align['EntryInfo'] = 'l'
+        pt.align['Value']     = 'l'
+        pt.float_format = '8.5'
+
+        show_info = self.post()
+
+        public_keys = sorted([key for key in show_info.keys()
+                              if not key.startswith('_')])
+        for key in public_keys:
+            pt.add_row([key, show_info[key]])
+
+        print(pt, file=handle)
 
 
     def post(self):
