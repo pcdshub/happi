@@ -2,10 +2,12 @@
 # Standard #
 ############
 import re
+import time
 
 ###############
 # Third Party #
 ###############
+import six
 import pytest
 import logging
 
@@ -78,4 +80,13 @@ def test_post(device, device_info):
     assert post['alias']    == device_info['alias']
     assert post['z']        == device_info['z']
     assert post['beamline'] == device_info['beamline']
+
+def test_show_info(device, device_info):
+    f = six.StringIO()
+    device.show_info(handle=f)
+    f.seek(0)
+    out = f.read()
+    device_info.pop('_id')
+    assert '_id' not in out
+    assert all([info in out for info in device_info.keys()])
 
