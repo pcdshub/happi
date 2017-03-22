@@ -239,9 +239,6 @@ class Device(six.with_metaclass(InfoMeta, object)):
                    base  = 'CXI:DG2:DEV:01', #Base PV for device
                    note  = 'Example',        #Piece of arbitrary metadata
                   )
-    .. todo::
-
-        Add a PrettyTable output of current information
     """
 
     #Entry Info
