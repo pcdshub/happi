@@ -19,11 +19,11 @@ from happi.errors import ContainerError, EntryError
 from happi.device import EntryInfo
 
 def test_get(device, device_info):
-    assert device.alias == device_info['alias']
+    assert device.name == device_info['name']
 
 def test_init(device, device_info):
-    assert device.base     == device_info['base']
-    assert device.alias    == device_info['alias']
+    assert device.prefix     == device_info['prefix']
+    assert device.name    == device_info['name']
     assert device.z        == device_info['z']
     assert device.beamline == device_info['beamline']
 
@@ -50,8 +50,8 @@ def test_regex_enforce():
         d.re_attr = 'ABC'
 
 def test_set(device):
-    device.alias = 'new_alias'
-    assert device.alias == 'new_alias'
+    device.name = 'new_name'
+    assert device.name == 'new_name'
 
 def test_optional(device):
     assert device.parent == None
@@ -66,7 +66,7 @@ def test_container_error():
             fault = EntryInfo(enforce=int, default='not-int')
 
 def test_mandatory_info(device):
-    for info in ('base','alias','beamline'):
+    for info in ('prefix','name','beamline'):
         assert info in device.mandatory_info
 
 def test_restricted_attr():
@@ -76,8 +76,8 @@ def test_restricted_attr():
 
 def test_post(device, device_info):
     post = device.post()
-    assert post['base']     == device_info['base']
-    assert post['alias']    == device_info['alias']
+    assert post['prefix']     == device_info['prefix']
+    assert post['name']    == device_info['name']
     assert post['z']        == device_info['z']
     assert post['beamline'] == device_info['beamline']
 

@@ -12,14 +12,14 @@ Basic Device Attributes
 These are fields that are common to all device
 
 
-alias
+name
 +++++
 This is simply a short name we can use to refer to the device.
 
 
-base
-++++
-This should be the base for all of the PVs contained within the device. It does
+prefix
+++++++
+This should be the prefix for all of the PVs contained within the device. It does
 not matter if this is an invalid record by itself. Each Device Container will
 have it's own convention for base PV. See :ref:`Containers`.
 
@@ -95,14 +95,14 @@ substitute our EntryInfo in place of these brackets.
         evr = happi.EntryInfo('EVR Trigger for Camera')
 
     #Instantiate
-    cam = Camera(alias='Opal', base='BASE:CAM:PV',
+    cam = Camera(name='Opal', prefix='BASE:CAM:PV',
                  beamline='TST', evr='EVR:TRIG:PV')
 
     #Link our EDL screens 
     cam.main_screen = 'my_screens/camera.edl'
 
     #Add our macros template
-    cam.macros = 'CAM={{base}}, EVR={{evr}}'
+    cam.macros = 'CAM={{prefix}}, EVR={{evr}}'
 
 That is all the neccesary information you need to provide, other scripts that
 utilize the information will do something similar to the script below to
@@ -116,10 +116,10 @@ substitute device information into our template
     env = Environment().from_string(cam.macros)
 
     #Render our template given the device information
-    env.render(base=cam.base, evr=cam.evr)
+    env.render(prefix=cam.prefix, evr=cam.evr)
 
 A succinct script exists in the ``examples`` section of the module that
-substitutes and launches the associated EDM screen provided the device alias.
+substitutes and launches the associated EDM screen provided the device name.
 
 system
 ++++++
@@ -128,7 +128,7 @@ System the device is associated with, e.g. vacuum, timing, etc.
 
 parent
 ++++++
-If this device is a component of another, this should be the alias of the full
+If this device is a component of another, this should be the name of the full
 device.
 
 
@@ -161,5 +161,5 @@ device, such as a mirror or an LODCM crystal.
 states
 ++++++
 An additional PV or multiple additional PVs that represent states records that
-are important to the device. This is included when one base PV is not
+are important to the device. This is included when one prefix PV is not
 sufficient.

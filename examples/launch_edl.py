@@ -28,7 +28,7 @@ Example:
     %(prog)s XRT_M2  --embedded
 
 This launches the embedded EDL screen for the device contained within the Happi
-database with the alias 'XRT_M2' 
+database with the name 'XRT_M2' 
 """
 
 def launch(path, wait=True, wd=None, macros=None):
@@ -107,7 +107,7 @@ def main():
                                      formatter_class=fclass)
 
     #Arguments
-    parser.add_argument('alias', help='Alias of Device')
+    parser.add_argument('name', help='Name of Device')
 
     parser.add_argument('-e','--embedded', dest='embedded',
                         help='Choice to use embedded screen',
@@ -128,12 +128,12 @@ def main():
     client = happi.Client()
 
     try:
-        device = client.load_device(alias=args.alias)
+        device = client.load_device(name=args.name)
 
     except happi.errors.SearchError:
         print('Unable to locate any device with '
-              'alias {} in the database.'
-              ''.format(args.alias))
+              'name {} in the database.'
+              ''.format(args.name))
         return
 
     #Create string of macros based on template

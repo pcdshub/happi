@@ -49,7 +49,7 @@ class Client(object):
     Attributes
     ----------
     device_types : dict
-        Mapping of Container aliases to class types 
+        Mapping of Container namees to class types 
 
     Todo
     ----
@@ -60,7 +60,7 @@ class Client(object):
     _port       = None      #Port of MongoDB instance
     _user       = 'happi'   #Username
     _pw         = 'happi'   #Password
-    _id         = 'base'    #Attribute name to use as unique id
+    _id         = 'prefix'    #Attribute name to use as unique id
     _db_name    = 'happi'   #MongoDB name
     _coll_name  = 'beamline' #Relevant Collection name
     _timeout    = 5         #Connection timeout
@@ -177,8 +177,8 @@ class Client(object):
         -------
         .. code::
 
-            device = client.create_device(Device,   alias='my_device' ...)
-            device = client.create_device('Device', alias='my_device',...)
+            device = client.create_device(Device,   name='my_device' ...)
+            device = client.create_device('Device', name='my_device',...)
 
         See Also
         --------
@@ -417,7 +417,7 @@ class Client(object):
 
                 except KeyError as e:
                     logger.error("Device {} was missing attribute {}"
-                                 "".format(dev.alias, e))
+                                 "".format(dev.name, e))
 
 
     def remove_device(self, device):
@@ -504,7 +504,7 @@ class Client(object):
 
         Todo
         ----
-        Enforce parent is an already entered alias
+        Enforce parent is an already entered name
         """
         logger.debug('Loading a device into the collection ...')
 
@@ -549,9 +549,9 @@ class Client(object):
 
 
         except DuplicateKeyError:
-            raise DuplicateError('Device with alias {} has already been entered into '
+            raise DuplicateError('Device with name {} has already been entered into '
                                  'the database, use load_device and save if you wish to make '
-                                 'changes to the device'.format(post['alias']))
+                                 'changes to the device'.format(post['name']))
 
         except OperationFailure:
             raise PermissionError("Unauthorized command, make sure you are "

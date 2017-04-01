@@ -237,16 +237,16 @@ class Device(six.with_metaclass(InfoMeta, object)):
     -------
     .. code ::
 
-        d = Device(alias = 'my_device',      #Alias name for device
-                   base  = 'CXI:DG2:DEV:01', #Base PV for device
+        d = Device(name = 'my_device',      #Alias name for device
+                   prefix  = 'CXI:DG2:DEV:01', #Base PV for device
                    note  = 'Example',        #Piece of arbitrary metadata
                   )
     """
 
     #Entry Info
-    alias           = EntryInfo('Shorthand alias for the device',
+    name           = EntryInfo('Shorthand name for the device',
                                 optional=False, enforce=str)
-    base            = EntryInfo('A base PV for all related records',
+    prefix            = EntryInfo('A base PV for all related records',
                                 optional=False, enforce=str)
     beamline        = EntryInfo('Section of beamline the device belongs',
                                 optional=False, enforce=str)
@@ -269,7 +269,7 @@ class Device(six.with_metaclass(InfoMeta, object)):
                                 "this can reference other EntryInfo keywords.",
                                 enforce=str)
     parent          = EntryInfo('If the device is a component of another, '
-                                'enter the alias',
+                                'enter the name',
                                 enforce=str)
 
     def __init__(self, **kwargs):
@@ -285,7 +285,7 @@ class Device(six.with_metaclass(InfoMeta, object)):
         #Handle additional information
         if kwargs:
             logging.info('Additional information for {} was defined '
-                         '{}'.format(self.alias, ', '.join(kwargs.keys())))
+                         '{}'.format(self.name, ', '.join(kwargs.keys())))
             self.extraneous = kwargs
 
         else:
@@ -361,11 +361,11 @@ class Device(six.with_metaclass(InfoMeta, object)):
 
 
     def __repr__(self):
-        return '{} {} (base={}, z={})'.format(self.__class__.__name__,
-                                              self.alias,
-                                              self.base,
+        return '{} {} (prefix={}, z={})'.format(self.__class__.__name__,
+                                              self.name,
+                                              self.prefix,
                                               self.z)
 
 
     def __eq__(self, other):
-        return self.base, self.alias == other.base, other.alias
+        return self.prefix, self.name == other.prefix, other.name

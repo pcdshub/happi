@@ -13,9 +13,9 @@ Editing the information for a container is a simple as:
 
     from happi import Device
 
-    device = Device(alias='my_device')
+    device = Device(name='my_device')
 
-    device.alias = 'new_alias'
+    device.name = 'new_name'
 
 The :class:`.Device` class also supports extraneous data that may not have been
 captured when the original container was created. You can either enter this as

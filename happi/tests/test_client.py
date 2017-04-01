@@ -19,28 +19,28 @@ from happi.errors     import *
 
 def test_find_document(mockclient, device_info):
     doc = mockclient.find_document(**device_info)
-    assert doc.pop('base')     == device_info['base']
-    assert doc.pop('alias')    == device_info['alias']
+    assert doc.pop('prefix')     == device_info['prefix']
+    assert doc.pop('name')    == device_info['name']
     assert doc.pop('z')        == device_info['z']
     assert doc.pop('beamline') == device_info['beamline']
 
 
     #Remove id and check
-    base = device_info.pop('base')
+    prefix = device_info.pop('prefix')
     doc  = mockclient.find_document(**device_info)
-    assert doc.pop('base')     == base
-    assert doc.pop('alias')    == device_info['alias']
+    assert doc.pop('prefix')     == prefix
+    assert doc.pop('name')    == device_info['name']
     assert doc.pop('z')        == device_info['z']
     assert doc.pop('beamline') == device_info['beamline']
 
     #Not available
     with pytest.raises(SearchError):
-        doc = mockclient.find_document(base='Does not Exist')
+        doc = mockclient.find_document(prefix='Does not Exist')
 
 def test_create_device(mockclient, device_info):
     device = mockclient.create_device(Device, **device_info)
-    assert device.base     == device_info['base']
-    assert device.alias    == device_info['alias']
+    assert device.prefix     == device_info['prefix']
+    assert device.name    == device_info['name']
     assert device.z        == device_info['z']
     assert device.beamline == device_info['beamline']
 
@@ -51,24 +51,24 @@ def test_create_device(mockclient, device_info):
 def test_create_valve(mockclient, valve_info):
     device = mockclient.create_device(GateValve, **valve_info)
     assert isinstance(device, GateValve)
-    assert device.base     == valve_info['base']
-    assert device.alias    == valve_info['alias']
+    assert device.prefix     == valve_info['prefix']
+    assert device.name    == valve_info['name']
     assert device.z        == valve_info['z']
     assert device.beamline == valve_info['beamline']
 
     #Specify string as class
     device = mockclient.create_device('GateValve', **valve_info)
     assert isinstance(device, GateValve)
-    assert device.base     == valve_info['base']
-    assert device.alias    == valve_info['alias']
+    assert device.prefix     == valve_info['prefix']
+    assert device.name    == valve_info['name']
     assert device.z        == valve_info['z']
     assert device.beamline == valve_info['beamline']
 
     #Save
     device.save()
     loaded_device = mockclient.load_device(**valve_info)
-    assert loaded_device.base     == valve_info['base']
-    assert loaded_device.alias    == valve_info['alias']
+    assert loaded_device.prefix     == valve_info['prefix']
+    assert loaded_device.name    == valve_info['name']
     assert loaded_device.z        == valve_info['z']
     assert loaded_device.beamline == valve_info['beamline']
 
@@ -79,8 +79,8 @@ def test_all_devices(mockclient, device):
 def test_add_device(mockclient, valve, device, valve_info):
     mockclient.add_device(valve)
     doc = mockclient._collection.find_one(valve_info)
-    assert valve.base     == doc['base']
-    assert valve.alias    == doc['alias']
+    assert valve.prefix     == doc['prefix']
+    assert valve.name    == doc['name']
     assert valve.z        == doc['z']
     assert valve.beamline == doc['beamline']
 
@@ -97,8 +97,8 @@ def test_add_device(mockclient, valve, device, valve_info):
 def test_add_and_load_device(mockclient, valve, valve_info):
     mockclient.add_device(valve)
     loaded_device = mockclient.load_device(**valve_info)
-    assert loaded_device.base     == valve.base
-    assert loaded_device.alias    == valve.alias
+    assert loaded_device.prefix     == valve.prefix
+    assert loaded_device.name    == valve.name
     assert loaded_device.z        == valve.z
     assert loaded_device.beamline == valve.beamline
 
@@ -107,8 +107,8 @@ def test_add_and_load_device(mockclient, valve, valve_info):
 def test_load_device(mockclient, device_info):
     device = mockclient.load_device(**device_info)
     assert isinstance(device, Device)
-    assert device.base     == device_info['base']
-    assert device.alias    == device_info['alias']
+    assert device.prefix     == device_info['prefix']
+    assert device.name    == device_info['name']
     assert device.z        == device_info['z']
     assert device.beamline == device_info['beamline']
 
@@ -117,8 +117,8 @@ def test_load_device(mockclient, device_info):
     device.save()
 
     loaded_device = mockclient.load_device(**device_info)
-    assert loaded_device.base     == device_info['base']
-    assert loaded_device.alias    == device_info['alias']
+    assert loaded_device.prefix     == device_info['prefix']
+    assert loaded_device.name    == device_info['name']
     assert loaded_device.z        == device_info['z']
     assert loaded_device.beamline == device_info['beamline']
     assert loaded_device.stand    == 'DG3'
@@ -140,23 +140,23 @@ def test_validate(mockclient):
 
 def test_search(mockclient, device, valve, device_info, valve_info):
     mockclient.add_device(valve)
-    res = mockclient.search(alias=device_info['alias'])
+    res = mockclient.search(name=device_info['name'])
     #Single search return
     assert len(res) == 1
     loaded_device = res[0]
-    assert loaded_device.base     == device_info['base']
-    assert loaded_device.alias    == device_info['alias']
+    assert loaded_device.prefix     == device_info['prefix']
+    assert loaded_device.name    == device_info['name']
     assert loaded_device.z        == device_info['z']
     assert loaded_device.beamline == device_info['beamline']
 
     #No results
-    assert mockclient.search(alias='not') == None
+    assert mockclient.search(name='not') == None
 
     #returned as dict
     res = mockclient.search(as_dict=True, **device_info)
     loaded_device = res[0]
-    assert loaded_device['base']     == device_info['base']
-    assert loaded_device['alias']    == device_info['alias']
+    assert loaded_device['prefix']     == device_info['prefix']
+    assert loaded_device['name']    == device_info['name']
     assert loaded_device['z']        == device_info['z']
     assert loaded_device['beamline'] == device_info['beamline']
 
@@ -164,8 +164,8 @@ def test_search(mockclient, device, valve, device_info, valve_info):
     res = mockclient.search(start=0, end=500)
     assert len(res) == 2
     loaded_device = res[0]
-    assert loaded_device.base     == device_info['base']
-    assert loaded_device.alias    == device_info['alias']
+    assert loaded_device.prefix     == device_info['prefix']
+    assert loaded_device.name    == device_info['name']
     assert loaded_device.z        == device_info['z']
     assert loaded_device.beamline == device_info['beamline']
 
@@ -177,8 +177,8 @@ def test_search(mockclient, device, valve, device_info, valve_info):
     res = mockclient.search(start=0)
     assert len(res) == 2
     loaded_device = res[1]
-    assert loaded_device.base     == valve_info['base']
-    assert loaded_device.alias    == valve_info['alias']
+    assert loaded_device.prefix     == valve_info['prefix']
+    assert loaded_device.name    == valve_info['name']
     assert loaded_device.z        == valve_info['z']
     assert loaded_device.beamline == valve_info['beamline']
 
@@ -208,7 +208,7 @@ def test_export(mockclient, valve):
     mockclient.add_device(valve)
     fd, temp_path = tempfile.mkstemp()
 
-    mockclient.export(open(temp_path, 'w+'), sep=',', attrs=['alias','base'])
+    mockclient.export(open(temp_path, 'w+'), sep=',', attrs=['name','prefix'])
     assert open(temp_path,'r').read() == "alias,BASE:PV\nname,BASE:VGC:PV\n"
    
     #Cleanup

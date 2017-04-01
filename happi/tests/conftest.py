@@ -18,10 +18,10 @@ from happi.containers import GateValve
 
 @pytest.fixture(scope='function')
 def device_info():
-    return {'alias' : 'alias',
+    return {'name' : 'alias',
             'z'     : 400,
             '_id'   : 'BASE:PV',
-            'base'  : 'BASE:PV',
+            'prefix'  : 'BASE:PV',
             'beamline' : 'LCLS',
             'type'  : 'Device',}
 
@@ -32,9 +32,9 @@ def device(device_info):
 
 @pytest.fixture(scope='function')
 def valve_info():
-    return {'alias' : 'name',
+    return {'name' : 'name',
             'z'     : 300,
-            'base'  : 'BASE:VGC:PV',
+            'prefix'  : 'BASE:VGC:PV',
             'beamline':'LCLS',
             'mps' : 'MPS:VGC:PV'}
 

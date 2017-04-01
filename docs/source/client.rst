@@ -42,7 +42,7 @@ that the tutorial does not change actual database files.
     import happi.tests 
     client = happi.tests.MockClient(user='test',pw='test',db='test')
 
-    device = client.create_device("Device", alias='my_device',base='PV:BASE', beamline='XRT', z=345.5)
+    device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5)
     
     device.save()
 
@@ -51,7 +51,7 @@ explicitly using :meth:`.Device.save`
 
 .. ipython:: python
 
-    device = happi.Device(alias='my_device2',base='PV:BASE2', beamline='MFX', z=355.5)
+    device = happi.Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5)
    
     client.add_device(device)
 
@@ -96,12 +96,12 @@ criteria, an ``SearchError`` will be raised
 
 .. ipython:: python
 
-   device =  client.load_device(base='PV:BASE2')
+   device =  client.load_device(prefix='PV:BASE2')
 
-   print(device.base, device.alias)
+   print(device.prefix, device.name)
 
    try:
-       client.load_device(alias='non-existant')
+       client.load_device(name='non-existant')
    except happi.errors.SearchError as e:
        print(e)
 
@@ -111,13 +111,13 @@ Editing Device Information
 The workflow for editing a device looks very similar to the code within
 :ref:`entry_code`, but instead of instantiating the device you use either
 :meth:`.Client.load_device` or :meth:`.Client.search` to grab an existing device from
-the database. When the device is retreived this way the class method
+the dataprefix. When the device is retreived this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
 
 .. ipython:: python
 
-    my_motor = client.load_device(base='PV:BASE')
+    my_motor = client.load_device(prefix='PV:BASE')
     
     my_motor.z = 425.4
     
@@ -125,7 +125,7 @@ the Device information.
 
 .. note::
 
-    Because the database uses the ``base`` key as a device's identification you
+    Because the database uses the ``prefix`` key as a device's identification you
     can not edit this information in the same way. Instead you must explicitly
     remove the device and then use :meth:`.Client.add_device` to create a new
     entry. 
@@ -135,9 +135,9 @@ Finally, lets clean up our example objects by using
 
 .. ipython:: python
 
-    device_1 = client.load_device(alias='my_device')
+    device_1 = client.load_device(name='my_device')
     
-    device_2 = client.load_device(alias='my_device2')
+    device_2 = client.load_device(name='my_device2')
 
     for device in (device_1, device_2):
         client.remove_device(device)

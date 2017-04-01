@@ -82,8 +82,8 @@ class GateValve(Vacuum, MPS):
 
     Attributes
     ----------
-    base : str
-        The base pv should be the record one level below the state and control
+    prefix : str
+        The prefix pv should be the record one level below the state and control
         PVs. For example, if the open command pv is "HXX:MXT:VGC:01:OPN_SW",
         the base pv is "HXX:MXT:VGC:01". A regex will be used to check that
         "VGC" is found in the base PV.
@@ -96,8 +96,8 @@ class GateValve(Vacuum, MPS):
     veto : bool
         Set this to True if the gate valve is a veto device.
     """
-    base = copy(Vacuum.base)
-    base.enforce = re.compile(r'.*VGC.*')
+    prefix = copy(Vacuum.prefix)
+    prefix.enforce = re.compile(r'.*VGC.*')
 
 
 class Slits(BeamControl):
@@ -108,15 +108,15 @@ class Slits(BeamControl):
 
     Attributes
     ----------
-    base : str
-        The base PV should be the JAWS record one level below the center and
+    prefix : str
+        The prefix PV should be the JAWS record one level below the center and
         width PVs. Note that this is NOT the motor record. For example, if the
         x center PV is "XCS:SB2:DS:JAWS:ACTUAL_XCENTER", then the base PV
         should be "XCS:SB2:DS:JAWS". A regex will be used to check that "JAWS"
         is found in the base PV.
     """
-    base = copy(BeamControl.base)
-    base.enforce = re.compile(r'.*JAWS.*')
+    prefix = copy(BeamControl.prefix)
+    prefix.enforce = re.compile(r'.*JAWS.*')
 
 
 class PIM(Diagnostic):
@@ -128,7 +128,7 @@ class PIM(Diagnostic):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         The base PV should be the motor states PV that shows whether the
         monitor is out, in at yag, or in at diode. Note that this is NOT the
         motor record. For example, if the command PV to pull the PIM out is
@@ -140,8 +140,8 @@ class PIM(Diagnostic):
         data is broadcast on "XCS:SB1:P6740:IMAGE1:ArrayData", the data base
         should be "XCS:SB1:P6740".
     """
-    base = copy(Diagnostic.base)
-    base.enforce = re.compile(r'.*PIM.*')
+    prefix = copy(Diagnostic.prefix)
+    prefix.enforce = re.compile(r'.*PIM.*')
 
 
 class IPM(Diagnostic):
@@ -154,7 +154,7 @@ class IPM(Diagnostic):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         The base PV should be the prefix one level up from the diode and target
         state PVs. Note that this is NOT the motor record, it is neither the
         diode nor the target state PV, and it may not even be a valid PV name.
@@ -172,8 +172,8 @@ class IPM(Diagnostic):
         If the diode and target have subtly different recorded z-positions, use
         the diode position for the purposes of this database.
     """
-    base = copy(Diagnostic.base)
-    base.enforce = re.compile(r'.*IPM.*')
+    prefix = copy(Diagnostic.prefix)
+    prefix.enforce = re.compile(r'.*IPM.*')
 
 
 class Attenuator(BeamControl):
@@ -184,15 +184,15 @@ class Attenuator(BeamControl):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         For attunators, the base PV should be the base record from the
         attentuation calculation and control IOC, one level up from the
         calculated tranmission ratio. For example, if the transmission PV is
         "XPP:ATT:COM:R_CUR", the base PV is "XPP:ATT:COM". A regex will be used
         to check that "ATT" is found in the base PV.
     """
-    base = copy(BeamControl.base)
-    base.enforce = re.compile(r'.*ATT.*')
+    prefix = copy(BeamControl.prefix)
+    prefix.enforce = re.compile(r'.*ATT.*')
 
 
 class Stopper(MPS):
@@ -205,7 +205,7 @@ class Stopper(MPS):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         The base PV should be the combined mps status PV e.g.
         "STPR:XRT1:1:S5IN_MPS".
 
@@ -226,7 +226,7 @@ class Mirror(BeamSteering, ExtraState):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         The base PV should be a states PV that tells us which destination the
         mirror is pointing to. These states will be fairly rough and should not
         be relied on for alignment purposes, except for a guarantee that if a
@@ -261,7 +261,7 @@ class PulsePicker(BeamControl, ExtraState):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         The base PV should be the motor record base that the pulsepicker IOC
         is built on top of e.g. "XCS:SB2:MMS:09".
 
@@ -286,7 +286,7 @@ class LODCM(BeamSteering, ExtraStates):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         The base PV should be the state PV associated with the h1n or h2n
         state, depending on which crystal we're referring to e.g.
         "XPP:LODCM:H1N".
@@ -305,7 +305,7 @@ class MovableStand(Device):
 
     Attributes
     ----------
-    base : str
+    prefix : str
         If there is a single PV with the stand's location, this should be the
         base PV. In general, these devices will actually have multiple PVs
         with binary outputs that have yes/no on the stand being in each
