@@ -9,7 +9,7 @@ source:
 
 requirements:
     build:
-       - python
+      - python
 
 
     run:
@@ -25,4 +25,3 @@ test:
 
     requires: 
       - pytest
-      - mongomock
