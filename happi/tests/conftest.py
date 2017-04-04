@@ -61,8 +61,6 @@ class MockClient(Client):
                                                                  db=self._db_name))
             self._db         = self._client['test']
             self._collection = self._db['happi']
-            self.device_types = {'GateValve'  : GateValve,
-                                 'Device' : Device}
 
 
 @pytest.fixture(scope='function')
