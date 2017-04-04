@@ -81,6 +81,13 @@ class Client(object):
         db   = db   or self._db_name
         timeout = timeout or self._timeout
 
+
+        #Get Container Mapping
+        self.device_types.update(dict([(name,cls) for (name,cls) in
+                                       inspect.getmembers(containers,inspect.isclass)
+                                       if issubclass(cls,Device)
+                                ]))
+
         #Load database
         conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
         logging.debug('Attempting connection using {} '.format(conn_str))
@@ -104,13 +111,6 @@ class Client(object):
             raise DatabaseError('Unable to connect to MongoDB instance, check '
                                 'that the server is running on the host and port '
                                 'specified at startup')
-
-        #Get Container Mapping
-        self.device_types.update(dict([(name,cls) for (name,cls) in
-                                       inspect.getmembers(containers,inspect.isclass)
-                                       if issubclass(cls,Device)
-                                ]))
-
 
     def find_document(self, **kwargs):
         """
