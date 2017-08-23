@@ -12,6 +12,3 @@ class ContainerError(Exception):
 
 class SearchError(Exception):
     pass
-
-class PermissionError(Exception):
-    pass
