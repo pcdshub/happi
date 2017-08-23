@@ -90,3 +90,9 @@ def test_show_info(device, device_info):
     assert '_id' not in out
     assert all([info in out for info in device_info.keys()])
 
+def test_device_equivalance():
+    a = Device(name='a', prefix='b')
+    b = Device(name='a', prefix='b')
+    c = Device(name='c', prefix='b')
+    assert a == b
+    assert not c==a
