@@ -368,4 +368,4 @@ class Device(six.with_metaclass(InfoMeta, object)):
 
 
     def __eq__(self, other):
-        return self.prefix, self.name == other.prefix, other.name
+        return (self.prefix, self.name) == (other.prefix, other.name)
