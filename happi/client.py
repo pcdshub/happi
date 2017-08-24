@@ -9,6 +9,7 @@ import time as ttime
 ###############
 # Third Party #
 ###############
+import six
 import numpy as np #Could be removed if necessary
 
 ##########
@@ -17,7 +18,7 @@ import numpy as np #Could be removed if necessary
 from . import containers
 from .device import Device
 from .backends import MongoBackend
-from .errors import EntryError,DatabaseError, SearchError, DuplicateError
+from .errors import EntryError, DatabaseError, SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +41,11 @@ class Client(object):
     ----------
     device_types : dict
         Mapping of Container namees to class types 
+
+    Raises
+    -----
+    DatabaseError:
+        Raised if the Client fails to instantiate the Database
     """
     #Device information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
@@ -59,13 +65,20 @@ class Client(object):
             self.backend = database
         #Load database
         else:
-            self.backend = db_type(**kwargs)
-
+            try:
+                self.backend = db_type(**kwargs)
+            except Exception as exc:
+                six.raise_from(DatabaseError("Failed to instantiate "
+                                             "a {} backend".format(db_type)),
+                                             exc)
 
     def find_document(self, **kwargs):
         """
-        Load a device document from the MongoDB
-        based on the natural order inside the MongoDB instance
+        Load a device document from the database
+
+        If multiple matches are found, a single document will be returned to
+        the user. How the database will choose to select this device is based
+        on each individual implementation
 
         Parameters
         ----------
