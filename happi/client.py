@@ -4,118 +4,81 @@
 import sys
 import logging
 import inspect
-import time  as ttime
+import time as ttime
 
 ###############
 # Third Party #
 ###############
+import six
 import numpy as np #Could be removed if necessary
-from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
-from pymongo.errors import DuplicateKeyError
 
 ##########
 # Module #
 ##########
-from . import device
 from . import containers
 from .device import Device
-from .errors import DatabaseError, PermissionError, SearchError
-from .errors import EntryError, DuplicateError
+from .backends import MongoBackend
+from .errors import EntryError, DatabaseError, SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
 class Client(object):
     """
     The client to control the contents of the Happi Database
-    
+
     Parameters
     ----------
-    user : str, optional
-        Username for MongoDB instance
+    database : happi.backends.Backend
+        A already instantiated backend
 
-    pw :str, optional
-        Password for given username
+    db_type : happi.backends.Backend
+        A class to use if the database keyword is `None`
 
-    host : str, optional
-        Host of the MongoDB instance
-
-    db : str, optional
-        Database name within the MongoDB instance
-
-    timeout : float, optional
-        Time to wait for connection attempt
+    kwargs:
+        Passed to the `db_type` backend
 
     Attributes
     ----------
     device_types : dict
         Mapping of Container namees to class types 
 
-    Todo
-    ----
-    Add a rotating file handler to the logger
+    Raises
+    -----
+    DatabaseError:
+        Raised if the Client fails to instantiate the Database
     """
-    #MongoDB information
-    _host       = 'psdev03' #Hostname of MongoDB instance
-    _port       = None      #Port of MongoDB instance
-    _user       = 'happi'   #Username
-    _pw         = 'happi'   #Password
-    _id         = 'prefix'    #Attribute name to use as unique id
-    _db_name    = 'happi'   #MongoDB name
-    _coll_name  = 'beamline' #Relevant Collection name
-    _timeout    = 5         #Connection timeout
-    _conn_str   = 'mongodb://{user}:{pw}@{host}/{db}' #String for login
-
     #Device information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
+    _id = 'prefix'
+
     device_types  = {'Device' : Device}
 
-    def __init__(self, host=None, port=None, user=None,
-                 pw=None, db=None, timeout=None):
-
-        #Initialization info
-        host = host or self._host
-        port = port or self._port
-        user = user or self._user
-        pw   = pw   or self._pw
-        db   = db   or self._db_name
-        timeout = timeout or self._timeout
-
-
+    def __init__(self, database=None, db_type=MongoBackend, **kwargs):
         #Get Container Mapping
         self.device_types.update(dict([(name,cls) for (name,cls) in
-                                       inspect.getmembers(containers,inspect.isclass)
+                                       inspect.getmembers(containers,
+                                                          inspect.isclass)
                                        if issubclass(cls,Device)
                                 ]))
-
+        #Use supplied backend
+        if database:
+            self.backend = database
         #Load database
-        conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
-        logging.debug('Attempting connection using {} '.format(conn_str))
-        self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
-        self._db     = self._client[db] 
-
-        #Load collection
-        try:
-            if self._coll_name not in self._db.collection_names():
-                raise DatabaseError('Unable to locate collection {} '
-                                    'in database'.format(self._coll_name))
-
-            self._collection = self._db[self._coll_name]
-
-        #Unable to view collection names
-        except OperationFailure as e:
-            raise PermissionError(e)
-
-        #Unable to connect to MongoDB instance
-        except ServerSelectionTimeoutError:
-            raise DatabaseError('Unable to connect to MongoDB instance, check '
-                                'that the server is running on the host and port '
-                                'specified at startup')
+        else:
+            try:
+                self.backend = db_type(**kwargs)
+            except Exception as exc:
+                six.raise_from(DatabaseError("Failed to instantiate "
+                                             "a {} backend".format(db_type)),
+                                             exc)
 
     def find_document(self, **kwargs):
         """
-        Load a device document from the MongoDB
-        based on the natural order inside the MongoDB instance
+        Load a device document from the database
+
+        If multiple matches are found, a single document will be returned to
+        the user. How the database will choose to select this device is based
+        on each individual implementation
 
         Parameters
         ----------
@@ -136,12 +99,8 @@ class Client(object):
         --------
         :meth:`.load_device`, :meth:`.search`
         """
-        #Separated for increased speed
-        if self._id in kwargs:
-            post = self._collection.find_one({'_id': kwargs[self._id]})
-
-        else:
-            post = self._collection.find_one(kwargs)
+        #Request information from backend
+        post = self.backend.find(multiples=False, **kwargs)
 
         #Check result, if not found let the user know
         if not post:
@@ -259,10 +218,10 @@ class Client(object):
             device = self.create_device(doc['type'], **doc)
 
         except (KeyError, TypeError):
-            raise EntryError('The information relating to the device class has '
-                             'been modified to the point where the object can not '
-                             'be initialized, please load the corresponding '
-                             'document')
+            raise EntryError('The information relating to the device class '
+                             'has been modified to the point where the object '
+                             'can not be initialized, please load the '
+                             'corresponding document')
 
         #Add the save method to the device
         device.save = lambda : self._store(device, insert=False)
@@ -289,21 +248,23 @@ class Client(object):
         bad = list()
 
         logger.debug('Loading database to validate contained devices ...')
-        for post in self._collection.find():
-            #Device identification
-            _id = post['_id']
-            logger.info('Attempting to validate {} ...'.format(_id))
-
+        for post in self.backend.all_devices:
             #Try and load device based on database info
             try:
-                logger.debug('Attempting to initialize ...') 
+                #Device identification
+                _id = post[self._id]
+                logger.debug('Attempting to initialize {}...'.format(_id))
+                #Load Device
                 device = self.load_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
 
+            except KeyError:
+                logger.error("Post has no id, {}"
+                             "".format(post))
             #Log all generated exceptions
-            except Exception:
-                logger.exception("Failed to validate {}".format(_id))
+            except Exception as e:
+                logger.warning("Failed to validate {} because {}".format(_id, e))
                 bad.append(_id)
 
             #Report successes
@@ -346,19 +307,13 @@ class Client(object):
         Either a list of devices or dictionaries
 
         Example
-        -------
         .. code::
 
             gate_valves = client.search(type='Valve')
             hxr_valves  = client.search(type='Valve', beamline='HXR')
-
-        Todo
-        ----
-        Search on regular expression, in general expose fancier MongoDB search
-        keys
         """
         try:
-            cur = list(self._collection.find(kwargs))
+            cur = self.backend.find(multiples=True, **kwargs)
 
         except TypeError:
             return None
@@ -372,11 +327,9 @@ class Client(object):
             if start >= end:
                 raise ValueError("Invalid beamline range")
 
-            #Define range 
-            def in_range(val):
-                return start <=  val < end
-
-            cur = [info for info in cur if in_range(info['z'])]
+            #Find all values within range
+            cur = [info for info in cur
+                   if start <= info['z'] and info['z'] < end]
 
         if not cur:
             return None
@@ -432,14 +385,14 @@ class Client(object):
         #Device Check
         if not isinstance(device, Device):
             raise ValueError("Must supply an object of type `Device`")
- 
+
         logger.info("Attempting to remove {!r} from the "
                     "collection ...".format(device))
 
         #Check that device is in the database
         try:
-            info = device.post()
-            self.find_document(**info) #Will raise SearchError if not present
+            _id =getattr(device, self._id)
+            self.find_document(_id=_id)
 
         #Log and re-raise
         except SearchError:
@@ -447,17 +400,12 @@ class Client(object):
             raise
 
         else:
-            cursor = self._collection.delete_one({'_id':info.pop(self._id)})
-
-            if cursor.deleted_count :
-                logging.info("{} successfully deleted from "
-                             "database".format(device))
+            self.backend.delete(_id)
 
 
     def _validate_device(self, device):
         """
-        Validate that a device is an instance of :class:`.Device` and has all
-        of the mandatory information
+        Validate that a device has all of the mandatory information
         """
         logger.debug('Validating device {!r} ...'.format(device))
 
@@ -476,7 +424,8 @@ class Client(object):
         #Abort initialization if missing mandatory info
         if missing:
             raise EntryError('Missing mandatory information ({}) for {}' 
-                             ''.format(', '.join(missing), device.__class__.__name__))
+                             ''.format(', '.join(missing),
+                                       device.__class__.__name__))
 
         logger.debug('Device {!r} has been validated.'.format(device))
 
@@ -514,60 +463,30 @@ class Client(object):
         #Grab information from device
         post = device.post()
 
+        #Store creation time
+        creation = post.get('creation', ttime.ctime())
+
         #Clean supplied information
         [post.pop(key) for key in self._client_attrs if key in post]
 
-
         #Note that device has some unrecognized metadata
         for key in [key for key in post.keys() if key not in device.info_names]:
-            logger.info("Device {!r} defines an extra piece of information "
-                        "under the keyword {}".format(device, key))
-
+            logger.warning("Device {!r} defines an extra piece of information "
+                           "under the keyword {}".format(device, key))
 
         #Add metadata from the Client Side
-        post.update({'type'     : device.__class__.__name__,
-                     'creation' : ttime.ctime(),
-                    })
-
+        post.update({'type'      : device.__class__.__name__,
+                     'creation'  : creation,
+                     'last_edit' : ttime.ctime()})
+        #Find id 
         try:
-            #Add some metadata
             _id = post[self._id]
-
-            logger.info('Adding / Modifying information for {} ...'.format(_id))
-
-
-            post.update({'last_edit' : ttime.ctime()})
-
-            #Add to database
-            result = self._collection.update_one({'_id'  : _id},
-                                                 {'$set' : post},
-                                                 upsert = insert)
 
         except KeyError:
             raise EntryError('Device did not supply the proper information to '
-                             'interface with the database')
-
-
-        except DuplicateKeyError:
-            raise DuplicateError('Device with name {} has already been entered into '
-                                 'the database, use load_device and save if you wish to make '
-                                 'changes to the device'.format(post['name']))
-
-        except OperationFailure:
-            raise PermissionError("Unauthorized command, make sure you are "
-                                  "using a user with write permissions")
-
-        logger.info('{} documents have been modified ...'
-                     ''.format(result.matched_count))
-
-        if insert and not result.upserted_id:
-            raise DuplicateError('Device with id {} has already been entered into '
-                                 'the database, use load_device and save if you wish to make '
-                                 'changes to the device'.format(_id))
-
-        if not insert and result.matched_count == 0:
-            raise SearchError('No device found with id {} please, if this is a '
-                              'new device, try add_device. If not, make '
-                              'sure that the device information being sent is '
-                              'correct'.format(_id))
+                             'interface with the database, missing {}'
+                             ''.format(self._id))
+        #Store information
+        logger.info('Adding / Modifying information for {} ...'.format(_id))
+        self.backend.save(_id, post, insert=insert)
 

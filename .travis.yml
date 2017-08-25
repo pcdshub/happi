@@ -27,7 +27,7 @@ install:
   - conda update -q conda conda-build
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION coverage pip pymongo numpy pytest six -c conda-forge 
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION simplejson coverage pip pymongo numpy pytest six -c conda-forge 
   - source activate test-environment
   - pip install codecov
   - pip install mongomock
