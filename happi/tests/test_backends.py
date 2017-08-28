@@ -3,6 +3,7 @@
 ############
 import os
 import fcntl
+import os.path
 ###############
 # Third Party #
 ###############
@@ -135,3 +136,15 @@ def test_json_locking(mockjson):
     #Attempt to save
     with pytest.raises(IOError):
         mockjson.store({"_ID" : "ID"})
+
+def test_json_initialize():
+    jb = JSONBackend("testing.json", initialize=True)
+    #Check that the file was made
+    assert os.path.exists("testing.json")
+    #Check it is a valid json file
+    assert jb.load() == {}
+    #Check that we can not overwrite the database
+    with pytest.raises(PermissionError):
+        jb2 = JSONBackend("testing.json", initialize=True)
+    #Cleanup
+    os.remove("testing.json")
