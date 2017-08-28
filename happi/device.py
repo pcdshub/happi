@@ -284,8 +284,8 @@ class Device(six.with_metaclass(InfoMeta, object)):
 
         #Handle additional information
         if kwargs:
-            logging.info('Additional information for {} was defined '
-                         '{}'.format(self.name, ', '.join(kwargs.keys())))
+            logging.info('Additional information for %s was defined %s',
+                         self.name, ', '.join(kwargs.keys()))
             self.extraneous = kwargs
 
         else:
