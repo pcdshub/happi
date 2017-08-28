@@ -6,6 +6,7 @@ Abstract backend database options
 ############
 import abc
 import fcntl
+import os.path
 import logging
 
 ###############
@@ -266,9 +267,16 @@ class JSONBackend(with_metaclass(Backend)):
     ----------
     path : str
         Path to JSON file
+
+    initialze : bool, optional
+        Initialize a new empty JSON file to begin filling
     """
-    def __init__(self, path):
+    def __init__(self, path, initialize=False):
         self.path  = path
+
+        #Create a new JSON file if requested
+        if initialize:
+            self.initialize()
 
 
     @property
@@ -277,6 +285,30 @@ class JSONBackend(with_metaclass(Backend)):
         All of the devices in the database
         """
         return list(self.load().values())
+
+
+
+    def initialize(self):
+        """
+        Initialize a new JSON file database
+
+        Raises
+        ------
+        PermissionError:
+            If the JSON file specified by `path` already exists
+
+        Notes
+        -----
+        This is exists because the `store` and `load` methods assume that the
+        given path already points to a readable JSON file. In order to begin
+        filling a new database, an empty but valid JSON file is created
+        """
+        #Do not overwrite existing databases
+        if os.path.exists(self.path):
+            raise PermissionError("File {} already exists. Can not initialize "
+                                  "a new database.".format(self.path))
+        #Dump an empty dictionary
+        json.dump({}, open(self.path, "w+"))
 
 
     def load(self):
