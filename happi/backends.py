@@ -139,7 +139,7 @@ class MongoBackend(with_metaclass(Backend)):
         #Format connection string
         conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
 
-        logging.debug('Attempting connection using {} '.format(conn_str))
+        logging.debug('Attempting connection using %s ',conn_str)
         self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
         self._db     = self._client[db] 
 
@@ -158,8 +158,8 @@ class MongoBackend(with_metaclass(Backend)):
         #Unable to connect to MongoDB instance
         except ServerSelectionTimeoutError:
             raise DatabaseError('Unable to connect to MongoDB instance, check '
-                                'that the server is running on the host and port '
-                                'specified at startup')
+                                'that the server is running on the host and '
+                                'port specified at startup')
 
 
     @property
@@ -233,9 +233,10 @@ class MongoBackend(with_metaclass(Backend)):
                                   "using a user with write permissions")
 
         if insert and not result.upserted_id:
-            raise DuplicateError('Device with id {} has already been entered into '
-                                 'the database, use load_device and save if you wish to make '
-                                 'changes to the device'.format(_id))
+            raise DuplicateError('Device with id {} has already been entered '
+                                 'into the database, use load_device and '
+                                 'save if you wish to make changes to the '
+                                 'device'.format(_id))
 
         if not insert and result.matched_count == 0:
             raise SearchError('No device found with id {} please, if this is a '
@@ -456,7 +457,7 @@ class JSONBackend(with_metaclass(Backend)):
         try:
             db.pop(_id)
         except KeyError:
-            logger.warning("Device {} not found in database".format(_id))
+            logger.warning("Device %s not found in database", _id)
         #Store database
         self.store(db)
 
