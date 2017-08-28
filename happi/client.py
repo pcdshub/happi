@@ -260,8 +260,8 @@ class Client(object):
                 self._validate_device(device)
 
             except KeyError:
-                logger.error("Post has no id, {}"
-                             "".format(post))
+                logger.error("Post has no id  %s", post)
+
             #Log all generated exceptions
             except Exception as e:
                 logger.warning("Failed to validate %s because %s", _id, e)
@@ -407,7 +407,7 @@ class Client(object):
         """
         Validate that a device has all of the mandatory information
         """
-        logger.debug('Validating device {!r} ...'.format(device))
+        logger.debug('Validating device %r ...', device)
 
         #Check type
         if not isinstance(device, Device):
