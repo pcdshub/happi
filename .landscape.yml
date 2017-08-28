@@ -5,6 +5,12 @@ max-line-length : 80
 autodetect: true
 ignore-paths:
    - docs
+   - happi/__init__.py
+ignore-patterns:
+    - versioneer.py
+    - happi/_version.py
 python-targets:
-    - 2
     - 3
+pylint:
+    disable:
+        - protected-access
