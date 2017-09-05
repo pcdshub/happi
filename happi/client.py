@@ -18,7 +18,7 @@ import numpy as np #Could be removed if necessary
 from . import containers
 from .device import Device
 from .backends import MongoBackend
-from .errors import EntryError, DatabaseError, SearchError, DuplicateError
+from .errors import EntryError, DatabaseError, SearchError
 
 logger = logging.getLogger(__name__)
 
@@ -177,14 +177,14 @@ class Client(object):
             specified or there is already a device with that ``id`` in the 
             database
         """
-        logger.info("Storing device {!r} ...".format(device))
+        logger.info("Storing device %r ...", device)
 
         #Store post
         self._store(device, insert=True)
 
         #Log success
-        logger.info('Device {!r} has been succesfully added to the '
-                    'database'.format(device))
+        logger.info('Device %r has been succesfully added to the '
+                    'database', device)
 
 
             
@@ -253,23 +253,23 @@ class Client(object):
             try:
                 #Device identification
                 _id = post[self._id]
-                logger.debug('Attempting to initialize {}...'.format(_id))
+                logger.debug('Attempting to initialize %s...', _id)
                 #Load Device
                 device = self.load_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
 
             except KeyError:
-                logger.error("Post has no id, {}"
-                             "".format(post))
+                logger.error("Post has no id  %s", post)
+
             #Log all generated exceptions
             except Exception as e:
-                logger.warning("Failed to validate {} because {}".format(_id, e))
+                logger.warning("Failed to validate %s because %s", _id, e)
                 bad.append(_id)
 
             #Report successes
             else:
-                logger.debug('Successfully validated {}'.format(_id))
+                logger.debug('Successfully validated %s', _id)
 
         return bad
 
@@ -358,7 +358,7 @@ class Client(object):
         """
         #Load documents
         devs = self.all_devices
-        logger.info('Creating file at {} ...'.format(path))
+        logger.info('Creating file at %s ...', path)
 
         #Load device information
         with path as f:
@@ -369,8 +369,8 @@ class Client(object):
                             +'\n')
 
                 except KeyError as e:
-                    logger.error("Device {} was missing attribute {}"
-                                 "".format(dev.name, e))
+                    logger.error("Device %s was missing attribute %s",
+                                 dev.name, e)
 
 
     def remove_device(self, device):
@@ -386,8 +386,8 @@ class Client(object):
         if not isinstance(device, Device):
             raise ValueError("Must supply an object of type `Device`")
 
-        logger.info("Attempting to remove {!r} from the "
-                    "collection ...".format(device))
+        logger.info("Attempting to remove %r from the "
+                    "collection ...", device)
 
         #Check that device is in the database
         try:
@@ -407,7 +407,7 @@ class Client(object):
         """
         Validate that a device has all of the mandatory information
         """
-        logger.debug('Validating device {!r} ...'.format(device))
+        logger.debug('Validating device %r ...', device)
 
         #Check type
         if not isinstance(device, Device):
@@ -427,7 +427,7 @@ class Client(object):
                              ''.format(', '.join(missing),
                                        device.__class__.__name__))
 
-        logger.debug('Device {!r} has been validated.'.format(device))
+        logger.debug('Device %r has been validated.', device)
 
                  
 
@@ -471,8 +471,8 @@ class Client(object):
 
         #Note that device has some unrecognized metadata
         for key in [key for key in post.keys() if key not in device.info_names]:
-            logger.warning("Device {!r} defines an extra piece of information "
-                           "under the keyword {}".format(device, key))
+            logger.warning("Device %r defines an extra piece of information "
+                           "under the keyword %s", device, key)
 
         #Add metadata from the Client Side
         post.update({'type'      : device.__class__.__name__,
@@ -487,6 +487,6 @@ class Client(object):
                              'interface with the database, missing {}'
                              ''.format(self._id))
         #Store information
-        logger.info('Adding / Modifying information for {} ...'.format(_id))
+        logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
 
