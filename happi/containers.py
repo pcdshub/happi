@@ -33,8 +33,7 @@ class Diagnostic(Device):
     """
     system = copy(Device.system)
     system.default = 'diagnostic'
-    data = EntryInfo('PV that gives us the diagnostic readback in EPICS.',
-                     optional=False, enforce=str)
+    data = EntryInfo('PV that gives us the diagnostic readback in EPICS.', enforce=str)
 
 
 class BeamControl(Device):
@@ -217,7 +216,7 @@ class Stopper(MPS):
     veto.default = True
 
 
-class Mirror(BeamSteering, ExtraState):
+class OffsetMirror(BeamSteering, ExtraState):
     """
     A device that steers beam in the x direction by changing a pitch motor.
     These are used for beam delivery and alignment. These have additional
