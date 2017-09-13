@@ -68,7 +68,7 @@ Stopper
 
 Mirror
 ++++++
-.. autoclass:: happi.containers.Mirror
+.. autoclass:: happi.containers.OffsetMirror
 
 PulsePicker
 ++++++++++++
