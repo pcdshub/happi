@@ -43,6 +43,10 @@ script:
   - |
     if [ $BUILD_DOCS ]; then
       pip install -r docs-requirements.txt
+      # Install doctr from a custom branch until
+      # https://github.com/drdoctr/doctr/pull/190 is merged.
+      pip uninstall -y doctr
+      pip install git+https://github.com/danielballan/doctr@other-master 
       pushd docs
       make html
       popd
