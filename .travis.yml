@@ -41,7 +41,7 @@ script:
   - set -e
   # Build docs.
   - |
-    if [ $BUILD_DOCS ]; then
+    if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY" && $BUILD_DOCS ]]; then
       pip install -r docs-requirements.txt
       # Install doctr from a custom branch until
       # https://github.com/drdoctr/doctr/pull/190 is merged.
