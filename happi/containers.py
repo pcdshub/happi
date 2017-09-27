@@ -141,7 +141,7 @@ class PIM(Diagnostic):
     """
     prefix = copy(Diagnostic.prefix)
     prefix.enforce = re.compile(r'.*PIM.*')
-
+    prefix_det = EntryInfo("Prefix for associated camera", enforce=str)
 
 class IPM(Diagnostic):
     """
@@ -248,8 +248,14 @@ class OffsetMirror(BeamSteering, ExtraState):
         If the mirror is purely for alignment and not for steering, this can be
         an empty dict.
     """
-    pass
-
+    prefix_xy    = EntryInfo("Prefix for Gantry Motion",
+                             enforce=str,
+                             optional=False)
+    state_prefix = EntryInfo("Prefix for state summary ", enforce=str)
+    in_lines     = EntryInfo("Name of beamlines delivered beam "
+                             "when the mirror is inserted", enforce=list)
+    out_lines    = EntryInfo("Name of beamlines delivered beam "
+                             "when the mirror is removed", enforce=list)
 
 class PulsePicker(BeamControl, ExtraState):
     """
