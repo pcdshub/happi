@@ -1,0 +1,5 @@
+simplejson
+pymongo
+numpy
+prettytable
+six
