@@ -30,9 +30,9 @@ install:
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION simplejson coverage pip pymongo numpy pytest six -c conda-forge 
   - source activate test-environment
+  - pip install -r requirements.txt
+  - pip install -r test-requirements.txt
   - pip install codecov
-  - pip install mongomock
-  - pip install prettytable
   - python setup.py install
 
 script:
