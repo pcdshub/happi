@@ -5,6 +5,7 @@ Functions to instantiate the Python representations of happi Containers
 # Standard #
 ############
 import sys
+import types
 import logging
 import importlib
 
@@ -17,6 +18,7 @@ from jinja2 import Environment, meta
 ##########
 # Module #
 ##########
+from .utils import create_alias
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +46,9 @@ def fill_template(template, device, enforce_type=False):
         # Find which variable we used in the template, get the type and convert
         # our rendered template to agree with this
         info = meta.find_undeclared_variables(env.environment.parse(template))
+        # We select a type at random here. If we use two different variables
+        # in the same template that disagree on type we could have an issue
+        # but I decided that we will deal with that issue if it arises
         enforce = type(getattr(device, info.pop()))
         filled = enforce(filled)
     return filled
@@ -56,6 +61,10 @@ def from_container(device):
     The container is queried for the device_class, args and kwargs. Then if the
     associated package is not already loaded it is imported. The specified
     class is then instantiated with the given args and kwargs provided.
+
+    This function does not attempt to catch exceptions either during module
+    imports or device creation. If you would like a series of independent
+    devices to be loaded use :func:`.load_devices`
 
     Parameters
     ----------
@@ -97,3 +106,46 @@ def from_container(device):
                   for key, val in device.kwargs.items())
     # Return the instantiated device
     return cls(*args, **kwargs)
+
+
+def load_devices(*devices, pprint=False, namespace=None):
+    """
+    Load a series of devices into a namespace
+
+    Parameters
+    ----------
+    args :
+        List of happi containers to load
+
+    pprint: bool, optional
+        Print results of device loads
+
+    namespace : obj, optional
+        Namespace to collect loaded devices in. By default this will be a
+        ``types.SimpleNamespace``
+    """
+    # Create our namespace if we were not given one
+    namespace = namespace or types.SimpleNamespace()
+    for device in devices:
+        # Attempt to load our device. If this raises an exception
+        # catch and store it so we can easily view the traceback
+        # later without going to logs, e.t.c
+        logger.debug("Loading device %s ...", device.name)
+        if pprint:
+            print("Loading {} [{}]...".format(device.name,
+                                              device.device_class),
+                  end=' ')
+        try:
+            loaded = from_container(device)
+            logger.debug("Succesfully loaded!")
+            if pprint:
+                print("\033[32mSUCCESS\033[0m")
+        except Exception as exc:
+            if pprint:
+                print("\033[31mFAILED\033[0m")
+            logger.exception('Error loading %s', device.name)
+            loaded = exc
+        # Add our newly created device to the namespace
+        attr = create_alias(device.name)
+        setattr(namespace, attr, loaded)
+    return namespace
