@@ -14,11 +14,11 @@ requirements:
 
     run:
       - six
-      - numpy
+      - jinja2
       - prettytable
+      - simplejson
       - pymongo 
       - python
-      - simplejson
 test:
     imports:
       - happi

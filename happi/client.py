@@ -2,6 +2,7 @@
 # Standard #
 ############
 import sys
+import math
 import logging
 import inspect
 import time as ttime
@@ -10,7 +11,6 @@ import time as ttime
 # Third Party #
 ###############
 import six
-import numpy as np #Could be removed if necessary
 
 ##########
 # Module #
@@ -322,7 +322,7 @@ class Client(object):
         if start or end:
 
             if not end:
-                end = np.inf
+                end = math.inf
 
             if start >= end:
                 raise ValueError("Invalid beamline range")

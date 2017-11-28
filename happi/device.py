@@ -1,23 +1,24 @@
-from __future__ import print_function
-
-###################
-# Standard Packages
-###################
+############
+# Standard #
+############
 import re
 import six
 import sys
 import logging
 
 from collections import OrderedDict
-from prettytable import PrettyTable 
+from prettytable import PrettyTable
 
-###################
-# Module Packages
-###################
+###############
+# Third Party #
+###############
+
+##########
+# Module #
+##########
 from .errors import ContainerError
 
 logger = logging.getLogger(__name__)
-
 
 
 class EntryInfo(object):
@@ -63,50 +64,65 @@ class EntryInfo(object):
             number   = EntryInfo('Device number', enforce=int, default=0)
     """
     def __init__(self, doc=None, optional=True, enforce=None, default=None):
-        self.key      = None #Set later by parent class
-        self.doc      = doc
-        self.enforce  = enforce
+        self.key = None  # Set later by parent class
+        self.doc = doc
+        self.enforce = enforce
         self.optional = optional
 
-        #Explicitly set default to None b/c this is how we ensure mandatory
-        #information was set
+        # Explicitly set default to None b/c this is how we ensure mandatory
+        # information was set
         if optional:
-            self.default  = default
-
+            self.default = default
         else:
             self.default = None
 
-        #Check that default value is correct type
+        # Check that default value is correct type
         try:
             self.enforce_value(default)
-
         except ValueError:
             raise ContainerError('Default value must match the enforced type')
 
-
     def enforce_value(self, value):
-        if not self.enforce or value == None:
+        """
+        Enforce the rules of the EntryInfo
+
+        Parameters
+        ----------
+        value
+
+        Returns
+        -------
+        value :
+            Identical to the provided value except it may have been converted
+            to the correct type
+
+        Raises
+        ------
+        ValueError:
+            If the value is not the correct type, or does not match the pattern
+        """
+        if not self.enforce or value is None:
             return value
 
         elif isinstance(self.enforce, type):
-            #Try and convert to type, otherwise raise ValueError
+            # Try and convert to type, otherwise raise ValueError
             return self.enforce(value)
 
-        elif isinstance(self.enforce, (list,tuple,set)):
-            #Check that value is in list, otherwise raise ValueError
+        elif isinstance(self.enforce, (list, tuple, set)):
+            # Check that value is in list, otherwise raise ValueError
             if value not in self.enforce:
                 raise ValueError('{} was not found in the enforce list {}'
                                  ''.format(self.key, self.enforce))
             return value
 
         elif isinstance(self.enforce, re._pattern_type):
-            #Try and match regex patttern, otherwise raise ValueError
+            # Try and match regex patttern, otherwise raise ValueError
             if not self.enforce.match(value):
                 raise ValueError('{} did not match the enforced pattern {}'
-                                ''.format(self.key, self.enforce.pattern))
+                                 ''.format(self.key, self.enforce.pattern))
             return value
 
-        #Invalid enforcement
+        # Invalid enforcement
         else:
             raise ContainerError('EntryInfo {} has an invalid enforce'
                                  ''.format(self.key))
@@ -118,12 +134,11 @@ class EntryInfo(object):
         doc = ['{} attribute'.format(self.__class__.__name__),
                '::',
                '',
-              ]
+               ]
 
         doc.append(repr(self))
         doc.append('')
         return '\n'.join(doc)
-
 
     def __get__(self, instance, owner):
 
@@ -132,11 +147,9 @@ class EntryInfo(object):
 
         return instance.__dict__[self.key]
 
-
     def __set__(self, instance, value):
 
         instance.__dict__[self.key] = self.enforce_value(value)
-
 
     def __repr__(self):
 
@@ -151,20 +164,19 @@ class EntryInfo(object):
 
 class InfoMeta(type):
 
-
     def __new__(cls, name, bases, clsdict):
         clsobj = super(InfoMeta, cls).__new__(cls, name, bases, clsdict)
 
-        #These attributes are used by device so can not be overwritten
-        RESERVED_ATTRS = ['info_names','entry_info',
-                          'mandatory_info','_info_attrs',
+        # These attributes are used by device so can not be overwritten
+        RESERVED_ATTRS = ['info_names', 'entry_info',
+                          'mandatory_info', '_info_attrs',
                           'post', 'save', 'creation', '_id',
                           'last_edit']
 
-        #Create dict to hold information
+        # Create dict to hold information
         clsobj._info_attrs = OrderedDict()
 
-        #Handle multiple inheritance
+        # Handle multiple inheritance
         for base in reversed(bases):
 
             if not hasattr(base, '_info_attrs'):
@@ -173,7 +185,7 @@ class InfoMeta(type):
             for attr, info in base._info_attrs.items():
                 clsobj._info_attrs[attr] = info
 
-        #Load from highest classEntry
+        # Load from highest classEntry
         for attr, value in clsdict.items():
             if isinstance(value, EntryInfo):
                 if attr in RESERVED_ATTRS:
@@ -184,15 +196,13 @@ class InfoMeta(type):
 
                 clsobj._info_attrs[attr] = value
 
-        #Notify Info of key names
+        # Notify Info of key names
         for attr, info in clsobj._info_attrs.items():
             info.key = attr
-
-        #Create docstring information
+        # Create docstring information
         for info in clsobj._info_attrs.values():
             info.__doc__ = info.make_docstring(clsobj)
-
-        #Store Entry Information
+        # Store Entry Information
         clsobj.entry_info = list(clsobj._info_attrs.values())
 
         return clsobj
@@ -237,60 +247,55 @@ class Device(six.with_metaclass(InfoMeta, object)):
     -------
     .. code ::
 
-        d = Device(name = 'my_device',      #Alias name for device
+        d = Device(name = 'my_device',         #Alias name for device
                    prefix  = 'CXI:DG2:DEV:01', #Base PV for device
-                   note  = 'Example',        #Piece of arbitrary metadata
+                   note  = 'Example',          #Piece of arbitrary metadata
                   )
     """
-
-    #Entry Info
-    name           = EntryInfo('Shorthand name for the device',
-                                optional=False, enforce=str)
-    prefix            = EntryInfo('A base PV for all related records',
-                                optional=False, enforce=str)
-    beamline        = EntryInfo('Section of beamline the device belongs',
-                                optional=False, enforce=str)
-    z               = EntryInfo('Beamline position of the device',
-                                enforce=float, default = -1.0)
-    stand           = EntryInfo('Acronym for stand, must be three alphanumeric '
-                                'characters',
-                                enforce=re.compile(r'[A-Z0-9]{3}$'))
-    main_screen     = EntryInfo('The absolute path to the main control screen',
-                                enforce=str)
-    embedded_screen = EntryInfo('The absolute path to an embeddable screen',
-                                enforce=str)
-    active          = EntryInfo('Whether the device is actively deployed',
-                                 enforce=bool, default=True)
-    system          = EntryInfo('The system the device is involved with, i.e '
-                                'Vacuum, Timing e.t.c',
-                                enforce=str)
-    macros          = EntryInfo("The EDM macro string asscociated with the "
-                                "with the device. By using a jinja2 template, "
-                                "this can reference other EntryInfo keywords.",
-                                enforce=str)
-    parent          = EntryInfo('If the device is a component of another, '
-                                'enter the name',
-                                enforce=str)
+    name = EntryInfo('Shorthand name for the device',
+                     optional=False, enforce=str)
+    prefix = EntryInfo('A base PV for all related records',
+                       optional=False, enforce=str)
+    beamline = EntryInfo('Section of beamline the device belongs',
+                         optional=False, enforce=str)
+    z = EntryInfo('Beamline position of the device',
+                  enforce=float, default=-1.0)
+    device_class = EntryInfo("Python class that represents the Device",
+                             enforce=str)
+    args = EntryInfo("Arguments to pass to device_class",
+                     enforce=list, default=['{{prefix}}'])
+    kwargs = EntryInfo("Keyword arguments to pass to device_class",
+                       enforce=dict, default={'name': '{{name}}'})
+    stand = EntryInfo('Acronym for stand, must be three alphanumeric '
+                      'characters', enforce=re.compile(r'[A-Z0-9]{3}$'))
+    screen = EntryInfo('The absolute path to the main control screen',
+                       enforce=str)
+    active = EntryInfo('Whether the device is actively deployed',
+                       enforce=bool, default=True)
+    system = EntryInfo('The system the device is involved with, i.e '
+                       'Vacuum, Timing e.t.c',
+                       enforce=str)
+    macros = EntryInfo("The EDM macro string asscociated with the "
+                       "with the device. By using a jinja2 template, "
+                       "this can reference other EntryInfo keywords.",
+                       enforce=str)
+    parent = EntryInfo('If the device is a component of another, '
+                       'enter the name', enforce=str)
 
     def __init__(self, **kwargs):
-        #Load given information into device class
+        # Load given information into device class
         for info in self.entry_info:
             if info.key in kwargs.keys():
                 setattr(self, info.key, kwargs.pop(info.key))
-
             else:
                 setattr(self, info.key, info.default)
-
-
-        #Handle additional information
+        # Handle additional information
         if kwargs:
             logger.debug('Additional information for %s was defined %s',
                          self.name, ', '.join(kwargs.keys()))
             self.extraneous = kwargs
-
         else:
             self.extraneous = {}
-
 
     @property
     def info_names(self):
@@ -299,14 +304,12 @@ class Device(six.with_metaclass(InfoMeta, object)):
         """
         return [info.key for info in self.entry_info]
 
-
     @property
     def mandatory_info(self):
         """
         Mandatory information for the device to be initialized
         """
         return [info.key for info in self.entry_info if not info.optional]
-
 
     def show_info(self, handle=sys.stdout):
         """
@@ -320,11 +323,12 @@ class Device(six.with_metaclass(InfoMeta, object)):
         pt = PrettyTable(['EntryInfo', 'Value'])
         pt.align = 'r'
         pt.align['EntryInfo'] = 'l'
-        pt.align['Value']     = 'l'
+        pt.align['Value'] = 'l'
         pt.float_format = '8.5'
 
+        # Gather all device information, do not show private
+        # information that begins with an underscore
         show_info = self.post()
-
         public_keys = sorted([key for key in show_info.keys()
                               if not key.startswith('_')])
         for key in public_keys:
@@ -332,26 +336,23 @@ class Device(six.with_metaclass(InfoMeta, object)):
 
         print(pt, file=handle)
 
-
     def post(self):
         """
-        Create a document to be loaded into the MongoDB
+        Create a document to be loaded into the happi database
 
         Returns
         -------
         post : dict
             Dictionary of all contained information
         """
-        #Grab all the specified information
-        post = dict([(key, getattr(self,key)) for key in self.info_names])
+        # Grab all the specified information
+        post = dict([(key, getattr(self, key)) for key in self.info_names])
 
-
-        #Add additional metadata
+        # Add additional metadata
         if self.extraneous:
             post.update(self.extraneous)
 
         return post
-
 
     def save(self):
         """
@@ -359,13 +360,11 @@ class Device(six.with_metaclass(InfoMeta, object)):
         """
         raise NotImplementedError
 
-
     def __repr__(self):
         return '{} {} (prefix={}, z={})'.format(self.__class__.__name__,
-                                              self.name,
-                                              self.prefix,
-                                              self.z)
-
+                                                self.name,
+                                                self.prefix,
+                                                self.z)
 
     def __eq__(self, other):
         return (self.prefix, self.name) == (other.prefix, other.name)
