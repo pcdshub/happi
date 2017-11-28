@@ -94,7 +94,7 @@ class EntryInfo(object):
         -------
         value :
             Identical to the provided value except it may have been converted
-            to the correc type
+            to the correct type
 
         Raises
         ------
