@@ -1,2 +1,1 @@
-import pytest
-from .conftest import MockClient
+from .conftest import MockClient  # noqa
