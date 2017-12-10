@@ -10,7 +10,6 @@ import time as ttime
 ###############
 # Third Party #
 ###############
-import six
 
 ##########
 # Module #
@@ -21,6 +20,7 @@ from .backends import MongoBackend
 from .errors import EntryError, DatabaseError, SearchError
 
 logger = logging.getLogger(__name__)
+
 
 class Client(object):
     """
@@ -40,37 +40,35 @@ class Client(object):
     Attributes
     ----------
     device_types : dict
-        Mapping of Container namees to class types 
+        Mapping of Container namees to class types
 
     Raises
     -----
     DatabaseError:
         Raised if the Client fails to instantiate the Database
     """
-    #Device information
+    # Device information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'prefix'
-
-    device_types  = {'Device' : Device}
+    # Store device types seen by client
+    device_types = {'Device': Device}
 
     def __init__(self, database=None, db_type=MongoBackend, **kwargs):
-        #Get Container Mapping
-        self.device_types.update(dict([(name,cls) for (name,cls) in
+        # Get Container Mapping
+        self.device_types.update(dict([(name, cls) for (name, cls) in
                                        inspect.getmembers(containers,
                                                           inspect.isclass)
-                                       if issubclass(cls,Device)
-                                ]))
-        #Use supplied backend
+                                       if issubclass(cls, Device)]))
+        # Use supplied backend
         if database:
             self.backend = database
-        #Load database
+        # Load database
         else:
             try:
                 self.backend = db_type(**kwargs)
             except Exception as exc:
-                six.raise_from(DatabaseError("Failed to instantiate "
-                                             "a {} backend".format(db_type)),
-                                             exc)
+                raise DatabaseError("Failed to instantiate "
+                                    "a {} backend".format(db_type)) from exc
 
     def find_document(self, **kwargs):
         """
@@ -99,15 +97,13 @@ class Client(object):
         --------
         :meth:`.load_device`, :meth:`.search`
         """
-        #Request information from backend
+        # Request information from backend
         post = self.backend.find(multiples=False, **kwargs)
-
-        #Check result, if not found let the user know
+        # Check result, if not found let the user know
         if not post:
             raise SearchError('No device information found that '
                               'matches the search criteria')
         return post
-
 
     def create_device(self, device_cls, **kwargs):
         """
@@ -143,23 +139,17 @@ class Client(object):
         --------
         :attr:`.device_types`
         """
-        #If specified by a string
+        # If specified by a string
         if device_cls in self.device_types:
             device_cls = self.device_types[device_cls]
-
-
-        #Check that this is a valid Container
+        # Check that this is a valid Container
         if not issubclass(device_cls, Device):
             raise TypeError('{!r} is not a subclass of '
-                             'Device'.format(device_cls))
-
+                            'Device'.format(device_cls))
         device = device_cls(**kwargs)
-
-        #Add the method to the device
-        device.save = lambda : self.add_device(device)
-
+        # Add the method to the device
+        device.save = lambda: self.add_device(device)
         return device
-
 
     def add_device(self, device):
         """
@@ -174,20 +164,16 @@ class Client(object):
         ------
         EntryError:
             If all of the mandatory information for the device has not been
-            specified or there is already a device with that ``id`` in the 
+            specified or there is already a device with that ``id`` in the
             database
         """
         logger.info("Storing device %r ...", device)
-
-        #Store post
+        # Store post
         self._store(device, insert=True)
-
-        #Log success
+        # Log success
         logger.info('Device %r has been succesfully added to the '
                     'database', device)
 
-
-            
     def load_device(self, **post):
         """
         Used to query the database for an individual Device
@@ -197,7 +183,7 @@ class Client(object):
         Parameters
         ----------
         post :
-            Information to pertinent to the device 
+            Information to pertinent to the device
 
         Raises
         ------
@@ -211,23 +197,19 @@ class Client(object):
         """
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
-
-        #Instantiate Device
+        # Instantiate Device
         logger.debug("Instantiating device based on found information ...")
         try:
             device = self.create_device(doc['type'], **doc)
-
         except (KeyError, TypeError):
             raise EntryError('The information relating to the device class '
                              'has been modified to the point where the object '
                              'can not be initialized, please load the '
                              'corresponding document')
 
-        #Add the save method to the device
-        device.save = lambda : self._store(device, insert=False)
-
+        # Add the save method to the device
+        device.save = lambda: self._store(device, insert=False)
         return device
-
 
     def validate(self):
         """
@@ -246,33 +228,27 @@ class Client(object):
         send email or post to eLog to keep a running log of incorrect changes
         """
         bad = list()
-
         logger.debug('Loading database to validate contained devices ...')
         for post in self.backend.all_devices:
-            #Try and load device based on database info
+            # Try and load device based on database info
             try:
-                #Device identification
+                # Device identification
                 _id = post[self._id]
                 logger.debug('Attempting to initialize %s...', _id)
-                #Load Device
+                # Load Device
                 device = self.load_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
-
             except KeyError:
                 logger.error("Post has no id  %s", post)
-
-            #Log all generated exceptions
+            # Log all generated exceptions
             except Exception as e:
                 logger.warning("Failed to validate %s because %s", _id, e)
                 bad.append(_id)
-
-            #Report successes
+            # Report successes
             else:
                 logger.debug('Successfully validated %s', _id)
-
         return bad
-
 
     @property
     def all_devices(self):
@@ -281,11 +257,10 @@ class Client(object):
         """
         return self.search()
 
-
     def search(self, start=0., end=None, as_dict=False, **kwargs):
         """
         Search the database for a device or devices
-        
+
         Parameters
         -----------
         as_dict : bool, optional
@@ -314,32 +289,23 @@ class Client(object):
         """
         try:
             cur = self.backend.find(multiples=True, **kwargs)
-
         except TypeError:
             return None
-
-        #If beamline position matters
+        # If beamline position matters
         if start or end:
-
             if not end:
                 end = math.inf
-
             if start >= end:
                 raise ValueError("Invalid beamline range")
-
-            #Find all values within range
+            # Find all values within range
             cur = [info for info in cur
                    if start <= info['z'] and info['z'] < end]
-
         if not cur:
             return None
-
         elif as_dict:
             return cur
-
         else:
             return [self.load_device(**info) for info in cur]
-
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """
@@ -356,22 +322,19 @@ class Client(object):
         attrs : iterable
             Attributes to include, these will be a list of values
         """
-        #Load documents
+        # Load documents
         devs = self.all_devices
         logger.info('Creating file at %s ...', path)
-
-        #Load device information
+        # Load device information
         with path as f:
             for dev in devs:
                 try:
                     f.write(sep.join([getattr(dev, attr)
                                       for attr in attrs])
-                            +'\n')
-
+                            + '\n')
                 except KeyError as e:
                     logger.error("Device %s was missing attribute %s",
                                  dev.name, e)
-
 
     def remove_device(self, device):
         """
@@ -382,26 +345,21 @@ class Client(object):
         device : :class:`.Device`
             Device to be removed from the database
         """
-        #Device Check
+        # Device Check
         if not isinstance(device, Device):
             raise ValueError("Must supply an object of type `Device`")
-
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
-
-        #Check that device is in the database
+        # Check that device is in the database
         try:
-            _id =getattr(device, self._id)
+            _id = getattr(device, self._id)
             self.find_document(_id=_id)
-
-        #Log and re-raise
+        # Log and re-raise
         except SearchError:
             logger.exception('Target device was not found in the database')
             raise
-
         else:
             self.backend.delete(_id)
-
 
     def _validate_device(self, device):
         """
@@ -409,32 +367,26 @@ class Client(object):
         """
         logger.debug('Validating device %r ...', device)
 
-        #Check type
+        # Check type
         if not isinstance(device, Device):
             raise ValueError('{!r} is not a subclass of '
                              'Device'.format(device))
-
         logger.debug('Checking mandatory information has been entered ...')
-
-        #Check that all mandatory info has been entered
+        # Check that all mandatory info has been entered
         missing = [info.key for info in device.entry_info
                    if not info.optional and
-                   info.default== getattr(device, info.key)]
-
-        #Abort initialization if missing mandatory info
+                   info.default == getattr(device, info.key)]
+        # Abort initialization if missing mandatory info
         if missing:
-            raise EntryError('Missing mandatory information ({}) for {}' 
+            raise EntryError('Missing mandatory information ({}) for {}'
                              ''.format(', '.join(missing),
                                        device.__class__.__name__))
-
         logger.debug('Device %r has been validated.', device)
-
-                 
 
     def _store(self, device, insert=False):
         """
         Store a document in the database
-        
+
         Parameters
         ----------
         post : :class:`.Device`
@@ -457,36 +409,31 @@ class Client(object):
         """
         logger.debug('Loading a device into the collection ...')
 
-        #Validate device is ready for storage
+        # Validate device is ready for storage
         self._validate_device(device)
-
-        #Grab information from device
+        # Grab information from device
         post = device.post()
-
-        #Store creation time
+        # Store creation time
         creation = post.get('creation', ttime.ctime())
-
-        #Clean supplied information
+        # Clean supplied information
         [post.pop(key) for key in self._client_attrs if key in post]
-
-        #Note that device has some unrecognized metadata
-        for key in [key for key in post.keys() if key not in device.info_names]:
-            logger.warning("Device %r defines an extra piece of information "
-                           "under the keyword %s", device, key)
-
-        #Add metadata from the Client Side
-        post.update({'type'      : device.__class__.__name__,
-                     'creation'  : creation,
-                     'last_edit' : ttime.ctime()})
-        #Find id 
+        # Note that device has some unrecognized metadata
+        for key in post.keys():
+            if key not in device.info_names:
+                logger.debug("Device %r defines an extra piece of "
+                             "information under the keyword %s",
+                             device, key)
+        # Add metadata from the Client Side
+        post.update({'type': device.__class__.__name__,
+                     'creation': creation,
+                     'last_edit': ttime.ctime()})
+        # Find id
         try:
             _id = post[self._id]
-
         except KeyError:
             raise EntryError('Device did not supply the proper information to '
                              'interface with the database, missing {}'
                              ''.format(self._id))
-        #Store information
+        # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
-
