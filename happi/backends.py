@@ -13,10 +13,8 @@ import logging
 # Third Party #
 ###############
 import simplejson as json
-from six import with_metaclass
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
-
 
 ##########
 # Module #
@@ -37,7 +35,6 @@ class Backend(abc.ABCMeta):
         """
         raise NotImplementedError
 
-
     @abc.abstractmethod
     def find(self, multiples=False, **kwargs):
         """
@@ -53,7 +50,6 @@ class Backend(abc.ABCMeta):
             Requested information
         """
         raise NotImplementedError
-
 
     @abc.abstractmethod
     def save(self, _id, post, insert=True):
@@ -85,7 +81,6 @@ class Backend(abc.ABCMeta):
         """
         raise NotImplementedError
 
-
     @abc.abstractmethod
     def delete(self, _id):
         """
@@ -104,8 +99,7 @@ class Backend(abc.ABCMeta):
         raise NotImplementedError
 
 
-
-class MongoBackend(with_metaclass(Backend)):
+class MongoBackend(metaclass=Backend):
     """
     Abstraction for MongoDB backend
 
@@ -129,38 +123,33 @@ class MongoBackend(with_metaclass(Backend)):
     timeout : float, optional
         Time to wait for connection attempt
     """
-    _timeout  = 5
-    _conn_str = 'mongodb://{user}:{pw}@{host}/{db}' #String for login
+    _timeout = 5
+    _conn_str = 'mongodb://{user}:{pw}@{host}/{db}'  # String for login
 
     def __init__(self, host=None, user=None,
                  pw=None, db=None, timeout=None):
-        #Default timeout
+        # Default timeout
         timeout = timeout or self._timeout
-        #Format connection string
-        conn_str     = self._conn_str.format(user=user,pw=pw,host=host,db=db)
-
-        logging.debug('Attempting connection using %s ',conn_str)
+        # Format connection string
+        conn_str = self._conn_str.format(user=user, pw=pw,
+                                         host=host, db=db)
+        logging.debug('Attempting connection using %s ', conn_str)
         self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
-        self._db     = self._client[db] 
-
-        #Load collection
+        self._db = self._client[db]
+        # Load collection
         try:
             if self._coll_name not in self._db.collection_names():
                 raise DatabaseError('Unable to locate collection {} '
                                     'in database'.format(self._coll_name))
-
             self._collection = self._db[self._coll_name]
-
-        #Unable to view collection names
+        # Unable to view collection names
         except OperationFailure as e:
             raise PermissionError(e)
-
-        #Unable to connect to MongoDB instance
+        # Unable to connect to MongoDB instance
         except ServerSelectionTimeoutError:
             raise DatabaseError('Unable to connect to MongoDB instance, check '
                                 'that the server is running on the host and '
                                 'port specified at startup')
-
 
     @property
     def all_devices(self):
@@ -168,7 +157,6 @@ class MongoBackend(with_metaclass(Backend)):
         List of all device sub-dictionaries
         """
         return self._collection.find()
-
 
     def find(self, multiples=False, **kwargs):
         """
@@ -183,18 +171,17 @@ class MongoBackend(with_metaclass(Backend)):
         kwargs :
             Requested information
         """
-        #Find all matches
+        # Find all matches
         cur = list(self._collection.find(kwargs))
-        #Only return a single device if requested
+        # Only return a single device if requested
         if not multiples:
-            #Grab first item
+            # Grab first item
             try:
                 cur = cur[0]
-            #If no items were returned
+            # If no items were returned
             except IndexError:
                 logger.debug("No items found when searching for multiples")
         return cur
-
 
     def save(self, _id, post, insert=True):
         """
@@ -224,10 +211,10 @@ class MongoBackend(with_metaclass(Backend)):
             If the write operation fails due to issues with permissions
         """
         try:
-            #Add to database
-            result = self._collection.update_one({'_id'  : _id},
-                                                 {'$set' : post},
-                                                 upsert = insert)
+            # Add to database
+            result = self._collection.update_one({'_id': _id},
+                                                 {'$set': post},
+                                                 upsert=insert)
         except OperationFailure:
             raise PermissionError("Unauthorized command, make sure you are "
                                   "using a user with write permissions")
@@ -239,11 +226,10 @@ class MongoBackend(with_metaclass(Backend)):
                                  'device'.format(_id))
 
         if not insert and result.matched_count == 0:
-            raise SearchError('No device found with id {} please, if this is a '
-                              'new device, try add_device. If not, make '
+            raise SearchError('No device found with id {} please, if this is '
+                              'a new device, try add_device. If not, make '
                               'sure that the device information being sent is '
                               'correct'.format(_id))
-
 
     def delete(self, _id):
         """
@@ -257,7 +243,7 @@ class MongoBackend(with_metaclass(Backend)):
         self._collection.delete_one({'_id': _id})
 
 
-class JSONBackend(with_metaclass(Backend)):
+class JSONBackend(metaclass=Backend):
     """
     JSON database
 
@@ -273,12 +259,10 @@ class JSONBackend(with_metaclass(Backend)):
         Initialize a new empty JSON file to begin filling
     """
     def __init__(self, path, initialize=False):
-        self.path  = path
-
-        #Create a new JSON file if requested
+        self.path = path
+        # Create a new JSON file if requested
         if initialize:
             self.initialize()
-
 
     @property
     def all_devices(self):
@@ -286,8 +270,6 @@ class JSONBackend(with_metaclass(Backend)):
         All of the devices in the database
         """
         return list(self.load().values())
-
-
 
     def initialize(self):
         """
@@ -304,23 +286,21 @@ class JSONBackend(with_metaclass(Backend)):
         given path already points to a readable JSON file. In order to begin
         filling a new database, an empty but valid JSON file is created
         """
-        #Do not overwrite existing databases
+        # Do not overwrite existing databases
         if os.path.exists(self.path):
             raise PermissionError("File {} already exists. Can not initialize "
                                   "a new database.".format(self.path))
-        #Dump an empty dictionary
+        # Dump an empty dictionary
         json.dump({}, open(self.path, "w+"))
-
 
     def load(self):
         """
         Load the JSON database
 
         """
-        #Create file handle
+        # Create file handle
         handle = open(self.path, 'r')
         return json.load(handle)
-
 
     def store(self, db):
         """
@@ -336,16 +316,16 @@ class JSONBackend(with_metaclass(Backend)):
         BlockingIOError:
             If the file is already being used by another happi operation
         """
-        #Create file handle
+        # Create file handle
         handle = open(self.path, 'w+')
-        #Create lock in filesystem
+        # Create lock in filesystem
         fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        #Dump to file
+        # Dump to file
         try:
             json.dump(db, handle, sort_keys=True, indent=4)
 
         finally:
-            #Release lock in filesystem
+            # Release lock in filesystem
             fcntl.flock(handle, fcntl.LOCK_UN)
 
     def find(self, _id=None, multiples=False, **kwargs):
@@ -361,17 +341,17 @@ class JSONBackend(with_metaclass(Backend)):
         kwargs :
             Requested information
         """
-        #Load database
+        # Load database
         db = self.load()
 
-        #Search by _id, separated for speed
+        # Search by _id, separated for speed
         if _id:
             try:
                 matches = [db[_id]]
             except KeyError:
                 matches = []
 
-        #Find devices matching kwargs
+        # Find devices matching kwargs
         else:
             matches = [doc for doc in db.values()
                        if all([value == doc[key]
@@ -384,7 +364,6 @@ class JSONBackend(with_metaclass(Backend)):
                 matches = []
 
         return matches
-
 
     def save(self, _id, post, insert=True):
         """
@@ -413,29 +392,25 @@ class JSONBackend(with_metaclass(Backend)):
         PermissionError:
             If the write operation fails due to issues with permissions
         """
-        #Load database
+        # Load database
         db = self.load()
-
-        #New device
+        # New device
         if insert:
             if _id in db.keys():
                 raise DuplicateError("Device {} already exists".format(_id))
-            #Add _id keyword
-            post.update({'_id' : _id})
-            #Add to database
+            # Add _id keyword
+            post.update({'_id': _id})
+            # Add to database
             db[_id] = post
-
-        #Updating device
+        # Updating device
         else:
-            #Edit information
+            # Edit information
             try:
                 db[_id].update(post)
             except KeyError:
                 raise SearchError("No device found {}".format(_id))
-
-        #Save changes
+        # Save changes
         self.store(db)
-
 
     def delete(self, _id):
         """
@@ -451,14 +426,12 @@ class JSONBackend(with_metaclass(Backend)):
         PermissionError:
             If the write operation fails due to issues with permissions
         """
-        #Load database
+        # Load database
         db = self.load()
-        #Remove device
+        # Remove device
         try:
             db.pop(_id)
         except KeyError:
             logger.warning("Device %s not found in database", _id)
-        #Store database
+        # Store database
         self.store(db)
-
-

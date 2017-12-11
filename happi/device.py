@@ -2,7 +2,6 @@
 # Standard #
 ############
 import re
-import six
 import sys
 import logging
 
@@ -208,7 +207,7 @@ class InfoMeta(type):
         return clsobj
 
 
-class Device(six.with_metaclass(InfoMeta, object)):
+class Device(metaclass=InfoMeta):
     """
     A Generic Device Container
 

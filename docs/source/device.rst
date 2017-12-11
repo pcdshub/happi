@@ -42,42 +42,17 @@ Device container. This section documents the entries when they either do not
 exist in the generic device or require further clarification on a case-by-case
 basis.
 
-Gate Valve
-++++++++++
-.. autoclass:: happi.containers.GateValve
+.. autosummary::
+   :toctree: generated
 
-Slits
-+++++
-.. autoclass:: happi.containers.Slits
-
-PIM
-+++
-.. autoclass:: happi.containers.PIM
-
-IPM
-+++++
-.. autoclass:: happi.containers.IPM
-
-Attenuator
-++++++++++
-.. autoclass:: happi.containers.Attenuator
-
-Stopper
-+++++++
-.. autoclass:: happi.containers.Stopper
-
-Mirror
-++++++
-.. autoclass:: happi.containers.OffsetMirror
-
-PulsePicker
-++++++++++++
-.. autoclass:: happi.containers.PulsePicker
-
-LODCM
-+++++
-.. autoclass:: happi.containers.LODCM
-
-MovableStand
-+++++++++++++
-.. autoclass:: happi.containers.MovableStand
+   happi.containers.GateValve
+   happi.containers.Slits
+   happi.containers.PIM
+   happi.containers.PIM
+   happi.containers.IPM
+   happi.containers.Attenuator
+   happi.containers.Stopper
+   happi.containers.OffsetMirror
+   happi.containers.PulsePicker
+   happi.containers.LODCM
+   happi.containers.MovableStand

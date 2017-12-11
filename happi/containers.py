@@ -33,7 +33,8 @@ class Diagnostic(Device):
     """
     system = copy(Device.system)
     system.default = 'diagnostic'
-    data = EntryInfo('PV that gives us the diagnostic readback in EPICS.', enforce=str)
+    data = EntryInfo('PV that gives us the diagnostic readback in EPICS.',
+                     enforce=str)
 
 
 class BeamControl(Device):
@@ -82,10 +83,10 @@ class GateValve(Vacuum, MPS):
     Attributes
     ----------
     prefix : str
-        The prefix pv should be the record one level below the state and control
-        PVs. For example, if the open command pv is "HXX:MXT:VGC:01:OPN_SW",
-        the base pv is "HXX:MXT:VGC:01". A regex will be used to check that
-        "VGC" is found in the base PV.
+        The prefix pv should be the record one level below the state and
+        control PVs. For example, if the open command pv is
+        "HXX:MXT:VGC:01:OPN_SW", the base pv is "HXX:MXT:VGC:01". A regex will
+        be used to check that "VGC" is found in the base PV.
 
     mps : str
         The mps pv should be the prefix before the OPN_DI_MPSC segment. For
@@ -142,6 +143,7 @@ class PIM(Diagnostic):
     prefix = copy(Diagnostic.prefix)
     prefix.enforce = re.compile(r'.*PIM.*')
     prefix_det = EntryInfo("Prefix for associated camera", enforce=str)
+
 
 class IPM(Diagnostic):
     """
@@ -248,14 +250,15 @@ class OffsetMirror(BeamSteering, ExtraState):
         If the mirror is purely for alignment and not for steering, this can be
         an empty dict.
     """
-    prefix_xy    = EntryInfo("Prefix for Gantry Motion",
-                             enforce=str,
-                             optional=False)
+    prefix_xy = EntryInfo("Prefix for Gantry Motion",
+                          enforce=str,
+                          optional=False)
     state_prefix = EntryInfo("Prefix for state summary ", enforce=str)
-    in_lines     = EntryInfo("Name of beamlines delivered beam "
-                             "when the mirror is inserted", enforce=list)
-    out_lines    = EntryInfo("Name of beamlines delivered beam "
-                             "when the mirror is removed", enforce=list)
+    in_lines = EntryInfo("Name of beamlines delivered beam "
+                         "when the mirror is inserted", enforce=list)
+    out_lines = EntryInfo("Name of beamlines delivered beam "
+                          "when the mirror is removed", enforce=list)
+
 
 class PulsePicker(BeamControl, ExtraState):
     """
@@ -301,6 +304,7 @@ class LODCM(BeamSteering, ExtraStates):
         to that crystal, or an empty list if no such PVs exist.
     """
     pass
+
 
 class MovableStand(Device):
     """
