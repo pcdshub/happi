@@ -1,0 +1,82 @@
+"""
+Abstract backend database options
+"""
+import abc
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class Backend(abc.ABCMeta):
+    """
+    Abstract interface for backend database
+    """
+    @abc.abstractproperty
+    def devices(self):
+        """
+        List of all device sub-dictionaries
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def find(self, multiples=False, **kwargs):
+        """
+        Find an instance or instances that matches the search criteria
+
+        Parameters
+        ----------
+        multiples : bool
+            Find a single result or all results matching the provided
+            information
+
+        kwargs :
+            Requested information
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def save(self, _id, post, insert=True):
+        """
+        Save information to the database
+
+        Parameters
+        ----------
+        _id : str
+            ID of device
+
+        post : dict
+            Information to place in database
+
+        insert : bool, optional
+            Whether or not this a new device to the database
+
+        Raises
+        ------
+        DuplicateError:
+            If insert is True, but there is already a device with the provided
+            _id
+
+        SearchError:
+            If insert is False, but there is no device with the provided _id
+
+        PermissionError:
+            If the write operation fails due to issues with permissions
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def delete(self, _id):
+        """
+        Delete a device instance from the database
+
+        Parameters
+        ----------
+        _id : str
+            ID of device
+
+        Raises
+        ------
+        PermissionError:
+            If the write operation fails due to issues with permissions
+        """
+        raise NotImplementedError

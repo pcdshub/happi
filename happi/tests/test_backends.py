@@ -1,20 +1,12 @@
-############
-# Standard #
-############
 import os
 import fcntl
 import os.path
-###############
-# Third Party #
-###############
+
 import pytest
 import simplejson
 
-##########
-# Module #
-##########
 from .conftest import requires_mongomock, MockMongoBackend
-from happi.backends import JSONBackend
+from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 
 

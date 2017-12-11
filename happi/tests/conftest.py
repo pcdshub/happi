@@ -1,19 +1,11 @@
-############
-# Standard #
-############
 import logging
 
-###############
-# Third Party #
-###############
 import pytest
 import simplejson
 
-##########
-# Module #
-##########
 from happi import Client, Device
-from happi.backends import JSONBackend, MongoBackend
+from happi.backends.json_db import JSONBackend
+from happi.backends.mongo_db import MongoBackend
 
 logger = logging.getLogger(__name__)
 
