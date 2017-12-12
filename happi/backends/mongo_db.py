@@ -40,7 +40,8 @@ class MongoBackend(metaclass=Backend):
     _conn_str = 'mongodb://{user}:{pw}@{host}/{db}'  # String for login
 
     def __init__(self, host=None, user=None,
-                 pw=None, db=None, timeout=None):
+                 pw=None, db=None, collection=None,
+                 timeout=None):
         # Default timeout
         timeout = timeout or self._timeout
         # Format connection string
@@ -51,10 +52,10 @@ class MongoBackend(metaclass=Backend):
         self._db = self._client[db]
         # Load collection
         try:
-            if self._coll_name not in self._db.collection_names():
+            if collection not in self._db.collection_names():
                 raise DatabaseError('Unable to locate collection {} '
-                                    'in database'.format(self._coll_name))
-            self._collection = self._db[self._coll_name]
+                                    'in database'.format(collection))
+            self._collection = self._db[collection]
         # Unable to view collection names
         except OperationFailure as e:
             raise PermissionError(e)
