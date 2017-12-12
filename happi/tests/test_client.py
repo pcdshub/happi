@@ -1,18 +1,9 @@
-############
-# Standard #
-############
 import os
 import logging
 import tempfile
 
-###############
-# Third Party #
-###############
 import pytest
 
-##########
-# Module #
-##########
 from happi import Device
 from happi.containers import GateValve
 from happi.errors import SearchError, DuplicateError, EntryError
@@ -88,7 +79,7 @@ class TestClient:
         assert device.beamline == valve_info['beamline']
         # Save
         device.save()
-        loaded_device = client.load_device(**valve_info)
+        loaded_device = client.find_device(**valve_info)
         assert loaded_device.prefix == valve_info['prefix']
         assert loaded_device.name == valve_info['name']
         assert loaded_device.z == valve_info['z']
@@ -114,18 +105,18 @@ class TestClient:
         with pytest.raises(EntryError):
             client.add_device(d)
 
-    def test_add_and_load_device(self, mc, valve, valve_info):
+    def test_add_and_find_device(self, mc, valve, valve_info):
         client = mc()
         client.add_device(valve)
-        loaded_device = client.load_device(**valve_info)
+        loaded_device = client.find_device(**valve_info)
         assert loaded_device.prefix == valve.prefix
         assert loaded_device.name == valve.name
         assert loaded_device.z == valve.z
         assert loaded_device.beamline == valve.beamline
 
-    def test_load_device(self, mc, device_info):
+    def test_find_device(self, mc, device_info):
         client = mc()
-        device = client.load_device(**device_info)
+        device = client.find_device(**device_info)
         assert isinstance(device, Device)
         assert device.prefix == device_info['prefix']
         assert device.name == device_info['name']
@@ -134,7 +125,7 @@ class TestClient:
         # Test edit and save
         device.stand = 'DG3'
         device.save()
-        loaded_device = client.load_device(**device_info)
+        loaded_device = client.find_device(**device_info)
         assert loaded_device.prefix == device_info['prefix']
         assert loaded_device.name == device_info['name']
         assert loaded_device.z == device_info['z']
@@ -144,7 +135,7 @@ class TestClient:
         bad = {'a': 'b'}
         client.backend.save('a', bad, insert=True)
         with pytest.raises(EntryError):
-            client.load_device(**bad)
+            client.find_device(**bad)
 
     def test_validate(self, mc):
         client = mc()

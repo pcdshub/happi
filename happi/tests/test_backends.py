@@ -5,16 +5,14 @@ import os.path
 import pytest
 import simplejson
 
-from .conftest import requires_mongomock, MockMongoBackend
+from .conftest import requires_mongomock, mockmongoclient
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 
 
 @pytest.fixture(scope='function')
-def mockmongo(device_info):
-    mm = MockMongoBackend()
-    mm._collection.insert_one(device_info)
-    return mm
+def mockmongo():
+    return mockmongoclient().backend
 
 
 @pytest.fixture(scope='function')

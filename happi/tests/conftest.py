@@ -1,4 +1,5 @@
 import logging
+from unittest.mock import patch
 
 import pytest
 import simplejson
@@ -66,38 +67,16 @@ def mockjsonclient():
     return Client(database=db)
 
 
-#############################################
-# Classes created to mock a running MongoDB #
-#############################################
 @pytest.fixture(scope='function')
-def mockmongoclient():
-    # Instantiate Fake Mongo Client
-    client = MockClient()
-    # Insert a single device
-    client.backend._collection.insert_one(device_info())
-    return client
-
-
-class MockMongoBackend(MongoBackend):
-    """
-    Mock a MongoDB database
-    """
-    def __init__(self, *args, **kwargs):
-        # Try and connect to non-existant db
-        try:
-            super(MockMongoBackend, self).__init__(timeout=0.001)
-        except Exception:
-            pass
-        # Replace with mock client
-        finally:
-            self._client = MongoClient()
-            self._db = self._client['test']
-            self._collection = self._db['happi']
-
-
-class MockClient(Client):
-    """
-    Mock a full Happi Client
-    """
-    def __init__(self, *args, **kwargs):
-        super(MockClient, self).__init__(db_type=MockMongoBackend, **kwargs)
+def mockmongoclient(*args):
+    with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
+        mc = MongoClient()
+        mc['test_db'].create_collection('test_collect')
+        mock_mongo.return_value = mc
+        # Client
+        backend = MongoBackend(db='test_db',
+                               collection='test_collect')
+        client = Client(database=backend)
+        # Insert a single device
+        client.backend._collection.insert_one(device_info())
+        return client
