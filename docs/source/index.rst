@@ -14,15 +14,16 @@ there are still standards within the group we need to uphold.
 
 .. toctree::
    :maxdepth: 1
-   :caption: User Documentation
+   :caption: Tutorial
 
    conventions.rst
    client.rst
-   device.rst
+   develop.rst
 
 .. toctree::
    :maxdepth: 1
-   :caption: Developer Documentation
+   :caption: API Documentation
 
-   develop.rst
-   todo.rst
+   client_api.rst
+   backends.rst
+   containers.rst
