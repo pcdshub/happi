@@ -209,11 +209,6 @@ class Client:
         -------
         ids : list
             List of device ids that have failed verification
-
-        Todo
-        ----
-        Automated script to scan database and alert invalid devices. Either
-        send email or post to eLog to keep a running log of incorrect changes
         """
         bad = list()
         logger.debug('Loading database to validate contained devices ...')
