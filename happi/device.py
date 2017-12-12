@@ -1,6 +1,3 @@
-############
-# Standard #
-############
 import re
 import sys
 import logging
@@ -8,13 +5,6 @@ import logging
 from collections import OrderedDict
 from prettytable import PrettyTable
 
-###############
-# Third Party #
-###############
-
-##########
-# Module #
-##########
 from .errors import ContainerError
 
 logger = logging.getLogger(__name__)

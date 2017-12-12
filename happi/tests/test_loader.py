@@ -1,15 +1,3 @@
-############
-# Standard #
-############
-
-###############
-# Third Party #
-###############
-
-
-##########
-# Module #
-##########
 from happi import Device, EntryInfo
 from happi.loader import fill_template, from_container, load_devices
 from happi.utils import create_alias

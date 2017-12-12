@@ -1,18 +1,6 @@
 """
 Basic module utilities
 """
-############
-# Standard #
-############
-
-###############
-# Third Party #
-###############
-
-
-##########
-# Module #
-##########
 
 
 def create_alias(name):

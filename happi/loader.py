@@ -1,23 +1,13 @@
 """
 Functions to instantiate the Python representations of happi Containers
 """
-############
-# Standard #
-############
 import sys
 import types
 import logging
 import importlib
 
-###############
-# Third Party #
-###############
 from jinja2 import Environment, meta
 
-
-##########
-# Module #
-##########
 from .utils import create_alias
 
 logger = logging.getLogger(__name__)
