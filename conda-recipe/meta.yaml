@@ -13,7 +13,6 @@ requirements:
 
 
     run:
-      - six
       - jinja2
       - prettytable
       - simplejson

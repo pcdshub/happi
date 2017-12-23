@@ -1,28 +1,18 @@
-############
-# Standard #
-############
 import os
 import fcntl
 import os.path
-###############
-# Third Party #
-###############
+
 import pytest
 import simplejson
 
-##########
-# Module #
-##########
-from .conftest import requires_mongomock, MockMongoBackend
-from happi.backends import JSONBackend
+from .conftest import requires_mongomock, mockmongoclient
+from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 
 
 @pytest.fixture(scope='function')
-def mockmongo(device_info):
-    mm = MockMongoBackend()
-    mm._collection.insert_one(device_info)
-    return mm
+def mockmongo():
+    return mockmongoclient().backend
 
 
 @pytest.fixture(scope='function')

@@ -30,23 +30,10 @@ Beamline refers to a single segment of the full path with no branching paths.
 Paths may only branch between beamlines. As a convention, we are adopting the
 following beamline names for the branching paths:
 
-* FEE: from the start of the FEE to M1S.
-* SXD: from M1S to M2S
-* AMO: from M2S to the AMO IP
-* SXR: from M2S to the SXR IP
-* HXD: from M1S to XPP LODCM Crystal 1
-* XPP: from XPP LODCM Crystal 1 to the XPP IP
-* PINK: from XPP LODCM Crystal 1 to XRT-M1
-* PERI: from XRT-M1 to XCS LODCM Crystal 2
-* XCS: from XCS LODCM Crystal 2 to the XCS IP
-* XRT_0: from XRT-M1 to XRT-M2
-* XRT_1: from XRT-M2 to XCS LODCM Crystal 1
-* XCS_LOM: from XCS LODCM Crystal 1 to Crystal 2
-* CXI: from XCS LODCM Crystal 1 to the CXI IP
-* MEC: from XRT-M2 to the MEC IP
-* MFX: from XRT-M2 to the MFX IP
+.. figure:: _static/LCLS.png
 
-Mirrors and other steering devices should be the last element of a beamline.
+   Drawing of LCLS beamline layout
+
 Note that this naming scheme will necessarily have to change for lcls 2.
 
 z

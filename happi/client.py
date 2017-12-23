@@ -1,28 +1,18 @@
-############
-# Standard #
-############
 import sys
 import math
 import logging
 import inspect
 import time as ttime
 
-###############
-# Third Party #
-###############
-
-##########
-# Module #
-##########
 from . import containers
 from .device import Device
-from .backends import MongoBackend
 from .errors import EntryError, DatabaseError, SearchError
+from .backends import backend
 
 logger = logging.getLogger(__name__)
 
 
-class Client(object):
+class Client:
     """
     The client to control the contents of the Happi Database
 
@@ -30,9 +20,6 @@ class Client(object):
     ----------
     database : happi.backends.Backend
         A already instantiated backend
-
-    db_type : happi.backends.Backend
-        A class to use if the database keyword is `None`
 
     kwargs:
         Passed to the `db_type` backend
@@ -53,7 +40,7 @@ class Client(object):
     # Store device types seen by client
     device_types = {'Device': Device}
 
-    def __init__(self, database=None, db_type=MongoBackend, **kwargs):
+    def __init__(self, database=None, **kwargs):
         # Get Container Mapping
         self.device_types.update(dict([(name, cls) for (name, cls) in
                                        inspect.getmembers(containers,
@@ -64,11 +51,12 @@ class Client(object):
             self.backend = database
         # Load database
         else:
+            logger.info("No database given, using '%s'", backend)
             try:
-                self.backend = db_type(**kwargs)
+                self.backend = backend(**kwargs)
             except Exception as exc:
                 raise DatabaseError("Failed to instantiate "
-                                    "a {} backend".format(db_type)) from exc
+                                    "a {} backend".format(backend)) from exc
 
     def find_document(self, **kwargs):
         """
@@ -95,7 +83,7 @@ class Client(object):
 
         See Also
         --------
-        :meth:`.load_device`, :meth:`.search`
+        :meth:`.find_device`, :meth:`.search`
         """
         # Request information from backend
         post = self.backend.find(multiples=False, **kwargs)
@@ -174,7 +162,7 @@ class Client(object):
         logger.info('Device %r has been succesfully added to the '
                     'database', device)
 
-    def load_device(self, **post):
+    def find_device(self, **post):
         """
         Used to query the database for an individual Device
 
@@ -221,11 +209,6 @@ class Client(object):
         -------
         ids : list
             List of device ids that have failed verification
-
-        Todo
-        ----
-        Automated script to scan database and alert invalid devices. Either
-        send email or post to eLog to keep a running log of incorrect changes
         """
         bad = list()
         logger.debug('Loading database to validate contained devices ...')
@@ -236,7 +219,7 @@ class Client(object):
                 _id = post[self._id]
                 logger.debug('Attempting to initialize %s...', _id)
                 # Load Device
-                device = self.load_device(**post)
+                device = self.find_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
             except KeyError:
@@ -305,7 +288,7 @@ class Client(object):
         elif as_dict:
             return cur
         else:
-            return [self.load_device(**info) for info in cur]
+            return [self.find_device(**info) for info in cur]
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """

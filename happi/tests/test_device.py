@@ -1,17 +1,8 @@
-############
-# Standard #
-############
 import re
 import io
 
-###############
-# Third Party #
-###############
 import pytest
 
-##########
-# Module #
-##########
 from happi import Device
 from happi.errors import ContainerError
 from happi.device import EntryInfo

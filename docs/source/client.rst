@@ -1,30 +1,19 @@
 .. _client_label:
 
-Client 
-******
+Using the Client
+****************
 Users will interact with the database by using the :class:`happi.Client`, this
 will handle the authentication, and methods for adding, editing and removing
 devices.
 
-By default the MongoDB underneath happi is incredibly flexible, allowing us to
-put arbitrary key-value pair information into the databse. While this will make
-adding functionality easy in the future, it also means that any rules on the
-structure of the data we allow will need to be performed by the
-:class:`.happi.Client` itself. To make this intuitive, the client deals
-primarily with objects we will call Device Containers, see :ref:`device_label`
-in order to see more about how the devices are created. However the basic use
-cases for the client can be demonstrated without much knowledge of how the
-:class:`.Device` container works.
-
-Authentication
-^^^^^^^^^^^^^^
-There are two accounts available for accessing the Happi database, one of which
-is embedded in the source code itself that provides basic reading privilege,
-the other which allows you to add and edit.
-
-The :class:`.Client` also assumes a host and port name of the MongoDB instance.
-All of this information can be entered upon intialization of the client using
-keyword arguments. 
+Happi is incredibly flexible, allowing us to put arbitrary key-value pair
+information into the databse. While this will make adding functionality easy in
+the future, it also means that any rules on the structure of the data we allow
+will need to be performed by the :class:`.happi.Client` itself. To make this
+intuitive, the client deals primarily with objects we will call Device
+Containers, see :ref:`device_label` in order to see more about how the devices
+are created. However the basic use cases for the client can be demonstrated
+without much knowledge of how the :class:`.Device` container works.
 
 .. _entry_code:
 
@@ -32,15 +21,26 @@ Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
 A new device must be a subclass of the basic container :class:`.Device`.
 While you are free to use the initialized object whereever you see fit, the client
-has a hook to create new devices. The examples belows use a ``MockClient`` so
-that the tutorial does not change actual database files.
+has a hook to create new devices. 
+
+Before we can create our first client, we need to create a backend for our device
+information to be stored.
 
 .. ipython:: python
 
-    import happi
-    
-    import happi.tests 
-    client = happi.tests.MockClient(user='test',pw='test',db='test')
+    from happi.backends.json_db import JSONBackend
+
+    db = JSONBackend(path='doc_test.json', initialize=True)
+
+If you are connecting to an existing database you can pass the information
+directly into the ``Client`` itself at `__init__``. See :ref:`db_choice`
+about how to configure your default backend choice
+
+.. ipython:: python
+
+    from happi import Client, Device
+
+    client = Client(path='doc_test.json')
 
     device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5)
     
@@ -51,7 +51,7 @@ explicitly using :meth:`.Device.save`
 
 .. ipython:: python
 
-    device = happi.Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5)
+    device = Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5)
    
     client.add_device(device)
 
@@ -65,7 +65,7 @@ into the database. For more information on device creation see
 Searching the Database
 ^^^^^^^^^^^^^^^^^^^^^^
 There are two ways to load information from the database
-:meth:`.Client.load_device` and :meth:`.Client.search`. The former should only
+:meth:`.Client.find_device` and :meth:`.Client.search`. The former should only
 be used to load one device at at a time. Both accept criteria in the from of
 keyword-value pairs to find the device or device/s you desire. Here are some
 example searches to demonstrate the power of the Happi Client
@@ -96,28 +96,28 @@ criteria, an ``SearchError`` will be raised
 
 .. ipython:: python
 
-   device =  client.load_device(prefix='PV:BASE2')
+   device =  client.find_device(prefix='PV:BASE2')
 
    print(device.prefix, device.name)
 
    try:
-       client.load_device(name='non-existant')
-   except happi.errors.SearchError as e:
-       print(e)
+       client.find_device(name='non-existant')
+   except Exception as exc:
+       print(exc)
 
 
 Editing Device Information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 The workflow for editing a device looks very similar to the code within
 :ref:`entry_code`, but instead of instantiating the device you use either
-:meth:`.Client.load_device` or :meth:`.Client.search` to grab an existing device from
+:meth:`.Client.find_device` or :meth:`.Client.search` to grab an existing device from
 the dataprefix. When the device is retreived this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
 
 .. ipython:: python
 
-    my_motor = client.load_device(prefix='PV:BASE')
+    my_motor = client.find_device(prefix='PV:BASE')
     
     my_motor.z = 425.4
     
@@ -135,15 +135,20 @@ Finally, lets clean up our example objects by using
 
 .. ipython:: python
 
-    device_1 = client.load_device(name='my_device')
+    device_1 = client.find_device(name='my_device')
     
-    device_2 = client.load_device(name='my_device2')
+    device_2 = client.find_device(name='my_device2')
 
     for device in (device_1, device_2):
         client.remove_device(device)
 
-Client API
-^^^^^^^^^^
-.. autoclass:: happi.Client
-   :members:
+.. _db_choice:
+
+Selecting a Backend
+^^^^^^^^^^^^^^^^^^^
+Happi supports both JSON and MongoDB backends. You can always import your
+chosen backend directly, but in order to save time you can create an
+environment variable ``HAPPI_BACKEND`` and set this to ``"mongodb"``. This well
+tell the library to assume you want to use the :class:`.MongoBackend`.
+Otherwise, the library uses the :class:`.JSONBackend`.
 
