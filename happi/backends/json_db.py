@@ -66,7 +66,6 @@ class JSONBackend(metaclass=Backend):
     def load(self):
         """
         Load the JSON database
-
         """
         # Create file handle
         handle = open(self.path, 'r')
