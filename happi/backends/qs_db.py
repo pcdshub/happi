@@ -39,7 +39,7 @@ class QSBackend(JSONBackend):
         Proposal identifier i.e "LR32"
     """
     ws_url = 'https://pswww.slac.stanford.edu/ws-kerb/questionnaire'
-    device_translations = {'motors': 'pcdsdevices.EpicsMotor'}
+    device_translations = {'motors': 'pcdsdevices.epics_motor.EpicsMotor'}
 
     def __init__(self, run_no, proposal):
         # Create our client and gather the raw information from the client
