@@ -23,6 +23,19 @@ except ImportError as exc:
 requires_mongomock = pytest.mark.skipif(not has_mongomock,
                                         reason='Missing mongomock')
 
+# Conditional import of mongomock
+try:
+    from psdm_qs_cli import QuestionnaireClient
+    from happi.backends.qs_db import QSBackend
+    has_qs_cli = True
+except ImportError as exc:
+    logger.warning('Error importing psdm_qs_cli : -> %s', exc)
+    has_qs_cli = False
+
+
+requires_questionnaire = pytest.mark.skipif(not has_qs_cli,
+                                            reason='Missing psdm_qs_cli')
+
 
 @pytest.fixture(scope='function')
 def device_info():
@@ -80,3 +93,58 @@ def mockmongoclient(*args):
         # Insert a single device
         client.backend._collection.insert_one(device_info())
         return client
+
+
+@pytest.fixture(scope='module')
+def mockqsbackend():
+    # Create a very basic mock class
+    class MockQuestionnaireClient(QuestionnaireClient):
+
+        def getProposalsListForRun(self, run):
+            return {'X534': {'Instrument': 'TST', 'proposal_id': 'X534'},
+                    'LR32': {'Instrument': 'TST', 'proposal_id': 'LR32'}}
+
+        def getProposalDetailsForRun(self, run_no, proposal):
+            return {
+                'pcdssetup-motors-enc-1-desc': '',
+                'pcdssetup-motors-enc-2-desc': '',
+                'pcdssetup-motors-enc-3-desc': '',
+                'pcdssetup-motors-enc-4-desc': '',
+                'pcdssetup-motors-setup-1-location': 'Hutch-main experimental',
+                'pcdssetup-motors-setup-1-name': 'sam_x',
+                'pcdssetup-motors-setup-1-purpose': 'sample x motion',
+                'pcdssetup-motors-setup-1-pvbase': 'TST:USR:MMS:01',
+                'pcdssetup-motors-setup-1-stageidentity': 'IMS MD23',
+                'pcdssetup-motors-setup-2-location': 'Hutch-main experimental',
+                'pcdssetup-motors-setup-2-name': 'sam_z',
+                'pcdssetup-motors-setup-2-purpose': 'sample z motion',
+                'pcdssetup-motors-setup-2-pvbase': 'TST:USR:MMS:02',
+                'pcdssetup-motors-setup-2-stageidentity': 'IMS MD23',
+                'pcdssetup-motors-setup-3-location': 'Hutch-main experimental',
+                'pcdssetup-motors-setup-3-name': 'sam_y',
+                'pcdssetup-motors-setup-3-purpose': 'sample y motion',
+                'pcdssetup-motors-setup-3-pvbase': 'TST:USR:MMS:03',
+                'pcdssetup-motors-setup-3-stageidentity': 'IMS MD32',
+                'pcdssetup-motors-setup-4-location': 'Hutch-main experimental',
+                'pcdssetup-motors-setup-4-name': 'sam_r',
+                'pcdssetup-motors-setup-4-purpose': 'sample rotation',
+                'pcdssetup-motors-setup-4-pvbase': 'TST:USR:MMS:04',
+                'pcdssetup-motors-setup-4-stageidentity': 'IMS MD23',
+                'pcdssetup-motors-setup-5-location': 'Hutch-main experimental',
+                'pcdssetup-motors-setup-5-name': 'sam_az',
+                'pcdssetup-motors-setup-5-purpose': 'sample azimuth',
+                'pcdssetup-motors-setup-5-pvbase': 'TST:USR:MMS:05',
+                'pcdssetup-motors-setup-5-stageidentity': 'IMS MD23',
+                'pcdssetup-motors-setup-6-location': 'Hutch-main experimental',
+                'pcdssetup-motors-setup-6-name': 'sam_flip',
+                'pcdssetup-motors-setup-6-purpose': 'sample flip',
+                'pcdssetup-motors-setup-6-pvbase': 'TST:USR:MMS:06',
+                'pcdssetup-motors-setup-6-stageidentity': 'IMS MD23'}
+
+    with patch('happi.backends.qs_db.QuestionnaireClient') as qs_cli:
+        # Replace QuestionnaireClient with our test version
+        mock_qs = MockQuestionnaireClient(QSBackend.ws_url, use_kerberos=False)
+        qs_cli.return_value = mock_qs
+        # Instantiate a fake device
+        backend = QSBackend(15, 'LR32')
+        return backend
