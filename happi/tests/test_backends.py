@@ -5,9 +5,11 @@ import os.path
 import pytest
 import simplejson
 
-from .conftest import requires_mongomock, mockmongoclient
+from .conftest import (requires_questionnaire, requires_mongomock,
+                       mockmongoclient)
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
+from happi import Client
 
 
 @pytest.fixture(scope='function')
@@ -141,3 +143,15 @@ def test_json_initialize():
         JSONBackend("testing.json", initialize=True)
     # Cleanup
     os.remove("testing.json")
+
+
+@requires_questionnaire
+def test_qs_find(mockqsbackend):
+    assert len(mockqsbackend.find(beamline='TST', multiples=True)) == 6
+    assert len(mockqsbackend.find(name='sam_r', multiples=True)) == 1
+
+
+@requires_questionnaire
+def test_qsbackend_with_client(mockqsbackend):
+    c = Client(database=mockqsbackend)
+    assert len(c.all_devices) == 6
