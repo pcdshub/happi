@@ -23,7 +23,7 @@ except ImportError as exc:
 requires_mongomock = pytest.mark.skipif(not has_mongomock,
                                         reason='Missing mongomock')
 
-# Conditional import of mongomock
+# Conditional import of psdm_qs_cli
 try:
     from psdm_qs_cli import QuestionnaireClient
     from happi.backends.qs_db import QSBackend
