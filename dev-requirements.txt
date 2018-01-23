@@ -1,0 +1,8 @@
+pytest
+codecov
+doctr
+ipython
+matplotlib
+sphinx
+sphinx_rtd_theme
+psdm_qs_cli
