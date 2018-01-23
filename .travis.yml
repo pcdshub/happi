@@ -7,34 +7,36 @@ env:
 matrix:
   include:
       - python: 3.5
+        env: PCDS_CHANNEL=pcds-tag  
+      - python: 3.5
+        env: PCDS_CHANNEL=pcds-dev
       - python: 3.6
-        env: BUILD_DOCS=1
-
+        env: PCDS_CHANNEL=pcds-dev  
+      - python: 3.6
+        env:
+           - BUILD_DOCS=1
+           - PCDS_CHANNEL=pcds-tag
 install:
   - sudo apt-get update
-  # We do this conditionally because it saves us some downloading if the
-  # version is the same.
-  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-    else
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-    fi
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda install conda-build anaconda-client
   - conda update -q conda conda-build
-  - conda config --append channels pcds-tag
+  - conda config --append channels $PCDS_CHANNEL
+  - conda config --append channels conda-forge
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION simplejson coverage pip pymongo pytest psdm_qs_cli -c conda-forge
+  # Test conda build
+  - conda build -q conda-recipe --python=$TRAVIS_PYTHON_VERSION --output-folder bld-dir
+  - conda config --add channels "file://`pwd`/bld-dir"
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION happi --file dev-requirements.txt
   - source activate test-environment
-  - pip install -r requirements.txt
-  - pip install -r test-requirements.txt
-  - pip install codecov
-  - python setup.py install
-
+  # TODO: mongomock is not currently available via conda. Ultimately we should
+  # probably build this ourselves, but until that day we resort to `pip`
+  - pip install mongomock
 script:
   - coverage run run_tests.py
   - coverage report -m
@@ -42,7 +44,6 @@ script:
   # Build docs.
   - |
     if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY" && $BUILD_DOCS ]]; then
-      pip install -r docs-requirements.txt
       pushd docs
       sphinx-autogen -o source/generated source/*.rst 
       make html
@@ -55,9 +56,11 @@ after_success:
   - codecov
   - |
     if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $CONDA_UPLOAD_TOKEN_TAG != '' ]]; then
-      conda build . -c defaults -c conda-forge --token $CONDA_UPLOAD_TOKEN_TAG --python $TRAVIS_PYTHON_VERSION
+      export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
+      anaconda upload bld-dir/linux-64/*.tar.bz2
     fi
   - |
     if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $TRAVIS_BRANCH == 'master' && $TRAVIS_TAG == '' && $CONDA_UPLOAD_TOKEN_DEV != '' ]]; then
-      conda build . -c defaults -c conda-forge --token $CONDA_UPLOAD_TOKEN_DEV --python $TRAVIS_PYTHON_VERSION
+      export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
+      anaconda upload bld-dir/linux-64/*.tar.bz2
     fi
