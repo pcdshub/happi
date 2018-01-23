@@ -13,3 +13,4 @@ Backend Choices
 
    happi.backends.mongo_db.MongoBackend
    happi.backends.json_db.JSONBackend
+   happi.backends.qs_db.QSBackend
