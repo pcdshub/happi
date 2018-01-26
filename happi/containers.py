@@ -41,31 +41,12 @@ class BeamSteering(BeamControl):
                              optional=False, enforce=dict)
 
 
-class ExtraState(Device):
-    """
-    Parent class for devices that need a single extra states PV because one
-    base PV is insufficient to fully define the device.
-    """
-    states = EntryInfo('Extra state PV, in addition to base.',
-                       optional=False, enforce=str)
-
-
-class ExtraStates(Device):
-    """
-    Parent class for devices that need multiple extra states PVs because one
-    base PV is insufficient to fully define the device.
-    """
-    states = EntryInfo('Extra states PVs, in addition to base.',
-                       optional=False, enforce=list)
-
-
 # Basic classes that inherit from above
 class GateValve(Vacuum):
     """
-    Standard MPS isolation valves. Generally, these close when there is a
+    Standard isolation valves. Generally, these close when there is a
     problem and beam is not allowed. Devices made with this class will be set
-    as part of the vacuum system. These devices have mps and veto attributes in
-    addition to the standard entries.
+    as part of the vacuum system.
 
     Attributes
     ----------
@@ -75,18 +56,13 @@ class GateValve(Vacuum):
         "HXX:MXT:VGC:01:OPN_SW", the base pv is "HXX:MXT:VGC:01". A regex will
         be used to check that "VGC" is found in the base PV.
 
-    mps : str
-        The mps pv should be the prefix before the OPN_DI_MPSC segment. For
-        example, if the open PV is "HXX:MXT:VGC_01:OPN_DI_MPSC", the base PV
-        would be "HXX:MXT:VGC_01".
-
     veto : bool
         Set this to True if the gate valve is a veto device.
     """
     prefix = copy(Vacuum.prefix)
     prefix.enforce = re.compile(r'.*VGC.*')
     device_class = copy(Device.device_class)
-    device_class = 'pcdsdevices.device_types.GateValve'
+    device_class.default = 'pcdsdevices.device_types.GateValve'
 
 
 class Slits(BeamControl):
@@ -216,7 +192,7 @@ class Stopper(Device):
     device_class = 'pcdsdevices.device_types.Stopper'
 
 
-class OffsetMirror(BeamSteering, ExtraState):
+class OffsetMirror(BeamSteering):
     """
     A device that steers beam in the x direction by changing a pitch motor.
     These are used for beam delivery and alignment. These have additional
@@ -247,7 +223,7 @@ class OffsetMirror(BeamSteering, ExtraState):
     xgantry_prefix = EntryInfo("Prefix for the X Gantry", enforce=str)
 
 
-class PulsePicker(BeamControl, ExtraState):
+class PulsePicker(BeamControl):
     """
     A device that syncs with the timing system to control when beam arrives in
     the hutch. These have an additional states entry to define their in/out
@@ -268,7 +244,7 @@ class PulsePicker(BeamControl, ExtraState):
     device_class.default = 'pcdsdevices.device_types.PulsePicker'
 
 
-class LODCM(BeamSteering, ExtraStates):
+class LODCM(BeamSteering):
     """
     This LODCM class doesn't refer to the full LODCM, but rather one of the two
     crystals. This makes 4 LODCM objects in total, 2 for each LODCM. These have
