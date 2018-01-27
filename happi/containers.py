@@ -6,19 +6,6 @@ from copy import copy
 from .device import Device, EntryInfo
 
 
-# Broad device categories
-class MPS(Device):
-    """
-    Parent class for devices that are in MPS.
-    """
-    system = copy(Device.system)
-    system.default = 'mps'
-    mps = EntryInfo('MPS PV associated with the Device',
-                    optional=False, enforce=str)
-    veto = EntryInfo('Whether MPS considers this a veto device',
-                     enforce=bool, default=False)
-
-
 class Vacuum(Device):
     """
     Parent class for devices in the vacuum system.
@@ -54,31 +41,12 @@ class BeamSteering(BeamControl):
                              optional=False, enforce=dict)
 
 
-class ExtraState(Device):
-    """
-    Parent class for devices that need a single extra states PV because one
-    base PV is insufficient to fully define the device.
-    """
-    states = EntryInfo('Extra state PV, in addition to base.',
-                       optional=False, enforce=str)
-
-
-class ExtraStates(Device):
-    """
-    Parent class for devices that need multiple extra states PVs because one
-    base PV is insufficient to fully define the device.
-    """
-    states = EntryInfo('Extra states PVs, in addition to base.',
-                       optional=False, enforce=list)
-
-
 # Basic classes that inherit from above
-class GateValve(Vacuum, MPS):
+class GateValve(Vacuum):
     """
-    Standard MPS isolation valves. Generally, these close when there is a
+    Standard isolation valves. Generally, these close when there is a
     problem and beam is not allowed. Devices made with this class will be set
-    as part of the vacuum system. These devices have mps and veto attributes in
-    addition to the standard entries.
+    as part of the vacuum system.
 
     Attributes
     ----------
@@ -88,16 +56,13 @@ class GateValve(Vacuum, MPS):
         "HXX:MXT:VGC:01:OPN_SW", the base pv is "HXX:MXT:VGC:01". A regex will
         be used to check that "VGC" is found in the base PV.
 
-    mps : str
-        The mps pv should be the prefix before the OPN_DI_MPSC segment. For
-        example, if the open PV is "HXX:MXT:VGC_01:OPN_DI_MPSC", the base PV
-        would be "HXX:MXT:VGC_01".
-
     veto : bool
         Set this to True if the gate valve is a veto device.
     """
     prefix = copy(Vacuum.prefix)
     prefix.enforce = re.compile(r'.*VGC.*')
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.GateValve'
 
 
 class Slits(BeamControl):
@@ -117,6 +82,8 @@ class Slits(BeamControl):
     """
     prefix = copy(BeamControl.prefix)
     prefix.enforce = re.compile(r'.*JAWS.*')
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.Slits'
 
 
 class PIM(Diagnostic):
@@ -143,6 +110,10 @@ class PIM(Diagnostic):
     prefix = copy(Diagnostic.prefix)
     prefix.enforce = re.compile(r'.*PIM.*')
     prefix_det = EntryInfo("Prefix for associated camera", enforce=str)
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.PIM'
+    kwargs = copy(Device.kwargs)
+    kwargs.default['prefix_det'] = "{{prefix_det}}"
 
 
 class IPM(Diagnostic):
@@ -175,6 +146,8 @@ class IPM(Diagnostic):
     """
     prefix = copy(Diagnostic.prefix)
     prefix.enforce = re.compile(r'.*IPM.*')
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevics.device_types.IPM'
 
 
 class Attenuator(BeamControl):
@@ -189,36 +162,37 @@ class Attenuator(BeamControl):
         For attunators, the base PV should be the base record from the
         attentuation calculation and control IOC, one level up from the
         calculated tranmission ratio. For example, if the transmission PV is
-        "XPP:ATT:COM:R_CUR", the base PV is "XPP:ATT:COM". A regex will be used
-        to check that "ATT" is found in the base PV.
+        "XPP:ATT:COM:R_CUR", the base PV is "XPP:ATT". A regex will be used
+        to check that "ATT" is found in the base PV
+
+    n_filters : int
+        Number of Attenuator blades
     """
     prefix = copy(BeamControl.prefix)
     prefix.enforce = re.compile(r'.*ATT.*')
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.Attenuator'
+    n_filters = EntryInfo("Number of filters on the Attenuator",
+                          enforce=int, optional=False)
+    kwargs = copy(Device.kwargs)
+    kwargs.default['n_filters'] = "{{n_filters}}"
 
 
-class Stopper(MPS):
+class Stopper(Device):
     """
-    Large devices that prevent beam when it could cause damage to hardware. In
-    addition to the standard attributes, this has entries for mps pv and veto
-    boolean. The veto boolean will be True by default and does not need to be
-    set for each stopper. Stoppers will have their system set to mps by
-    default.
+    Large devices that prevent beam when it could cause damage to hardware.
 
     Attributes
     ----------
     prefix : str
         The base PV should be the combined mps status PV e.g.
         "STPR:XRT1:1:S5IN_MPS".
-
-    mps : str
-        The mps PV should be the prefix for the lower mps logic PVs e.g.
-        "HFX:UM6:STP_01".
     """
-    veto = copy(MPS.veto)
-    veto.default = True
+    device_class = copy(Device.device_class)
+    device_class = 'pcdsdevices.device_types.Stopper'
 
 
-class OffsetMirror(BeamSteering, ExtraState):
+class OffsetMirror(BeamSteering):
     """
     A device that steers beam in the x direction by changing a pitch motor.
     These are used for beam delivery and alignment. These have additional
@@ -237,30 +211,19 @@ class OffsetMirror(BeamSteering, ExtraState):
         doesn't make sense for the pitch to have states, this can be the pitch
         control motor record base instead.
 
-    states : str
-        A basic in/out states pv that tells us whether the mirror is in the
-        beam or not.
-        If the states pv doesn't exist yet, this can be the x control motor
-        record base instead.
+    prefix_xy : str, optional
+        Name of the X and Y motors if different than the standard prefix
 
-    destinations: dict
-        A mapping that matches the base pv's outputs with destinations. The
-        keys should be enum states or indexes and the values should be beamline
-        names. See :ref:`Conventions` for an explanation of beamline names.
-        If the mirror is purely for alignment and not for steering, this can be
-        an empty dict.
+    xgantry_prefix : str, optional
+        Prefix of the X Gantry PVs if different than the standard prefix
     """
-    prefix_xy = EntryInfo("Prefix for Gantry Motion",
-                          enforce=str,
-                          optional=False)
-    state_prefix = EntryInfo("Prefix for state summary ", enforce=str)
-    in_lines = EntryInfo("Name of beamlines delivered beam "
-                         "when the mirror is inserted", enforce=list)
-    out_lines = EntryInfo("Name of beamlines delivered beam "
-                          "when the mirror is removed", enforce=list)
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.OffsetMirror'
+    prefix_xy = EntryInfo("Prefix for X and Y motors", enforce=str)
+    xgantry_prefix = EntryInfo("Prefix for the X Gantry", enforce=str)
 
 
-class PulsePicker(BeamControl, ExtraState):
+class PulsePicker(BeamControl):
     """
     A device that syncs with the timing system to control when beam arrives in
     the hutch. These have an additional states entry to define their in/out
@@ -277,10 +240,11 @@ class PulsePicker(BeamControl, ExtraState):
         The additional state should be the states PV associated with the
         pulsepicker in/out. An example of one such PV is "XCS:SB2:PP:Y".
     """
-    pass
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.PulsePicker'
 
 
-class LODCM(BeamSteering, ExtraStates):
+class LODCM(BeamSteering):
     """
     This LODCM class doesn't refer to the full LODCM, but rather one of the two
     crystals. This makes 4 LODCM objects in total, 2 for each LODCM. These have
@@ -299,11 +263,16 @@ class LODCM(BeamSteering, ExtraStates):
         state, depending on which crystal we're referring to e.g.
         "XPP:LODCM:H1N".
 
-    states : list
-        The additional states should be all other available states PVs relating
-        to that crystal, or an empty list if no such PVs exist.
+    mono_line : str
+        Name of the mono line
     """
-    pass
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.LODCM'
+    mono_line = EntryInfo("Name of the MONO beamline",
+                          enforce=str, optional=False)
+    kwargs = copy(Device.kwargs)
+    kwargs.default.update({'mono_line': '{{mono_line}}',
+                           'main_line': '{{beamline}}'})
 
 
 class MovableStand(Device):
@@ -320,19 +289,9 @@ class MovableStand(Device):
         with binary outputs that have yes/no on the stand being in each
         position. In these cases we pick the common prefix of these PVs.
 
-    beamline : dict
-        If the base PV is a real PV with an unambiguous location state, this
-        should be a mapping from that PV's values to which beamline the stand
-        is on. If the base PV is the common prefix of two PVs, this should be a
-        mapping from strings like "pv_suffix=high" to the beamline the stand is
-        on. This lets us capture the state when the stand hasn't been moved
-        all the way to a hard stop, which can cause problems.
-
     stand : list
         List of stands affected by table movement.
     """
-    beamline = copy(Device.beamline)
-    beamline.enforce = dict
     stand = copy(Device.stand)
     stand.enforce = list
     system = copy(Device.system)
