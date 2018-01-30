@@ -44,9 +44,9 @@ data entry where required.
 
 ## Installation
 
-Install the most recent tagged build: `conda install happi -c skywalker-tag -c conda-forge`
+Install the most recent tagged build: `conda install happi -c pcds-tag -c conda-forge`
 
-Install the most recent development build: `conda install happi -c skywalker-dev - conda-forge`
+Install the most recent development build: `conda install happi -c pcds-dev - conda-forge`
 
 ## Basic Usage 
 
