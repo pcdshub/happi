@@ -51,7 +51,7 @@ class Client:
             self.backend = database
         # Load database
         else:
-            logger.info("No database given, using '%s'", backend)
+            logger.debug("No database given, using '%s'", backend)
             try:
                 self.backend = backend(**kwargs)
             except Exception as exc:

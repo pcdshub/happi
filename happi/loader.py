@@ -146,7 +146,8 @@ def load_devices(*devices, pprint=False, namespace=None):
                   end=' ')
         try:
             loaded = from_container(device)
-            logger.debug("Succesfully loaded!")
+            logger.info("Succesfully %s [%s] loaded!",
+                        device.name, device.device_class)
             if pprint:
                 print("\033[32mSUCCESS\033[0m")
         except Exception as exc:
