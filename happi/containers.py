@@ -2,7 +2,7 @@
 Define subclasses of Device for specific hardware.
 """
 import re
-from copy import copy
+from copy import copy, deepcopy
 from .device import Device, EntryInfo
 
 
@@ -112,7 +112,7 @@ class PIM(Diagnostic):
     prefix_det = EntryInfo("Prefix for associated camera", enforce=str)
     device_class = copy(Device.device_class)
     device_class.default = 'pcdsdevices.device_types.PIM'
-    kwargs = copy(Device.kwargs)
+    kwargs = deepcopy(Device.kwargs)
     kwargs.default['prefix_det'] = "{{prefix_det}}"
 
 
@@ -174,7 +174,7 @@ class Attenuator(BeamControl):
     device_class.default = 'pcdsdevices.device_types.Attenuator'
     n_filters = EntryInfo("Number of filters on the Attenuator",
                           enforce=int, optional=False)
-    kwargs = copy(Device.kwargs)
+    kwargs = deepcopy(Device.kwargs)
     kwargs.default['n_filters'] = "{{n_filters}}"
 
 
@@ -270,7 +270,7 @@ class LODCM(BeamSteering):
     device_class.default = 'pcdsdevices.device_types.LODCM'
     mono_line = EntryInfo("Name of the MONO beamline",
                           enforce=str, optional=False)
-    kwargs = copy(Device.kwargs)
+    kwargs = deepcopy(Device.kwargs)
     kwargs.default.update({'mono_line': '{{mono_line}}',
                            'main_line': '{{beamline}}'})
 
