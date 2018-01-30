@@ -39,8 +39,13 @@ def fill_template(template, device, enforce_type=False):
         # We select a type at random here. If we use two different variables
         # in the same template that disagree on type we could have an issue
         # but I decided that we will deal with that issue if it arises
-        enforce = type(getattr(device, info.pop()))
-        filled = enforce(filled)
+        try:
+            info_name = info.pop()
+            enforce = type(getattr(device, info_name))
+            filled = enforce(filled)
+        except AttributeError as exc:
+            logger.warning("Unable to enforce the type of %s, because it is "
+                           "a piece of extraneous information")
     return filled
 
 
