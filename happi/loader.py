@@ -49,7 +49,7 @@ def fill_template(template, device, enforce_type=False):
     return filled
 
 
-def from_container(device):
+def from_container(device, attach_md=True):
     """
     Load a device from a happi container
 
@@ -59,11 +59,18 @@ def from_container(device):
 
     This function does not attempt to catch exceptions either during module
     imports or device creation. If you would like a series of independent
-    devices to be loaded use :func:`.load_devices`
+    devices to be loaded use :func:`.load_devices`.
+
+    By default, the instantiated object has the original container added on as
+    ``.md``. This allows applications to utilize additional metadata
+    information that may not be included in the basic class constructor.
 
     Parameters
     ----------
     device : happi.Device
+
+    attach_md: bool, optional
+        Attach the container to the instantiated object as `md`
 
     Returns
     -------
@@ -100,7 +107,14 @@ def from_container(device):
     kwargs = dict((key, create_arg(val))
                   for key, val in device.kwargs.items())
     # Return the instantiated device
-    return cls(*args, **kwargs)
+    obj = cls(*args, **kwargs)
+    # Attach the metadata to the object
+    if attach_md:
+        try:
+            setattr(obj, 'md', device)
+        except Exception as exc:
+            logger.warning("Unable to attach metadata dictionary to device")
+    return obj
 
 
 def load_devices(*devices, pprint=False, namespace=None):
