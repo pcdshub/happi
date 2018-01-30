@@ -147,7 +147,7 @@ class IPM(Diagnostic):
     prefix = copy(Diagnostic.prefix)
     prefix.enforce = re.compile(r'.*IPM.*')
     device_class = copy(Device.device_class)
-    device_class.default = 'pcdsdevics.device_types.IPM'
+    device_class.default = 'pcdsdevices.device_types.IPM'
 
 
 class Attenuator(BeamControl):
