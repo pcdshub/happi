@@ -28,6 +28,15 @@ def test_from_container():
     assert td == datetime.timedelta(days=10, seconds=30)
 
 
+def test_add_md():
+    d = Device(name='Test', prefix='Tst:This',
+               beamline="TST", args = list(),
+               device_class="happi.Device")
+    obj = from_container(d, attach_md=True)
+    assert obj.md.beamline == 'TST'
+    assert obj.md.name == 'Test'
+
+
 def test_load_devices():
     # Create a bunch of devices to load
     devs = [TimeDevice(name='Test 1', prefix='Tst1:This', beamline='TST',
