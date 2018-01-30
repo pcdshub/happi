@@ -189,11 +189,11 @@ class Client:
         logger.debug("Instantiating device based on found information ...")
         try:
             device = self.create_device(doc['type'], **doc)
-        except (KeyError, TypeError):
+        except (KeyError, TypeError) as exc:
             raise EntryError('The information relating to the device class '
                              'has been modified to the point where the object '
                              'can not be initialized, please load the '
-                             'corresponding document')
+                             'corresponding document') from exc
 
         # Add the save method to the device
         device.save = lambda: self._store(device, insert=False)
