@@ -38,12 +38,11 @@ class QSBackend(JSONBackend):
     proposal: str
         Proposal identifier i.e "LR32"
     """
-    ws_url = 'https://pswww.slac.stanford.edu/ws-kerb/questionnaire'
     device_translations = {'motors': 'pcdsdevices.epics_motor.EpicsMotor'}
 
-    def __init__(self, run_no, proposal):
+    def __init__(self, run_no, proposal, **kwargs):
         # Create our client and gather the raw information from the client
-        self.qs = QuestionnaireClient(self.ws_url)
+        self.qs = QuestionnaireClient(**kwargs)
 
         # Ensure that our user entered a valid run number and proposal
         # identification
