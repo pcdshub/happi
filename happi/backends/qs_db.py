@@ -53,7 +53,7 @@ class QSBackend(JSONBackend):
             beamline = prop_ids[proposal]['Instrument']
         # Invalid proposal id for this run
         except KeyError as exc:
-            raise DatabaseError('Unable to find proposal %s'.format(proposal))\
+            raise DatabaseError('Unable to find proposal {}'.format(proposal))\
                   from exc
         # Find if our exception gave an HTTP status code and interpret it
         except Exception as exc:
@@ -63,7 +63,7 @@ class QSBackend(JSONBackend):
                 status_code = ''
             # No information found from run
             if status_code == 500:
-                reason = 'No run id found %s found %s'.format(run_no)
+                reason = 'No run id found for {}'.format(run_no)
             # Invalid credentials
             elif status_code == 401:
                 reason = 'Invalid credentials'
