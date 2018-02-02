@@ -143,7 +143,8 @@ def mockqsbackend():
 
     with patch('happi.backends.qs_db.QuestionnaireClient') as qs_cli:
         # Replace QuestionnaireClient with our test version
-        mock_qs = MockQuestionnaireClient()
+        mock_qs = MockQuestionnaireClient(use_kerberos=False,
+                                          user='user', pw='pw')
         qs_cli.return_value = mock_qs
         # Instantiate a fake device
         backend = QSBackend(15, 'LR32')
