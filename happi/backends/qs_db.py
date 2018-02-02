@@ -38,12 +38,11 @@ class QSBackend(JSONBackend):
     proposal: str
         Proposal identifier i.e "LR32"
     """
-    ws_url = 'https://pswww.slac.stanford.edu/ws-kerb/questionnaire'
     device_translations = {'motors': 'pcdsdevices.epics_motor.EpicsMotor'}
 
-    def __init__(self, run_no, proposal):
+    def __init__(self, run_no, proposal, **kwargs):
         # Create our client and gather the raw information from the client
-        self.qs = QuestionnaireClient(self.ws_url)
+        self.qs = QuestionnaireClient(**kwargs)
 
         # Ensure that our user entered a valid run number and proposal
         # identification
@@ -54,7 +53,7 @@ class QSBackend(JSONBackend):
             beamline = prop_ids[proposal]['Instrument']
         # Invalid proposal id for this run
         except KeyError as exc:
-            raise DatabaseError('Unable to find proposal %s'.format(proposal))\
+            raise DatabaseError('Unable to find proposal {}'.format(proposal))\
                   from exc
         # Find if our exception gave an HTTP status code and interpret it
         except Exception as exc:
@@ -64,7 +63,7 @@ class QSBackend(JSONBackend):
                 status_code = ''
             # No information found from run
             if status_code == 500:
-                reason = 'No run id found %s found %s'.format(run_no)
+                reason = 'No run id found for {}'.format(run_no)
             # Invalid credentials
             elif status_code == 401:
                 reason = 'Invalid credentials'

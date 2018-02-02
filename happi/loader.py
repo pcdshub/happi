@@ -87,7 +87,7 @@ def from_container(device, attach_md=True):
         logger.debug("Using previously imported version of %s", mod)
         mod = sys.modules[mod]
     else:
-        logger.info("Importing %s", mod)
+        logger.debug("Importing %s", mod)
         mod = importlib.import_module(mod)
     # Gather our device class from the given module
     try:
@@ -146,7 +146,7 @@ def load_devices(*devices, pprint=False, namespace=None):
                   end=' ')
         try:
             loaded = from_container(device)
-            logger.info("Succesfully %s [%s] loaded!",
+            logger.info("Loading %s [%s] ... \033[32mSUCCESS\033[0m!",
                         device.name, device.device_class)
             if pprint:
                 print("\033[32mSUCCESS\033[0m")
