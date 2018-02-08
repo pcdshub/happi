@@ -134,7 +134,7 @@ def from_container(device, attach_md=True, use_cache=True):
     return obj
 
 
-def load_devices(*devices, pprint=False, namespace=None):
+def load_devices(*devices, pprint=False, namespace=None, **kwargs):
     """
     Load a series of devices into a namespace
 
@@ -149,6 +149,9 @@ def load_devices(*devices, pprint=False, namespace=None):
     namespace : obj, optional
         Namespace to collect loaded devices in. By default this will be a
         ``types.SimpleNamespace``
+
+    kwargs:
+        Are passed to :func:`.from_container`
     """
     # Create our namespace if we were not given one
     namespace = namespace or types.SimpleNamespace()
@@ -162,7 +165,7 @@ def load_devices(*devices, pprint=False, namespace=None):
                                               device.device_class),
                   end=' ')
         try:
-            loaded = from_container(device)
+            loaded = from_container(device, **kwargs)
             logger.info("Loading %s [%s] ... \033[32mSUCCESS\033[0m!",
                         device.name, device.device_class)
             if pprint:
