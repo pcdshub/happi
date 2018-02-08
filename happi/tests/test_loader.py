@@ -30,7 +30,7 @@ def test_from_container():
 
 def test_add_md():
     d = Device(name='Test', prefix='Tst:This',
-               beamline="TST", args = list(),
+               beamline="TST", args=list(),
                device_class="happi.Device")
     obj = from_container(d, attach_md=True)
     assert obj.md.beamline == 'TST'
