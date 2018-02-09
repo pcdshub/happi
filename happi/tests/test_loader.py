@@ -1,4 +1,4 @@
-from happi import Device, EntryInfo
+from happi import Device, EntryInfo, cache
 from happi.loader import fill_template, from_container, load_devices
 from happi.utils import create_alias
 
@@ -19,7 +19,7 @@ def test_fill_template(device):
 
 def test_from_container():
     # Create a datetime device
-    d = TimeDevice(name='Test', prefix='Tst:This', beamline='TST',
+    d = TimeDevice(name='Test', prefix='Tst:This:1', beamline='TST',
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
@@ -28,9 +28,20 @@ def test_from_container():
     assert td == datetime.timedelta(days=10, seconds=30)
 
 
+def test_caching():
+    # Create a datetime device
+    d = TimeDevice(name='Test', prefix='Tst:This:2', beamline='TST',
+                   device_class='datetime.timedelta', args=list(), days=10,
+                   kwargs={'days': '{{days}}', 'seconds': 30})
+    td = from_container(d)
+    assert d.prefix in cache
+    assert id(td) == id(from_container(d))
+    assert id(td) != id(from_container(d, use_cache=False))
+
+
 def test_add_md():
-    d = Device(name='Test', prefix='Tst:This',
-               beamline="TST", args = list(),
+    d = Device(name='Test', prefix='Tst:This:3',
+               beamline="TST", args=list(),
                device_class="happi.Device")
     obj = from_container(d, attach_md=True)
     assert obj.md.beamline == 'TST'

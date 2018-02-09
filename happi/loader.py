@@ -12,6 +12,8 @@ from .utils import create_alias
 
 logger = logging.getLogger(__name__)
 
+cache= dict()
+
 
 def fill_template(template, device, enforce_type=False):
     """
@@ -49,7 +51,7 @@ def fill_template(template, device, enforce_type=False):
     return filled
 
 
-def from_container(device, attach_md=True):
+def from_container(device, attach_md=True, use_cache=True):
     """
     Load a device from a happi container
 
@@ -72,10 +74,22 @@ def from_container(device, attach_md=True):
     attach_md: bool, optional
         Attach the container to the instantiated object as `md`
 
+    use_cache: bool, optional
+        When devices are loaded they are stored in the ``happi.cache``
+        dictionary. This means that repeated attempts to load the device will
+        return the same object. This prevents unnecessary EPICS connections
+        from being initialized in the same process. If a new object is
+        needed, set `use_cache` to False and a new object will be created,
+        overriding the current cached object
+
     Returns
     -------
     obj : happi.Device.device_class
     """
+    # Return a cached version of the device if present and not forced
+    if use_cache and device.prefix in cache:
+        return cache[device.prefix]
+
     # Find the class and module of the container.
     if not device.device_class:
         raise ValueError("Device %s does not have an associated Python class",
@@ -114,10 +128,13 @@ def from_container(device, attach_md=True):
             setattr(obj, 'md', device)
         except Exception as exc:
             logger.warning("Unable to attach metadata dictionary to device")
+
+    # Store a copy of the device in the cache
+    cache[device.prefix] = obj
     return obj
 
 
-def load_devices(*devices, pprint=False, namespace=None):
+def load_devices(*devices, pprint=False, namespace=None, **kwargs):
     """
     Load a series of devices into a namespace
 
@@ -132,6 +149,9 @@ def load_devices(*devices, pprint=False, namespace=None):
     namespace : obj, optional
         Namespace to collect loaded devices in. By default this will be a
         ``types.SimpleNamespace``
+
+    kwargs:
+        Are passed to :func:`.from_container`
     """
     # Create our namespace if we were not given one
     namespace = namespace or types.SimpleNamespace()
@@ -145,7 +165,7 @@ def load_devices(*devices, pprint=False, namespace=None):
                                               device.device_class),
                   end=' ')
         try:
-            loaded = from_container(device)
+            loaded = from_container(device, **kwargs)
             logger.info("Loading %s [%s] ... \033[32mSUCCESS\033[0m!",
                         device.name, device.device_class)
             if pprint:
