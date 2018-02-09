@@ -99,7 +99,7 @@ class QSBackend(JSONBackend):
             else:
                 logger.debug("Found %s devices under %s table",
                              len(devices), field)
-                for dev_info in devices.values():
+                for num, dev_info in devices.items():
                     try:
                         post = {'name': dev_info.pop('name'),
                                 'prefix': dev_info['pvbase'],
@@ -113,9 +113,16 @@ class QSBackend(JSONBackend):
                                 '_id': dev_info.pop('pvbase')}
                         # Add extraneous metadata
                         post.update(dev_info)
-                    except KeyError as exc:
-                        logger.warning("Can not define a device without %s",
-                                       exc)
+                        # Check that the we haven't received empty strings from
+                        # the Questionnaire
+                        for key in ['prefix', 'name']:
+                            if not post.get(key):
+                                raise Exception("Unable to create a device "
+                                                " without %s".format(key))
+                    except Exception as exc:
+                        logger.warning("Unable to create a %s from "
+                                       "Questionnaire row %s",
+                                       _class, num)
                     else:
                         self.db[post['_id']] = post
 
