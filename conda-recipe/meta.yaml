@@ -26,6 +26,6 @@ test:
       - pytest
 
 about:
-  home: https://github.com/slaclab/happi
+  home: https://github.com/pcdshub/happi
   license: SLAC Open License
   summary: Heuristic Access to Positions of Photon Instruments
