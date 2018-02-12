@@ -49,7 +49,7 @@ script:
       make html
       popd
       # Publish docs.
-      doctr deploy --deploy-repo lcls-pcds/skywalker-docs --deploy-branch-name master happi
+      doctr deploy . --built-docs docs/build/html --deploy-branch-name gh-pages
     fi
 
 after_success:
