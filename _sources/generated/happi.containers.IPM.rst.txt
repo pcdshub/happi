@@ -1,0 +1,25 @@
+happi\.containers\.IPM
+======================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: IPM
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~IPM.__init__
+      ~IPM.post
+      ~IPM.save
+      ~IPM.show_info
+   
+   
+
+   
+   
+   

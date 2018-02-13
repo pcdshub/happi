@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="../index.html"/>
+        <link rel="up" title="Supported Backends" href="../backends.html"/>
+        <link rel="next" title="Device Containers" href="../containers.html"/>
+        <link rel="prev" title="happi.backends.json_db.JSONBackend" href="happi.backends.json_db.JSONBackend.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Happi Deck
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0+20.g6a87942
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../conventions.html">Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../client.html">Using the Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../develop.html">Creating New Device Types</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../client_api.html">Client API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../backends.html">Supported Backends</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../backends.html#backend-choices">Backend Choices</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="happi.backends.mongo_db.MongoBackend.html">happi.backends.mongo_db.MongoBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="happi.backends.json_db.JSONBackend.html">happi.backends.json_db.JSONBackend</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">happi.backends.qs_db.QSBackend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../containers.html">Device Containers</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Happi Deck</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../backends.html">Supported Backends</a> &raquo;</li>
+        
+      <li>happi.backends.qs_db.QSBackend</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/happi.backends.qs_db.QSBackend.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="happi-backends-qs-db-qsbackend">
+<h1>happi.backends.qs_db.QSBackend<a class="headerlink" href="#happi-backends-qs-db-qsbackend" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="happi.backends.qs_db.QSBackend">
+<em class="property">class </em><code class="descclassname">happi.backends.qs_db.</code><code class="descname">QSBackend</code><span class="sig-paren">(</span><em>run_no</em>, <em>proposal</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Questionniare Backend</p>
+<p>This backend connects to the LCLS questionnaire and looks at devices with
+the key pattern pcds-<em>-setup-</em>-<a href="#id1"><span class="problematic" id="id2">*</span></a>. These fields are then combined and turned
+into proper happi devices. The translation of table name to pcdsdevices
+class is determined by the <code class="xref py py-attr docutils literal"><span class="pre">device_translations</span></code> dictionary. The
+beamline is determined by looking where the proposal was submitted.</p>
+<p>Unlike the other backends, this one is read-only. All changes to the device
+information should be done via the web interface. Finally, in order to
+avoid duplicating any code needed to search the device database, the
+QSBackend inherits directly from JSONBackend. Many of the functions are
+unmodified with exception being that this backend merely searchs through an
+in memory dictionary while the JSONBackend reads from the file before
+searches.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>run_no</strong> (<em>int</em>) – Desired run number i.e 16</li>
+<li><strong>proposal</strong> (<em>str</em>) – Proposal identifier i.e “LR32”</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="happi.backends.qs_db.QSBackend.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>run_no</em>, <em>proposal</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#happi.backends.qs_db.QSBackend.__init__" title="happi.backends.qs_db.QSBackend.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(run_no,&nbsp;proposal,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">delete</span></code>(_id)</td>
+<td>The current implementation of this backend is read-only</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">find</span></code>([_id,&nbsp;multiples])</td>
+<td>Find an instance or instances that matches the search criteria</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code>()</td>
+<td>Can not initialize a new Questionnaire entry from API</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">load</span></code>()</td>
+<td>Return the structured dictionary of information</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">save</span></code>(*args,&nbsp;**kwargs)</td>
+<td>The current implementation of this backend is read-only</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">store</span></code>(*args,&nbsp;**kwargs)</td>
+<td>The current implementation of this backend is read-only</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../containers.html" class="btn btn-neutral float-right" title="Device Containers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="happi.backends.json_db.JSONBackend.html" class="btn btn-neutral" title="happi.backends.json_db.JSONBackend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, SLAC National Accelerator Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0+20.g6a87942',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

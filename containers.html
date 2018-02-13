@@ -1,0 +1,490 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Device Containers &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="index.html"/>
+        <link rel="next" title="happi.containers.GateValve" href="generated/happi.containers.GateValve.html"/>
+        <link rel="prev" title="happi.backends.qs_db.QSBackend" href="generated/happi.backends.qs_db.QSBackend.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Happi Deck
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0+20.g6a87942
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Creating New Device Types</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Device Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#device">Device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#containers">Containers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.GateValve.html">happi.containers.GateValve</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.Slits.html">happi.containers.Slits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.PIM.html">happi.containers.PIM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.PIM.html">happi.containers.PIM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.IPM.html">happi.containers.IPM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.Attenuator.html">happi.containers.Attenuator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.Stopper.html">happi.containers.Stopper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.OffsetMirror.html">happi.containers.OffsetMirror</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.PulsePicker.html">happi.containers.PulsePicker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.LODCM.html">happi.containers.LODCM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.containers.MovableStand.html">happi.containers.MovableStand</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Happi Deck</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Device Containers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/containers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="device-containers">
+<span id="device-label"></span><h1>Device Containers<a class="headerlink" href="#device-containers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="device">
+<h2>Device<a class="headerlink" href="#device" title="Permalink to this headline">¶</a></h2>
+<p>A generic device container is available for use that holds a few basic traits
+pertinent to all LCLS devices. Largely this is available to provide a common
+base that more specific devices will inherit from.</p>
+<dl class="class">
+<dt id="happi.Device">
+<em class="property">class </em><code class="descclassname">happi.</code><code class="descname">Device</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Device" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Generic Device Container</p>
+<p>The class does not need to be intialized with any specific piece of
+information, but all of the attributes listed by <a class="reference internal" href="#happi.Device.info_names" title="happi.Device.info_names"><code class="xref py py-attr docutils literal"><span class="pre">Device.info_names</span></code></a>
+can be used to assign values to <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> upon initialization.
+Pieces of information that are deemed mandatory by the class must be filled
+in before the device is loaded into the database. See
+<a class="reference internal" href="#happi.Device.mandatory_info" title="happi.Device.mandatory_info"><code class="xref py py-attr docutils literal"><span class="pre">Device.mandatory_info</span></code></a> to see which attributes are neccesary.</p>
+<p>Additional metadata can be given to the device in the form of keywords
+on initialization, this information is kept in the <a class="reference internal" href="#happi.Device.extraneous" title="happi.Device.extraneous"><code class="xref py py-attr docutils literal"><span class="pre">extraneous</span></code></a>
+attribute, and will be saved in to the database as long as it does not
+clash with an existing piece of metadata that the client uses to organize
+devices.</p>
+<dl class="attribute">
+<dt id="happi.Device.entry_info">
+<code class="descname">entry_info</code><a class="headerlink" href="#happi.Device.entry_info" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> – A list of all the <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> associated with the device</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.extraneous">
+<code class="descname">extraneous</code><a class="headerlink" href="#happi.Device.extraneous" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – Storage for information supplied during initialization that does not
+correspond to a specific EntryInfo</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
+<li>EntryError: – If a piece of information supplied at startup is of the incorrect type</li>
+<li>ContainerError: – If one of the pieces of <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> has a default value of the
+incorrect type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;my_device&#39;</span><span class="p">,</span>         <span class="c1">#Alias name for device</span>
+           <span class="n">prefix</span>  <span class="o">=</span> <span class="s1">&#39;CXI:DG2:DEV:01&#39;</span><span class="p">,</span> <span class="c1">#Base PV for device</span>
+           <span class="n">note</span>  <span class="o">=</span> <span class="s1">&#39;Example&#39;</span><span class="p">,</span>          <span class="c1">#Piece of arbitrary metadata</span>
+          <span class="p">)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="happi.Device.active">
+<code class="descname">active</code><a class="headerlink" href="#happi.Device.active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the device is actively deployed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.args">
+<code class="descname">args</code><a class="headerlink" href="#happi.Device.args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arguments to pass to device_class</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.beamline">
+<code class="descname">beamline</code><a class="headerlink" href="#happi.Device.beamline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Section of beamline the device belongs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.device_class">
+<code class="descname">device_class</code><a class="headerlink" href="#happi.Device.device_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python class that represents the Device</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.info_names">
+<code class="descname">info_names</code><a class="headerlink" href="#happi.Device.info_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Names of all <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> for the device</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.kwargs">
+<code class="descname">kwargs</code><a class="headerlink" href="#happi.Device.kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keyword arguments to pass to device_class</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.macros">
+<code class="descname">macros</code><a class="headerlink" href="#happi.Device.macros" title="Permalink to this definition">¶</a></dt>
+<dd><p>The EDM macro string asscociated with the with the device. By using a jinja2 template, this can reference other EntryInfo keywords.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.mandatory_info">
+<code class="descname">mandatory_info</code><a class="headerlink" href="#happi.Device.mandatory_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mandatory information for the device to be initialized</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.name">
+<code class="descname">name</code><a class="headerlink" href="#happi.Device.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shorthand name for the device</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.parent">
+<code class="descname">parent</code><a class="headerlink" href="#happi.Device.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the device is a component of another, enter the name</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Device.post">
+<code class="descname">post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#happi.Device.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a document to be loaded into the happi database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>post</strong> – Dictionary of all contained information</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.prefix">
+<code class="descname">prefix</code><a class="headerlink" href="#happi.Device.prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>A base PV for all related records</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Device.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#happi.Device.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwritten when the device is loaded from the client</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.screen">
+<code class="descname">screen</code><a class="headerlink" href="#happi.Device.screen" title="Permalink to this definition">¶</a></dt>
+<dd><p>The absolute path to the main control screen</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Device.show_info">
+<code class="descname">show_info</code><span class="sig-paren">(</span><em>handle=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Device.show_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the device information in a PrettyTable</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<em>file-like</em><em>, </em><em>optional</em>) – Option to write to a file-like object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.stand">
+<code class="descname">stand</code><a class="headerlink" href="#happi.Device.stand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Acronym for stand, must be three alphanumeric characters</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.system">
+<code class="descname">system</code><a class="headerlink" href="#happi.Device.system" title="Permalink to this definition">¶</a></dt>
+<dd><p>The system the device is involved with, i.e Vacuum, Timing e.t.c</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.z">
+<code class="descname">z</code><a class="headerlink" href="#happi.Device.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Beamline position of the device</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="containers">
+<h2>Containers<a class="headerlink" href="#containers" title="Permalink to this headline">¶</a></h2>
+<p>Each of the containers below share the attributes and entries of the generic
+Device container. This section documents the entries when they either do not
+exist in the generic device or require further clarification on a case-by-case
+basis.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.GateValve.html#happi.containers.GateValve" title="happi.containers.GateValve"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.GateValve</span></code></a>(**kwargs)</td>
+<td>Standard isolation valves.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.Slits.html#happi.containers.Slits" title="happi.containers.Slits"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.Slits</span></code></a>(**kwargs)</td>
+<td>Mechanical devices to control beam profile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.PIM.html#happi.containers.PIM" title="happi.containers.PIM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.PIM</span></code></a>(**kwargs)</td>
+<td>Beam profile monitors.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.PIM.html#happi.containers.PIM" title="happi.containers.PIM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.PIM</span></code></a>(**kwargs)</td>
+<td>Beam profile monitors.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.IPM.html#happi.containers.IPM" title="happi.containers.IPM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.IPM</span></code></a>(**kwargs)</td>
+<td>Beam intensity monitors.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.Attenuator.html#happi.containers.Attenuator" title="happi.containers.Attenuator"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.Attenuator</span></code></a>(**kwargs)</td>
+<td>Beam attenuators, used to get a lower intensity beam downstream to protect the sample or to protect hardware components.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.Stopper.html#happi.containers.Stopper" title="happi.containers.Stopper"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.Stopper</span></code></a>(**kwargs)</td>
+<td>Large devices that prevent beam when it could cause damage to hardware.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.OffsetMirror.html#happi.containers.OffsetMirror" title="happi.containers.OffsetMirror"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.OffsetMirror</span></code></a>(**kwargs)</td>
+<td>A device that steers beam in the x direction by changing a pitch motor.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.PulsePicker.html#happi.containers.PulsePicker" title="happi.containers.PulsePicker"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.PulsePicker</span></code></a>(**kwargs)</td>
+<td>A device that syncs with the timing system to control when beam arrives in the hutch.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.LODCM.html#happi.containers.LODCM" title="happi.containers.LODCM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.LODCM</span></code></a>(**kwargs)</td>
+<td>This LODCM class doesn’t refer to the full LODCM, but rather one of the two crystals.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.MovableStand.html#happi.containers.MovableStand" title="happi.containers.MovableStand"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.MovableStand</span></code></a>(**kwargs)</td>
+<td>This class stores information about stands that move, like XPP’s hand-crank that moves SB2 and SB3 from the PINK to XPP lines and back.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/happi.containers.GateValve.html" class="btn btn-neutral float-right" title="happi.containers.GateValve" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/happi.backends.qs_db.QSBackend.html" class="btn btn-neutral" title="happi.backends.qs_db.QSBackend" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, SLAC National Accelerator Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0+20.g6a87942',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

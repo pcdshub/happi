@@ -1,0 +1,25 @@
+happi\.containers\.Slits
+========================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: Slits
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Slits.__init__
+      ~Slits.post
+      ~Slits.save
+      ~Slits.show_info
+   
+   
+
+   
+   
+   

@@ -1,0 +1,25 @@
+happi\.containers\.Stopper
+==========================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: Stopper
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Stopper.__init__
+      ~Stopper.post
+      ~Stopper.save
+      ~Stopper.show_info
+   
+   
+
+   
+   
+   

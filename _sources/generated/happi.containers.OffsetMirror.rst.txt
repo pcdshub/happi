@@ -1,0 +1,25 @@
+happi\.containers\.OffsetMirror
+===============================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: OffsetMirror
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OffsetMirror.__init__
+      ~OffsetMirror.post
+      ~OffsetMirror.save
+      ~OffsetMirror.show_info
+   
+   
+
+   
+   
+   

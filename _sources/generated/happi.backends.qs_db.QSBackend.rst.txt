@@ -1,0 +1,28 @@
+happi\.backends\.qs\_db\.QSBackend
+==================================
+
+.. currentmodule:: happi.backends.qs_db
+
+.. autoclass:: QSBackend
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~QSBackend.__init__
+      ~QSBackend.delete
+      ~QSBackend.find
+      ~QSBackend.initialize
+      ~QSBackend.load
+      ~QSBackend.save
+      ~QSBackend.store
+   
+   
+
+   
+   
+   

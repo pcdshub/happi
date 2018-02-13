@@ -1,0 +1,25 @@
+happi\.containers\.MovableStand
+===============================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: MovableStand
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MovableStand.__init__
+      ~MovableStand.post
+      ~MovableStand.save
+      ~MovableStand.show_info
+   
+   
+
+   
+   
+   

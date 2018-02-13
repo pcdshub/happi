@@ -1,0 +1,25 @@
+happi\.backends\.mongo\_db\.MongoBackend
+========================================
+
+.. currentmodule:: happi.backends.mongo_db
+
+.. autoclass:: MongoBackend
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MongoBackend.__init__
+      ~MongoBackend.delete
+      ~MongoBackend.find
+      ~MongoBackend.save
+   
+   
+
+   
+   
+   

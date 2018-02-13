@@ -1,0 +1,25 @@
+happi\.containers\.PIM
+======================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: PIM
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PIM.__init__
+      ~PIM.post
+      ~PIM.save
+      ~PIM.show_info
+   
+   
+
+   
+   
+   

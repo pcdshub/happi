@@ -1,0 +1,25 @@
+happi\.containers\.Attenuator
+=============================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: Attenuator
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Attenuator.__init__
+      ~Attenuator.post
+      ~Attenuator.save
+      ~Attenuator.show_info
+   
+   
+
+   
+   
+   

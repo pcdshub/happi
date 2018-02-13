@@ -1,0 +1,28 @@
+happi\.backends\.json\_db\.JSONBackend
+======================================
+
+.. currentmodule:: happi.backends.json_db
+
+.. autoclass:: JSONBackend
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JSONBackend.__init__
+      ~JSONBackend.delete
+      ~JSONBackend.find
+      ~JSONBackend.initialize
+      ~JSONBackend.load
+      ~JSONBackend.save
+      ~JSONBackend.store
+   
+   
+
+   
+   
+   

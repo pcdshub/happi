@@ -1,0 +1,25 @@
+happi\.containers\.LODCM
+========================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: LODCM
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LODCM.__init__
+      ~LODCM.post
+      ~LODCM.save
+      ~LODCM.show_info
+   
+   
+
+   
+   
+   

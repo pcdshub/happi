@@ -1,0 +1,465 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Client API &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="index.html"/>
+        <link rel="next" title="Supported Backends" href="backends.html"/>
+        <link rel="prev" title="Creating New Device Types" href="develop.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Happi Deck
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0+20.g6a87942
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Creating New Device Types</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Client API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Device Containers</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Happi Deck</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Client API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/client_api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="client-api">
+<h1>Client API<a class="headerlink" href="#client-api" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="happi.Client">
+<em class="property">class </em><code class="descclassname">happi.</code><code class="descname">Client</code><span class="sig-paren">(</span><em>database=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client" title="Permalink to this definition">¶</a></dt>
+<dd><p>The client to control the contents of the Happi Database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>database</strong> (<em>happi.backends.Backend</em>) – A already instantiated backend</li>
+<li><strong>kwargs</strong> – Passed to the <cite>db_type</cite> backend</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="happi.Client.device_types">
+<code class="descname">device_types</code><a class="headerlink" href="#happi.Client.device_types" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – Mapping of Container namees to class types</p>
+</dd></dl>
+
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">DatabaseError: – Raised if the Client fails to instantiate the Database</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="happi.Client.add_device">
+<code class="descname">add_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.add_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new device into the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a>) – The device to store in the database</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">EntryError: – If all of the mandatory information for the device has not been
+specified or there is already a device with that <code class="docutils literal"><span class="pre">id</span></code> in the
+database</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Client.all_devices">
+<code class="descname">all_devices</code><a class="headerlink" href="#happi.Client.all_devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all contained devices</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.create_device">
+<code class="descname">create_device</code><span class="sig-paren">(</span><em>device_cls</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.create_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new device</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>device_cls</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> or name of class) – The Device Container to instantiate</li>
+<li><strong>kwargs</strong> – Information to pass through to the device, upon initialization</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An instantiated version of the device</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">device</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: – If the provided class is not a subclass of <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#happi.Client.device_types" title="happi.Client.device_types"><code class="xref py py-attr docutils literal"><span class="pre">device_types</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.export">
+<code class="descname">export</code><span class="sig-paren">(</span><em>path=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>sep='\t'</em>, <em>attrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export the contents of the database into a text file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<em>File Handle</em>) – File-like object to save text file</li>
+<li><strong>sep</strong> (<em>str</em>) – Separator to place inbetween columns of information</li>
+<li><strong>attrs</strong> (<em>iterable</em>) – Attributes to include, these will be a list of values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.find_device">
+<code class="descname">find_device</code><span class="sig-paren">(</span><em>**post</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.find_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to query the database for an individual Device</p>
+<p>If multiple devices are found, only the first is returned</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>post</strong> – Information to pertinent to the device</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">SearchError</span></code> – If no match for the given information is found</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>device</strong> – A device that matches the characteristics given</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.find_document">
+<code class="descname">find_document</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.find_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a device document from the database</p>
+<p>If multiple matches are found, a single document will be returned to
+the user. How the database will choose to select this device is based
+on each individual implementation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> – Add information to locate the device in keyword pairs</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>document</strong> – A dict that matches the specified information.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">SearchError: – If no document with the given information is found</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal"><span class="pre">find_device()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal"><span class="pre">search()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.remove_device">
+<code class="descname">remove_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.remove_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a device from the database</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a>) – Device to be removed from the database</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>start=0.0</em>, <em>end=None</em>, <em>as_dict=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search the database for a device or devices</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>as_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – Return the information as a list of dictionaries or a list of
+<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> containers</li>
+<li><strong>start</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum beamline position to include devices</li>
+<li><strong>end</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum beamline position to include devices</li>
+<li><strong>kwargs</strong> – Information to filter through the database structured as key, value
+pairs for the desired pieces of EntryInfo</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>Either a list of devices or dictionaries</em></li>
+<li><em>Example</em></li>
+<li><em>.. code::</em> – gate_valves = client.search(type=’Valve’)
+hxr_valves  = client.search(type=’Valve’, beamline=’HXR’)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.Client.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate all of the devices in the database by attempting to initialize
+them and asserting their mandatory information is present. Information
+is written to the logger</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ids</strong> – List of device ids that have failed verification</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="backends.html" class="btn btn-neutral float-right" title="Supported Backends" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="develop.html" class="btn btn-neutral" title="Creating New Device Types" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, SLAC National Accelerator Laboratory.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0+20.g6a87942',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
