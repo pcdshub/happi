@@ -13,15 +13,15 @@
 
 <div align="center">
   <!-- Build Status -->
-  <a href="https://travis-ci.org/slaclab/happi">
+  <a href="https://travis-ci.org/pcdshub/happi">
     <img
-src="https://img.shields.io/travis/slaclab/happi/master.svg?style=flat-square"
+src="https://img.shields.io/travis/pcdshub/happi/master.svg?style=flat-square"
       alt="Build Status" />
   </a>
   <!-- Test Coverage -->
-  <a href="https://codecov.io/github/slaclab/happi">
+  <a href="https://codecov.io/github/pcdshub/happi">
     <img
-src="https://img.shields.io/codecov/c/github/slaclab/happi/master.svg?style=flat-square"
+src="https://img.shields.io/codecov/c/github/pcdshub/happi/master.svg?style=flat-square"
       alt="Test Coverage" />
   </a>
 </div>
