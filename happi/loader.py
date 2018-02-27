@@ -38,6 +38,9 @@ def fill_template(template, device, enforce_type=False):
         # Find which variable we used in the template, get the type and convert
         # our rendered template to agree with this
         info = meta.find_undeclared_variables(env.environment.parse(template))
+        # If no variables were substituted there is no type to enforce
+        if not info:
+            return filled
         # We select a type at random here. If we use two different variables
         # in the same template that disagree on type we could have an issue
         # but I decided that we will deal with that issue if it arises
