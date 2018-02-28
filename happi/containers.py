@@ -32,15 +32,6 @@ class BeamControl(Device):
     system.default = 'beam control'
 
 
-class BeamSteering(BeamControl):
-    """
-    Parent class for devices that direct the beam from one line to another.
-    """
-    destinations = EntryInfo('Mapping from steering states PV to ' +
-                             'destination beamlines',
-                             optional=False, enforce=dict)
-
-
 # Basic classes that inherit from above
 class GateValve(Vacuum):
     """
@@ -192,7 +183,7 @@ class Stopper(Device):
     device_class = 'pcdsdevices.device_types.Stopper'
 
 
-class OffsetMirror(BeamSteering):
+class OffsetMirror(BeamControl):
     """
     A device that steers beam in the x direction by changing a pitch motor.
     These are used for beam delivery and alignment. These have additional
@@ -244,7 +235,7 @@ class PulsePicker(BeamControl):
     device_class.default = 'pcdsdevices.device_types.PulsePicker'
 
 
-class LODCM(BeamSteering):
+class LODCM(BeamControl):
     """
     This LODCM class doesn't refer to the full LODCM, but rather one of the two
     crystals. This makes 4 LODCM objects in total, 2 for each LODCM. These have
