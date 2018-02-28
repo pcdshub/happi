@@ -15,6 +15,12 @@ def test_fill_template(device):
     template = '{{z}}'
     z = fill_template(template, device, enforce_type=True)
     assert isinstance(z, float)
+    # Check that we can handle non-jinja template
+    template = "blah"
+    assert template == fill_template(template, device, enforce_type=True)
+    # Check that we do not enforce a NoneType
+    template = "{{screen}}"
+    assert fill_template(template, device, enforce_type=True) is None
 
 
 def test_from_container():
