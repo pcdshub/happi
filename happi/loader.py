@@ -34,23 +34,32 @@ def fill_template(template, device, enforce_type=False):
     # Create a template and render our happi information inside it
     env = Environment().from_string(template)
     filled = env.render(**device.post())
-    if enforce_type:
-        # Find which variable we used in the template, get the type and convert
-        # our rendered template to agree with this
-        info = meta.find_undeclared_variables(env.environment.parse(template))
-        # If no variables were substituted there is no type to enforce
-        if not info:
-            return filled
-        # We select a type at random here. If we use two different variables
-        # in the same template that disagree on type we could have an issue
-        # but I decided that we will deal with that issue if it arises
+    # Find which variable we used in the template, get the type and convert
+    # our rendered template to agree with this
+    info = meta.find_undeclared_variables(env.environment.parse(template))
+    if len(info) == 1 and enforce_type:
+        # Get the original attribute back from the device. If this does not
+        # exist there is a possibility it is a piece of metadata e.t.c
         try:
-            info_name = info.pop()
-            enforce = type(getattr(device, info_name))
-            filled = enforce(filled)
-        except AttributeError as exc:
-            logger.warning("Unable to enforce the type of %s, because it is "
-                           "a piece of extraneous information")
+            attr_name = info.pop()
+            typed_attr = getattr(device, attr_name)
+        except AttributeError:
+            logger.warning("Can not enforce type to match attribute %s",
+                           attr_name)
+            return filled
+        # If this was a straight substitution with nothing else in the template
+        # we can just return the attribute itself thus preserving type
+        if str(typed_attr) == filled:
+            filled = typed_attr
+        # If there is something more complex going on we can attempt to convert
+        # it to match the type of the original
+        else:
+            attr_type = type(typed_attr)
+            try:
+                filled = attr_type(filled)
+            except ValueError:
+                logger.exception("Unable to convert %s to %s",
+                                 filled, attr_type)
     return filled
 
 
