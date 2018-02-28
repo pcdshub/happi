@@ -15,6 +15,9 @@ def test_fill_template(device):
     template = '{{z}}'
     z = fill_template(template, device, enforce_type=True)
     assert isinstance(z, float)
+    # Check that we will convert a more complex template
+    template = '{{z*100}}'
+    assert z*100 == fill_template(template, device, enforce_type=True)
     # Check that we can handle non-jinja template
     template = "blah"
     assert template == fill_template(template, device, enforce_type=True)
