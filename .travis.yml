@@ -41,6 +41,7 @@ install:
 script:
   - coverage run run_tests.py
   - coverage report -m
+  - flake8 happi
   - set -e
   # Build docs.
   - |
