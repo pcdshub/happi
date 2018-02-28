@@ -12,7 +12,7 @@ from .utils import create_alias
 
 logger = logging.getLogger(__name__)
 
-cache= dict()
+cache = dict()
 
 
 def fill_template(template, device, enforce_type=False):
