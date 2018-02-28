@@ -1,5 +1,5 @@
-happi\.containers\.Stopper
-==========================
+happi.containers.Stopper
+========================
 
 .. currentmodule:: happi.containers
 
@@ -21,5 +21,26 @@ happi\.containers\.Stopper
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stopper.active
+      ~Stopper.args
+      ~Stopper.beamline
+      ~Stopper.device_class
+      ~Stopper.entry_info
+      ~Stopper.info_names
+      ~Stopper.kwargs
+      ~Stopper.macros
+      ~Stopper.mandatory_info
+      ~Stopper.name
+      ~Stopper.parent
+      ~Stopper.prefix
+      ~Stopper.screen
+      ~Stopper.stand
+      ~Stopper.system
+      ~Stopper.z
    
    

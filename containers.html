@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Device Containers &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  <title>Device Containers &mdash; Happi Deck 1.1.0+8.g139ad0c documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="index.html"/>
+    <link rel="top" title="Happi Deck 1.1.0+8.g139ad0c documentation" href="index.html"/>
         <link rel="next" title="happi.containers.GateValve" href="generated/happi.containers.GateValve.html"/>
         <link rel="prev" title="happi.backends.qs_db.QSBackend" href="generated/happi.backends.qs_db.QSBackend.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0.0+20.g6a87942
+                1.1.0+8.g139ad0c
               </div>
             
           
@@ -193,20 +193,20 @@ base that more specific devices will inherit from.</p>
 <em class="property">class </em><code class="descclassname">happi.</code><code class="descname">Device</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Device" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Generic Device Container</p>
 <p>The class does not need to be intialized with any specific piece of
-information, but all of the attributes listed by <a class="reference internal" href="#happi.Device.info_names" title="happi.Device.info_names"><code class="xref py py-attr docutils literal"><span class="pre">Device.info_names</span></code></a>
-can be used to assign values to <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> upon initialization.
+information, but all of the attributes listed by <a class="reference internal" href="#happi.Device.info_names" title="happi.Device.info_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.info_names</span></code></a>
+can be used to assign values to <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> upon initialization.
 Pieces of information that are deemed mandatory by the class must be filled
 in before the device is loaded into the database. See
-<a class="reference internal" href="#happi.Device.mandatory_info" title="happi.Device.mandatory_info"><code class="xref py py-attr docutils literal"><span class="pre">Device.mandatory_info</span></code></a> to see which attributes are neccesary.</p>
+<a class="reference internal" href="#happi.Device.mandatory_info" title="happi.Device.mandatory_info"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.mandatory_info</span></code></a> to see which attributes are neccesary.</p>
 <p>Additional metadata can be given to the device in the form of keywords
-on initialization, this information is kept in the <a class="reference internal" href="#happi.Device.extraneous" title="happi.Device.extraneous"><code class="xref py py-attr docutils literal"><span class="pre">extraneous</span></code></a>
+on initialization, this information is kept in the <a class="reference internal" href="#happi.Device.extraneous" title="happi.Device.extraneous"><code class="xref py py-attr docutils literal notranslate"><span class="pre">extraneous</span></code></a>
 attribute, and will be saved in to the database as long as it does not
 clash with an existing piece of metadata that the client uses to organize
 devices.</p>
 <dl class="attribute">
 <dt id="happi.Device.entry_info">
 <code class="descname">entry_info</code><a class="headerlink" href="#happi.Device.entry_info" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> – A list of all the <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> associated with the device</p>
+<dd><p><em>list</em> – A list of all the <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> associated with the device</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -222,7 +222,7 @@ correspond to a specific EntryInfo</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
 <li>EntryError: – If a piece of information supplied at startup is of the incorrect type</li>
-<li>ContainerError: – If one of the pieces of <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> has a default value of the
+<li>ContainerError: – If one of the pieces of <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> has a default value of the
 incorrect type</li>
 </ul>
 </td>
@@ -230,7 +230,7 @@ incorrect type</li>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;my_device&#39;</span><span class="p">,</span>         <span class="c1">#Alias name for device</span>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">d</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;my_device&#39;</span><span class="p">,</span>         <span class="c1">#Alias name for device</span>
            <span class="n">prefix</span>  <span class="o">=</span> <span class="s1">&#39;CXI:DG2:DEV:01&#39;</span><span class="p">,</span> <span class="c1">#Base PV for device</span>
            <span class="n">note</span>  <span class="o">=</span> <span class="s1">&#39;Example&#39;</span><span class="p">,</span>          <span class="c1">#Piece of arbitrary metadata</span>
           <span class="p">)</span>
@@ -263,7 +263,7 @@ incorrect type</li>
 <dl class="attribute">
 <dt id="happi.Device.info_names">
 <code class="descname">info_names</code><a class="headerlink" href="#happi.Device.info_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Names of all <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> for the device</p>
+<dd><p>Names of all <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -377,37 +377,37 @@ basis.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.GateValve.html#happi.containers.GateValve" title="happi.containers.GateValve"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.GateValve</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.GateValve.html#happi.containers.GateValve" title="happi.containers.GateValve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.GateValve</span></code></a>(**kwargs)</td>
 <td>Standard isolation valves.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.Slits.html#happi.containers.Slits" title="happi.containers.Slits"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.Slits</span></code></a>(**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.Slits.html#happi.containers.Slits" title="happi.containers.Slits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.Slits</span></code></a>(**kwargs)</td>
 <td>Mechanical devices to control beam profile.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.PIM.html#happi.containers.PIM" title="happi.containers.PIM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.PIM</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.PIM.html#happi.containers.PIM" title="happi.containers.PIM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.PIM</span></code></a>(**kwargs)</td>
 <td>Beam profile monitors.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.PIM.html#happi.containers.PIM" title="happi.containers.PIM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.PIM</span></code></a>(**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.PIM.html#happi.containers.PIM" title="happi.containers.PIM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.PIM</span></code></a>(**kwargs)</td>
 <td>Beam profile monitors.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.IPM.html#happi.containers.IPM" title="happi.containers.IPM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.IPM</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.IPM.html#happi.containers.IPM" title="happi.containers.IPM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.IPM</span></code></a>(**kwargs)</td>
 <td>Beam intensity monitors.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.Attenuator.html#happi.containers.Attenuator" title="happi.containers.Attenuator"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.Attenuator</span></code></a>(**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.Attenuator.html#happi.containers.Attenuator" title="happi.containers.Attenuator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.Attenuator</span></code></a>(**kwargs)</td>
 <td>Beam attenuators, used to get a lower intensity beam downstream to protect the sample or to protect hardware components.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.Stopper.html#happi.containers.Stopper" title="happi.containers.Stopper"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.Stopper</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.Stopper.html#happi.containers.Stopper" title="happi.containers.Stopper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.Stopper</span></code></a>(**kwargs)</td>
 <td>Large devices that prevent beam when it could cause damage to hardware.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.OffsetMirror.html#happi.containers.OffsetMirror" title="happi.containers.OffsetMirror"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.OffsetMirror</span></code></a>(**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.OffsetMirror.html#happi.containers.OffsetMirror" title="happi.containers.OffsetMirror"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.OffsetMirror</span></code></a>(**kwargs)</td>
 <td>A device that steers beam in the x direction by changing a pitch motor.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.PulsePicker.html#happi.containers.PulsePicker" title="happi.containers.PulsePicker"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.PulsePicker</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.PulsePicker.html#happi.containers.PulsePicker" title="happi.containers.PulsePicker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.PulsePicker</span></code></a>(**kwargs)</td>
 <td>A device that syncs with the timing system to control when beam arrives in the hutch.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.LODCM.html#happi.containers.LODCM" title="happi.containers.LODCM"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.LODCM</span></code></a>(**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/happi.containers.LODCM.html#happi.containers.LODCM" title="happi.containers.LODCM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.LODCM</span></code></a>(**kwargs)</td>
 <td>This LODCM class doesn’t refer to the full LODCM, but rather one of the two crystals.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.MovableStand.html#happi.containers.MovableStand" title="happi.containers.MovableStand"><code class="xref py py-obj docutils literal"><span class="pre">happi.containers.MovableStand</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/happi.containers.MovableStand.html#happi.containers.MovableStand" title="happi.containers.MovableStand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.containers.MovableStand</span></code></a>(**kwargs)</td>
 <td>This class stores information about stands that move, like XPP’s hand-crank that moves SB2 and SB3 from the PINK to XPP lines and back.</td>
 </tr>
 </tbody>
@@ -459,7 +459,7 @@ basis.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0+20.g6a87942',
+            VERSION:'1.1.0+8.g139ad0c',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

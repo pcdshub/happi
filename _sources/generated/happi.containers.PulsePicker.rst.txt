@@ -1,5 +1,5 @@
-happi\.containers\.PulsePicker
-==============================
+happi.containers.PulsePicker
+============================
 
 .. currentmodule:: happi.containers
 
@@ -21,5 +21,26 @@ happi\.containers\.PulsePicker
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PulsePicker.active
+      ~PulsePicker.args
+      ~PulsePicker.beamline
+      ~PulsePicker.device_class
+      ~PulsePicker.entry_info
+      ~PulsePicker.info_names
+      ~PulsePicker.kwargs
+      ~PulsePicker.macros
+      ~PulsePicker.mandatory_info
+      ~PulsePicker.name
+      ~PulsePicker.parent
+      ~PulsePicker.prefix
+      ~PulsePicker.screen
+      ~PulsePicker.stand
+      ~PulsePicker.system
+      ~PulsePicker.z
    
    

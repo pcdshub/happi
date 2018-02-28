@@ -1,5 +1,5 @@
-happi\.containers\.PIM
-======================
+happi.containers.PIM
+====================
 
 .. currentmodule:: happi.containers
 
@@ -21,5 +21,28 @@ happi\.containers\.PIM
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PIM.active
+      ~PIM.args
+      ~PIM.beamline
+      ~PIM.data
+      ~PIM.device_class
+      ~PIM.entry_info
+      ~PIM.info_names
+      ~PIM.kwargs
+      ~PIM.macros
+      ~PIM.mandatory_info
+      ~PIM.name
+      ~PIM.parent
+      ~PIM.prefix
+      ~PIM.prefix_det
+      ~PIM.screen
+      ~PIM.stand
+      ~PIM.system
+      ~PIM.z
    
    

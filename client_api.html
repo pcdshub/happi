@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Client API &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  <title>Client API &mdash; Happi Deck 1.1.0+8.g139ad0c documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="index.html"/>
+    <link rel="top" title="Happi Deck 1.1.0+8.g139ad0c documentation" href="index.html"/>
         <link rel="next" title="Supported Backends" href="backends.html"/>
         <link rel="prev" title="Creating New Device Types" href="develop.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0.0+20.g6a87942
+                1.1.0+8.g139ad0c
               </div>
             
           
@@ -204,10 +204,10 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a>) – The device to store in the database</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>) – The device to store in the database</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">EntryError: – If all of the mandatory information for the device has not been
-specified or there is already a device with that <code class="docutils literal"><span class="pre">id</span></code> in the
+specified or there is already a device with that <code class="docutils literal notranslate"><span class="pre">id</span></code> in the
 database</td>
 </tr>
 </tbody>
@@ -229,7 +229,7 @@ database</td>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>device_cls</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> or name of class) – The Device Container to instantiate</li>
+<li><strong>device_cls</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> or name of class) – The Device Container to instantiate</li>
 <li><strong>kwargs</strong> – Information to pass through to the device, upon initialization</li>
 </ul>
 </td>
@@ -240,19 +240,19 @@ database</td>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">device</p>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: – If the provided class is not a subclass of <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: – If the provided class is not a subclass of <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
 <span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#happi.Client.device_types" title="happi.Client.device_types"><code class="xref py py-attr docutils literal"><span class="pre">device_types</span></code></a></p>
+<p class="last"><a class="reference internal" href="#happi.Client.device_types" title="happi.Client.device_types"><code class="xref py py-attr docutils literal notranslate"><span class="pre">device_types</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -286,11 +286,11 @@ database</td>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>post</strong> – Information to pertinent to the device</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">SearchError</span></code> – If no match for the given information is found</td>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">SearchError</span></code> – If no match for the given information is found</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>device</strong> – A device that matches the characteristics given</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -319,7 +319,7 @@ on each individual implementation</p>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal"><span class="pre">find_device()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal"><span class="pre">search()</span></code></a></p>
+<p class="last"><a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_device()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -331,7 +331,7 @@ on each individual implementation</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a>) – Device to be removed from the database</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>) – Device to be removed from the database</td>
 </tr>
 </tbody>
 </table>
@@ -347,7 +347,7 @@ on each individual implementation</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>as_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – Return the information as a list of dictionaries or a list of
-<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> containers</li>
+<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> containers</li>
 <li><strong>start</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum beamline position to include devices</li>
 <li><strong>end</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum beamline position to include devices</li>
 <li><strong>kwargs</strong> – Information to filter through the database structured as key, value
@@ -434,7 +434,7 @@ is written to the logger</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0+20.g6a87942',
+            VERSION:'1.1.0+8.g139ad0c',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

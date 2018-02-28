@@ -1,5 +1,5 @@
-happi\.containers\.Slits
-========================
+happi.containers.Slits
+======================
 
 .. currentmodule:: happi.containers
 
@@ -21,5 +21,26 @@ happi\.containers\.Slits
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Slits.active
+      ~Slits.args
+      ~Slits.beamline
+      ~Slits.device_class
+      ~Slits.entry_info
+      ~Slits.info_names
+      ~Slits.kwargs
+      ~Slits.macros
+      ~Slits.mandatory_info
+      ~Slits.name
+      ~Slits.parent
+      ~Slits.prefix
+      ~Slits.screen
+      ~Slits.stand
+      ~Slits.system
+      ~Slits.z
    
    

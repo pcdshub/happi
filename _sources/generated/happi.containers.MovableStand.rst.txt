@@ -1,5 +1,5 @@
-happi\.containers\.MovableStand
-===============================
+happi.containers.MovableStand
+=============================
 
 .. currentmodule:: happi.containers
 
@@ -21,5 +21,26 @@ happi\.containers\.MovableStand
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MovableStand.active
+      ~MovableStand.args
+      ~MovableStand.beamline
+      ~MovableStand.device_class
+      ~MovableStand.entry_info
+      ~MovableStand.info_names
+      ~MovableStand.kwargs
+      ~MovableStand.macros
+      ~MovableStand.mandatory_info
+      ~MovableStand.name
+      ~MovableStand.parent
+      ~MovableStand.prefix
+      ~MovableStand.screen
+      ~MovableStand.stand
+      ~MovableStand.system
+      ~MovableStand.z
    
    

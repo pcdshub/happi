@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.Stopper &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  <title>happi.containers.Stopper &mdash; Happi Deck 1.1.0+8.g139ad0c documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="../index.html"/>
+    <link rel="top" title="Happi Deck 1.1.0+8.g139ad0c documentation" href="../index.html"/>
         <link rel="up" title="Device Containers" href="../containers.html"/>
         <link rel="next" title="happi.containers.OffsetMirror" href="happi.containers.OffsetMirror.html"/>
         <link rel="prev" title="happi.containers.Attenuator" href="happi.containers.Attenuator.html"/> 
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.0.0+20.g6a87942
+                1.1.0+8.g139ad0c
               </div>
             
           
@@ -200,7 +200,8 @@
 <dl class="method">
 <dt id="happi.containers.Stopper.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.Stopper.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
 
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
@@ -209,17 +210,74 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#happi.containers.Stopper.__init__" title="happi.containers.Stopper.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(**kwargs)</td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="#happi.containers.Stopper.__init__" title="happi.containers.Stopper.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</td>
+<td>Initialize self.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">post</span></code>()</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">post</span></code>()</td>
 <td>Create a document to be loaded into the happi database</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">save</span></code>()</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>()</td>
 <td>Overwritten when the device is loaded from the client</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">show_info</span></code>([handle])</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_info</span></code>([handle])</td>
 <td>Show the device information in a PrettyTable</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">active</span></code></td>
+<td>Whether the device is actively deployed</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">args</span></code></td>
+<td>Arguments to pass to device_class</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">beamline</span></code></td>
+<td>Section of beamline the device belongs</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">entry_info</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></td>
+<td>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></td>
+<td>Keyword arguments to pass to device_class</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">macros</span></code></td>
+<td>The EDM macro string asscociated with the with the device.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatory_info</span></code></td>
+<td>Mandatory information for the device to be initialized</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></td>
+<td>Shorthand name for the device</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></td>
+<td>If the device is a component of another, enter the name</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#happi.containers.Stopper.prefix" title="happi.containers.Stopper.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span></code></a></td>
+<td>A base PV for all related records</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen</span></code></td>
+<td>The absolute path to the main control screen</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">stand</span></code></td>
+<td>Acronym for stand, must be three alphanumeric characters</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">system</span></code></td>
+<td>The system the device is involved with, i.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></td>
+<td>Beamline position of the device</td>
 </tr>
 </tbody>
 </table>
@@ -271,7 +329,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.0.0+20.g6a87942',
+            VERSION:'1.1.0+8.g139ad0c',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

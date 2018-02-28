@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating New Device Types &mdash; Happi Deck 1.0.0+20.g6a87942 documentation</title>
+  <title>Creating New Device Types &mdash; Happi Deck 1.1.0+8.g139ad0c documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="Happi Deck 1.0.0+20.g6a87942 documentation" href="index.html"/>
+    <link rel="top" title="Happi Deck 1.1.0+8.g139ad0c documentation" href="index.html"/>
         <link rel="next" title="Client API" href="client_api.html"/>
         <link rel="prev" title="Using the Client" href="client.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0.0+20.g6a87942
+                1.1.0+8.g139ad0c
               </div>
             
           
@@ -171,14 +171,14 @@
             
   <div class="section" id="creating-new-device-types">
 <h1>Creating New Device Types<a class="headerlink" href="#creating-new-device-types" title="Permalink to this headline">¶</a></h1>
-<p>Container objects are built using both the base <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> class as well
-as instances of the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a>.</p>
+<p>Container objects are built using both the base <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class as well
+as instances of the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>.</p>
 <div class="section" id="entry-info">
 <h2>Entry Info<a class="headerlink" href="#entry-info" title="Permalink to this headline">¶</a></h2>
 <p>In order to regulate and template the information that gets entered into the
 Happi database, we use the concept of device containers. This allows a
 developer to specify fields that are inherit to every device of a specific
-type, in addition by specifying these keys using the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a>
+type, in addition by specifying these keys using the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>
 object, you have even greater control by declaring optional vs. mandatory,
 default options when a user does not enter the value, and enforce specific
 types.</p>
@@ -198,9 +198,9 @@ help control the information entered into a device</p>
 to demand a particular piece of information upon initialization</li>
 <li><strong>enforce</strong> (<em>type</em><em>, </em><em>list</em><em>, </em><em>compiled regex</em><em>, </em><em>optional</em>) – Specify that all entered information is entered in a specific format.
 This can either by a Python type i.e. int, float e.t.c., a list of
-acceptable values, or a compiled regex pattern i.e <code class="docutils literal"><span class="pre">re.compile(...)</span></code></li>
+acceptable values, or a compiled regex pattern i.e <code class="docutils literal notranslate"><span class="pre">re.compile(...)</span></code></li>
 <li><strong>default</strong> (<em>optional</em>) – A default value for the trait to have if the user does not specify.
-Keep in mind that this should be the same type as <code class="docutils literal"><span class="pre">enforce</span></code> if you
+Keep in mind that this should be the same type as <code class="docutils literal notranslate"><span class="pre">enforce</span></code> if you
 are demanding a certain type.</li>
 </ul>
 </td>
@@ -213,7 +213,7 @@ based on the the settings</p>
 </tbody>
 </table>
 <p class="rubric">Example</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
 
     <span class="n">my_field</span> <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;My generated field&#39;</span><span class="p">)</span>
     <span class="n">number</span>   <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Device number&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -247,31 +247,31 @@ to the correct type</td>
 <h2>Using a Device<a class="headerlink" href="#using-a-device" title="Permalink to this headline">¶</a></h2>
 <p>In order to ensure that information is entered into the database in an
 organized fashion, the client will only accept classes that inherit from
-<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a>. Each device will have the key information represented as
+<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>. Each device will have the key information represented as
 class attributes, available to be manipulated like any other regular property</p>
 <p>Editing the information for a container is a simple as:</p>
-<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">Device</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">Device</span>
 
 <span class="gp">In [2]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">)</span>
 
 <span class="gp">In [3]: </span><span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;new_name&#39;</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal"><span class="pre">Device</span></code></a> class also supports extraneous data that may not have been
+<p>The <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class also supports extraneous data that may not have been
 captured when the original container was created. You can either enter this as
-a keyword, or enter it into the <a class="reference internal" href="containers.html#happi.Device.extraneous" title="happi.Device.extraneous"><code class="xref py py-attr docutils literal"><span class="pre">Device.extraneous</span></code></a> dictionary.</p>
+a keyword, or enter it into the <a class="reference internal" href="containers.html#happi.Device.extraneous" title="happi.Device.extraneous"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.extraneous</span></code></a> dictionary.</p>
 <p>While you are free to play around with the device attributes, when loading the
 object into the database you will need to make sure that all of the
-<a class="reference internal" href="containers.html#happi.Device.mandatory_info" title="happi.Device.mandatory_info"><code class="xref py py-attr docutils literal"><span class="pre">Device.mandatory_info</span></code></a> has been entered, otherwise the client
+<a class="reference internal" href="containers.html#happi.Device.mandatory_info" title="happi.Device.mandatory_info"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.mandatory_info</span></code></a> has been entered, otherwise the client
 will reject the device.</p>
 </div>
 <div class="section" id="example-class">
 <h2>Example Class<a class="headerlink" href="#example-class" title="Permalink to this headline">¶</a></h2>
-<p>In order to show the flexibility of the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> class, we’ll put
+<p>In order to show the flexibility of the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> class, we’ll put
 together an example container. The class can be invoked in the same way you
 would usually handle class inheritance, the only difference is that you specify
 class attributes as EntryInfo objects:</p>
-<div class="code highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">happi.device</span> <span class="k">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">EntryInfo</span>
 
 <span class="k">class</span> <span class="nc">MyDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
@@ -284,15 +284,15 @@ class attributes as EntryInfo objects:</p>
 </pre></div>
 </div>
 <p>By default, EntryInfo will create an optional keyword, whose default is
-<code class="docutils literal"><span class="pre">None</span></code> with the same name as the class attribute. You can always see how this
+<code class="docutils literal notranslate"><span class="pre">None</span></code> with the same name as the class attribute. You can always see how this
 information will be put into the the database by looking at the output of the
-<a class="reference internal" href="containers.html#happi.Device.post" title="happi.Device.post"><code class="xref py py-meth docutils literal"><span class="pre">Device.post()</span></code></a> method. As shown in the example above, using the EntryInfo
+<a class="reference internal" href="containers.html#happi.Device.post" title="happi.Device.post"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.post()</span></code></a> method. As shown in the example above, using the EntryInfo
 keywords, you can put a short doc string to give a better explanation of the
 field, and also enforce that user enter a specific format of information.</p>
-<p>While the user will always be able to enter <code class="docutils literal"><span class="pre">None</span></code> for the attribute, if a
-real value is given it will be checked against the specified <code class="docutils literal"><span class="pre">enforce</span></code>
-keyword, raising <code class="docutils literal"><span class="pre">ValueError</span></code> if invalid. Here is a table for how the
-<a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a> check the type</p>
+<p>While the user will always be able to enter <code class="docutils literal notranslate"><span class="pre">None</span></code> for the attribute, if a
+real value is given it will be checked against the specified <code class="docutils literal notranslate"><span class="pre">enforce</span></code>
+keyword, raising <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if invalid. Here is a table for how the
+<a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> check the type</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="21%" />
@@ -321,7 +321,7 @@ keyword, raising <code class="docutils literal"><span class="pre">ValueError</sp
 <p>Finally, fields that are important to the device can be marked as mandatory.
 These should have no default value. When entering information you will not
 neccesarily see a difference in between optional and mandatory
-<a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal"><span class="pre">EntryInfo</span></code></a>, however the database client will reject the device if
+<a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>, however the database client will reject the device if
 these fields don’t have values associated with them.</p>
 </div>
 </div>
@@ -370,7 +370,7 @@ these fields don’t have values associated with them.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0+20.g6a87942',
+            VERSION:'1.1.0+8.g139ad0c',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
