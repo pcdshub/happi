@@ -29,7 +29,8 @@ def guess_motor_class(prefix):
     Returns
     -------
     device_class : str
-        Type of EpicsMotor. If not, we assume can use pcdsd
+        Type of EpicsMotor. If not, we assume
+        `pcdsdevices.epics_motor.PCDSMotorBase`
     """
     for _typ in motor_types:
         if _typ in prefix:
