@@ -12,6 +12,31 @@ from ..errors import DatabaseError
 logger = logging.getLogger(__name__)
 
 
+# Declare our motor types
+motor_types = {'MMS': 'pcdsdevices.epics_motor.IMS',
+               'MMN': 'pcdsdevices.epics_motor.Newport',
+               'MZM': 'pcdsdevices.epics_motor.PMC100'}
+
+
+def guess_motor_class(prefix):
+    """
+    Guess the corresponding pcdsdevices.epics_motor class based on prefix
+
+    Parameters
+    ----------
+    prefix : str
+
+    Returns
+    -------
+    device_class : str
+        Type of EpicsMotor. If not, we assume can use pcdsd
+    """
+    for _typ in motor_types:
+        if _typ in prefix:
+            return motor_types[_typ]
+    return 'pcdsdevices.epics_motor.PCDSMotorBase'
+
+
 class QSBackend(JSONBackend):
     """
     Questionniare Backend
