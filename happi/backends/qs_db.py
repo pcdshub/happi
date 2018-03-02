@@ -12,6 +12,32 @@ from ..errors import DatabaseError
 logger = logging.getLogger(__name__)
 
 
+# Declare our motor types
+motor_types = {'MMS': 'pcdsdevices.epics_motor.IMS',
+               'MMN': 'pcdsdevices.epics_motor.Newport',
+               'MZM': 'pcdsdevices.epics_motor.PMC100'}
+
+
+def guess_motor_class(prefix):
+    """
+    Guess the corresponding pcdsdevices.epics_motor class based on prefix
+
+    Parameters
+    ----------
+    prefix : str
+
+    Returns
+    -------
+    device_class : str
+        Type of EpicsMotor. If not, we assume
+        `pcdsdevices.epics_motor.PCDSMotorBase`
+    """
+    for _typ in motor_types:
+        if _typ in prefix:
+            return motor_types[_typ]
+    return 'pcdsdevices.epics_motor.PCDSMotorBase'
+
+
 class QSBackend(JSONBackend):
     """
     Questionniare Backend
@@ -38,7 +64,7 @@ class QSBackend(JSONBackend):
     proposal: str
         Proposal identifier i.e "LR32"
     """
-    device_translations = {'motors': 'pcdsdevices.epics_motor.EpicsMotor'}
+    device_translations = {'motors': guess_motor_class}
 
     def __init__(self, run_no, proposal, **kwargs):
         # Create our client and gather the raw information from the client
@@ -104,7 +130,7 @@ class QSBackend(JSONBackend):
                         post = {'name': dev_info.pop('name'),
                                 'prefix': dev_info['pvbase'],
                                 'beamline': beamline,
-                                'device_class': _class,
+                                'device_class': _class(dev_info['pvbase']),
                                 'type': 'Device',
                                 # TODO: We should not assume that we are using
                                 # the prefix as _id. Other backends do not make
@@ -120,9 +146,9 @@ class QSBackend(JSONBackend):
                                 raise Exception("Unable to create a device "
                                                 " without %s".format(key))
                     except Exception as exc:
-                        logger.warning("Unable to create a %s from "
-                                       "Questionnaire row %s",
-                                       _class, num)
+                        logger.warning("Unable to create an object from "
+                                       "Questionnaire table %s row %s",
+                                       field, num)
                     else:
                         self.db[post['_id']] = post
 
