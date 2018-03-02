@@ -158,6 +158,7 @@ def test_qsbackend_with_client(mockqsbackend):
     assert all([d.device_class == 'pcdsdevices.epics_motor.IMS'
                 for d in c.all_devices])
 
+
 @requires_questionnaire
 def test_guess_motor_class():
     from happi.backends.qs_db import guess_motor_class
