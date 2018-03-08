@@ -102,10 +102,10 @@ class QSBackend(JSONBackend):
         self.db = dict()
         logger.debug("Requesting proposal information for %s", proposal)
         raw = self.qs.getProposalDetailsForRun(run_no, proposal)
-        for field, _class in self.device_translations.items():
+        for table, _class in self.device_translations.items():
             # Create a regex pattern to find all the appropriate pattern match
             pattern = re.compile('pcdssetup-{}-'
-                                 'setup-(\d+)-(\w+)'.format(field))
+                                 'setup-(\d+)-(\w+)'.format(table))
             # Search for all keys that match the device and store in a
             # temporary dictionary
             devices = dict()
@@ -121,10 +121,10 @@ class QSBackend(JSONBackend):
                     devices[dev_no][match.group(2)] = raw[field]
             # Store the devices as happi items
             if not devices:
-                logger.info("No device information found under '%s'", field)
+                logger.info("No device information found under '%s'", table)
             else:
                 logger.debug("Found %s devices under %s table",
-                             len(devices), field)
+                             len(devices), table)
                 for num, dev_info in devices.items():
                     try:
                         post = {'name': dev_info.pop('name'),
@@ -148,7 +148,7 @@ class QSBackend(JSONBackend):
                     except Exception as exc:
                         logger.warning("Unable to create an object from "
                                        "Questionnaire table %s row %s",
-                                       field, num)
+                                       table, num)
                     else:
                         self.db[post['_id']] = post
 
