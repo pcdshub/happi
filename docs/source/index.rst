@@ -27,3 +27,9 @@ there are still standards within the group we need to uphold.
    client_api.rst
    backends.rst
    containers.rst
+
+.. toctree::
+   :maxdepth: 0
+   :caption: Developer Documentation
+
+   releases.rst
