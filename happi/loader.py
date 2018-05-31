@@ -100,7 +100,17 @@ def from_container(device, attach_md=True, use_cache=True):
     """
     # Return a cached version of the device if present and not forced
     if use_cache and device.prefix in cache:
-        return cache[device.prefix]
+        cached_device = cache[device.prefix]
+        # If the metadata has not been modified or we can't review it.
+        # Return the cached object
+        if not hasattr(cached_device, 'md') or cached_device.md == device:
+            logger.debug("Loading %s from cache ...", device.prefix)
+            return cached_device
+        # Otherwise reload
+        else:
+            logger.warning("Device %s has already been loaded, but the "
+                           "database information has been modified. "
+                           "Reloading ...", device.prefix)
 
     # Find the class and module of the container.
     if not device.device_class:
