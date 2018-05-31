@@ -2,6 +2,15 @@
 Release Notes
 #############
 
+Next Release
+============
+
+Maintenance
+-----------
+- In :meth:`.from_container`, the provided container is compared against
+  the cached version of the device to find discrepancies. This means that
+  modified container objects will always load a new Device. (#62)
+
 v1.1.1 (2018-03-08)
 ===================
 
