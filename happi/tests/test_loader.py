@@ -40,10 +40,20 @@ def test_from_container():
 def test_caching():
     # Create a datetime device
     d = TimeDevice(name='Test', prefix='Tst:This:2', beamline='TST',
-                   device_class='datetime.timedelta', args=list(), days=10,
+                   device_class='types.SimpleNamespace', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
     assert d.prefix in cache
+    assert id(td) == id(from_container(d))
+    assert id(td) != id(from_container(d, use_cache=False))
+    # Modify md and check we see a reload
+    d.days = 12
+    assert id(td) != id(from_container(d, use_cache=True))
+    # Check with a device where metadata is unavailable
+    d = TimeDevice(name='Test', prefix='Tst:Delta:3', beamline='TST',
+                   device_class='datetime.timedelta', args=list(), days=10,
+                   kwargs={'days': '{{days}}', 'seconds': 30})
+    td = from_container(d)
     assert id(td) == id(from_container(d))
     assert id(td) != id(from_container(d, use_cache=False))
 

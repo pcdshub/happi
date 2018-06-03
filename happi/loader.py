@@ -77,7 +77,10 @@ def from_container(device, attach_md=True, use_cache=True):
 
     By default, the instantiated object has the original container added on as
     ``.md``. This allows applications to utilize additional metadata
-    information that may not be included in the basic class constructor.
+    information that may not be included in the basic class constructor. On
+    later calls, the container you request is checked against this stored
+    metadata. If a discrepancy is found the object is **forced** to reload, not
+    retrieved from the cache.
 
     Parameters
     ----------
@@ -92,7 +95,9 @@ def from_container(device, attach_md=True, use_cache=True):
         return the same object. This prevents unnecessary EPICS connections
         from being initialized in the same process. If a new object is
         needed, set `use_cache` to False and a new object will be created,
-        overriding the current cached object
+        overriding the current cached object. An object with matching prefix
+        and differing metadata will always return a new instantiation of the
+        device.
 
     Returns
     -------
@@ -100,7 +105,17 @@ def from_container(device, attach_md=True, use_cache=True):
     """
     # Return a cached version of the device if present and not forced
     if use_cache and device.prefix in cache:
-        return cache[device.prefix]
+        cached_device = cache[device.prefix]
+        # If the metadata has not been modified or we can't review it.
+        # Return the cached object
+        if not hasattr(cached_device, 'md') or cached_device.md == device:
+            logger.debug("Loading %s from cache ...", device.prefix)
+            return cached_device
+        # Otherwise reload
+        else:
+            logger.warning("Device %s has already been loaded, but the "
+                           "database information has been modified. "
+                           "Reloading ...", device.prefix)
 
     # Find the class and module of the container.
     if not device.device_class:
