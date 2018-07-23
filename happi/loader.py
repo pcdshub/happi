@@ -172,8 +172,8 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     return obj
 
 
-def load_devices(*devices, pprint=False, namespace=None, threaded=True,
-                 **kwargs):
+def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
+                 threaded=True, **kwargs):
     """
     Load a series of devices into a namespace
 
@@ -189,6 +189,10 @@ def load_devices(*devices, pprint=False, namespace=None, threaded=True,
         Namespace to collect loaded devices in. By default this will be a
         ``types.SimpleNamespace``
 
+    use_cache : bool, optional
+        If set to ``False``, we'll ignore the cache and always make new
+        devices.
+
     threaded : bool, optional
         Defaults to True to create each device in a background thread.
         Note that this assumes that no two devices in the *devices input are
@@ -201,19 +205,21 @@ def load_devices(*devices, pprint=False, namespace=None, threaded=True,
     """
     # Create our namespace if we were not given one
     namespace = namespace or types.SimpleNamespace()
+    name_list = [container.name for container in devices]
     if threaded:
         pool = ThreadPool(len(devices))
-        opt_load = partial(load_device, pprint=pprint, threaded=True, **kwargs)
-        dev_list = pool.map(opt_load, devices)
+        opt_load = partial(load_device, pprint=pprint, use_cache=use_cache,
+                           threaded=True, **kwargs)
+        loaded_list = pool.map(opt_load, devices)
     else:
-        dev_list = []
+        loaded_list = []
         for device in devices:
-            loaded = load_device(device, pprint=pprint, threaded=False,
-                                 **kwargs)
-            dev_list.append(loaded)
-    for dev in dev_list:
-        attr = create_alias(dev.name)
-        setattr(namespace, attr, loaded)
+            loaded = load_device(device, pprint=pprint, use_cache=use_cache,
+                                 threaded=False, **kwargs)
+            loaded_list.append(loaded)
+    for dev, name in zip(loaded_list, name_list):
+        attr = create_alias(name)
+        setattr(namespace, attr, dev)
     return namespace
 
 
