@@ -110,10 +110,6 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     -------
     obj : happi.Device.device_class
     """
-    # We sync with the main thread's loop so that they work as expected later
-    if threaded:
-        asyncio.set_event_loop(main_event_loop)
-
     # Return a cached version of the device if present and not forced
     if use_cache and device.prefix in cache:
         cached_device = cache[device.prefix]
@@ -207,6 +203,9 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
     namespace = namespace or types.SimpleNamespace()
     name_list = [container.name for container in devices]
     if threaded:
+        global main_event_loop
+        if main_event_loop is None:
+            main_event_loop = asyncio.get_event_loop()
         pool = ThreadPool(len(devices))
         opt_load = partial(load_device, pprint=pprint, use_cache=use_cache,
                            threaded=True, **kwargs)
@@ -228,6 +227,11 @@ def load_device(device, pprint=False, threaded=False, **kwargs):
     # catch and store it so we can easily view the traceback
     # later without going to logs, e.t.c
     logger.debug("Loading device %s ...", device.name)
+
+    # We sync with the main thread's loop so that they work as expected later
+    if threaded and main_event_loop is not None:
+        asyncio.set_event_loop(main_event_loop)
+
     load_message = "Loading %s [%s] ... "
     success = "\033[32mSUCCESS\033[0m!"
     failed = "\033[31mFAILED\033[0m"
