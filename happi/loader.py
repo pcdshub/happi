@@ -5,6 +5,9 @@ import sys
 import types
 import logging
 import importlib
+import asyncio
+from functools import partial
+from multiprocessing.pool import ThreadPool
 
 from jinja2 import Environment, meta
 
@@ -13,6 +16,7 @@ from .utils import create_alias
 logger = logging.getLogger(__name__)
 
 cache = dict()
+main_event_loop = None
 
 
 def fill_template(template, device, enforce_type=False):
@@ -63,7 +67,7 @@ def fill_template(template, device, enforce_type=False):
     return filled
 
 
-def from_container(device, attach_md=True, use_cache=True):
+def from_container(device, attach_md=True, use_cache=True, threaded=False):
     """
     Load a device from a happi container
 
@@ -99,10 +103,17 @@ def from_container(device, attach_md=True, use_cache=True):
         and differing metadata will always return a new instantiation of the
         device.
 
+    threaded: bool, optional
+        Set this to True when calling inside a thread.
+
     Returns
     -------
     obj : happi.Device.device_class
     """
+    # We sync with the main thread's loop so that they work as expected later
+    if threaded:
+        asyncio.set_event_loop(main_event_loop)
+
     # Return a cached version of the device if present and not forced
     if use_cache and device.prefix in cache:
         cached_device = cache[device.prefix]
@@ -161,7 +172,8 @@ def from_container(device, attach_md=True, use_cache=True):
     return obj
 
 
-def load_devices(*devices, pprint=False, namespace=None, **kwargs):
+def load_devices(*devices, pprint=False, namespace=None, threaded=True,
+                 **kwargs):
     """
     Load a series of devices into a namespace
 
@@ -177,32 +189,52 @@ def load_devices(*devices, pprint=False, namespace=None, **kwargs):
         Namespace to collect loaded devices in. By default this will be a
         ``types.SimpleNamespace``
 
+    threaded : bool, optional
+        Defaults to True to create each device in a background thread.
+        Note that this assumes that no two devices in the *devices input are
+        the same device. You are not guaranteed to load from the cache
+        correctly if you ask for the same device to be loaded twice in the same
+        threaded load.
+
     kwargs:
         Are passed to :func:`.from_container`
     """
     # Create our namespace if we were not given one
     namespace = namespace or types.SimpleNamespace()
-    for device in devices:
-        # Attempt to load our device. If this raises an exception
-        # catch and store it so we can easily view the traceback
-        # later without going to logs, e.t.c
-        logger.debug("Loading device %s ...", device.name)
-        if pprint:
-            print("Loading {} [{}]...".format(device.name,
-                                              device.device_class),
-                  end=' ')
-        try:
-            loaded = from_container(device, **kwargs)
-            logger.info("Loading %s [%s] ... \033[32mSUCCESS\033[0m!",
-                        device.name, device.device_class)
-            if pprint:
-                print("\033[32mSUCCESS\033[0m")
-        except Exception as exc:
-            if pprint:
-                print("\033[31mFAILED\033[0m")
-            logger.exception('Error loading %s', device.name)
-            loaded = exc
-        # Add our newly created device to the namespace
-        attr = create_alias(device.name)
+    if threaded:
+        pool = ThreadPool(len(devices))
+        opt_load = partial(load_device, pprint=pprint, threaded=True, **kwargs)
+        dev_list = pool.map(opt_load, devices)
+    else:
+        dev_list = []
+        for device in devices:
+            loaded = load_device(device, pprint=pprint, threaded=False,
+                                 **kwargs)
+            dev_list.append(loaded)
+    for dev in dev_list:
+        attr = create_alias(dev.name)
         setattr(namespace, attr, loaded)
     return namespace
+
+
+def load_device(device, pprint=False, threaded=False, **kwargs):
+    # Attempt to load our device. If this raises an exception
+    # catch and store it so we can easily view the traceback
+    # later without going to logs, e.t.c
+    logger.debug("Loading device %s ...", device.name)
+    if pprint:
+        print("Loading {} [{}]...".format(device.name,
+                                          device.device_class),
+              end=' ')
+    try:
+        loaded = from_container(device, **kwargs)
+        logger.info("Loading %s [%s] ... \033[32mSUCCESS\033[0m!",
+                    device.name, device.device_class)
+        if pprint:
+            print("\033[32mSUCCESS\033[0m")
+    except Exception as exc:
+        if pprint:
+            print("\033[31mFAILED\033[0m")
+        logger.exception('Error loading %s', device.name)
+        loaded = exc
+    return loaded
