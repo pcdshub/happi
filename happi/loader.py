@@ -228,19 +228,28 @@ def load_device(device, pprint=False, threaded=False, **kwargs):
     # catch and store it so we can easily view the traceback
     # later without going to logs, e.t.c
     logger.debug("Loading device %s ...", device.name)
+    load_message = "Loading %s [%s] ... "
+    success = "\033[32mSUCCESS\033[0m!"
+    failed = "\033[31mFAILED\033[0m"
     if pprint:
-        print("Loading {} [{}]...".format(device.name,
-                                          device.device_class),
-              end=' ')
+        device_message = load_message % (device.name, device.device_class)
+        if not threaded:
+            print(device_message, end='')
     try:
         loaded = from_container(device, **kwargs)
-        logger.info("Loading %s [%s] ... \033[32mSUCCESS\033[0m!",
+        logger.info(load_message + success,
                     device.name, device.device_class)
         if pprint:
-            print("\033[32mSUCCESS\033[0m")
+            if threaded:
+                print(device_message + success)
+            else:
+                print(success)
     except Exception as exc:
         if pprint:
-            print("\033[31mFAILED\033[0m")
+            if threaded:
+                print(device_message + failed)
+            else:
+                print(failed)
         logger.exception('Error loading %s', device.name)
         loaded = exc
     return loaded
