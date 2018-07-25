@@ -110,10 +110,6 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     -------
     obj : happi.Device.device_class
     """
-    # We sync with the main thread's loop so that they work as expected later
-    if threaded:
-        asyncio.set_event_loop(main_event_loop)
-
     # Return a cached version of the device if present and not forced
     if use_cache and device.prefix in cache:
         cached_device = cache[device.prefix]
@@ -132,21 +128,8 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     if not device.device_class:
         raise ValueError("Device %s does not have an associated Python class",
                          device.name)
-    mod, cls = device.device_class.rsplit('.', 1)
-    # Import the module if not already present
-    # Otherwise use the stashed version in sys.modules
-    if mod in sys.modules:
-        logger.debug("Using previously imported version of %s", mod)
-        mod = sys.modules[mod]
-    else:
-        logger.debug("Importing %s", mod)
-        mod = importlib.import_module(mod)
-    # Gather our device class from the given module
-    try:
-        cls = getattr(mod, cls)
-    except AttributeError as exc:
-        raise ImportError("Unable to import %s from %s" %
-                          (cls, mod.__name__)) from exc
+
+    cls = import_class(device.device_class)
 
     # Create correctly typed arguments from happi information
     def create_arg(arg):
@@ -170,6 +153,37 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     # Store the device in the cache
     cache[device.prefix] = obj
     return obj
+
+
+def import_class(device_class):
+    """
+    Interpret a device class import string and extract the class object.
+
+    Parameters
+    ----------
+    device_class : ``str``
+        The module path to find the class e.g. "pcdsdevices.device_types.IPM"
+
+    Returns
+    -------
+    cls : ``type``
+        The class referred to by the input string.
+    """
+    mod, cls = device_class.rsplit('.', 1)
+    # Import the module if not already present
+    # Otherwise use the stashed version in sys.modules
+    if mod in sys.modules:
+        logger.debug("Using previously imported version of %s", mod)
+        mod = sys.modules[mod]
+    else:
+        logger.debug("Importing %s", mod)
+        mod = importlib.import_module(mod)
+    # Gather our device class from the given module
+    try:
+        return getattr(mod, cls)
+    except AttributeError as exc:
+        raise ImportError("Unable to import %s from %s" %
+                          (cls, mod.__name__)) from exc
 
 
 def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
@@ -212,6 +226,16 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
     namespace = namespace or types.SimpleNamespace()
     name_list = [container.name for container in devices]
     if threaded:
+        # Pre-import because imports in threads have race conditions
+        for device in devices:
+            try:
+                import_class(device.device_class)
+            except Exception:
+                # Just wait for the normal error handling later
+                pass
+        global main_event_loop
+        if main_event_loop is None:
+            main_event_loop = asyncio.get_event_loop()
         pool = ThreadPool(len(devices))
         opt_load = partial(load_device, pprint=pprint, use_cache=use_cache,
                            threaded=True, wait=wait, **kwargs)
@@ -234,6 +258,11 @@ def load_device(device, pprint=False, threaded=False, wait=False,
     # catch and store it so we can easily view the traceback
     # later without going to logs, e.t.c
     logger.debug("Loading device %s ...", device.name)
+
+    # We sync with the main thread's loop so that they work as expected later
+    if threaded and main_event_loop is not None:
+        asyncio.set_event_loop(main_event_loop)
+
     load_message = "Loading %s [%s] ... "
     success = "\033[32mSUCCESS\033[0m!"
     failed = "\033[31mFAILED\033[0m"
