@@ -187,7 +187,7 @@ def import_class(device_class):
 
 
 def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
-                 threaded=False, wait=False, **kwargs):
+                 threaded=False, post_load=None, **kwargs):
     """
     Load a series of devices into a namespace
 
@@ -214,10 +214,10 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
         correctly if you ask for the same device to be loaded twice in the same
         threaded load.
 
-    wait : bool, optional
-        Set to True to wait for connections, and to consider a disconnected
-        device as an errored load. If threaded is True, this will be done in
-        the threaded load.
+    post_load : function, optional
+        Function of one argument to run on each device after instantiation.
+        This is your opportunity to check for good device health during the
+        threaded load.
 
     kwargs:
         Are passed to :func:`.from_container`
@@ -238,13 +238,13 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
             main_event_loop = asyncio.get_event_loop()
         pool = ThreadPool(len(devices))
         opt_load = partial(load_device, pprint=pprint, use_cache=use_cache,
-                           threaded=True, wait=wait, **kwargs)
+                           threaded=True, post_load=post_load, **kwargs)
         loaded_list = pool.map(opt_load, devices)
     else:
         loaded_list = []
         for device in devices:
             loaded = load_device(device, pprint=pprint, use_cache=use_cache,
-                                 threaded=False, wait=wait, **kwargs)
+                                 threaded=False, post_load=post_load, **kwargs)
             loaded_list.append(loaded)
     for dev, name in zip(loaded_list, name_list):
         attr = create_alias(name)
@@ -252,7 +252,7 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
     return namespace
 
 
-def load_device(device, pprint=False, threaded=False, wait=False,
+def load_device(device, pprint=False, threaded=False, post_load=None,
                 **kwargs):
     # Attempt to load our device. If this raises an exception
     # catch and store it so we can easily view the traceback
@@ -272,9 +272,8 @@ def load_device(device, pprint=False, threaded=False, wait=False,
             print(device_message, end='')
     try:
         loaded = from_container(device, **kwargs)
-        if wait:
-            if hasattr(loaded, 'wait_for_connection'):
-                loaded.wait_for_connection()
+        if post_load is not None:
+            post_load(loaded)
         logger.info(load_message + success,
                     device.name, device.device_class)
         if pprint:
