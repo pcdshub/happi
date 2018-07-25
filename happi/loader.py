@@ -167,13 +167,13 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
         except Exception as exc:
             logger.warning("Unable to attach metadata dictionary to device")
 
-    # Store a copy of the device in the cache
+    # Store the device in the cache
     cache[device.prefix] = obj
     return obj
 
 
 def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
-                 threaded=True, **kwargs):
+                 threaded=False, wait=False, **kwargs):
     """
     Load a series of devices into a namespace
 
@@ -194,11 +194,16 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
         devices.
 
     threaded : bool, optional
-        Defaults to True to create each device in a background thread.
+        Set to True to create each device in a background thread.
         Note that this assumes that no two devices in the *devices input are
         the same device. You are not guaranteed to load from the cache
         correctly if you ask for the same device to be loaded twice in the same
         threaded load.
+
+    wait : bool, optional
+        Set to True to wait for connections, and to consider a disconnected
+        device as an errored load. If threaded is True, this will be done in
+        the threaded load.
 
     kwargs:
         Are passed to :func:`.from_container`
@@ -209,13 +214,13 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
     if threaded:
         pool = ThreadPool(len(devices))
         opt_load = partial(load_device, pprint=pprint, use_cache=use_cache,
-                           threaded=True, **kwargs)
+                           threaded=True, wait=wait, **kwargs)
         loaded_list = pool.map(opt_load, devices)
     else:
         loaded_list = []
         for device in devices:
             loaded = load_device(device, pprint=pprint, use_cache=use_cache,
-                                 threaded=False, **kwargs)
+                                 threaded=False, wait=wait, **kwargs)
             loaded_list.append(loaded)
     for dev, name in zip(loaded_list, name_list):
         attr = create_alias(name)
@@ -223,7 +228,8 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
     return namespace
 
 
-def load_device(device, pprint=False, threaded=False, **kwargs):
+def load_device(device, pprint=False, threaded=False, wait=False,
+                **kwargs):
     # Attempt to load our device. If this raises an exception
     # catch and store it so we can easily view the traceback
     # later without going to logs, e.t.c
@@ -237,6 +243,9 @@ def load_device(device, pprint=False, threaded=False, **kwargs):
             print(device_message, end='')
     try:
         loaded = from_container(device, **kwargs)
+        if wait:
+            if hasattr(loaded, 'wait_for_connection'):
+                loaded.wait_for_connection()
         logger.info(load_message + success,
                     device.name, device.device_class)
         if pprint:
