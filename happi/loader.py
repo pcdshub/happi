@@ -254,9 +254,27 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
 
 def load_device(device, pprint=False, threaded=False, post_load=None,
                 **kwargs):
-    # Attempt to load our device. If this raises an exception
-    # catch and store it so we can easily view the traceback
-    # later without going to logs, e.t.c
+    """
+    Call :func:`.from_container ` and show success/fail
+
+    Parameters
+    ----------
+    device : happi.Device
+
+    pprint: bool, optional
+        Print results of device loads
+
+    threaded: bool, optional
+        Set this to True when calling inside a thread.
+
+    post_load : function, optional
+        Function of one argument to run on each device after instantiation.
+        This is your opportunity to check for good device health during the
+        threaded load.
+
+    kwargs:
+        Are passed to :func:`.from_container`
+    """
     logger.debug("Loading device %s ...", device.name)
 
     # We sync with the main thread's loop so that they work as expected later
