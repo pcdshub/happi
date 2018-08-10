@@ -58,21 +58,23 @@ class QSBackend(JSONBackend):
 
     Parameters
     ----------
-    run_no : int
-        Desired run number i.e 16
-
-    proposal: str
-        Proposal identifier i.e "LR32"
+    expname : str
+        The experiment name from the elog, e.g. xcslp1915
     """
     device_translations = {'motors': guess_motor_class}
 
-    def __init__(self, run_no, proposal, **kwargs):
+    def __init__(self, expname, **kwargs):
         # Create our client and gather the raw information from the client
         self.qs = QuestionnaireClient(**kwargs)
 
-        # Ensure that our user entered a valid run number and proposal
-        # identification
-        run_no = 'run{}'.format(run_no)
+        # Ensure that our user entered a valid expname
+        exp_dict = self.qs.getExpName2URAWIProposalIDs()
+        try:
+            proposal = exp_dict[expname]
+        except KeyError:
+            err = '{} is not a valid experiment name.'
+            raise ValueError(err.format(expname))
+        run_no = 'run{}'.format(expname[-2:])
         try:
             logger.debug("Requesting list of proposals in %s", run_no)
             prop_ids = self.qs.getProposalsListForRun(run_no)
