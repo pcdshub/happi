@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.1.1+6.ga8e9e36 documentation</title>
+  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.1.1+8.g0e64cc8 documentation</title>
   
 
   
@@ -24,8 +24,7 @@
 
   
 
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -59,7 +58,7 @@
             
             
               <div class="version">
-                1.1.1+6.ga8e9e36
+                1.1.1+8.g0e64cc8
               </div>
             
           
@@ -176,7 +175,7 @@
 <h1>happi.backends.qs_db.QSBackend<a class="headerlink" href="#happi-backends-qs-db-qsbackend" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="happi.backends.qs_db.QSBackend">
-<em class="property">class </em><code class="descclassname">happi.backends.qs_db.</code><code class="descname">QSBackend</code><span class="sig-paren">(</span><em>run_no</em>, <em>proposal</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">happi.backends.qs_db.</code><code class="descname">QSBackend</code><span class="sig-paren">(</span><em>expname</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Questionniare Backend</p>
 <p>This backend connects to the LCLS questionnaire and looks at devices with
 the key pattern pcds-<em>-setup-</em>-<a href="#id1"><span class="problematic" id="id2">*</span></a>. These fields are then combined and turned
@@ -194,17 +193,13 @@ searches.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>run_no</strong> (<em>int</em>) – Desired run number i.e 16</li>
-<li><strong>proposal</strong> (<em>str</em>) – Proposal identifier i.e “LR32”</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>expname</strong> (<em>str</em>) – The experiment name from the elog, e.g. xcslp1915</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="happi.backends.qs_db.QSBackend.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>run_no</em>, <em>proposal</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>expname</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -215,7 +210,7 @@ searches.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#happi.backends.qs_db.QSBackend.__init__" title="happi.backends.qs_db.QSBackend.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(run_no,&nbsp;proposal,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#happi.backends.qs_db.QSBackend.__init__" title="happi.backends.qs_db.QSBackend.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(expname,&nbsp;**kwargs)</td>
 <td>Initialize self.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</td>
@@ -299,7 +294,7 @@ searches.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.1+6.ga8e9e36',
+            VERSION:'1.1.1+8.g0e64cc8',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -313,10 +308,7 @@ searches.</p>
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
