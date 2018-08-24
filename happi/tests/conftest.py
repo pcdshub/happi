@@ -141,11 +141,16 @@ def mockqsbackend():
                 'pcdssetup-motors-setup-6-pvbase': 'TST:USR:MMS:06',
                 'pcdssetup-motors-setup-6-stageidentity': 'IMS MD23'}
 
+        def getExpName2URAWIProposalIDs(self):
+            return {
+                'tstx53416': 'X534',
+                'tstlr3216': 'LR32'}
+
     with patch('happi.backends.qs_db.QuestionnaireClient') as qs_cli:
         # Replace QuestionnaireClient with our test version
         mock_qs = MockQuestionnaireClient(use_kerberos=False,
                                           user='user', pw='pw')
         qs_cli.return_value = mock_qs
         # Instantiate a fake device
-        backend = QSBackend(15, 'LR32')
+        backend = QSBackend('tstlr3216')
         return backend
