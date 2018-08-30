@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release Notes &mdash; Happi Deck 1.1.1+8.g0e64cc8 documentation</title>
+  <title>Release Notes &mdash; Happi Deck 1.1.1+11.g5c63fbf documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.1.1+8.g0e64cc8
+                1.1.1+11.g5c63fbf
               </div>
             
           
@@ -96,7 +96,7 @@
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#next-release">Next Release</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#maintenance">Maintenance</a></li>
 </ul>
 </li>
@@ -178,14 +178,17 @@
             
   <div class="section" id="release-notes">
 <h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="next-release">
-<h2>Next Release<a class="headerlink" href="#next-release" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="v1-1-2-2018-08-30">
+<h2>v1.1.2 (2018-08-30)<a class="headerlink" href="#v1-1-2-2018-08-30" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="maintenance">
 <h3>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>In <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code>, the provided container is compared against
 the cached version of the device to find discrepancies. This means that
 modified container objects will always load a new Device. (#62)</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> uses newer methods available in the <code class="docutils literal notranslate"><span class="pre">psdm_qs_cli</span></code> to
+determine the proposal from the experiment name. This is more robust against
+exotic experiment naming schemas than prior implementations (#68)</li>
 </ul>
 </div>
 </div>
@@ -272,7 +275,7 @@ associated with different authentication methods.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.1.1+8.g0e64cc8',
+            VERSION:'1.1.1+11.g5c63fbf',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
