@@ -15,6 +15,7 @@ requirements:
     run:
       - jinja2
       - prettytable
+      - psdm_qs_cli  >=0.2.3
       - simplejson
       - pymongo 
       - python

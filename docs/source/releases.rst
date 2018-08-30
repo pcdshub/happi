@@ -2,14 +2,17 @@
 Release Notes
 #############
 
-Next Release
-============
+v1.1.2 (2018-08-30)
+===================
 
 Maintenance
 -----------
 - In :meth:`.from_container`, the provided container is compared against
   the cached version of the device to find discrepancies. This means that
   modified container objects will always load a new Device. (#62)
+- The ``QSBackend`` uses newer methods available in the ``psdm_qs_cli`` to
+  determine the proposal from the experiment name. This is more robust against
+  exotic experiment naming schemas than prior implementations (#68)
 
 v1.1.1 (2018-03-08)
 ===================
