@@ -6,5 +6,5 @@ matplotlib
 pymongo
 sphinx
 sphinx_rtd_theme
-git+https://github.com/slaclab/psdm_qs_cli.git
+psdm_qs_cli
 flake8
