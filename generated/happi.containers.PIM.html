@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.PIM &mdash; Happi Deck 1.1.1+11.g5c63fbf documentation</title>
+  <title>happi.containers.PIM &mdash; Happi Deck 1.1.2+5.gcf4650f documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.1+11.g5c63fbf
+                1.1.2+5.gcf4650f
               </div>
             
           
@@ -192,19 +192,35 @@ the diagnostic system by default.</p>
 <dl class="attribute">
 <dt id="happi.containers.PIM.prefix">
 <code class="descname">prefix</code><a class="headerlink" href="#happi.containers.PIM.prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – The base PV should be the motor states PV that shows whether the
+<dd><p>The base PV should be the motor states PV that shows whether the
 monitor is out, in at yag, or in at diode. Note that this is NOT the
 motor record. For example, if the command PV to pull the PIM out is
 “XPP:SB3:PIM:OUT:GO”, then the base PV is “XPP:SB3:PIM”. A regex will
 be used to check that “PIM” is found in the base PV.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="happi.containers.PIM.data">
 <code class="descname">data</code><a class="headerlink" href="#happi.containers.PIM.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – The data PV should be the AreaDetector base. For example, if the image
+<dd><p>The data PV should be the AreaDetector base. For example, if the image
 data is broadcast on “XCS:SB1:P6740:IMAGE1:ArrayData”, the data base
 should be “XCS:SB1:P6740”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -343,7 +359,7 @@ should be “XCS:SB1:P6740”.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.1+11.g5c63fbf',
+            VERSION:'1.1.2+5.gcf4650f',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -354,6 +370,7 @@ should be “XCS:SB1:P6740”.</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.Attenuator &mdash; Happi Deck 1.1.1+11.g5c63fbf documentation</title>
+  <title>happi.containers.Attenuator &mdash; Happi Deck 1.1.2+5.gcf4650f documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.1+11.g5c63fbf
+                1.1.2+5.gcf4650f
               </div>
             
           
@@ -191,17 +191,33 @@ assigned the beam control system by default.</p>
 <dl class="attribute">
 <dt id="happi.containers.Attenuator.prefix">
 <code class="descname">prefix</code><a class="headerlink" href="#happi.containers.Attenuator.prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> – For attunators, the base PV should be the base record from the
+<dd><p>For attunators, the base PV should be the base record from the
 attentuation calculation and control IOC, one level up from the
 calculated tranmission ratio. For example, if the transmission PV is
 “XPP:ATT:COM:R_CUR”, the base PV is “XPP:ATT”. A regex will be used
 to check that “ATT” is found in the base PV</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="happi.containers.Attenuator.n_filters">
 <code class="descname">n_filters</code><a class="headerlink" href="#happi.containers.Attenuator.n_filters" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> – Number of Attenuator blades</p>
+<dd><p>Number of Attenuator blades</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -337,7 +353,7 @@ to check that “ATT” is found in the base PV</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.1.1+11.g5c63fbf',
+            VERSION:'1.1.2+5.gcf4650f',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
@@ -348,6 +364,7 @@ to check that “ATT” is found in the base PV</p>
       <script type="text/javascript" src="../_static/jquery.js"></script>
       <script type="text/javascript" src="../_static/underscore.js"></script>
       <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
