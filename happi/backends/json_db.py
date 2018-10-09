@@ -1,6 +1,7 @@
 """
 Backend implemenation using simplejson
 """
+import os
 import fcntl
 import os.path
 import logging
@@ -57,7 +58,7 @@ class JSONBackend(metaclass=Backend):
         filling a new database, an empty but valid JSON file is created
         """
         # Do not overwrite existing databases
-        if os.path.exists(self.path):
+        if os.path.exists(self.path) and os.stat(self.path).st_size > 0:
             raise PermissionError("File {} already exists. Can not initialize "
                                   "a new database.".format(self.path))
         # Dump an empty dictionary
