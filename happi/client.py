@@ -8,6 +8,7 @@ from . import containers
 from .device import Device
 from .errors import EntryError, DatabaseError, SearchError
 from .backends import backend
+from .loader import from_container
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +199,34 @@ class Client:
         # Add the save method to the device
         device.save = lambda: self._store(device, insert=False)
         return device
+
+    def load_device(self, use_cache=True, **post):
+        """
+        Find a device in the database and instantiate it
+
+        Essentially a shortcut for:
+
+        .. code:: python
+
+            container = client.find_device(name='...')
+            device = from_container(container)
+
+        Parameters
+        ----------
+        post:
+            Passed to :meth:`.Client.find_device`
+
+        use_cache: bool, optional
+            Choice to use a cached device. See :meth:`.from_container for more
+            information
+
+        Returns
+        -------
+        obj:
+            Instantiated object
+        """
+        cntr = self.find_device(**post)
+        return from_container(cntr, use_cache=use_cache)
 
     def validate(self):
         """
