@@ -43,7 +43,7 @@ class QSBackend(JSONBackend):
     Questionniare Backend
 
     This backend connects to the LCLS questionnaire and looks at devices with
-    the key pattern pcds-*-setup-*-*. These fields are then combined and turned
+    the key pattern pcds-{}-setup-{}-{}. These fields are then combined and turned
     into proper happi devices. The translation of table name to pcdsdevices
     class is determined by the :attr:`.device_translations` dictionary. The
     beamline is determined by looking where the proposal was submitted.

@@ -217,7 +217,7 @@ class Client:
             Passed to :meth:`.Client.find_device`
 
         use_cache: bool, optional
-            Choice to use a cached device. See :meth:`.from_container for more
+            Choice to use a cached device. See :meth:`.from_container` for more
             information
 
         Returns
