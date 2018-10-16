@@ -1,6 +1,7 @@
 import os
 import logging
 import tempfile
+import types
 
 import pytest
 
@@ -206,3 +207,9 @@ class TestClient:
         # Cleanup
         os.remove(temp_path)
         os.close(fd)
+
+    def test_load_device(self, mc, device):
+        client = mc()
+        device = client.load_device(name=device.name)
+        assert isinstance(device, types.SimpleNamespace)
+        assert device.hi == 'oh hello'
