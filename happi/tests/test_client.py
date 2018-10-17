@@ -5,7 +5,8 @@ import types
 
 import pytest
 
-from happi import Device
+from happi import Client, Device
+from happi.backends.json_db import JSONBackend
 from happi.containers import GateValve
 from happi.errors import SearchError, DuplicateError, EntryError
 from .conftest import has_mongomock, mockmongoclient, mockjsonclient
@@ -25,6 +26,19 @@ def pytest_generate_tests(metafunc):
         idlist.append(case[0])
         argvalues.append(case[1])
     metafunc.parametrize('mc', argvalues, ids=idlist, scope='class')
+
+
+@pytest.fixture(scope='function')
+def happi_cfg():
+    fname = os.path.join(os.getcwd(), 'happi.cfg')
+    with open(fname, 'w+') as handle:
+        handle.write("""\
+[DEFAULT]
+backend=json
+path=db.json
+""")
+    yield fname
+    os.remove(fname)
 
 
 class TestClient:
@@ -213,3 +227,13 @@ class TestClient:
         device = client.load_device(name=device.name)
         assert isinstance(device, types.SimpleNamespace)
         assert device.hi == 'oh hello'
+
+    def test_find_cfg(self, mc, happi_cfg):
+        assert happi_cfg == Client.find_config()
+        os.environ['HAPPI_CFG'] = happi_cfg
+        assert happi_cfg == Client.find_config()
+
+    def test_from_cfg(self, mc, happi_cfg):
+        client = Client.from_config()
+        assert isinstance(client.backend, JSONBackend)
+        assert client.backend.path == 'db.json'
