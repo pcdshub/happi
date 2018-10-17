@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release Notes &mdash; Happi Deck 1.1.2+5.gcf4650f documentation</title>
+  <title>Release Notes &mdash; Happi Deck 1.1.2+15.g9433797 documentation</title>
   
 
   
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                1.1.2+5.gcf4650f
+                1.1.2+15.g9433797
               </div>
             
           
@@ -96,20 +96,9 @@
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#maintenance">Maintenance</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#enhancements">Enhancements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Enhancements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Maintenance</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a></li>
 </ul>
 </li>
 </ul>
@@ -180,8 +169,7 @@
 <h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="v1-1-2-2018-08-30">
 <h2>v1.1.2 (2018-08-30)<a class="headerlink" href="#v1-1-2-2018-08-30" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="maintenance">
-<h3>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h3>
+<p><strong>Maintenance</strong></p>
 <ul class="simple">
 <li>In <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code>, the provided container is compared against
 the cached version of the device to find discrepancies. This means that
@@ -191,20 +179,16 @@ determine the proposal from the experiment name. This is more robust against
 exotic experiment naming schemas than prior implementations (#68)</li>
 </ul>
 </div>
-</div>
 <div class="section" id="v1-1-1-2018-03-08">
 <h2>v1.1.1 (2018-03-08)<a class="headerlink" href="#v1-1-1-2018-03-08" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="enhancements">
-<h3>Enhancements<a class="headerlink" href="#enhancements" title="Permalink to this headline">¶</a></h3>
+<p><strong>Enhancements</strong></p>
 <ul class="simple">
 <li>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> guesses which a type of motor based on the <code class="docutils literal notranslate"><span class="pre">prefix</span></code>.
 Currently this supports <code class="docutils literal notranslate"><span class="pre">Newport</span></code>, <code class="docutils literal notranslate"><span class="pre">IMS</span></code>, and <code class="docutils literal notranslate"><span class="pre">PMC100</span></code> motors. While there is
 not an explicit dependency, this will require <code class="docutils literal notranslate"><span class="pre">pcdsdevices</span> <span class="pre">&gt;=</span> <span class="pre">0.5.0</span></code> to load
 properly (#51)</li>
 </ul>
-</div>
-<div class="section" id="bug-fixes">
-<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
+<p><strong>Bug Fixes</strong></p>
 <ul class="simple">
 <li>Templating is more robust when dealing with types. This includes a fatal case
 where the default for an <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (#50)</li>
@@ -212,26 +196,26 @@ where the default for an <code class="docutils literal notranslate"><span class=
 requisite information to load (#53 )</li>
 </ul>
 </div>
-</div>
 <div class="section" id="v1-1-0-2018-02-13">
 <h2>v1.1.0 (2018-02-13)<a class="headerlink" href="#v1-1-0-2018-02-13" title="Permalink to this headline">¶</a></h2>
 <p>Ownership of this repository has been transferred to
 <a class="reference external" href="https://github.com/pcdshub">https://github.com/pcdshub</a></p>
-<div class="section" id="id1">
-<h3>Enhancements<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><strong>Enhancements</strong></p>
 <ul class="simple">
 <li>Happi now has a cache so the repeated requests to load the same device do
 not spawn multiple objects.</li>
 </ul>
-</div>
-<div class="section" id="id2">
-<h3>Maintenance<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p><strong>Maintenance</strong></p>
 <ul class="simple">
-<li>Cleaner logging messages</li>
-<li><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments
-associated with different authentication methods.</li>
+<li>Cleaner logging messages<ul>
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments</dt>
+<dd>associated with different authentication methods.</dd>
+</dl>
+</li>
 </ul>
-</div>
+</li>
+</ul>
 </div>
 </div>
 
@@ -253,7 +237,7 @@ associated with different authentication methods.</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, SLAC National Accelerator Laboratory.
+        &copy; Copyright 2017, SLAC National Accelerator Laboratory
 
     </p>
   </div>
@@ -272,21 +256,14 @@ associated with different authentication methods.</li>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.2+5.gcf4650f',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

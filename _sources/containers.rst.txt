@@ -32,3 +32,11 @@ basis.
    happi.containers.PulsePicker
    happi.containers.LODCM
    happi.containers.MovableStand
+
+
+Loading Containers
+------------------
+
+.. autofunction:: happi.from_container
+
+.. autofunction:: happi.load_devices

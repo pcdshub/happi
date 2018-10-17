@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating New Device Types &mdash; Happi Deck 1.1.2+5.gcf4650f documentation</title>
+  <title>Creating New Device Types &mdash; Happi Deck 1.1.2+15.g9433797 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.2+5.gcf4650f
+                1.1.2+15.g9433797
               </div>
             
           
@@ -90,6 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#entry-info">Entry Info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#using-a-device">Using a Device</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#example-class">Example Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-devices">Loading Devices</a></li>
 </ul>
 </li>
 </ul>
@@ -321,6 +322,25 @@ neccesarily see a difference in between optional and mandatory
 <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>, however the database client will reject the device if
 these fields don’t have values associated with them.</p>
 </div>
+<div class="section" id="loading-devices">
+<h2>Loading Devices<a class="headerlink" href="#loading-devices" title="Permalink to this headline">¶</a></h2>
+<p>Part of happi’s job is to contain the information necessary to load the Python
+representation of an object. This information is stored as a <code class="docutils literal notranslate"><span class="pre">device_class</span></code>,
+<code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>. The former stores a string that indicates the Python
+class of the device, the other two indicate the information that is needed to
+instantiate it. With this information both <a class="reference internal" href="containers.html#happi.from_container" title="happi.from_container"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_container()</span></code></a> and
+<a class="reference internal" href="containers.html#happi.load_devices" title="happi.load_devices"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_devices()</span></code></a> will handle importing modules and instantiating your
+device. To keep track of the container the device that was instantiated has an
+attribute attached <code class="docutils literal notranslate"><span class="pre">.md</span></code> which will return the original container.</p>
+<p>Often information contained in the <code class="docutils literal notranslate"><span class="pre">args</span></code> or <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> will be duplicated in
+other parts of the container. For instance most <code class="docutils literal notranslate"><span class="pre">ophyd</span></code> objects will want a
+<code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">prefix</span></code> on initialization. Instead of repeating that
+information you can just use a template and have the information automatically
+populated for you by the container itself. For instance, in the aforementioned
+example <cite>device.args = [“{{prefix}}”]</cite> would substitute the attribute listed as
+<cite>Device.prefix</cite> in as an argument. If the template contains the substituted
+attribute alone the type will also be converted.</p>
+</div>
 </div>
 
 
@@ -343,7 +363,7 @@ these fields don’t have values associated with them.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, SLAC National Accelerator Laboratory.
+        &copy; Copyright 2017, SLAC National Accelerator Laboratory
 
     </p>
   </div>
@@ -362,21 +382,14 @@ these fields don’t have values associated with them.</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.2+5.gcf4650f',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 

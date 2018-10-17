@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Client API &mdash; Happi Deck 1.1.2+5.gcf4650f documentation</title>
+  <title>Client API &mdash; Happi Deck 1.1.2+15.g9433797 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.2+5.gcf4650f
+                1.1.2+15.g9433797
               </div>
             
           
@@ -329,6 +329,36 @@ on each individual implementation</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="happi.Client.load_device">
+<code class="descname">load_device</code><span class="sig-paren">(</span><em>use_cache=True</em>, <em>**post</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.load_device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a device in the database and instantiate it</p>
+<p>Essentially a shortcut for:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>post</strong> – Passed to <a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a></li>
+<li><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Choice to use a cached device. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code> for more
+information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Instantiated object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">obj</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="happi.Client.remove_device">
 <code class="descname">remove_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.remove_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a device from the database</p>
@@ -415,7 +445,7 @@ is written to the logger</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2017, SLAC National Accelerator Laboratory.
+        &copy; Copyright 2017, SLAC National Accelerator Laboratory
 
     </p>
   </div>
@@ -434,21 +464,14 @@ is written to the logger</p>
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'1.1.2+5.gcf4650f',
-            LANGUAGE:'None',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
 
   
 
