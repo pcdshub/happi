@@ -449,3 +449,20 @@ class Client:
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
+
+    @staticmethod
+    def find_config():
+        """
+        Search for a ``happi`` configuration file
+        """
+        # Point to with an environment variable
+        if os.environ.get('HAPPI_CFG', False):
+            return os.environ.get('HAPPI_CFG')
+        # Search in the current directory and home directory
+        else:
+            for path in ('.happi.cfg', 'happi.cfg', '~/.happi.cfg'):
+                if os.path.exists(path):
+                    return os.path.abspath(path)
+        # If found nothing
+        raise EnvironmentError("No happi configuration file found. "
+                               "Check HAPPI_CFG.")
