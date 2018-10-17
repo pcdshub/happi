@@ -6,9 +6,16 @@ import os
 # override this by explicitly importing the backend
 _backend = os.environ.get("HAPPI_BACKEND", '').lower()
 
-if _backend == 'mongodb':
-    from .mongo_db import MongoBackend as backend
-else:
-    from .json_db import JSONBackend as backend
+
+def _get_backend(backend):
+    if backend == 'mongodb':
+        from .mongo_db import MongoBackend
+        return MongoBackend
+    else:
+        from .json_db import JSONBackend
+        return JSONBackend
+
+
+backend = _get_backend(_backend)
 
 del _backend
