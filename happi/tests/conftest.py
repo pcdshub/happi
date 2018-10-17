@@ -44,7 +44,10 @@ def device_info():
             '_id': 'BASE:PV',
             'prefix': 'BASE:PV',
             'beamline': 'LCLS',
-            'type': 'Device'}
+            'type': 'Device',
+            'device_class': 'types.SimpleNamespace',
+            'args': list(),
+            'kwargs': {'hi': 'oh hello'}}
 
 
 @pytest.fixture(scope='function')

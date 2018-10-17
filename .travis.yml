@@ -47,7 +47,6 @@ script:
   - |
     if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY_PCDSHUB_HAPPI" && $BUILD_DOCS ]]; then
       pushd docs
-      sphinx-autogen -o source/generated source/*.rst 
       make html
       popd
       # Publish docs.
