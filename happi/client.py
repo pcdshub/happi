@@ -1,13 +1,15 @@
+import os
 import sys
 import math
 import logging
 import inspect
 import time as ttime
+import configparser
 
 from . import containers
 from .device import Device
 from .errors import EntryError, DatabaseError, SearchError
-from .backends import backend
+from .backends import backend, _get_backend
 from .loader import from_container
 
 logger = logging.getLogger(__name__)
@@ -449,6 +451,27 @@ class Client:
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
+
+    @classmethod
+    def from_config(cls, cfg=None):
+        """
+        Create a client from a configuration file specification
+        """
+        # Find a configuration file
+        if not cfg:
+            cfg = cls.find_config()
+        # Parse configuration file
+        cfg_parser = configparser.ConfigParser()
+        cfg_parser.read(cfg)
+        db_info = cfg_parser['DEFAULT']
+        # If a backend is specified use it, otherwise default
+        if 'backend' in db_info:
+            db_str = db_info.pop('backend')
+            db = _get_backend(db_str)
+        else:
+            db = backend
+        # Create our database with provided kwargs
+        return cls(database=db(**dict(db_info.items())))
 
     @staticmethod
     def find_config():
