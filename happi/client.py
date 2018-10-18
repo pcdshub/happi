@@ -456,6 +456,23 @@ class Client:
     def from_config(cls, cfg=None):
         """
         Create a client from a configuration file specification
+
+        Configuration files looking something along the lines of:
+
+        .. code::
+
+            [DEFAULT]
+            path=path/to/my/db.json
+
+        All key value pairs will be passed directly into backend construction
+        with the exception of the key ``backend`` which can be used to specify
+        a specific type of backend if this differs from the configured default.
+
+        Parameters
+        ----------
+        cfg: str, optional
+            Path to a configuration file. If not entered, :meth:`.find_config`
+            will be use.
         """
         # Find a configuration file
         if not cfg:
@@ -477,6 +494,22 @@ class Client:
     def find_config():
         """
         Search for a ``happi`` configuration file
+
+        We first query the environment variable ``$HAPPI_CFG`` to see if
+        this points to a specific configuration file. If this is not present,
+        the current working directory and the users home directory are searched
+        for a file named ``happi.cfg``
+
+        Returns
+        -------
+        path: str
+            Absolute path to configuration file
+
+        Raises
+        ------
+        EnvironmentError:
+            If no configuration file can be found by the methodology detailed
+            above
         """
         # Point to with an environment variable
         if os.environ.get('HAPPI_CFG', False):
