@@ -31,6 +31,7 @@ def pytest_generate_tests(metafunc):
 @pytest.fixture(scope='function')
 def happi_cfg():
     fname = os.path.join(os.getcwd(), 'happi.cfg')
+    os.environ['XDG_CONFIG_HOME'] = os.getcwd()
     with open(fname, 'w+') as handle:
         handle.write("""\
 [DEFAULT]
@@ -229,7 +230,9 @@ class TestClient:
         assert device.hi == 'oh hello'
 
     def test_find_cfg(self, mc, happi_cfg):
+        # Use our config directory
         assert happi_cfg == Client.find_config()
+        # Set the path explicitly using HAPPI env variable
         os.environ['HAPPI_CFG'] = happi_cfg
         assert happi_cfg == Client.find_config()
 
