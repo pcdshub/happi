@@ -497,10 +497,10 @@ class Client:
         """
         Search for a ``happi`` configuration file
 
-        We first query the environment variable ``$HAPPI_CFG`` to see if
-        this points to a specific configuration file. If this is not present,
-        the current working directory and the users home directory are searched
-        for a file named ``happi.cfg``
+        We first query the environment variable ``$HAPPI_CFG`` to see if this
+        points to a specific configuration file. If this is not present, the
+        variable set by ``$XDG_CONFIG_HOME`` or if  that is not set
+        ``~/.config``
 
         Returns
         -------
@@ -521,9 +521,14 @@ class Client:
             return happi_cfg
         # Search in the current directory and home directory
         else:
-            for path in ('.happi.cfg', 'happi.cfg', '~/.happi.cfg'):
-                if os.path.exists(path):
-                    return os.path.abspath(os.path.expanduser(path))
+            config_dir = (os.environ.get('XDG_CONFIG_HOME')
+                          or os.path.expanduser('~/.config'))
+            logger.debug('Searching for Happi config in %s', config_dir)
+            for path in ('.happi.cfg', 'happi.cfg'):
+                full_path = os.path.join(config_dir, path)
+                if os.path.exists(full_path):
+                    logger.debug("Found configuration file at %r", full_path)
+                    return full_path
         # If found nothing
         raise EnvironmentError("No happi configuration file found. "
                                "Check HAPPI_CFG.")
