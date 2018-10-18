@@ -1,13 +1,15 @@
+import os
 import sys
 import math
 import logging
 import inspect
 import time as ttime
+import configparser
 
 from . import containers
 from .device import Device
 from .errors import EntryError, DatabaseError, SearchError
-from .backends import backend
+from .backends import backend, _get_backend
 from .loader import from_container
 
 logger = logging.getLogger(__name__)
@@ -449,3 +451,84 @@ class Client:
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
+
+    @classmethod
+    def from_config(cls, cfg=None):
+        """
+        Create a client from a configuration file specification
+
+        Configuration files looking something along the lines of:
+
+        .. code::
+
+            [DEFAULT]
+            path=path/to/my/db.json
+
+        All key value pairs will be passed directly into backend construction
+        with the exception of the key ``backend`` which can be used to specify
+        a specific type of backend if this differs from the configured default.
+
+        Parameters
+        ----------
+        cfg: str, optional
+            Path to a configuration file. If not entered, :meth:`.find_config`
+            will be use.
+        """
+        # Find a configuration file
+        if not cfg:
+            cfg = cls.find_config()
+        # Parse configuration file
+        cfg_parser = configparser.ConfigParser()
+        cfg_file = cfg_parser.read(cfg)
+        logger.debug("Loading configuration file at %r", cfg_file)
+        db_info = cfg_parser['DEFAULT']
+        # If a backend is specified use it, otherwise default
+        if 'backend' in db_info:
+            db_str = db_info.pop('backend')
+            db = _get_backend(db_str)
+        else:
+            db = backend
+        logger.debug("Using Happi backend %r", db)
+        # Create our database with provided kwargs
+        return cls(database=db(**dict(db_info.items())))
+
+    @staticmethod
+    def find_config():
+        """
+        Search for a ``happi`` configuration file
+
+        We first query the environment variable ``$HAPPI_CFG`` to see if this
+        points to a specific configuration file. If this is not present, the
+        variable set by ``$XDG_CONFIG_HOME`` or if  that is not set
+        ``~/.config``
+
+        Returns
+        -------
+        path: str
+            Absolute path to configuration file
+
+        Raises
+        ------
+        EnvironmentError:
+            If no configuration file can be found by the methodology detailed
+            above
+        """
+        # Point to with an environment variable
+        if os.environ.get('HAPPI_CFG', False):
+            happi_cfg = os.environ.get('HAPPI_CFG')
+            logger.debug("Found $HAPPI_CFG specification for Client "
+                         "configuration at %s", happi_cfg)
+            return happi_cfg
+        # Search in the current directory and home directory
+        else:
+            config_dir = (os.environ.get('XDG_CONFIG_HOME')
+                          or os.path.expanduser('~/.config'))
+            logger.debug('Searching for Happi config in %s', config_dir)
+            for path in ('.happi.cfg', 'happi.cfg'):
+                full_path = os.path.join(config_dir, path)
+                if os.path.exists(full_path):
+                    logger.debug("Found configuration file at %r", full_path)
+                    return full_path
+        # If found nothing
+        raise EnvironmentError("No happi configuration file found. "
+                               "Check HAPPI_CFG.")
