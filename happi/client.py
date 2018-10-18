@@ -518,7 +518,7 @@ class Client:
         else:
             for path in ('.happi.cfg', 'happi.cfg', '~/.happi.cfg'):
                 if os.path.exists(path):
-                    return os.path.abspath(path)
+                    return os.path.abspath(os.path.expanduser(path))
         # If found nothing
         raise EnvironmentError("No happi configuration file found. "
                                "Check HAPPI_CFG.")
