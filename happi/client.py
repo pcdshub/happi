@@ -479,7 +479,8 @@ class Client:
             cfg = cls.find_config()
         # Parse configuration file
         cfg_parser = configparser.ConfigParser()
-        cfg_parser.read(cfg)
+        cfg_file = cfg_parser.read(cfg)
+        logger.debug("Loading configuration file at %r", cfg_file)
         db_info = cfg_parser['DEFAULT']
         # If a backend is specified use it, otherwise default
         if 'backend' in db_info:
@@ -487,6 +488,7 @@ class Client:
             db = _get_backend(db_str)
         else:
             db = backend
+        logger.debug("Using Happi backend %r", db)
         # Create our database with provided kwargs
         return cls(database=db(**dict(db_info.items())))
 
@@ -513,7 +515,10 @@ class Client:
         """
         # Point to with an environment variable
         if os.environ.get('HAPPI_CFG', False):
-            return os.environ.get('HAPPI_CFG')
+            happi_cfg = os.environ.get('HAPPI_CFG')
+            logger.debug("Found $HAPPI_CFG specification for Client "
+                         "configuration at %s", happi_cfg)
+            return happi_cfg
         # Search in the current directory and home directory
         else:
             for path in ('.happi.cfg', 'happi.cfg', '~/.happi.cfg'):
