@@ -287,3 +287,13 @@ class MovableStand(Device):
     stand.enforce = list
     system = copy(Device.system)
     system.default = 'changeover'
+
+
+class Motor(Device):
+    """
+    A Generic EpicsMotor
+    """
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.Motor'
+    system = copy(Device.system)
+    system.default = 'motion'

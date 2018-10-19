@@ -32,7 +32,7 @@ basis.
    happi.containers.PulsePicker
    happi.containers.LODCM
    happi.containers.MovableStand
-
+   happi.containers.Motor
 
 Loading Containers
 ------------------
