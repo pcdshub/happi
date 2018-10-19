@@ -155,5 +155,5 @@ def test_qs_find(mockqsbackend):
 def test_qsbackend_with_client(mockqsbackend):
     c = Client(database=mockqsbackend)
     assert len(c.all_devices) == 6
-    assert all([d.device_class == 'pcdsdevices.epics_motor.IMS'
+    assert all([d.device_class == 'pcdsdevices.device_types.Motor'
                 for d in c.all_devices])
