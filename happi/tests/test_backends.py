@@ -10,6 +10,7 @@ from .conftest import (requires_questionnaire, requires_mongomock,
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi import Client
+from happi.containers import Motor
 
 
 @pytest.fixture(scope='function')
@@ -155,5 +156,4 @@ def test_qs_find(mockqsbackend):
 def test_qsbackend_with_client(mockqsbackend):
     c = Client(database=mockqsbackend)
     assert len(c.all_devices) == 6
-    assert all([d.device_class == 'pcdsdevices.device_types.Motor'
-                for d in c.all_devices])
+    assert all([isinstance(d, Motor) for d in c.all_devices])
