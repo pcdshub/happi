@@ -10,6 +10,13 @@ from .errors import ContainerError
 logger = logging.getLogger(__name__)
 
 
+# For back-compat to <py3.7
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
+
+
 class EntryInfo(object):
     """
     A piece of information related to a specific device
@@ -104,7 +111,7 @@ class EntryInfo(object):
                                  ''.format(self.key, self.enforce))
             return value
 
-        elif isinstance(self.enforce, re._pattern_type):
+        elif isinstance(self.enforce, Pattern):
             # Try and match regex patttern, otherwise raise ValueError
             if not self.enforce.match(value):
                 raise ValueError('{} did not match the enforced pattern {}'
