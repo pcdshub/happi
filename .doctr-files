@@ -12,6 +12,7 @@
 ./_sources/generated/happi.containers.GateValve.rst.txt
 ./_sources/generated/happi.containers.IPM.rst.txt
 ./_sources/generated/happi.containers.LODCM.rst.txt
+./_sources/generated/happi.containers.Motor.rst.txt
 ./_sources/generated/happi.containers.MovableStand.rst.txt
 ./_sources/generated/happi.containers.OffsetMirror.rst.txt
 ./_sources/generated/happi.containers.PIM.rst.txt
@@ -88,6 +89,7 @@
 ./generated/happi.containers.GateValve.html
 ./generated/happi.containers.IPM.html
 ./generated/happi.containers.LODCM.html
+./generated/happi.containers.Motor.html
 ./generated/happi.containers.MovableStand.html
 ./generated/happi.containers.OffsetMirror.html
 ./generated/happi.containers.PIM.html

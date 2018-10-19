@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.1.2+26.gd461ab6 documentation</title>
+  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.1.2+33.g4738aff documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.2+26.gd461ab6
+                1.1.2+33.g4738aff
               </div>
             
           
@@ -180,7 +180,7 @@
 <p>This backend connects to the LCLS questionnaire and looks at devices with
 the key pattern pcds-{}-setup-{}-{}. These fields are then combined and
 turned into proper happi devices. The translation of table name to
-pcdsdevices class is determined by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">device_translations</span></code>
+<code class="docutils literal notranslate"><span class="pre">happi.Container</span></code> is determined by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">device_translations</span></code>
 dictionary. The beamline is determined by looking where the proposal was
 submitted.</p>
 <p>Unlike the other backends, this one is read-only. All changes to the device

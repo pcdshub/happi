@@ -1,0 +1,46 @@
+happi.containers.Motor
+======================
+
+.. currentmodule:: happi.containers
+
+.. autoclass:: Motor
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Motor.__init__
+      ~Motor.post
+      ~Motor.save
+      ~Motor.show_info
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Motor.active
+      ~Motor.args
+      ~Motor.beamline
+      ~Motor.device_class
+      ~Motor.entry_info
+      ~Motor.info_names
+      ~Motor.kwargs
+      ~Motor.macros
+      ~Motor.mandatory_info
+      ~Motor.name
+      ~Motor.parent
+      ~Motor.prefix
+      ~Motor.screen
+      ~Motor.stand
+      ~Motor.system
+      ~Motor.z
+   
+   
