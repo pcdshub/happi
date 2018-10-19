@@ -12,32 +12,6 @@ from ..errors import DatabaseError
 logger = logging.getLogger(__name__)
 
 
-# Declare our motor types
-motor_types = {'MMS': 'pcdsdevices.epics_motor.IMS',
-               'MMN': 'pcdsdevices.epics_motor.Newport',
-               'MZM': 'pcdsdevices.epics_motor.PMC100'}
-
-
-def guess_motor_class(prefix):
-    """
-    Guess the corresponding pcdsdevices.epics_motor class based on prefix
-
-    Parameters
-    ----------
-    prefix : str
-
-    Returns
-    -------
-    device_class : str
-        Type of EpicsMotor. If not, we assume
-        `pcdsdevices.epics_motor.PCDSMotorBase`
-    """
-    for _typ in motor_types:
-        if _typ in prefix:
-            return motor_types[_typ]
-    return 'pcdsdevices.epics_motor.PCDSMotorBase'
-
-
 class QSBackend(JSONBackend):
     """
     Questionniare Backend
@@ -45,7 +19,7 @@ class QSBackend(JSONBackend):
     This backend connects to the LCLS questionnaire and looks at devices with
     the key pattern pcds-{}-setup-{}-{}. These fields are then combined and
     turned into proper happi devices. The translation of table name to
-    pcdsdevices class is determined by the :attr:`.device_translations`
+    ``happi.Container`` is determined by the :attr:`.device_translations`
     dictionary. The beamline is determined by looking where the proposal was
     submitted.
 
@@ -62,7 +36,7 @@ class QSBackend(JSONBackend):
     expname : str
         The experiment name from the elog, e.g. xcslp1915
     """
-    device_translations = {'motors': guess_motor_class}
+    device_translations = {'motors': 'Motor'}
 
     def __init__(self, expname, **kwargs):
         # Create our client and gather the raw information from the client
@@ -133,8 +107,7 @@ class QSBackend(JSONBackend):
                         post = {'name': dev_info.pop('name'),
                                 'prefix': dev_info['pvbase'],
                                 'beamline': beamline,
-                                'device_class': _class(dev_info['pvbase']),
-                                'type': 'Device',
+                                'type': _class,
                                 # TODO: We should not assume that we are using
                                 # the prefix as _id. Other backends do not make
                                 # this assumption. This will require moving the
