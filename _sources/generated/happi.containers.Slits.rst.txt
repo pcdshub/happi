@@ -30,9 +30,11 @@ happi.containers.Slits
       ~Slits.args
       ~Slits.beamline
       ~Slits.device_class
+      ~Slits.documentation
       ~Slits.entry_info
       ~Slits.info_names
       ~Slits.kwargs
+      ~Slits.lightpath
       ~Slits.macros
       ~Slits.mandatory_info
       ~Slits.name

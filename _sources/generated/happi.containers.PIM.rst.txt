@@ -31,9 +31,11 @@ happi.containers.PIM
       ~PIM.beamline
       ~PIM.data
       ~PIM.device_class
+      ~PIM.documentation
       ~PIM.entry_info
       ~PIM.info_names
       ~PIM.kwargs
+      ~PIM.lightpath
       ~PIM.macros
       ~PIM.mandatory_info
       ~PIM.name

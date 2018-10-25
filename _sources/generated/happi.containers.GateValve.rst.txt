@@ -30,9 +30,11 @@ happi.containers.GateValve
       ~GateValve.args
       ~GateValve.beamline
       ~GateValve.device_class
+      ~GateValve.documentation
       ~GateValve.entry_info
       ~GateValve.info_names
       ~GateValve.kwargs
+      ~GateValve.lightpath
       ~GateValve.macros
       ~GateValve.mandatory_info
       ~GateValve.name

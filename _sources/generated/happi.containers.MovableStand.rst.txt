@@ -30,9 +30,11 @@ happi.containers.MovableStand
       ~MovableStand.args
       ~MovableStand.beamline
       ~MovableStand.device_class
+      ~MovableStand.documentation
       ~MovableStand.entry_info
       ~MovableStand.info_names
       ~MovableStand.kwargs
+      ~MovableStand.lightpath
       ~MovableStand.macros
       ~MovableStand.mandatory_info
       ~MovableStand.name

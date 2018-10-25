@@ -30,9 +30,11 @@ happi.containers.Attenuator
       ~Attenuator.args
       ~Attenuator.beamline
       ~Attenuator.device_class
+      ~Attenuator.documentation
       ~Attenuator.entry_info
       ~Attenuator.info_names
       ~Attenuator.kwargs
+      ~Attenuator.lightpath
       ~Attenuator.macros
       ~Attenuator.mandatory_info
       ~Attenuator.n_filters

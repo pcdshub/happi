@@ -30,9 +30,11 @@ happi.containers.Stopper
       ~Stopper.args
       ~Stopper.beamline
       ~Stopper.device_class
+      ~Stopper.documentation
       ~Stopper.entry_info
       ~Stopper.info_names
       ~Stopper.kwargs
+      ~Stopper.lightpath
       ~Stopper.macros
       ~Stopper.mandatory_info
       ~Stopper.name

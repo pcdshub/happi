@@ -30,9 +30,11 @@ happi.containers.PulsePicker
       ~PulsePicker.args
       ~PulsePicker.beamline
       ~PulsePicker.device_class
+      ~PulsePicker.documentation
       ~PulsePicker.entry_info
       ~PulsePicker.info_names
       ~PulsePicker.kwargs
+      ~PulsePicker.lightpath
       ~PulsePicker.macros
       ~PulsePicker.mandatory_info
       ~PulsePicker.name

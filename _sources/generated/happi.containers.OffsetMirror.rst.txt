@@ -30,9 +30,11 @@ happi.containers.OffsetMirror
       ~OffsetMirror.args
       ~OffsetMirror.beamline
       ~OffsetMirror.device_class
+      ~OffsetMirror.documentation
       ~OffsetMirror.entry_info
       ~OffsetMirror.info_names
       ~OffsetMirror.kwargs
+      ~OffsetMirror.lightpath
       ~OffsetMirror.macros
       ~OffsetMirror.mandatory_info
       ~OffsetMirror.name

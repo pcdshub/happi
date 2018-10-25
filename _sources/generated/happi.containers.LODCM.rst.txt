@@ -30,9 +30,11 @@ happi.containers.LODCM
       ~LODCM.args
       ~LODCM.beamline
       ~LODCM.device_class
+      ~LODCM.documentation
       ~LODCM.entry_info
       ~LODCM.info_names
       ~LODCM.kwargs
+      ~LODCM.lightpath
       ~LODCM.macros
       ~LODCM.mandatory_info
       ~LODCM.mono_line

@@ -31,9 +31,11 @@ happi.containers.IPM
       ~IPM.beamline
       ~IPM.data
       ~IPM.device_class
+      ~IPM.documentation
       ~IPM.entry_info
       ~IPM.info_names
       ~IPM.kwargs
+      ~IPM.lightpath
       ~IPM.macros
       ~IPM.mandatory_info
       ~IPM.name

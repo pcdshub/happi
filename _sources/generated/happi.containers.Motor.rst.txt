@@ -30,9 +30,11 @@ happi.containers.Motor
       ~Motor.args
       ~Motor.beamline
       ~Motor.device_class
+      ~Motor.documentation
       ~Motor.entry_info
       ~Motor.info_names
       ~Motor.kwargs
+      ~Motor.lightpath
       ~Motor.macros
       ~Motor.mandatory_info
       ~Motor.name
