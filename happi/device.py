@@ -277,6 +277,10 @@ class Device(metaclass=InfoMeta):
                        enforce=str)
     parent = EntryInfo('If the device is a component of another, '
                        'enter the name', enforce=str)
+    lightpath = EntryInfo("If the device should be included in the "
+                          "LCLS Lightpath", enforce=bool, default=False)
+    documentation = EntryInfo("Relevant documentation for the Device",
+                              enforce=str)
 
     def __init__(self, **kwargs):
         # Load given information into device class
