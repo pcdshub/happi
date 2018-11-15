@@ -1,6 +1,7 @@
 import re
 import sys
 import logging
+import warnings
 
 from collections import OrderedDict
 from prettytable import PrettyTable
@@ -359,6 +360,13 @@ class Device(metaclass=InfoMeta):
             post.update(self.extraneous)
 
         return post
+
+    @property
+    def screen(self):
+        warnings.warn("The 'screen' keyword is no longer used in Happi as it "
+                      "lacks specificity. Use one of detailed_screen, "
+                      "embedded_screen, or engineering screen instead")
+        return self.detailed_screen
 
     def save(self):
         """
