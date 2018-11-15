@@ -30,8 +30,14 @@ def pytest_generate_tests(metafunc):
 
 @pytest.fixture(scope='function')
 def happi_cfg():
-    fname = os.path.join(os.getcwd(), 'happi.cfg')
+    # Store current happi config
+    xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
+    happi_cfg = os.environ.get("HAPPI_CFG", '')
+    # Setup environment variables
     os.environ['XDG_CONFIG_HOME'] = os.getcwd()
+    os.environ['HAPPI_CFG'] = ''
+    # Write file
+    fname = os.path.join(os.getcwd(), 'happi.cfg')
     with open(fname, 'w+') as handle:
         handle.write("""\
 [DEFAULT]
@@ -39,6 +45,9 @@ backend=json
 path=db.json
 """)
     yield fname
+    # Restore environment variables
+    os.environ["HAPPI_CFG"] = happi_cfg
+    os.environ["XDG_CONFIG_HOME"] = xdg_cfg
     os.remove(fname)
 
 
