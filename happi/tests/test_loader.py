@@ -22,7 +22,7 @@ def test_fill_template(device):
     template = "blah"
     assert template == fill_template(template, device, enforce_type=True)
     # Check that we do not enforce a NoneType
-    template = "{{screen}}"
+    template = "{{detailed_screen}}"
     assert fill_template(template, device, enforce_type=True) is None
 
 
