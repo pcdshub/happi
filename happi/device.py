@@ -1,6 +1,7 @@
 import re
 import sys
 import logging
+import warnings
 
 from collections import OrderedDict
 from prettytable import PrettyTable
@@ -264,8 +265,14 @@ class Device(metaclass=InfoMeta):
                        enforce=dict, default={'name': '{{name}}'})
     stand = EntryInfo('Acronym for stand, must be three alphanumeric '
                       'characters', enforce=re.compile(r'[A-Z0-9]{3}$'))
-    screen = EntryInfo('The absolute path to the main control screen',
-                       enforce=str)
+    detailed_screen = EntryInfo('The absolute path to the main control screen',
+                                enforce=str)
+    embedded_screen = EntryInfo('The absolute path to the '
+                                'embedded control screen',
+                                enforce=str)
+    engineering_screen = EntryInfo('The absolute path to '
+                                   'the engineering control screen',
+                                   enforce=str)
     active = EntryInfo('Whether the device is actively deployed',
                        enforce=bool, default=True)
     system = EntryInfo('The system the device is involved with, i.e '
@@ -353,6 +360,13 @@ class Device(metaclass=InfoMeta):
             post.update(self.extraneous)
 
         return post
+
+    @property
+    def screen(self):
+        warnings.warn("The 'screen' keyword is no longer used in Happi as it "
+                      "lacks specificity. Use one of detailed_screen, "
+                      "embedded_screen, or engineering screen instead")
+        return self.detailed_screen
 
     def save(self):
         """

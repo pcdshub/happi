@@ -153,7 +153,7 @@ def from_container(device, attach_md=True, use_cache=True):
     if attach_md:
         try:
             setattr(obj, 'md', device)
-        except Exception as exc:
+        except Exception:
             logger.warning("Unable to attach metadata dictionary to device")
 
     # Store a copy of the device in the cache
