@@ -29,8 +29,11 @@ happi.containers.GateValve
       ~GateValve.active
       ~GateValve.args
       ~GateValve.beamline
+      ~GateValve.detailed_screen
       ~GateValve.device_class
       ~GateValve.documentation
+      ~GateValve.embedded_screen
+      ~GateValve.engineering_screen
       ~GateValve.entry_info
       ~GateValve.info_names
       ~GateValve.kwargs

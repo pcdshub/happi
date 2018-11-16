@@ -30,8 +30,11 @@ happi.containers.IPM
       ~IPM.args
       ~IPM.beamline
       ~IPM.data
+      ~IPM.detailed_screen
       ~IPM.device_class
       ~IPM.documentation
+      ~IPM.embedded_screen
+      ~IPM.engineering_screen
       ~IPM.entry_info
       ~IPM.info_names
       ~IPM.kwargs

@@ -29,8 +29,11 @@ happi.containers.Attenuator
       ~Attenuator.active
       ~Attenuator.args
       ~Attenuator.beamline
+      ~Attenuator.detailed_screen
       ~Attenuator.device_class
       ~Attenuator.documentation
+      ~Attenuator.embedded_screen
+      ~Attenuator.engineering_screen
       ~Attenuator.entry_info
       ~Attenuator.info_names
       ~Attenuator.kwargs

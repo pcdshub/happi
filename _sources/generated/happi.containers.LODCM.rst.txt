@@ -29,8 +29,11 @@ happi.containers.LODCM
       ~LODCM.active
       ~LODCM.args
       ~LODCM.beamline
+      ~LODCM.detailed_screen
       ~LODCM.device_class
       ~LODCM.documentation
+      ~LODCM.embedded_screen
+      ~LODCM.engineering_screen
       ~LODCM.entry_info
       ~LODCM.info_names
       ~LODCM.kwargs

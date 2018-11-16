@@ -29,8 +29,11 @@ happi.containers.Slits
       ~Slits.active
       ~Slits.args
       ~Slits.beamline
+      ~Slits.detailed_screen
       ~Slits.device_class
       ~Slits.documentation
+      ~Slits.embedded_screen
+      ~Slits.engineering_screen
       ~Slits.entry_info
       ~Slits.info_names
       ~Slits.kwargs

@@ -29,8 +29,11 @@ happi.containers.PulsePicker
       ~PulsePicker.active
       ~PulsePicker.args
       ~PulsePicker.beamline
+      ~PulsePicker.detailed_screen
       ~PulsePicker.device_class
       ~PulsePicker.documentation
+      ~PulsePicker.embedded_screen
+      ~PulsePicker.engineering_screen
       ~PulsePicker.entry_info
       ~PulsePicker.info_names
       ~PulsePicker.kwargs

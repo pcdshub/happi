@@ -29,8 +29,11 @@ happi.containers.OffsetMirror
       ~OffsetMirror.active
       ~OffsetMirror.args
       ~OffsetMirror.beamline
+      ~OffsetMirror.detailed_screen
       ~OffsetMirror.device_class
       ~OffsetMirror.documentation
+      ~OffsetMirror.embedded_screen
+      ~OffsetMirror.engineering_screen
       ~OffsetMirror.entry_info
       ~OffsetMirror.info_names
       ~OffsetMirror.kwargs

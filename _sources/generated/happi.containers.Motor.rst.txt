@@ -29,8 +29,11 @@ happi.containers.Motor
       ~Motor.active
       ~Motor.args
       ~Motor.beamline
+      ~Motor.detailed_screen
       ~Motor.device_class
       ~Motor.documentation
+      ~Motor.embedded_screen
+      ~Motor.engineering_screen
       ~Motor.entry_info
       ~Motor.info_names
       ~Motor.kwargs

@@ -29,8 +29,11 @@ happi.containers.Stopper
       ~Stopper.active
       ~Stopper.args
       ~Stopper.beamline
+      ~Stopper.detailed_screen
       ~Stopper.device_class
       ~Stopper.documentation
+      ~Stopper.embedded_screen
+      ~Stopper.engineering_screen
       ~Stopper.entry_info
       ~Stopper.info_names
       ~Stopper.kwargs

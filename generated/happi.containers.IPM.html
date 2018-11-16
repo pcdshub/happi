@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.IPM &mdash; Happi Deck 1.1.2+41.g0b2bc64 documentation</title>
+  <title>happi.containers.IPM &mdash; Happi Deck 1.1.2+47.g8c0a9e2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.2+41.g0b2bc64
+                1.1.2+47.g8c0a9e2
               </div>
             
           
@@ -289,49 +289,58 @@ the diode position for the purposes of this database.</p>
 <tr class="row-even"><td><a class="reference internal" href="#happi.containers.IPM.data" title="happi.containers.IPM.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>PV that gives us the diagnostic readback in EPICS.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></td>
-<td>Python class that represents the Device</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">documentation</span></code></td>
-<td>Relevant documentation for the Device</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">entry_info</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></td>
-<td>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></td>
-<td>Keyword arguments to pass to device_class</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">lightpath</span></code></td>
-<td>If the device should be included in the LCLS Lightpath</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">macros</span></code></td>
-<td>The EDM macro string asscociated with the with the device.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatory_info</span></code></td>
-<td>Mandatory information for the device to be initialized</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></td>
-<td>Shorthand name for the device</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></td>
-<td>If the device is a component of another, enter the name</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#happi.containers.IPM.prefix" title="happi.containers.IPM.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span></code></a></td>
-<td>A base PV for all related records</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">detailed_screen</span></code></td>
 <td>The absolute path to the main control screen</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">stand</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></td>
+<td>Python class that represents the Device</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">documentation</span></code></td>
+<td>Relevant documentation for the Device</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">embedded_screen</span></code></td>
+<td>The absolute path to the embedded control screen</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">engineering_screen</span></code></td>
+<td>The absolute path to the engineering control screen</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">entry_info</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></td>
+<td>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></td>
+<td>Keyword arguments to pass to device_class</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">lightpath</span></code></td>
+<td>If the device should be included in the LCLS Lightpath</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">macros</span></code></td>
+<td>The EDM macro string asscociated with the with the device.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatory_info</span></code></td>
+<td>Mandatory information for the device to be initialized</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></td>
+<td>Shorthand name for the device</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></td>
+<td>If the device is a component of another, enter the name</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#happi.containers.IPM.prefix" title="happi.containers.IPM.prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prefix</span></code></a></td>
+<td>A base PV for all related records</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">screen</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">stand</span></code></td>
 <td>Acronym for stand, must be three alphanumeric characters</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">system</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">system</span></code></td>
 <td>The system the device is involved with, i.e Vacuum, Timing e.t.c</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#happi.containers.IPM.z" title="happi.containers.IPM.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#happi.containers.IPM.z" title="happi.containers.IPM.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></td>
 <td>Beamline position of the device</td>
 </tr>
 </tbody>
@@ -385,7 +394,6 @@ the diode position for the purposes of this database.</p>
         <script type="text/javascript" src="../_static/jquery.js"></script>
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   

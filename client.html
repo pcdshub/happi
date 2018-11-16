@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Client &mdash; Happi Deck 1.1.2+41.g0b2bc64 documentation</title>
+  <title>Using the Client &mdash; Happi Deck 1.1.2+47.g8c0a9e2 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                1.1.2+41.g0b2bc64
+                1.1.2+47.g8c0a9e2
               </div>
             
           
@@ -238,17 +238,19 @@ corresponding objects or as a dictionary</p>
 <span class="go">  &#39;active&#39;: True,</span>
 <span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;XRT&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Thu Oct 25 17:58:22 2018&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Fri Nov 16 00:41:54 2018&#39;,</span>
+<span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
+<span class="go">  &#39;embedded_screen&#39;: None,</span>
+<span class="go">  &#39;engineering_screen&#39;: None,</span>
 <span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Thu Oct 25 17:58:22 2018&#39;,</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Fri Nov 16 00:41:54 2018&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device&#39;,</span>
 <span class="go">  &#39;parent&#39;: None,</span>
 <span class="go">  &#39;prefix&#39;: &#39;PV:BASE&#39;,</span>
-<span class="go">  &#39;screen&#39;: None,</span>
 <span class="go">  &#39;stand&#39;: None,</span>
 <span class="go">  &#39;system&#39;: None,</span>
 <span class="go">  &#39;type&#39;: &#39;Device&#39;,</span>
@@ -257,17 +259,19 @@ corresponding objects or as a dictionary</p>
 <span class="go">  &#39;active&#39;: True,</span>
 <span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;MFX&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Thu Oct 25 17:58:22 2018&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Fri Nov 16 00:41:54 2018&#39;,</span>
+<span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
+<span class="go">  &#39;embedded_screen&#39;: None,</span>
+<span class="go">  &#39;engineering_screen&#39;: None,</span>
 <span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Thu Oct 25 17:58:22 2018&#39;,</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Fri Nov 16 00:41:54 2018&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device2&#39;,</span>
 <span class="go">  &#39;parent&#39;: None,</span>
 <span class="go">  &#39;prefix&#39;: &#39;PV:BASE2&#39;,</span>
-<span class="go">  &#39;screen&#39;: None,</span>
 <span class="go">  &#39;stand&#39;: None,</span>
 <span class="go">  &#39;system&#39;: None,</span>
 <span class="go">  &#39;type&#39;: &#39;Device&#39;,</span>
@@ -296,10 +300,7 @@ criteria, an <code class="docutils literal notranslate"><span class="pre">Search
 <span class="gp">   ....: </span><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
 <span class="gp">   ....: </span>    <span class="k">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 <span class="gp">   ....: </span>
-<span class="go">                      File &quot;&lt;ipython-input-15-8b6837119b0e&gt;&quot;, line 1</span>
-<span class="go">    try:    client.find_device(name=&#39;non-existant&#39;)except Exception as exc:    print(exc)</span>
-<span class="go">                                                        ^</span>
-<span class="go">SyntaxError: invalid syntax</span>
+<span class="go">                    No device information found that matches the search criteria</span>
 </pre></div>
 </div>
 </div>
@@ -392,7 +393,6 @@ Otherwise, the library uses the <a class="reference internal" href="generated/ha
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
 
   

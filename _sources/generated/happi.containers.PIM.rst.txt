@@ -30,8 +30,11 @@ happi.containers.PIM
       ~PIM.args
       ~PIM.beamline
       ~PIM.data
+      ~PIM.detailed_screen
       ~PIM.device_class
       ~PIM.documentation
+      ~PIM.embedded_screen
+      ~PIM.engineering_screen
       ~PIM.entry_info
       ~PIM.info_names
       ~PIM.kwargs
