@@ -2,7 +2,6 @@
 Backend implemenation using simplejson
 """
 import os
-import fcntl
 import os.path
 import logging
 
@@ -12,6 +11,14 @@ from .core import Backend
 from ..errors import SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
+
+
+try:
+    import fcntl
+    on_unix = True
+except ImportError:
+    logger.warning("Unable to import 'fcntl'. Will be unable to lock files")
+    on_unix = False
 
 
 class JSONBackend(metaclass=Backend):
@@ -89,14 +96,16 @@ class JSONBackend(metaclass=Backend):
         # Create file handle
         handle = open(self.path, 'w+')
         # Create lock in filesystem
-        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if on_unix:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         # Dump to file
         try:
             json.dump(db, handle, sort_keys=True, indent=4)
 
         finally:
-            # Release lock in filesystem
-            fcntl.flock(handle, fcntl.LOCK_UN)
+            if on_unix:
+                # Release lock in filesystem
+                fcntl.flock(handle, fcntl.LOCK_UN)
 
     def find(self, _id=None, multiples=False, **kwargs):
         """
