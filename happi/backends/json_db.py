@@ -19,6 +19,7 @@ except ImportError:
     logger.warning("Unable to import 'fcntl'. Will be unable to lock files")
     fcntl = None
 
+
 class JSONBackend(metaclass=Backend):
     """
     JSON database
