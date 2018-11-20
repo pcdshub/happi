@@ -5,8 +5,7 @@ import os.path
 import pytest
 import simplejson
 
-from .conftest import (requires_questionnaire, requires_mongomock,
-                       mockmongoclient)
+from .conftest import requires_questionnaire, requires_mongomock
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi import Client
@@ -14,8 +13,8 @@ from happi.containers import Motor
 
 
 @pytest.fixture(scope='function')
-def mockmongo():
-    return mockmongoclient().backend
+def mockmongo(mockmongoclient):
+    return mockmongoclient.backend
 
 
 @pytest.fixture(scope='function')
