@@ -186,6 +186,8 @@ class Client:
         device : :class:`.Device`
             A device that matches the characteristics given
         """
+        if len(post) == 0:
+            raise EntryError('No information pertinent to device given')
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
         # Instantiate Device
