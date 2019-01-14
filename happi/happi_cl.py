@@ -20,6 +20,8 @@ parser.add_argument('--value', help="value of 'field' to return results",
 
 parser.add_argument('--add', action='store_true',
                     help='add a device')
+
+# TODO: Implement edit option
 #parser.add_argument('--edit', action='store_true',
 #                    help='edit a device')
 
@@ -41,60 +43,55 @@ if arg_dict['search']:
 
 if arg_dict['add']:
     dev_info = {}
-#    add_args = {}
-    print("Enter device information: (press return to default a field "
+    
+    all_fields = ["beamline", "detailed_screen", "device_class",
+                  "documentation", "embedded_screen", "engineering_screen",
+                  "lightpath", "macros", "name", "parent", "prefix",
+                  "stand", "system", "type", "z"]
+
+    print("Enter device information: (press <return> to default a field "
           "to 'none')")
     # Required arg of client.create_device()
-    device_container = input('Device Container: ')
+    device_container = input('Device Container (required): ')
 
-    dev_args = input('args: arg1 arg2 ...] : ')
+    #####################################################################
+    # TODO: Need better way to input args and kwargs
+    dev_args = input('args: arg1 arg2 ...: ')
     if dev_args is not '':
         dev_args_list = dev_args.split(' ')
         dev_info["args"] = dev_args_list
     else:
         dev_info["args"] = ['{{prefix}}']
 
-    beamline = input('beamline: ')
-    dev_info["beamline"] = beamline
-    
-    detailed_screen = input('detailed_screen: ')
-    dev_info["detailed_screen"] = detailed_screen
+    dev_kwargs = input("kwargs: 'kwarg1': 'default1' 'kwarg2': 'default2', ... : ")
+    if dev_kwargs is not '':
+        dev_kwargs_list = dev_kwargs.split(' ')
+        dev_kwargs_dict = {}
+        for i in range(0, len(dev_kwargs_list), 2):
+            key_str = dev_kwargs_list[i]
+            key = key_str[0:len(key_str) - 1]
+            dev_kwargs_dict[key] = dev_kwargs_list[i + 1]
+        dev_info["kwargs"] = dev_kwargs_dict
+    #####################################################################
 
-    device_class = input('device_class: ')
-    dev_info["device_class"] = device_class
-    
-    documentation = input('documentation: ')
-    dev_info["documentation"] = documentation
+    #####################################################################
+    # Fields with non-string values
+    for field in all_fields:
+        value = input(field + ': ')
+        if field is "lightpath":
+            value = bool(value)
+        elif field is "z":
+            value = float(value)
+        dev_info[field] = value
+    #####################################################################
 
-    embedded_screen = input('embedded_screen: ')
-    dev_info["embedded_screen"] = embedded_screen
+    all_keys = list(dev_info.keys())
 
-    engineering_screen = input('engineering_screen: ')
-    dev_info["engineering_screen"] = engineering_screen
-
-    # TODO: Add input for **kwargs
-    
-    lightpath = bool(input('lightpath: (True/False)'))
-    dev_info["lightpath"] = lightpath
-
-
-
-    name = input('name: ')
-    dev_info["name"] = name
-
-    stand = input('stand: ')
-    dev_info["stand"] = stand
-
-    system = input('system: ')
-    dev_info["system"] = system
-
-    dev_type = input('type: ')
-    dev_info["type"] = dev_type
-
-    z = float(input('Location (z): '))
-    dev_info["z"] = z
+    for key in all_keys:
+        if dev_info[key] == '':
+            del dev_info[key]
 
     new_dev = client.create_device(device_container, **dev_info)
     new_dev.show_info()
     input('Press <Enter> to add device or ^C to cancel\n')
-
+    client.add_device(new_dev)
