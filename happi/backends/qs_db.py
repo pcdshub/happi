@@ -36,7 +36,7 @@ class QSBackend(JSONBackend):
     expname : str
         The experiment name from the elog, e.g. xcslp1915
     """
-    device_translations = {'motors': 'Motor'}
+    device_translations = {'motors': 'Motor', 'areadet': 'AreaDet', 'camera': 'Camera', 'ao': 'Acromag', 'ai':'Acromag', 'trig': 'ControlsTriggers'}
 
     def __init__(self, expname, **kwargs):
         # Create our client and gather the raw information from the client
@@ -81,8 +81,14 @@ class QSBackend(JSONBackend):
         raw = self.qs.getProposalDetailsForRun(run_no, proposal)
         for table, _class in self.device_translations.items():
             # Create a regex pattern to find all the appropriate pattern match
+            # example pattern for non-AO devices:
+            ### 'pcdssetup-camera-setup-1-purpose'
+            # example pattern for AO devices:
+            ### 'pcdssetup-ao-1-purpose'
             pattern = re.compile(r'pcdssetup-{}-'
                                  r'setup-(\d+)-(\w+)'.format(table))
+            pattern_analog = re.compile(r'pcdssetup-{}-'
+                                 r'(\d+)-(\w+)'.format(table))
             # Search for all keys that match the device and store in a
             # temporary dictionary
             devices = dict()
@@ -96,6 +102,16 @@ class QSBackend(JSONBackend):
                         devices[dev_no] = dict()
                     # Add the key information to the specific device dictionary
                     devices[dev_no][match.group(2)] = raw[field]
+                match_analog = pattern_analog.match(field)
+                if match_analog:
+                    dev_no = match_analog.group(1)
+                    if dev_no not in devices:
+                        devices[dev_no] = dict()
+                    devices[dev_no][match_analog.group(2)] = raw[field]
+#            print(table)
+#            print(devices)
+#            print(len(devices))
+#            print('')
             # Store the devices as happi items
             if not devices:
                 logger.info("No device information found under '%s'", table)
