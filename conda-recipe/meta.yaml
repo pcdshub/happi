@@ -19,6 +19,7 @@ requirements:
       - simplejson
       - pymongo 
       - python
+      - coloredlogs
 test:
     imports:
       - happi
