@@ -15,11 +15,8 @@ logger = logging.getLogger(__name__)
 # Argument Parser Setup
 parser = argparse.ArgumentParser(description='happi command line tool')
 
-# First add search argument
-parser.add_argument('--search', action='store_true',
-                    help='search for device')
-parser.add_argument('--search_args', nargs=argparse.REMAINDER,
-                    help='search criteria: [--search_args] field value')
+parser.add_argument('--search', nargs=argparse.REMAINDER,
+                    help='search criteria: [--search] field value')
 parser.add_argument('--verbose', '-v', action='store_true',
                     help='Show the degub logging stream')
 parser.add_argument('--version', '-V', action='store_true',
@@ -65,9 +62,9 @@ def happi_cli(args):
     client = hcl.Client.from_config(cfg=cfg_path)
 
     if args.search:
-        if args.search_args[0] is 'z':
-            args.search_args[1] = float(args.search_args[1])
-        search_args = {args.search_args[0]: args.search_args[1]}
+        if args.search[0] is 'z':
+            args.search[1] = float(args.search[1])
+        search_args = {args.search[0]: args.search[1]}
 
         device = client.find_device(**search_args)
         device.show_info()
