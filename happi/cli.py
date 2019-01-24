@@ -52,8 +52,6 @@ def happi_cli(args):
         return
     logger.debug('Command line arguments: %r' % args)
 
-    xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
-    happi_cfg = os.environ.get("HAPPI_CFG", '')
     client = happi.client.Client.from_config(cfg=args.path)
 
     if args.search:
@@ -63,61 +61,6 @@ def happi_cli(args):
 
         device = client.find_device(**search_args)
         device.show_info()
-
-#    if args.add:
-#        dev_info = {}
-#
-#        all_fields = ["beamline", "detailed_screen", "device_class",
-#                      "documentation", "embedded_screen",
-#                      "engineering_screen", "lightpath", "macros", "name",
-#                      "parent", "prefix", "stand", "system", "type", "z"]
-#
-#        print("Enter device information: (press <return> to default a "
-#               "field to 'none')")
-#        # Required arg of client.create_device()
-#        device_container = input('Device Container (required): ')
-#
-#        ###################################################################
-#        # TODO: Need better way to input args and kwargs
-#        dev_args = input('args: arg1 arg2 ...: ')
-#        if dev_args is not '':
-#            dev_args_list = dev_args.split(' ')
-#            dev_info["args"] = dev_args_list
-#        else:
-#            dev_info["args"] = ['{{prefix}}']
-#
-#        dev_kwargs = input("kwargs: 'kwarg1': 'default1' 'kwarg2': 'default2', ... : ")
-#        if dev_kwargs is not '':
-#            dev_kwargs_list = dev_kwargs.split(' ')
-#            dev_kwargs_dict = {}
-#            for i in range(0, len(dev_kwargs_list), 2):
-#                key_str = dev_kwargs_list[i]
-#                key = key_str[0:len(key_str) - 1]
-#                dev_kwargs_dict[key] = dev_kwargs_list[i + 1]
-#            dev_info["kwargs"] = dev_kwargs_dict
-#        ###################################################################
-#
-#        ###################################################################
-#        # Fields with non-string values
-#        for field in all_fields:
-#            value = input(field + ': ')
-#            if field is "lightpath":
-#                value = bool(value)
-#            elif field is "z":
-#                value = float(value)
-#            dev_info[field] = value
-#        ###################################################################
-#
-#        all_keys = list(dev_info.keys())
-#
-#        for key in all_keys:
-#            if dev_info[key] == '':
-#                del dev_info[key]
-#
-#        new_dev = client.create_device(device_container, **dev_info)
-#        new_dev.show_info()
-#        input('Press <Enter> to add device or ^C to cancel\n')
-#        client.add_device(new_dev)
 
 
 def main():
