@@ -1,12 +1,12 @@
 """
-Module for a command line interface to happi
+This module defines the ``happi`` command line utility
 """
 # cli.py
 
 import os
 import argparse
 import sys
-import happi.client as hcl
+import happi
 import logging
 import coloredlogs
 
@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 # Argument Parser Setup
 parser = argparse.ArgumentParser(description='happi command line tool')
 
+parser.add_argument('--path', type=str,
+                    help='path to happi configuration file')
 parser.add_argument('--search', nargs=argparse.REMAINDER,
                     help='search criteria: [--search] field value')
 parser.add_argument('--verbose', '-v', action='store_true',
@@ -52,14 +54,7 @@ def happi_cli(args):
 
     xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
     happi_cfg = os.environ.get("HAPPI_CFG", '')
-    os.environ['XDG_CONFIG_HOME'] = os.getcwd()
-    os.environ['HAPPI_CFG'] = ''
-
-    cfg_path = hcl.Client.find_config()
-
-    os.environ["HAPPI_CFG"] = happi_cfg
-    os.environ["XDG_CONFIG_HOME"] = xdg_cfg
-    client = hcl.Client.from_config(cfg=cfg_path)
+    client = happi.client.Client.from_config(cfg=args.path)
 
     if args.search:
         if args.search[0] is 'z':
@@ -128,6 +123,3 @@ def happi_cli(args):
 def main():
     """Execute the ``happi_cli`` with command line arguments"""
     happi_cli(sys.argv[1:])
-
-# if __name__ == '__main__':
-#     main()
