@@ -1,5 +1,4 @@
 # test_cli.py
-import pytest
 
 import happi
 from happi.cli import happi_cli

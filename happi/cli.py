@@ -3,7 +3,6 @@ This module defines the ``happi`` command line utility
 """
 # cli.py
 
-import os
 import argparse
 import sys
 import happi
