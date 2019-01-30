@@ -54,12 +54,19 @@ def happi_cli(args):
     client = happi.client.Client.from_config(cfg=args.path)
 
     if args.search:
-        if args.search[0] is 'z':
-            args.search[1] = float(args.search[1])
-        search_args = {args.search[0]: args.search[1]}
+        for i in range(len(args.search)):
+            if args.search[i] is 'z':
+                args.search[i + 1] = float(args.search[i + 1])
 
-        device = client.find_device(**search_args)
-        device.show_info()
+        search_args = {}
+        for i in range(0, len(args.search), 2):
+            search_args[args.search[i]] = args.search[i + 1]
+        logger.debug('Search arguments: %r' % search_args)
+
+        devices = client.search(**search_args)
+        for dev in devices:
+            dev.show_info()
+        return devices
 
 
 def main():
