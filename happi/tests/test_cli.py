@@ -18,6 +18,7 @@ path=db.json
     yield fname
     os.remove(fname)
 
+
 @pytest.fixture(scope='function')
 def db():
     fname = os.path.join(os.getcwd(), 'db.json')
@@ -87,7 +88,8 @@ def test_search(happi_cfg, db):
     config_name = os.path.join(os.getcwd(), 'happi.cfg')
     client = happi.client.Client.from_config(cfg=config_name)
     devices = client.search(beamline="TST")
-    devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name, '--search', 'beamline', 'TST'])
+    devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name,
+                                       '--search', 'beamline', 'TST'])
     assert devices == devices_cli
 
 
@@ -95,5 +97,6 @@ def test_search_z(happi_cfg, db):
     config_name = os.path.join(os.getcwd(), 'happi.cfg')
     client = happi.client.Client.from_config(cfg=config_name)
     devices = client.search(z=6.0)
-    devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name, '--search', 'z', '6.0'])
+    devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name,
+                                       '--search', 'z', '6.0'])
     assert devices == devices_cli
