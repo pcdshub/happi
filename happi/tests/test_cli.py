@@ -4,6 +4,7 @@ import pytest
 import os
 import happi
 from happi.cli import happi_cli
+from happi.errors import EntryError
 
 
 @pytest.fixture(scope='function')
@@ -82,6 +83,12 @@ def test_cli_version(capsys):
     readout = capsys.readouterr()
     assert happi.__version__ in readout.out
     assert happi.__file__ in readout.out
+
+
+def test_odd_criteria(happi_cfg, db):
+    config_name = os.path.join(os.getcwd(), 'happi.cfg')
+    with pytest.raises(EntryError):
+        happi.cli.happi_cli(['--path', config_name, '--search', 'beamline'])
 
 
 def test_search(happi_cfg, db):

@@ -8,6 +8,7 @@ import sys
 import happi
 import logging
 import coloredlogs
+from .errors import EntryError
 
 logger = logging.getLogger(__name__)
 
@@ -54,10 +55,18 @@ def happi_cli(args):
     client = happi.client.Client.from_config(cfg=args.path)
 
     if args.search:
+        # Ensure we have an even number of search elements
+        # Should always have key:value pairs
+        if len(args.search) % 2 is not 0:
+            raise EntryError('Search criteria should be given as key '
+                             'value pair\ni.e:\n'
+                             'happi --search beamline MFX stand DG1')
+        # Change any numbers from strings to floats
         for i in range(len(args.search)):
-            if args.search[i] is 'z':
-                args.search[i + 1] = float(args.search[i + 1])
+            if args.search[i].replace('.', '').isnumeric():
+                args.search[i] = float(args.search[i])
 
+        # Get search criteria into dictionary for use by client
         search_args = {}
         for i in range(0, len(args.search), 2):
             search_args[args.search[i]] = args.search[i + 1]
