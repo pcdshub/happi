@@ -68,15 +68,15 @@ class JSONBackend(metaclass=Backend):
             raise PermissionError("File {} already exists. Can not initialize "
                                   "a new database.".format(self.path))
         # Dump an empty dictionary
-        json.dump({}, open(self.path, "w+"))
+        with open(self.path, "w+") as f:
+            json.dump({}, f)
 
     def load(self):
         """
         Load the JSON database
         """
-        # Create file handle
-        handle = open(self.path, 'r')
-        return json.load(handle)
+        with open(self.path, 'r') as f:
+            return json.load(f)
 
     def store(self, db):
         """
@@ -92,19 +92,18 @@ class JSONBackend(metaclass=Backend):
         BlockingIOError:
             If the file is already being used by another happi operation
         """
-        # Create file handle
-        handle = open(self.path, 'w+')
-        # Create lock in filesystem
-        if fcntl is not None:
-            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        # Dump to file
-        try:
-            json.dump(db, handle, sort_keys=True, indent=4)
-
-        finally:
+        with open(self.path, 'w+') as f:
+            # Create lock in filesystem
             if fcntl is not None:
-                # Release lock in filesystem
-                fcntl.flock(handle, fcntl.LOCK_UN)
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            # Dump to file
+            try:
+                json.dump(db, f, sort_keys=True, indent=4)
+
+            finally:
+                if fcntl is not None:
+                    # Release lock in filesystem
+                    fcntl.flock(f, fcntl.LOCK_UN)
 
     def find(self, _id=None, multiples=False, **kwargs):
         """
