@@ -93,7 +93,7 @@ class QSBackend(JSONBackend):
             # temporary dictionary
             devices = dict()
             for field in raw.keys():
-                match = pattern.match(field)
+                match = pattern.match(field) or pattern_analog.match(field)
                 if match:
                     dev_no = match.group(1)
                     # Create an empty dictionary for the specific device
@@ -102,12 +102,6 @@ class QSBackend(JSONBackend):
                         devices[dev_no] = dict()
                     # Add the key information to the specific device dictionary
                     devices[dev_no][match.group(2)] = raw[field]
-                match_analog = pattern_analog.match(field)
-                if match_analog:
-                    dev_no = match_analog.group(1)
-                    if dev_no not in devices:
-                        devices[dev_no] = dict()
-                    devices[dev_no][match_analog.group(2)] = raw[field]
             # Store the devices as happi items
             if not devices:
                 logger.info("No device information found under '%s'", table)
