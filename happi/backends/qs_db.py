@@ -108,10 +108,6 @@ class QSBackend(JSONBackend):
                     if dev_no not in devices:
                         devices[dev_no] = dict()
                     devices[dev_no][match_analog.group(2)] = raw[field]
-#            print(table)
-#            print(devices)
-#            print(len(devices))
-#            print('')
             # Store the devices as happi items
             if not devices:
                 logger.info("No device information found under '%s'", table)
