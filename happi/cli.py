@@ -28,9 +28,9 @@ subparsers = parser.add_subparsers(help='Subparsers to search, add, edit',
 parser_search = subparsers.add_parser('search', help='Search the happi '
                                       'database')
 HAPPI_FIELDS = ["_id", "active", "args", "beamline", "creation",
-                    "device_class", "kwargs", "last_edit", "macros",
-                    "name", "parent", "prefix", "screen", "stand",
-                    "system", "type", "z"]
+                "device_class", "kwargs", "last_edit", "macros",
+                "name", "parent", "prefix", "screen", "stand",
+                "system", "type", "z"]
 for field in HAPPI_FIELDS:
     parser_search.add_argument('--' + field, type=str,
                                help='%s to search for' % field)
