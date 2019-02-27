@@ -36,9 +36,9 @@ class QSBackend(JSONBackend):
     expname : str
         The experiment name from the elog, e.g. xcslp1915
     """
-    device_translations = {'motors': 'Motor', 'areadet': 'AreaDet',
-                           'camera': 'Camera', 'ao': 'Acromag',
-                           'ai': 'Acromag', 'trig': 'ControlsTriggers'}
+    device_translations = {'motors': 'Motor', 'areadet': 'AreaDetector',
+                           'camera': 'AreaDetector', 'ao': 'Acromag',
+                           'ai': 'Acromag', 'trig': 'Trigger'}
 
     def __init__(self, expname, **kwargs):
         # Create our client and gather the raw information from the client

@@ -299,24 +299,14 @@ class Motor(Device):
     system.default = 'motion'
 
 
-class Camera(Device):
+class AreaDetector(Device):
     """
     A Generic EpicsCamera
     """
     device_class = copy(Device.device_class)
-    device_class.default = 'pcdsdevices.device_types.Camera'
+    device_class.default = 'pcdsdevices.device_types.PCDSDetector'
     system = copy(Device.system)
-    system.default = 'cameras'
-
-
-class AreaDetector(Device):
-    """
-    A Generic EpicsAreaDetector
-    """
-    device_class = copy(Device.device_class)
-    device_class.default = 'pcdsdevices.device_types.AreaDetector'
-    system = copy(Device.system)
-    system.default = 'detectors'
+    system.default = 'camera'
 
 
 class Acromag(Device):
@@ -329,11 +319,11 @@ class Acromag(Device):
     system.default = 'acromag'
 
 
-class ControlsTriggers(Device):
+class Trigger(Device):
     """
     A Generic class for Controls Triggers
     """
     device_class = copy(Device.device_class)
-    device_class.default = 'pcdsdevices.device_types.ControlsTriggers'
+    device_class.default = 'pcdsdevices.device_types.Trigger'
     system = copy(Device.system)
-    system.default = 'triggers'
+    system.default = 'trigger'
