@@ -116,7 +116,8 @@ def mockqsbackend():
 
         def getProposalsListForRun(self, run):
             return {'X534': {'Instrument': 'TST', 'proposal_id': 'X534'},
-                    'LR32': {'Instrument': 'TST', 'proposal_id': 'LR32'}}
+                    'LR32': {'Instrument': 'TST', 'proposal_id': 'LR32'},
+                    'LU34': {'Instrument': 'MFX', 'proposal_id': 'LU34'}}
 
         def getProposalDetailsForRun(self, run_no, proposal):
             return {
@@ -153,12 +154,48 @@ def mockqsbackend():
                 'pcdssetup-motors-setup-6-name': 'sam_flip',
                 'pcdssetup-motors-setup-6-purpose': 'sample flip',
                 'pcdssetup-motors-setup-6-pvbase': 'TST:USR:MMS:06',
-                'pcdssetup-motors-setup-6-stageidentity': 'IMS MD23'}
+                'pcdssetup-motors-setup-6-stageidentity': 'IMS MD23',
+                'pcdssetup-camera-setup-1-purpose': 'Meniscus',
+                'pcdssetup-camera-setup-1-trigger': '<=10',
+                'pcdssetup-camera-setup-1-type': 'Manta-G146C',
+                'pcdssetup-camera-setup-1-alias': 'MfxMeniscus',
+                'pcdssetup-camera-setup-2-purpose': 'Overview 1',
+                'pcdssetup-camera-setup-2-trigger': '<=10',
+                'pcdssetup-camera-setup-2-type': 'Manta-G145B',
+                'pcdssetup-camera-setup-2-alias': 'LBLOver1',
+                'pcdssetup-camera-setup-3-purpose': 'Side view',
+                'pcdssetup-camera-setup-3-trigger': '<=10',
+                'pcdssetup-camera-setup-3-type': 'Manta-G145B',
+                'pcdssetup-camera-setup-3-alias': 'LBLSide',
+                'pcdssetup-camera-setup-4-purpose': 'Inline',
+                'pcdssetup-camera-setup-4-trigger': '<=10',
+                'pcdssetup-camera-setup-4-type': 'Manta-G145B',
+                'pcdssetup-camera-setup-4-alias': 'LBLInline',
+                'pcdssetup-camera-setup-5-purpose': 'Overview 2',
+                'pcdssetup-camera-setup-5-trigger': '<=10',
+                'pcdssetup-camera-setup-5-type': 'Manta-G145B',
+                'pcdssetup-camera-setup-5-alias': 'LBLOver2',
+                'pcdssetup-trig-setup-1-delay': '0.00089',
+                'pcdssetup-trig-setup-1-eventcode': '198',
+                'pcdssetup-trig-setup-1-name': 'Overview_trig',
+                'pcdssetup-trig-setup-1-polarity': 'positive',
+                'pcdssetup-trig-setup-1-purpose': 'Overview',
+                'pcdssetup-trig-setup-1-pvbase': 'MFX:REC:EVR:02:TRIG1',
+                'pcdssetup-trig-setup-1-width': '0.00075',
+                'pcdssetup-trig-setup-2-delay': '0.000894348',
+                'pcdssetup-trig-setup-2-eventcode': '198',
+                'pcdssetup-trig-setup-2-name': 'Meniscus_trig',
+                'pcdssetup-trig-setup-2-polarity': 'positive',
+                'pcdssetup-trig-setup-2-purpose': 'Meniscus',
+                'pcdssetup-trig-setup-2-pvbase': 'MFX:REC:EVR:02:TRIG3',
+                'pcdssetup-trig-setup-2-width': '0.0005'}
+                # TODO: Add ao/ai devices once questionnaire is patched
 
         def getExpName2URAWIProposalIDs(self):
             return {
                 'tstx53416': 'X534',
-                'tstlr3216': 'LR32'}
+                'tstlr3216': 'LR32',
+                'mfxlu3417': 'LU34'}
 
     with patch('happi.backends.qs_db.QuestionnaireClient') as qs_cli:
         # Replace QuestionnaireClient with our test version
