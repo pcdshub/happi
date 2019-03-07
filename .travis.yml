@@ -55,7 +55,7 @@ install:
   # TODO: mongomock is not currently available via conda. Ultimately we should
   # probably build this ourselves, but until that day we resort to `pip`
   - |
-    if [[ "$USE_MONGO"=="1" ]]; then
+    if [[ "$USE_MONGO" == "1" ]]; then
       pip install mongomock
     fi
 
