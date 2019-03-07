@@ -158,26 +158,6 @@ def mockqsbackend():
                 'pcdssetup-motors-setup-6-purpose': 'sample flip',
                 'pcdssetup-motors-setup-6-pvbase': 'TST:USR:MMS:06',
                 'pcdssetup-motors-setup-6-stageidentity': 'IMS MD23',
-                'pcdssetup-camera-setup-1-purpose': 'Meniscus',
-                'pcdssetup-camera-setup-1-trigger': '<=10',
-                'pcdssetup-camera-setup-1-type': 'Manta-G146C',
-                'pcdssetup-camera-setup-1-alias': 'MfxMeniscus',
-                'pcdssetup-camera-setup-2-purpose': 'Overview 1',
-                'pcdssetup-camera-setup-2-trigger': '<=10',
-                'pcdssetup-camera-setup-2-type': 'Manta-G145B',
-                'pcdssetup-camera-setup-2-alias': 'LBLOver1',
-                'pcdssetup-camera-setup-3-purpose': 'Side view',
-                'pcdssetup-camera-setup-3-trigger': '<=10',
-                'pcdssetup-camera-setup-3-type': 'Manta-G145B',
-                'pcdssetup-camera-setup-3-alias': 'LBLSide',
-                'pcdssetup-camera-setup-4-purpose': 'Inline',
-                'pcdssetup-camera-setup-4-trigger': '<=10',
-                'pcdssetup-camera-setup-4-type': 'Manta-G145B',
-                'pcdssetup-camera-setup-4-alias': 'LBLInline',
-                'pcdssetup-camera-setup-5-purpose': 'Overview 2',
-                'pcdssetup-camera-setup-5-trigger': '<=10',
-                'pcdssetup-camera-setup-5-type': 'Manta-G145B',
-                'pcdssetup-camera-setup-5-alias': 'LBLOver2',
                 'pcdssetup-trig-setup-1-delay': '0.00089',
                 'pcdssetup-trig-setup-1-eventcode': '198',
                 'pcdssetup-trig-setup-1-name': 'Overview_trig',
@@ -192,7 +172,12 @@ def mockqsbackend():
                 'pcdssetup-trig-setup-2-purpose': 'Meniscus',
                 'pcdssetup-trig-setup-2-pvbase': 'MFX:REC:EVR:02:TRIG3',
                 'pcdssetup-trig-setup-2-width': '0.0005'}
-                # TODO: Add ao/ai devices once questionnaire is patched
+# TODO: Add ao/ai devices once questionnaire is patched
+# NOTE: Unsure what to do with cameras, they won't get
+#       added without having PV's
+# Goal: Load cameras, ao/ai's, triggers from questionnaire
+# Now: Only getting triggers:
+# Need questionnaire patch for ao/ai's, PV's for cams
 
         def getExpName2URAWIProposalIDs(self):
             return {
