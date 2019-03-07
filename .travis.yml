@@ -8,24 +8,31 @@ env:
 matrix:
   include:
       - python: 3.6
-        env: PCDS_CHANNEL=pcds-dev  
+        env:
+           - PCDS_CHANNEL=pcds-dev  
+           - USE_MONGO=1
       - python: 3.6
         env:
-            - NO_MONGO=1
-            - PCDS_CHANNEL=pcds-tag
+           - PCDS_CHANNEL=pcds-tag
+           - USE_MONGO=0
       - python: 3.6
         env:
            - BUILD_DOCS=1
            - PCDS_CHANNEL=pcds-tag
+           - USE_MONGO=1
       # Modification needed (https://github.com/travis-ci/travis-ci/issues/9815)
       - python: 3.7
         dist: xenial
         sudo: true
-        env: PCDS_CHANNEL=pcds-tag
+        env:
+           - PCDS_CHANNEL=pcds-tag
+           - USE_MONGO=1
       - python: 3.7
         dist: xenial
         sudo: true
-        env: PCDS_CHANNEL=pcds-dev
+        env:
+           - PCDS_CHANNEL=pcds-dev
+           - USE_MONGO=1
 
 install:
   - sudo apt-get update
@@ -48,7 +55,7 @@ install:
   # TODO: mongomock is not currently available via conda. Ultimately we should
   # probably build this ourselves, but until that day we resort to `pip`
   - |
-    if [[ "$NO_MONGO"=="1" ]]; then
+    if [[ "$USE_MONGO"=="1" ]]; then
       pip install mongomock
     fi
 
