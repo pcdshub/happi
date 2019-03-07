@@ -9,7 +9,7 @@ from .conftest import requires_questionnaire, requires_mongomock
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi import Client
-from happi.containers import Motor
+from happi.containers import Motor, Trigger
 
 
 @pytest.fixture(scope='function')
@@ -147,12 +147,13 @@ def test_json_initialize():
 
 @requires_questionnaire
 def test_qs_find(mockqsbackend):
-    assert len(mockqsbackend.find(beamline='TST', multiples=True)) == 6
+    assert len(mockqsbackend.find(beamline='TST', multiples=True)) == 8
     assert len(mockqsbackend.find(name='sam_r', multiples=True)) == 1
 
 
 @requires_questionnaire
 def test_qsbackend_with_client(mockqsbackend):
     c = Client(database=mockqsbackend)
-    assert len(c.all_devices) == 6
-    assert all([isinstance(d, Motor) for d in c.all_devices])
+    assert len(c.all_devices) == 8
+    assert all([isinstance(d, Motor) or isinstance(d, Trigger)
+                for d in c.all_devices])
