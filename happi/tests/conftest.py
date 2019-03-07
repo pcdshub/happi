@@ -86,16 +86,19 @@ def mockjsonclient(device_info):
 @pytest.fixture(scope='function')
 def mockmongoclient(device_info):
     with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
-        mc = MongoClient()
-        mc['test_db'].create_collection('test_collect')
-        mock_mongo.return_value = mc
-        # Client
-        backend = MongoBackend(db='test_db',
-                               collection='test_collect')
-        client = Client(database=backend)
-        # Insert a single device
-        client.backend._collection.insert_one(device_info)
-        return client
+        if has_mongomock:
+            mc = MongoClient()
+            mc['test_db'].create_collection('test_collect')
+            mock_mongo.return_value = mc
+            # Client
+            backend = MongoBackend(db='test_db',
+                                   collection='test_collect')
+            client = Client(database=backend)
+            # Insert a single device
+            client.backend._collection.insert_one(device_info)
+            return client
+        else:
+            return None
 
 
 @pytest.fixture(scope='function',
