@@ -4,6 +4,7 @@ import pytest
 import os
 import happi
 from happi.cli import happi_cli
+from happi.errors import EntryError
 
 
 @pytest.fixture(scope='function')
@@ -89,7 +90,7 @@ def test_search(happi_cfg, db):
     client = happi.client.Client.from_config(cfg=config_name)
     devices = client.search(beamline="TST")
     devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name,
-                                       'search', '--beamline', 'TST'])
+                                       'search', 'beamline', 'TST'])
     assert devices == devices_cli
 
 
@@ -98,5 +99,11 @@ def test_search_z(happi_cfg, db):
     client = happi.client.Client.from_config(cfg=config_name)
     devices = client.search(z=6.0)
     devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name,
-                                       'search', '--z', '6.0'])
+                                       'search', 'z', '6.0'])
     assert devices == devices_cli
+
+
+def test_odd_criteria(happi_cfg, db):
+    config_name = os.path.join(os.getcwd(), 'happi.cfg')
+    with pytest.raises(EntryError):
+        happi.cli.happi_cli(['--path', config_name, 'search', 'beamline'])
