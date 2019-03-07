@@ -100,6 +100,7 @@ def mockmongoclient(device_info):
         else:
             return None
 
+
 @pytest.fixture(scope='function',
                 params=supported_backends)
 def happi_client(request, mockmongoclient, mockjsonclient):
