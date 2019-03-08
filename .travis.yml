@@ -11,15 +11,18 @@ matrix:
         env:
            - PCDS_CHANNEL=pcds-dev  
            - USE_MONGO=1
+           - CONDA_UPLOAD=1
       - python: 3.6
         env:
            - PCDS_CHANNEL=pcds-tag
            - USE_MONGO=0
+           - CONDA_UPLOAD=0
       - python: 3.6
         env:
            - BUILD_DOCS=1
            - PCDS_CHANNEL=pcds-tag
            - USE_MONGO=1
+           - CONDA_UPLOAD=1
       # Modification needed (https://github.com/travis-ci/travis-ci/issues/9815)
       - python: 3.7
         dist: xenial
@@ -27,12 +30,14 @@ matrix:
         env:
            - PCDS_CHANNEL=pcds-tag
            - USE_MONGO=1
+           - CONDA_UPLOAD=1
       - python: 3.7
         dist: xenial
         sudo: true
         env:
            - PCDS_CHANNEL=pcds-dev
            - USE_MONGO=1
+           - CONDA_UPLOAD=1
 
 install:
   - sudo apt-get update
@@ -77,12 +82,13 @@ script:
 after_success:
   - codecov
   - |
-    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $PCDS_CHANNEL == 'pcds-tag' ]]; then
-      export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
-      anaconda upload bld-dir/linux-64/*.tar.bz2
-    fi
-  - |
-    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $TRAVIS_BRANCH == 'master' && $TRAVIS_TAG == '' && $PCDS_CHANNEL == 'pcds-dev' ]]; then
-      export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
-      anaconda upload bld-dir/linux-64/*.tar.bz2
+    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $CONDA_UPLOAD == '1' ]]; then
+      if [[ $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $PCDS_CHANNEL == 'pcds-tag' ]]; then
+        export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
+        anaconda upload bld-dir/linux-64/*.tar.bz2
+      fi
+      if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_TAG == '' && $PCDS_CHANNEL == 'pcds-dev' ]]; then
+        export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
+        anaconda upload bld-dir/linux-64/*.tar.bz2
+      fi
     fi
