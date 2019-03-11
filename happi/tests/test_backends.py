@@ -21,7 +21,7 @@ def mockmongo(mockmongoclient):
 def mockjson(device_info, valve_info):
     # Write underlying database
     with open('testing.json', 'w+') as handle:
-        simplejson.dump({device_info['prefix']: device_info},
+        simplejson.dump({device_info['_id']: device_info},
                         handle)
     # Return handle name
     yield JSONBackend('testing.json')
@@ -59,20 +59,20 @@ def test_mongo_find(valve_info, device_info, mockmongo):
 def test_mongo_save(mockmongo, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
-        mockmongo.save(device_info['prefix'], device_info, insert=True)
+        mockmongo.save(device_info[Client._id], device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):
-        mockmongo.save(valve_info['prefix'], valve_info, insert=False)
+        mockmongo.save(valve_info[Client._id], valve_info, insert=False)
 
     # Add to database
-    mockmongo.save(valve_info['prefix'], valve_info, insert=True)
+    mockmongo.save(valve_info[Client._id], valve_info, insert=True)
     assert mockmongo._collection.find_one(valve_info) == valve_info
 
 
 @requires_mongomock
 def test_mongo_delete(mockmongo, device_info):
-    mockmongo.delete(device_info['prefix'])
+    mockmongo.delete(device_info[Client._id])
     assert mockmongo._collection.find_one(device_info) is None
 
 
@@ -80,8 +80,8 @@ def test_json_find(valve_info, device_info, mockjson):
     mm = mockjson
     # Write underlying database
     with open(mm.path, 'w+') as handle:
-        simplejson.dump({valve_info['prefix']: valve_info,
-                         device_info['prefix']: device_info},
+        simplejson.dump({valve_info['_id']: valve_info,
+                         device_info['_id']: device_info},
                         handle)
     # No single device expected
     assert mm.find(beamline='BLERG', multiples=False) == []
@@ -105,21 +105,21 @@ def test_json_find(valve_info, device_info, mockjson):
 
 
 def test_json_delete(mockjson, device_info):
-    mockjson.delete(device_info['prefix'])
+    mockjson.delete(device_info[Client._id])
     assert device_info not in mockjson.all_devices
 
 
 def test_json_save(mockjson, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
-        mockjson.save(device_info['prefix'], device_info, insert=True)
+        mockjson.save(device_info[Client._id], device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):
-        mockjson.save(valve_info['prefix'], valve_info, insert=False)
+        mockjson.save(valve_info[Client._id], valve_info, insert=False)
 
     # Add to database
-    mockjson.save(valve_info['prefix'], valve_info, insert=True)
+    mockjson.save(valve_info[Client._id], valve_info, insert=True)
     assert valve_info in mockjson.all_devices
 
 
