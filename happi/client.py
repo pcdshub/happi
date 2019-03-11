@@ -39,7 +39,7 @@ class Client:
     """
     # Device information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
-    _id = 'prefix'
+    _id = 'name'
     # Store device types seen by client
     device_types = {'Device': Device}
 
