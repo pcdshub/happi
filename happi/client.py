@@ -7,7 +7,7 @@ import time as ttime
 import configparser
 
 from . import containers
-from .device import Device
+from .device import Container, Device
 from .errors import EntryError, DatabaseError, SearchError
 from .backends import backend, _get_backend
 from .loader import from_container
@@ -37,18 +37,19 @@ class Client:
     DatabaseError:
         Raised if the Client fails to instantiate the Database
     """
-    # Device information
+    # Container information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'name'
     # Store device types seen by client
-    device_types = {'Device': Device}
+    device_types = {'Device': Device,
+                    'Container': Container}
 
     def __init__(self, database=None, **kwargs):
         # Get Container Mapping
         self.device_types.update(dict([(name, cls) for (name, cls) in
                                        inspect.getmembers(containers,
                                                           inspect.isclass)
-                                       if issubclass(cls, Device)]))
+                                       if issubclass(cls, Container)]))
         # Use supplied backend
         if database:
             self.backend = database
@@ -104,7 +105,7 @@ class Client:
 
         Parameters
         ----------
-        device_cls : :class:`.Device` or name of class
+        device_cls : :class:`.Container` or name of class
             The Device Container to instantiate
 
         kwargs :
@@ -118,7 +119,7 @@ class Client:
         Raises
         ------
         TypeError:
-            If the provided class is not a subclass of :class:`.Device`
+            If the provided class is not a subclass of :class:`.Container`
 
 
         Example
@@ -136,9 +137,9 @@ class Client:
         if device_cls in self.device_types:
             device_cls = self.device_types[device_cls]
         # Check that this is a valid Container
-        if not issubclass(device_cls, Device):
+        if not issubclass(device_cls, Container):
             raise TypeError('{!r} is not a subclass of '
-                            'Device'.format(device_cls))
+                            'Container'.format(device_cls))
         device = device_cls(**kwargs)
         # Add the method to the device
         device.save = lambda: self.add_device(device)
@@ -150,7 +151,7 @@ class Client:
 
         Parameters
         ----------
-        device : :class:`.Device`
+        device : :class:`.Container`
             The device to store in the database
 
         Raises
@@ -164,12 +165,12 @@ class Client:
         # Store post
         self._store(device, insert=True)
         # Log success
-        logger.info('Device %r has been succesfully added to the '
+        logger.info('Container %r has been succesfully added to the '
                     'database', device)
 
     def find_device(self, **post):
         """
-        Used to query the database for an individual Device
+        Used to query the database for an individual Container
 
         If multiple devices are found, only the first is returned
 
@@ -185,12 +186,12 @@ class Client:
 
         Returns
         -------
-        device : :class:`.Device`
+        device : :class:`.Container`
             A device that matches the characteristics given
         """
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
-        # Instantiate Device
+        # Instantiate Container
         logger.debug("Instantiating device based on found information ...")
         try:
             device = self.create_device(doc['type'], **doc)
@@ -248,10 +249,10 @@ class Client:
         for post in self.backend.all_devices:
             # Try and load device based on database info
             try:
-                # Device identification
+                # Container identification
                 _id = post[self._id]
                 logger.debug('Attempting to initialize %s...', _id)
-                # Load Device
+                # Load Container
                 device = self.find_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
@@ -281,7 +282,7 @@ class Client:
         -----------
         as_dict : bool, optional
             Return the information as a list of dictionaries or a list of
-            :class:`.Device` containers
+            :class:`.Container`
 
         start : float, optional
             Minimum beamline position to include devices
@@ -349,7 +350,7 @@ class Client:
                                       for attr in attrs])
                             + '\n')
                 except KeyError as e:
-                    logger.error("Device %s was missing attribute %s",
+                    logger.error("Container %s was missing attribute %s",
                                  dev.name, e)
 
     def remove_device(self, device):
@@ -358,12 +359,12 @@ class Client:
 
         Parameters
         ----------
-        device : :class:`.Device`
-            Device to be removed from the database
+        device : :class:`.Container`
+            Container to be removed from the database
         """
-        # Device Check
-        if not isinstance(device, Device):
-            raise ValueError("Must supply an object of type `Device`")
+        # Container Check
+        if not isinstance(device, Container):
+            raise ValueError("Must supply an object of type `Container`")
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
         # Check that device is in the database
@@ -384,9 +385,9 @@ class Client:
         logger.debug('Validating device %r ...', device)
 
         # Check type
-        if not isinstance(device, Device):
+        if not isinstance(device, Container):
             raise ValueError('{!r} is not a subclass of '
-                             'Device'.format(device))
+                             'Container'.format(device))
         logger.debug('Checking mandatory information has been entered ...')
         # Check that all mandatory info has been entered
         missing = [info.key for info in device.entry_info
@@ -397,7 +398,7 @@ class Client:
             raise EntryError('Missing mandatory information ({}) for {}'
                              ''.format(', '.join(missing),
                                        device.__class__.__name__))
-        logger.debug('Device %r has been validated.', device)
+        logger.debug('Container %r has been validated.', device)
 
     def _store(self, device, insert=False):
         """
@@ -405,8 +406,8 @@ class Client:
 
         Parameters
         ----------
-        post : :class:`.Device`
-            Device to save
+        post : :class:`.Container`
+            Container to save
 
         insert : bool, optional
             Set to True if this is a new entry
@@ -436,7 +437,7 @@ class Client:
         # Note that device has some unrecognized metadata
         for key in post.keys():
             if key not in device.info_names:
-                logger.debug("Device %r defines an extra piece of "
+                logger.debug("Container %r defines an extra piece of "
                              "information under the keyword %s",
                              device, key)
         # Add metadata from the Client Side
@@ -447,8 +448,8 @@ class Client:
         try:
             _id = post[self._id]
         except KeyError:
-            raise EntryError('Device did not supply the proper information to '
-                             'interface with the database, missing {}'
+            raise EntryError('Container did not supply the proper information '
+                             'to interface with the database, missing {}'
                              ''.format(self._id))
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
