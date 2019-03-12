@@ -4,7 +4,7 @@ import pytest
 import os
 import happi
 from happi.cli import happi_cli
-from happi.errors import EntryError
+from happi.errors import SearchError
 
 
 @pytest.fixture(scope='function')
@@ -105,5 +105,5 @@ def test_search_z(happi_cfg, db):
 
 def test_odd_criteria(happi_cfg, db):
     config_name = os.path.join(os.getcwd(), 'happi.cfg')
-    with pytest.raises(EntryError):
+    with pytest.raises(SearchError):
         happi.cli.happi_cli(['--path', config_name, 'search', 'beamline'])

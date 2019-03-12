@@ -8,7 +8,7 @@ import sys
 import happi
 import logging
 import coloredlogs
-from .errors import EntryError
+from .errors import SearchError
 
 logger = logging.getLogger(__name__)
 
@@ -62,19 +62,19 @@ def happi_cli(args):
         # Ensure we have an even number of search elements
         # Should always have key:value pairs
         if len(args.search_criteria) % 2 is not 0:
-            raise EntryError('Search criteria should be given as key '
-                             'value pair\ni.e:\n'
-                             'happi search beamline MFX stand DG1')
-
-        # Convert any numbers from strings to floats
-        for i in range(len(args.search_criteria)):
-            if args.search_criteria[i].replace('.', '').isnumeric():
-                args.search_criteria[i] = float(args.search_criteria[i])
+            raise SearchError('Search criteria should be given as key '
+                              'value pair\ni.e:\n'
+                              'happi search beamline MFX stand DG1')
 
         # Get search criteria into dictionary for use by client
         client_args = {}
         for i in range(0, len(args.search_criteria), 2):
-            client_args[args.search_criteria[i]] = args.search_criteria[i+1]
+            criteria = args.search_criteria[i]
+            value = args.search_criteria[i+1]
+            if value.replace('.', '').isnumeric():
+                logger.debug('Changed %s to float', value)
+                value = float(value)
+            client_args[criteria] = value
 
         devices = client.search(**client_args)
         if devices:
@@ -82,7 +82,7 @@ def happi_cli(args):
                 dev.show_info()
             return devices
         else:
-            print('No devices found')
+            logger.error('No devices found')
 
 
 def main():
