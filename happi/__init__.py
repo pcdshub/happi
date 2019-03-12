@@ -1,5 +1,5 @@
 __all__ = ['Device', 'EntryInfo', 'Client', 'from_container',
-           'load_devices', 'cache']
+           'load_devices', 'cache', 'Container']
 import logging
 from .device import Container, Device, EntryInfo
 from .client import Client
