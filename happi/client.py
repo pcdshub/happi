@@ -88,6 +88,8 @@ class Client:
         --------
         :meth:`.find_device`, :meth:`.search`
         """
+        if len(kwargs) == 0:
+            raise SearchError('No information pertinent to device given')
         # Request information from backend
         post = self.backend.find(multiples=False, **kwargs)
         # Check result, if not found let the user know
