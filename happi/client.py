@@ -88,6 +88,8 @@ class Client:
         --------
         :meth:`.find_device`, :meth:`.search`
         """
+        if len(post) == 0:
+            raise SearchError('No information pertinent to device given')
         # Request information from backend
         post = self.backend.find(multiples=False, **kwargs)
         # Check result, if not found let the user know
@@ -186,8 +188,6 @@ class Client:
         device : :class:`.Device`
             A device that matches the characteristics given
         """
-        if len(post) == 0:
-            raise EntryError('No information pertinent to device given')
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
         # Instantiate Device
