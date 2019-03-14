@@ -349,10 +349,8 @@ class HappiItem(metaclass=InfoMeta):
         raise NotImplementedError
 
     def __repr__(self):
-        return '{} {} (prefix={}, z={})'.format(self.__class__.__name__,
-                                                self.name,
-                                                self.prefix,
-                                                self.z)
+        return '{} (name={})'.format(self.__class__.__name__,
+                                     self.name)
 
     def __eq__(self, other):
         return (self.prefix, self.name) == (other.prefix, other.name)
@@ -397,3 +395,10 @@ class Device(HappiItem):
     args.default = ['{{prefix}}']
     kwargs = copy.copy(HappiItem.kwargs)
     args.default = {'name': '{{name}}'}
+
+    def __repr__(self):
+        return '{} (name={}, prefix={}, z={})'.format(
+                                    self.__class__.__name__,
+                                    self.name,
+                                    self.prefix,
+                                    self.z)
