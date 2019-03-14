@@ -61,7 +61,7 @@ def happi_cli(args):
 
         # Ensure we have an even number of search elements
         # Should always have key:value pairs
-        if len(args.search_criteria) % 2 is not 0:
+        if len(args.search_criteria) % 2 != 0:
             raise SearchError('Search criteria should be given as key '
                               'value pair\ni.e:\n'
                               'happi search beamline MFX stand DG1')
