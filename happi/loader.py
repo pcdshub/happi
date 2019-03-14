@@ -108,8 +108,8 @@ def from_container(device, attach_md=True, use_cache=True):
         cached_device = cache[device.name]
         # If the metadata has not been modified or we can't review it.
         # Return the cached object
-        if not hasattr(cached_device, 'md') or cached_device.md == device:
-            logger.debug("Loading %s from cache ...", device.prefix)
+        if hasattr(cached_device, 'md') and cached_device.md == device:
+            logger.debug("Loading %s from cache ...", device.name)
             return cached_device
         # Otherwise reload
         else:
