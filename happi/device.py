@@ -206,13 +206,13 @@ class InfoMeta(type):
         return clsobj
 
 
-class Container(metaclass=InfoMeta):
+class HappiItem(metaclass=InfoMeta):
     """
-    The base Container object
+    The smallest description of an object that can be entered in ``happi``
 
     The class does not need to be intialized with any specific piece of
     information except a name, but all of the attributes listed by
-    :attr:`Container.info_names` can be used to assign values to
+    :attr:`HappiItem.info_names` can be used to assign values to
     :class:`.EntryInfo` upon initialization.  Pieces of information that are
     deemed mandatory by the class must be filled in before the device is loaded
     into the database. See :attr:`Device.mandatory_info` to see which
@@ -246,7 +246,7 @@ class Container(metaclass=InfoMeta):
     -------
     .. code ::
 
-        d = Container(name = 'my_device',         #Alias name for device
+        d = HappiItem(name = 'my_device',         #Alias name for device
                       note  = 'Example',          #Piece of arbitrary metadata
                      )
     """
@@ -358,7 +358,7 @@ class Container(metaclass=InfoMeta):
         return (self.prefix, self.name) == (other.prefix, other.name)
 
 
-class Device(Container):
+class Device(HappiItem):
     """
     A Generic Device
 
@@ -393,7 +393,7 @@ class Device(Container):
                           "LCLS Lightpath", enforce=bool, default=False)
     documentation = EntryInfo("Relevant documentation for the Device",
                               enforce=str)
-    args = copy.copy(Container.args)
+    args = copy.copy(HappiItem.args)
     args.default = ['{{prefix}}']
-    kwargs = copy.copy(Container.kwargs)
+    kwargs = copy.copy(HappiItem.kwargs)
     args.default = {'name': '{{name}}'}

@@ -7,7 +7,7 @@ import time as ttime
 import configparser
 
 from . import containers
-from .device import Container, Device
+from .device import HappiItem, Device
 from .errors import EntryError, DatabaseError, SearchError
 from .backends import backend, _get_backend
 from .loader import from_container
@@ -30,26 +30,26 @@ class Client:
     Attributes
     ----------
     device_types : dict
-        Mapping of Container namees to class types
+        Mapping of HappiItem namees to class types
 
     Raises
     -----
     DatabaseError:
         Raised if the Client fails to instantiate the Database
     """
-    # Container information
+    # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'name'
     # Store device types seen by client
     device_types = {'Device': Device,
-                    'Container': Container}
+                    'HappiItem': HappiItem}
 
     def __init__(self, database=None, **kwargs):
-        # Get Container Mapping
+        # Get HappiItem Mapping
         self.device_types.update(dict([(name, cls) for (name, cls) in
                                        inspect.getmembers(containers,
                                                           inspect.isclass)
-                                       if issubclass(cls, Container)]))
+                                       if issubclass(cls, HappiItem)]))
         # Use supplied backend
         if database:
             self.backend = database
@@ -105,8 +105,8 @@ class Client:
 
         Parameters
         ----------
-        device_cls : :class:`.Container` or name of class
-            The Device Container to instantiate
+        device_cls : :class:`.HappiItem` or name of class
+            The Device HappiItem to instantiate
 
         kwargs :
             Information to pass through to the device, upon initialization
@@ -119,7 +119,7 @@ class Client:
         Raises
         ------
         TypeError:
-            If the provided class is not a subclass of :class:`.Container`
+            If the provided class is not a subclass of :class:`.HappiItem`
 
 
         Example
@@ -136,10 +136,10 @@ class Client:
         # If specified by a string
         if device_cls in self.device_types:
             device_cls = self.device_types[device_cls]
-        # Check that this is a valid Container
-        if not issubclass(device_cls, Container):
+        # Check that this is a valid HappiItem
+        if not issubclass(device_cls, HappiItem):
             raise TypeError('{!r} is not a subclass of '
-                            'Container'.format(device_cls))
+                            'HappiItem'.format(device_cls))
         device = device_cls(**kwargs)
         # Add the method to the device
         device.save = lambda: self.add_device(device)
@@ -151,7 +151,7 @@ class Client:
 
         Parameters
         ----------
-        device : :class:`.Container`
+        device : :class:`.HappiItem`
             The device to store in the database
 
         Raises
@@ -165,12 +165,12 @@ class Client:
         # Store post
         self._store(device, insert=True)
         # Log success
-        logger.info('Container %r has been succesfully added to the '
+        logger.info('HappiItem %r has been succesfully added to the '
                     'database', device)
 
     def find_device(self, **post):
         """
-        Used to query the database for an individual Container
+        Used to query the database for an individual HappiItem
 
         If multiple devices are found, only the first is returned
 
@@ -186,12 +186,12 @@ class Client:
 
         Returns
         -------
-        device : :class:`.Container`
+        device : :class:`.HappiItem`
             A device that matches the characteristics given
         """
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
-        # Instantiate Container
+        # Instantiate HappiItem
         logger.debug("Instantiating device based on found information ...")
         try:
             device = self.create_device(doc['type'], **doc)
@@ -249,10 +249,10 @@ class Client:
         for post in self.backend.all_devices:
             # Try and load device based on database info
             try:
-                # Container identification
+                # HappiItem identification
                 _id = post[self._id]
                 logger.debug('Attempting to initialize %s...', _id)
-                # Load Container
+                # Load HappiItem
                 device = self.find_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
@@ -282,7 +282,7 @@ class Client:
         -----------
         as_dict : bool, optional
             Return the information as a list of dictionaries or a list of
-            :class:`.Container`
+            :class:`.HappiItem`
 
         start : float, optional
             Minimum beamline position to include devices
@@ -350,7 +350,7 @@ class Client:
                                       for attr in attrs])
                             + '\n')
                 except KeyError as e:
-                    logger.error("Container %s was missing attribute %s",
+                    logger.error("HappiItem %s was missing attribute %s",
                                  dev.name, e)
 
     def remove_device(self, device):
@@ -359,12 +359,12 @@ class Client:
 
         Parameters
         ----------
-        device : :class:`.Container`
-            Container to be removed from the database
+        device : :class:`.HappiItem`
+            HappiItem to be removed from the database
         """
-        # Container Check
-        if not isinstance(device, Container):
-            raise ValueError("Must supply an object of type `Container`")
+        # HappiItem Check
+        if not isinstance(device, HappiItem):
+            raise ValueError("Must supply an object of type `HappiItem`")
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
         # Check that device is in the database
@@ -385,9 +385,9 @@ class Client:
         logger.debug('Validating device %r ...', device)
 
         # Check type
-        if not isinstance(device, Container):
+        if not isinstance(device, HappiItem):
             raise ValueError('{!r} is not a subclass of '
-                             'Container'.format(device))
+                             'HappiItem'.format(device))
         logger.debug('Checking mandatory information has been entered ...')
         # Check that all mandatory info has been entered
         missing = [info.key for info in device.entry_info
@@ -398,7 +398,7 @@ class Client:
             raise EntryError('Missing mandatory information ({}) for {}'
                              ''.format(', '.join(missing),
                                        device.__class__.__name__))
-        logger.debug('Container %r has been validated.', device)
+        logger.debug('HappiItem %r has been validated.', device)
 
     def _store(self, device, insert=False):
         """
@@ -406,8 +406,8 @@ class Client:
 
         Parameters
         ----------
-        post : :class:`.Container`
-            Container to save
+        post : :class:`.HappiItem`
+            HappiItem to save
 
         insert : bool, optional
             Set to True if this is a new entry
@@ -437,7 +437,7 @@ class Client:
         # Note that device has some unrecognized metadata
         for key in post.keys():
             if key not in device.info_names:
-                logger.debug("Container %r defines an extra piece of "
+                logger.debug("HappiItem %r defines an extra piece of "
                              "information under the keyword %s",
                              device, key)
         # Add metadata from the Client Side
@@ -448,7 +448,7 @@ class Client:
         try:
             _id = post[self._id]
         except KeyError:
-            raise EntryError('Container did not supply the proper information '
+            raise EntryError('HappiItem did not supply the proper information '
                              'to interface with the database, missing {}'
                              ''.format(self._id))
         # Store information
