@@ -43,7 +43,7 @@ def test_caching():
                    device_class='types.SimpleNamespace', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
-    assert d.prefix in cache
+    assert d.name in cache
     assert id(td) == id(from_container(d))
     assert id(td) != id(from_container(d, use_cache=False))
     # Modify md and check we see a reload
