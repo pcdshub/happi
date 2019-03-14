@@ -54,7 +54,7 @@ def test_caching():
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
-    assert id(td) == id(from_container(d))
+    assert id(td) != id(from_container(d))
     assert id(td) != id(from_container(d, use_cache=False))
 
 
