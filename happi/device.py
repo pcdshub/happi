@@ -353,7 +353,7 @@ class HappiItem(metaclass=InfoMeta):
                                      self.name)
 
     def __eq__(self, other):
-        return (self.prefix, self.name) == (other.prefix, other.name)
+        return (self.post() == other.post())
 
 
 class Device(HappiItem):
