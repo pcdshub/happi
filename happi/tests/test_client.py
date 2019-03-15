@@ -93,16 +93,11 @@ def test_all_devices(happi_client, device):
     assert happi_client.all_devices == [device]
 
 
-def test_add_device(happi_client, valve, device, valve_info):
+def test_add_device(happi_client, valve):
     happi_client.add_device(valve)
-    doc = happi_client.backend.find(multiples=False, **valve_info)
-    assert valve.prefix == doc['prefix']
-    assert valve.name == doc['name']
-    assert valve.z == doc['z']
-    assert valve.beamline == doc['beamline']
     # No duplicates
     with pytest.raises(DuplicateError):
-        happi_client.add_device(device)
+        happi_client.add_device(valve)
     # No incompletes
     d = Device()
     with pytest.raises(EntryError):
@@ -145,7 +140,7 @@ def test_validate(happi_client):
     # No bad devices
     assert happi_client.validate() == list()
     # A single bad device
-    happi_client.backend.save('_id', {'prefix': 'bad'}, insert=True)
+    happi_client.backend.save('_id', {happi_client._id: 'bad'}, insert=True)
     assert happi_client.validate() == ['bad']
 
 

@@ -95,7 +95,7 @@ def from_container(device, attach_md=True, use_cache=True):
         return the same object. This prevents unnecessary EPICS connections
         from being initialized in the same process. If a new object is
         needed, set `use_cache` to False and a new object will be created,
-        overriding the current cached object. An object with matching prefix
+        overriding the current cached object. An object with matching name
         and differing metadata will always return a new instantiation of the
         device.
 
@@ -104,18 +104,18 @@ def from_container(device, attach_md=True, use_cache=True):
     obj : happi.Device.device_class
     """
     # Return a cached version of the device if present and not forced
-    if use_cache and device.prefix in cache:
-        cached_device = cache[device.prefix]
+    if use_cache and device.name in cache:
+        cached_device = cache[device.name]
         # If the metadata has not been modified or we can't review it.
         # Return the cached object
-        if not hasattr(cached_device, 'md') or cached_device.md == device:
-            logger.debug("Loading %s from cache ...", device.prefix)
+        if hasattr(cached_device, 'md') and cached_device.md == device:
+            logger.debug("Loading %s from cache ...", device.name)
             return cached_device
         # Otherwise reload
         else:
             logger.warning("Device %s has already been loaded, but the "
                            "database information has been modified. "
-                           "Reloading ...", device.prefix)
+                           "Reloading ...", device.name)
 
     # Find the class and module of the container.
     if not device.device_class:
@@ -157,7 +157,7 @@ def from_container(device, attach_md=True, use_cache=True):
             logger.warning("Unable to attach metadata dictionary to device")
 
     # Store a copy of the device in the cache
-    cache[device.prefix] = obj
+    cache[device.name] = obj
     return obj
 
 

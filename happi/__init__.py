@@ -1,7 +1,7 @@
 __all__ = ['Device', 'EntryInfo', 'Client', 'from_container',
-           'load_devices', 'cache']
+           'load_devices', 'cache', 'HappiItem']
 import logging
-from .device import Device, EntryInfo
+from .device import HappiItem, Device, EntryInfo
 from .client import Client
 from .loader import from_container, load_devices, cache
 from ._version import get_versions
