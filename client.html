@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Client &mdash; Happi Deck 1.2.1+23.ga65085c documentation</title>
+  <title>Using the Client &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Creating New Device Types" href="develop.html" />
     <link rel="prev" title="Conventions" href="conventions.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+23.ga65085c
+                1.2.1+41.g7354727
               </div>
             
           
@@ -205,7 +207,7 @@ about how to configure your default backend choice</p>
 </pre></div>
 </div>
 <p>Alternatively, you can create the device separately and add the device
-explicitly using <a class="reference internal" href="containers.html#happi.Device.save" title="happi.Device.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.save()</span></code></a></p>
+explicitly using <code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.save()</span></code></p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE2&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">355.5</span><span class="p">)</span>
 
 <span class="gp">In [8]: </span><span class="n">client</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
@@ -229,23 +231,23 @@ example searches to demonstrate the power of the Happi Client</p>
 corresponding objects or as a dictionary</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">)</span>
 <span class="gh">Out[9]: </span><span class="go"></span>
-<span class="go">[Device my_device (prefix=PV:BASE, z=345.5),</span>
-<span class="go"> Device my_device2 (prefix=PV:BASE2, z=355.5)]</span>
+<span class="go">[Device (name=my_device, prefix=PV:BASE, z=345.5),</span>
+<span class="go"> Device (name=my_device2, prefix=PV:BASE2, z=355.5)]</span>
 
 <span class="gp">In [10]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">                                                                                                     Out[10]: </span>
-<span class="go">[{&#39;_id&#39;: &#39;PV:BASE&#39;,</span>
+<span class="go">                                                                                                                 Out[10]: </span>
+<span class="go">[{&#39;_id&#39;: &#39;my_device&#39;,</span>
 <span class="go">  &#39;active&#39;: True,</span>
-<span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
+<span class="go">  &#39;args&#39;: [&#39;name&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;XRT&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Tue Mar 12 15:21:49 2019&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Sat Mar 16 00:04:28 2019&#39;,</span>
 <span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
 <span class="go">  &#39;embedded_screen&#39;: None,</span>
 <span class="go">  &#39;engineering_screen&#39;: None,</span>
-<span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Tue Mar 12 15:21:49 2019&#39;,</span>
+<span class="go">  &#39;kwargs&#39;: {},</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Sat Mar 16 00:04:28 2019&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device&#39;,</span>
@@ -255,18 +257,18 @@ corresponding objects or as a dictionary</p>
 <span class="go">  &#39;system&#39;: None,</span>
 <span class="go">  &#39;type&#39;: &#39;Device&#39;,</span>
 <span class="go">  &#39;z&#39;: 345.5},</span>
-<span class="go"> {&#39;_id&#39;: &#39;PV:BASE2&#39;,</span>
+<span class="go"> {&#39;_id&#39;: &#39;my_device2&#39;,</span>
 <span class="go">  &#39;active&#39;: True,</span>
-<span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
+<span class="go">  &#39;args&#39;: [&#39;name&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;MFX&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Tue Mar 12 15:21:49 2019&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Sat Mar 16 00:04:28 2019&#39;,</span>
 <span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
 <span class="go">  &#39;embedded_screen&#39;: None,</span>
 <span class="go">  &#39;engineering_screen&#39;: None,</span>
-<span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Tue Mar 12 15:21:49 2019&#39;,</span>
+<span class="go">  &#39;kwargs&#39;: {},</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Sat Mar 16 00:04:28 2019&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device2&#39;,</span>
@@ -281,10 +283,10 @@ corresponding objects or as a dictionary</p>
 <p>There are also some more advance methods to search specific areas of the
 beamline</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
-<span class="gh">Out[11]: </span><span class="go">[Device my_device2 (prefix=PV:BASE2, z=355.5)]</span>
+<span class="gh">Out[11]: </span><span class="go">[Device (name=my_device2, prefix=PV:BASE2, z=355.5)]</span>
 
 <span class="gp">In [12]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">)</span>
-<span class="go">                                                        Out[12]: [Device my_device (prefix=PV:BASE, z=345.5)]</span>
+<span class="go">                                                              Out[12]: [Device (name=my_device, prefix=PV:BASE, z=345.5)]</span>
 </pre></div>
 </div>
 <p>You can also explicitly load a single device. The advantage of this method is
@@ -310,7 +312,7 @@ criteria, an <code class="docutils literal notranslate"><span class="pre">Search
 <a class="reference internal" href="#entry-code"><span class="std std-ref">Creating a New Entry</span></a>, but instead of instantiating the device you use either
 <a class="reference internal" href="client_api.html#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a> or <a class="reference internal" href="client_api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a> to grab an existing device from
 the dataprefix. When the device is retreived this way the class method
-<a class="reference internal" href="containers.html#happi.Device.save" title="happi.Device.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.save()</span></code></a> is overwritten, simply call this when you are done editing
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.save()</span></code> is overwritten, simply call this when you are done editing
 the Device information.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [16]: </span><span class="n">my_motor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">)</span>
 
@@ -359,7 +361,7 @@ Otherwise, the library uses the <a class="reference internal" href="generated/ha
         <a href="develop.html" class="btn btn-neutral float-right" title="Creating New Device Types" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="conventions.html" class="btn btn-neutral" title="Conventions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="conventions.html" class="btn btn-neutral float-left" title="Conventions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -385,26 +387,16 @@ Otherwise, the library uses the <a class="reference internal" href="generated/ha
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

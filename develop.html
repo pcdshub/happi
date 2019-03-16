@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating New Device Types &mdash; Happi Deck 1.2.1+23.ga65085c documentation</title>
+  <title>Creating New Device Types &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
   
 
   
@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Client API" href="client_api.html" />
     <link rel="prev" title="Using the Client" href="client.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -58,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+23.ga65085c
+                1.2.1+41.g7354727
               </div>
             
           
@@ -257,10 +259,10 @@ class attributes, available to be manipulated like any other regular property</p
 </div>
 <p>The <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class also supports extraneous data that may not have been
 captured when the original container was created. You can either enter this as
-a keyword, or enter it into the <a class="reference internal" href="containers.html#happi.Device.extraneous" title="happi.Device.extraneous"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.extraneous</span></code></a> dictionary.</p>
+a keyword, or enter it into the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.extraneous</span></code> dictionary.</p>
 <p>While you are free to play around with the device attributes, when loading the
 object into the database you will need to make sure that all of the
-<a class="reference internal" href="containers.html#happi.Device.mandatory_info" title="happi.Device.mandatory_info"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.mandatory_info</span></code></a> has been entered, otherwise the client
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.mandatory_info</span></code> has been entered, otherwise the client
 will reject the device.</p>
 </div>
 <div class="section" id="example-class">
@@ -284,7 +286,7 @@ class attributes as EntryInfo objects:</p>
 <p>By default, EntryInfo will create an optional keyword, whose default is
 <code class="docutils literal notranslate"><span class="pre">None</span></code> with the same name as the class attribute. You can always see how this
 information will be put into the the database by looking at the output of the
-<a class="reference internal" href="containers.html#happi.Device.post" title="happi.Device.post"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.post()</span></code></a> method. As shown in the example above, using the EntryInfo
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.post()</span></code> method. As shown in the example above, using the EntryInfo
 keywords, you can put a short doc string to give a better explanation of the
 field, and also enforce that user enter a specific format of information.</p>
 <p>While the user will always be able to enter <code class="docutils literal notranslate"><span class="pre">None</span></code> for the attribute, if a
@@ -354,7 +356,7 @@ attribute alone the type will also be converted.</p>
         <a href="client_api.html" class="btn btn-neutral float-right" title="Client API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="client.html" class="btn btn-neutral" title="Using the Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="client.html" class="btn btn-neutral float-left" title="Using the Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -380,26 +382,16 @@ attribute alone the type will also be converted.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
