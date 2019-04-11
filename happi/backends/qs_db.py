@@ -36,9 +36,8 @@ class QSBackend(JSONBackend):
     expname : str
         The experiment name from the elog, e.g. xcslp1915
     """
-    device_translations = {'motors': 'Motor', 'camera': 'AreaDetector',
-                           'ao': 'Acromag', 'ai': 'Acromag',
-                           'trig': 'Trigger'}
+    device_translations = {'motors': 'Motor', 'trig': 'Trigger',
+                           'ao': 'Acromag', 'ai': 'Acromag'}
 
     def __init__(self, expname, **kwargs):
         # Create our client and gather the raw information from the client
@@ -83,8 +82,8 @@ class QSBackend(JSONBackend):
         raw = self.qs.getProposalDetailsForRun(run_no, proposal)
         for table, _class in self.device_translations.items():
             # Create a regex pattern to find all the appropriate pattern match
-            pattern = re.compile(r'pcdssetup-{}-'
-                                 r'setup-(\d+)-(\w+)'.format(table))
+            pattern = re.compile(r'pcdssetup-{}'
+                                 r'-(\d+)-(\w+)'.format(table))
             # Search for all keys that match the device and store in a
             # temporary dictionary
             devices = dict()
