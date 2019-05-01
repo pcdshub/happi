@@ -49,6 +49,7 @@ def device_info():
             'args': list(),
             'kwargs': {'hi': 'oh hello'}}
 
+
 @pytest.fixture(scope='function')
 def device(device_info):
     t = Device(**device_info)
