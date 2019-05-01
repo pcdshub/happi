@@ -41,14 +41,13 @@ requires_questionnaire = pytest.mark.skipif(not has_qs_cli,
 def device_info():
     return {'name': 'alias',
             'z': 400,
-            '_id': 'BASE:PV',
+            '_id': 'alias',
             'prefix': 'BASE:PV',
             'beamline': 'LCLS',
             'type': 'Device',
             'device_class': 'types.SimpleNamespace',
             'args': list(),
             'kwargs': {'hi': 'oh hello'}}
-
 
 @pytest.fixture(scope='function')
 def device(device_info):
@@ -61,7 +60,7 @@ def valve_info():
     return {'name': 'name',
             'z': 300,
             'prefix': 'BASE:VGC:PV',
-            '_id': 'BASE:VGC:PV',
+            '_id': 'name',
             'beamline': 'LCLS',
             'mps': 'MPS:VGC:PV'}
 
@@ -76,7 +75,7 @@ def valve(valve_info):
 def mockjsonclient(device_info):
     # Write underlying database
     with open('testing.json', 'w+') as handle:
-        simplejson.dump({device_info['prefix']: device_info},
+        simplejson.dump({device_info['name']: device_info},
                         handle)
     # Return handle name
     db = JSONBackend('testing.json')
