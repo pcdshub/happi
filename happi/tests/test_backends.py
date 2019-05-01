@@ -106,9 +106,6 @@ def test_json_find(valve_info, device_info, mockjson):
 
 def test_json_delete(mockjson, device_info):
     mockjson.delete(device_info[Client._id])
-    # Client._id = 'name', but it seems like the key for each entry in the
-    # database is 'BASE:PV'
-#    mockjson.delete('BASE:PV')
     assert device_info not in mockjson.all_devices
 
 
@@ -116,7 +113,6 @@ def test_json_save(mockjson, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
         mockjson.save(device_info[Client._id], device_info, insert=True)
-#        mockjson.save('BASE:PV', device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):

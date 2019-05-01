@@ -82,7 +82,6 @@ def test_create_valve(happi_client, valve_info):
     assert device.beamline == valve_info['beamline']
     # Save
     device.save()
-    os.system('cat testing.json')
     # seeing some format differences between entries in testing.json
     loaded_device = happi_client.find_device(**valve_info)
     assert loaded_device.prefix == valve_info['prefix']
@@ -109,7 +108,6 @@ def test_add_device(happi_client, valve):
 def test_add_and_find_device(happi_client, valve, valve_info):
     happi_client.add_device(valve)
     loaded_device = happi_client.find_device(**valve_info)
-    # See fix in test_create_valve
     assert loaded_device.prefix == valve.prefix
     assert loaded_device.name == valve.name
     assert loaded_device.z == valve.z
