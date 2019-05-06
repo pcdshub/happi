@@ -326,4 +326,4 @@ class Trigger(Device):
     device_class = copy(Device.device_class)
     device_class.default = 'pcdsdevices.device_types.Trigger'
     system = copy(Device.system)
-    system.default = 'trigger'
+    system.default = 'timing'

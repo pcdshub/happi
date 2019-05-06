@@ -157,3 +157,7 @@ def test_qsbackend_with_client(mockqsbackend):
     assert len(c.all_devices) == 14
     assert all([isinstance(d, Motor) or isinstance(d, Trigger)
                 or isinstance(d, Acromag) for d in c.all_devices])
+    device_types = [device.__class__ for device in c.all_devices]
+    assert device_types.count(Motor) == 6
+    assert device_types.count(Trigger) == 2
+    assert device_types.count(Acromag) == 6
