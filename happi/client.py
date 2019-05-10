@@ -544,7 +544,7 @@ class Client:
         ----------
         field : string
             search field to list all possible choices for
-            i.e 'beamline', 'name', 'z', etc.
+            i.e 'beamline', 'name', 'z', 'prefix', etc.
         """
         field_choices = []
         all_devs = self.all_devices
@@ -553,6 +553,6 @@ class Client:
                 choice = getattr(dev, field)
                 if choice not in field_choices:
                     field_choices.append(choice)
-            except:
-                pass
+            except AttributeError:
+                raise SearchError('No entries found with given field')
         return field_choices
