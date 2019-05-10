@@ -545,6 +545,16 @@ class Client:
         field : string
             search field to list all possible choices for
             i.e 'beamline', 'name', 'z', 'prefix', etc.
+
+        Raises
+        ------
+        SearchError
+            If no devices in the database have an entry for the given field
+
+        Returns
+        -------
+        field_choices : list
+            list of choices for a given field that are in the database
         """
         field_choices = []
         all_devs = self.all_devices
