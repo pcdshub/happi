@@ -228,12 +228,12 @@ def test_from_cfg(happi_cfg):
     assert client.backend.path == 'db.json'
 
 
-def test_list_choices(mockjsonclient):
-    beamline_choices = mockjsonclient.list_choices('beamline')
-    assert beamline_choices[0] == 'LCLS'
-    name_choices = mockjsonclient.list_choices('name')
-    assert name_choices[0] == 'alias'
-    prefix_choices = mockjsonclient.list_choices('prefix')
-    assert prefix_choices[0] == 'BASE:PV'
+def test_choices_for_field(happi_client):
+    beamline_choices = happi_client.choices_for_field('beamline')
+    assert beamline_choices == {'LCLS'}
+    name_choices = happi_client.choices_for_field('name')
+    assert name_choices == {'alias'}
+    prefix_choices = happi_client.choices_for_field('prefix')
+    assert prefix_choices == {'BASE:PV'}
     with pytest.raises(SearchError):
-        mockjsonclient.list_choices('not_a_field')
+        happi_client.choices_for_field('not_a_field')

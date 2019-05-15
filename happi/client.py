@@ -536,7 +536,7 @@ class Client:
         raise EnvironmentError("No happi configuration file found. "
                                "Check HAPPI_CFG.")
 
-    def list_choices(self, field):
+    def choices_for_field(self, field):
         """
         List all choices for a given field
 
@@ -556,13 +556,14 @@ class Client:
         field_choices : list
             list of choices for a given field that are in the database
         """
-        field_choices = []
-        all_devs = self.all_devices
-        for dev in all_devs:
+        field_choices = set()
+        for dev in self.all_devices:
             try:  # Want to ignore error if 'dev' doesn't have 'field'
                 choice = getattr(dev, field)
                 if choice not in field_choices:
-                    field_choices.append(choice)
+                    field_choices.add(choice)
             except AttributeError:
-                raise SearchError('No entries found with given field')
+                pass
+        if len(field_choices) is 0:
+            raise SearchError('No entries found with given field')
         return field_choices
