@@ -564,6 +564,6 @@ class Client:
                     field_choices.add(choice)
             except AttributeError:
                 pass
-        if len(field_choices) is 0:
+        if len(field_choices) == 0:
             raise SearchError('No entries found with given field')
         return field_choices
