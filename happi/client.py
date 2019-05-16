@@ -560,8 +560,7 @@ class Client:
         for dev in self.all_devices:
             try:  # Want to ignore error if 'dev' doesn't have 'field'
                 choice = getattr(dev, field)
-                if choice not in field_choices:
-                    field_choices.add(choice)
+                field_choices.add(choice)
             except AttributeError:
                 pass
         if len(field_choices) == 0:
