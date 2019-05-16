@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release Notes &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
+  <title>Release Notes &mdash; Happi Deck 1.2.1+56.g37017f4 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.2.1+41.g7354727
+                1.2.1+56.g37017f4
               </div>
             
           
@@ -173,29 +173,29 @@
 <h2>v1.1.2 (2018-08-30)<a class="headerlink" href="#v1-1-2-2018-08-30" title="Permalink to this headline">¶</a></h2>
 <p><strong>Maintenance</strong></p>
 <ul class="simple">
-<li>In <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code>, the provided container is compared against
+<li><p>In <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code>, the provided container is compared against
 the cached version of the device to find discrepancies. This means that
-modified container objects will always load a new Device. (#62)</li>
-<li>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> uses newer methods available in the <code class="docutils literal notranslate"><span class="pre">psdm_qs_cli</span></code> to
+modified container objects will always load a new Device. (#62)</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> uses newer methods available in the <code class="docutils literal notranslate"><span class="pre">psdm_qs_cli</span></code> to
 determine the proposal from the experiment name. This is more robust against
-exotic experiment naming schemas than prior implementations (#68)</li>
+exotic experiment naming schemas than prior implementations (#68)</p></li>
 </ul>
 </div>
 <div class="section" id="v1-1-1-2018-03-08">
 <h2>v1.1.1 (2018-03-08)<a class="headerlink" href="#v1-1-1-2018-03-08" title="Permalink to this headline">¶</a></h2>
 <p><strong>Enhancements</strong></p>
 <ul class="simple">
-<li>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> guesses which a type of motor based on the <code class="docutils literal notranslate"><span class="pre">prefix</span></code>.
+<li><p>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> guesses which a type of motor based on the <code class="docutils literal notranslate"><span class="pre">prefix</span></code>.
 Currently this supports <code class="docutils literal notranslate"><span class="pre">Newport</span></code>, <code class="docutils literal notranslate"><span class="pre">IMS</span></code>, and <code class="docutils literal notranslate"><span class="pre">PMC100</span></code> motors. While there is
 not an explicit dependency, this will require <code class="docutils literal notranslate"><span class="pre">pcdsdevices</span> <span class="pre">&gt;=</span> <span class="pre">0.5.0</span></code> to load
-properly (#51)</li>
+properly (#51)</p></li>
 </ul>
 <p><strong>Bug Fixes</strong></p>
 <ul class="simple">
-<li>Templating is more robust when dealing with types. This includes a fatal case
-where the default for an <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (#50)</li>
-<li>A proper error message is returned if an entry in the table does not have the
-requisite information to load (#53 )</li>
+<li><p>Templating is more robust when dealing with types. This includes a fatal case
+where the default for an <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (#50)</p></li>
+<li><p>A proper error message is returned if an entry in the table does not have the
+requisite information to load (#53 )</p></li>
 </ul>
 </div>
 <div class="section" id="v1-1-0-2018-02-13">
@@ -204,15 +204,16 @@ requisite information to load (#53 )</li>
 <a class="reference external" href="https://github.com/pcdshub">https://github.com/pcdshub</a></p>
 <p><strong>Enhancements</strong></p>
 <ul class="simple">
-<li>Happi now has a cache so the repeated requests to load the same device do
-not spawn multiple objects.</li>
+<li><p>Happi now has a cache so the repeated requests to load the same device do
+not spawn multiple objects.</p></li>
 </ul>
 <p><strong>Maintenance</strong></p>
 <ul class="simple">
-<li>Cleaner logging messages<ul>
-<li><dl class="first docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments</dt>
-<dd>associated with different authentication methods.</dd>
+<li><p>Cleaner logging messages</p>
+<ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments</dt><dd><p>associated with different authentication methods.</p>
+</dd>
 </dl>
 </li>
 </ul>

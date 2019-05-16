@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.json_db.JSONBackend &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
+  <title>happi.backends.json_db.JSONBackend &mdash; Happi Deck 1.2.1+56.g37017f4 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+41.g7354727
+                1.2.1+56.g37017f4
               </div>
             
           
@@ -181,18 +181,14 @@
 <dd><p>JSON database</p>
 <p>The happi information is kept in a single dictionary large dictionary that
 is stored using <cite>simplejson</cite></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> (<em>str</em>) – Path to JSON file</li>
-<li><strong>initialze</strong> (<em>bool</em><em>, </em><em>optional</em>) – Initialize a new empty JSON file to begin filling</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Path to JSON file</p></li>
+<li><p><strong>initialze</strong> (<em>bool</em><em>, </em><em>optional</em>) – Initialize a new empty JSON file to begin filling</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="happi.backends.json_db.JSONBackend.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>path</em>, <em>initialize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.json_db.JSONBackend.__init__" title="Permalink to this definition">¶</a></dt>
@@ -200,44 +196,44 @@ is stored using <cite>simplejson</cite></p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#happi.backends.json_db.JSONBackend.__init__" title="happi.backends.json_db.JSONBackend.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(path[,&nbsp;initialize])</td>
-<td>Initialize self.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#happi.backends.json_db.JSONBackend.__init__" title="happi.backends.json_db.JSONBackend.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(path[, initialize])</p></td>
+<td><p>Initialize self.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</td>
-<td>Delete a device instance from the database</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</p></td>
+<td><p>Delete a device instance from the database</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([_id,&nbsp;multiples])</td>
-<td>Find an instance or instances that matches the search criteria</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([_id, multiples])</p></td>
+<td><p>Find an instance or instances that matches the search criteria</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code>()</td>
-<td>Initialize a new JSON file database</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code>()</p></td>
+<td><p>Initialize a new JSON file database</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>()</td>
-<td>Load the JSON database</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>()</p></td>
+<td><p>Load the JSON database</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id,&nbsp;post[,&nbsp;insert])</td>
-<td>Save information to the database</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id, post[, insert])</p></td>
+<td><p>Save information to the database</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">store</span></code>(db)</td>
-<td>Stache the database back into JSON</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">store</span></code>(db)</p></td>
+<td><p>Stache the database back into JSON</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_devices</span></code></td>
-<td>All of the devices in the database</td>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_devices</span></code></p></td>
+<td><p>All of the devices in the database</p></td>
 </tr>
 </tbody>
 </table>

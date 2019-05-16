@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Supported Backends &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
+  <title>Supported Backends &mdash; Happi Deck 1.2.1+56.g37017f4 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+41.g7354727
+                1.2.1+56.g37017f4
               </div>
             
           
@@ -182,16 +182,12 @@
 <dt id="happi.backends.core.Backend.delete">
 <code class="descname">delete</code><span class="sig-paren">(</span><em>_id</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a device instance from the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>_id</strong> (<em>str</em>) – ID of device</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">PermissionError: – If the write operation fails due to issues with permissions</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_id</strong> (<em>str</em>) – ID of device</p>
+</dd>
+</dl>
+<p>:raises PermissionError:: If the write operation fails due to issues with permissions</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -204,66 +200,54 @@
 <dt id="happi.backends.core.Backend.find">
 <code class="descname">find</code><span class="sig-paren">(</span><em>multiples=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find an instance or instances that matches the search criteria</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>multiples</strong> (<em>bool</em>) – Find a single result or all results matching the provided
-information</li>
-<li><strong>kwargs</strong> – Requested information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiples</strong> (<em>bool</em>) – Find a single result or all results matching the provided
+information</p></li>
+<li><p><strong>kwargs</strong> – Requested information</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="happi.backends.core.Backend.save">
 <code class="descname">save</code><span class="sig-paren">(</span><em>_id</em>, <em>post</em>, <em>insert=True</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save information to the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>_id</strong> (<em>str</em>) – ID of device</li>
-<li><strong>post</strong> (<em>dict</em>) – Information to place in database</li>
-<li><strong>insert</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not this a new device to the database</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_id</strong> (<em>str</em>) – ID of device</p></li>
+<li><p><strong>post</strong> (<em>dict</em>) – Information to place in database</p></li>
+<li><p><strong>insert</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not this a new device to the database</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first last simple">
-<li>DuplicateError: – If insert is True, but there is already a device with the provided
-_id</li>
-<li>SearchError: – If insert is False, but there is no device with the provided _id</li>
-<li>PermissionError: – If the write operation fails due to issues with permissions</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+<p>:raises DuplicateError:: If insert is True, but there is already a device with the provided
+    _id
+:raises SearchError:: If insert is False, but there is no device with the provided _id
+:raises PermissionError:: If the write operation fails due to issues with permissions</p>
 </dd></dl>
 
 </dd></dl>
 
 <div class="section" id="backend-choices">
 <h2>Backend Choices<a class="headerlink" href="#backend-choices" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.backends.mongo_db.MongoBackend.html#happi.backends.mongo_db.MongoBackend" title="happi.backends.mongo_db.MongoBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.backends.mongo_db.MongoBackend</span></code></a>([host,&nbsp;…])</td>
-<td>Abstraction for MongoDB backend</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/happi.backends.mongo_db.MongoBackend.html#happi.backends.mongo_db.MongoBackend" title="happi.backends.mongo_db.MongoBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.backends.mongo_db.MongoBackend</span></code></a>([host, …])</p></td>
+<td><p>Abstraction for MongoDB backend</p></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/happi.backends.json_db.JSONBackend.html#happi.backends.json_db.JSONBackend" title="happi.backends.json_db.JSONBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.backends.json_db.JSONBackend</span></code></a>(path[,&nbsp;…])</td>
-<td>JSON database</td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/happi.backends.json_db.JSONBackend.html#happi.backends.json_db.JSONBackend" title="happi.backends.json_db.JSONBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.backends.json_db.JSONBackend</span></code></a>(path[, …])</p></td>
+<td><p>JSON database</p></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/happi.backends.qs_db.QSBackend.html#happi.backends.qs_db.QSBackend" title="happi.backends.qs_db.QSBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.backends.qs_db.QSBackend</span></code></a>(expname,&nbsp;**kwargs)</td>
-<td>Questionniare Backend</td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/happi.backends.qs_db.QSBackend.html#happi.backends.qs_db.QSBackend" title="happi.backends.qs_db.QSBackend"><code class="xref py py-obj docutils literal notranslate"><span class="pre">happi.backends.qs_db.QSBackend</span></code></a>(expname, **kwargs)</p></td>
+<td><p>Questionniare Backend</p></td>
 </tr>
 </tbody>
 </table>

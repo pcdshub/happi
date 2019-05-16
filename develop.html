@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating New Device Types &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
+  <title>Creating New Device Types &mdash; Happi Deck 1.2.1+56.g37017f4 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+41.g7354727
+                1.2.1+56.g37017f4
               </div>
             
           
@@ -188,32 +188,26 @@ types.</p>
 <dd><p>A piece of information related to a specific device</p>
 <p>These are entered as class attributes for a given device container. They
 help control the information entered into a device</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>doc</strong> (<em>str</em>) – A short string to document the device</li>
-<li><strong>optional</strong> (<em>bool</em><em>, </em><em>optional</em>) – By default all EntryInfo is optional, but in certain cases you may want
-to demand a particular piece of information upon initialization</li>
-<li><strong>enforce</strong> (<em>type</em><em>, </em><em>list</em><em>, </em><em>compiled regex</em><em>, </em><em>optional</em>) – Specify that all entered information is entered in a specific format.
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>doc</strong> (<em>str</em>) – A short string to document the device</p></li>
+<li><p><strong>optional</strong> (<em>bool</em><em>, </em><em>optional</em>) – By default all EntryInfo is optional, but in certain cases you may want
+to demand a particular piece of information upon initialization</p></li>
+<li><p><strong>enforce</strong> (<em>type</em><em>, </em><em>list</em><em>, </em><em>compiled regex</em><em>, </em><em>optional</em>) – Specify that all entered information is entered in a specific format.
 This can either by a Python type i.e. int, float e.t.c., a list of
-acceptable values, or a compiled regex pattern i.e <code class="docutils literal notranslate"><span class="pre">re.compile(...)</span></code></li>
-<li><strong>default</strong> (<em>optional</em>) – A default value for the trait to have if the user does not specify.
+acceptable values, or a compiled regex pattern i.e <code class="docutils literal notranslate"><span class="pre">re.compile(...)</span></code></p></li>
+<li><p><strong>default</strong> (<em>optional</em>) – A default value for the trait to have if the user does not specify.
 Keep in mind that this should be the same type as <code class="docutils literal notranslate"><span class="pre">enforce</span></code> if you
-are demanding a certain type.</li>
+are demanding a certain type.</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">ContainerError: – If there is an error with the way the enforced value interacts with its
-default value, or if the piece of information entered is unenforcable
-based on the the settings</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
+<p>:raises ContainerError:: If there is an error with the way the enforced value interacts with its
+    default value, or if the piece of information entered is unenforcable
+    based on the the settings</p>
 <p class="rubric">Example</p>
-<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
 
     <span class="n">my_field</span> <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;My generated field&#39;</span><span class="p">)</span>
     <span class="n">number</span>   <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Device number&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -223,21 +217,19 @@ based on the the settings</p>
 <dt id="happi.device.EntryInfo.enforce_value">
 <code class="descname">enforce_value</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.device.EntryInfo.enforce_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enforce the rules of the EntryInfo</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>value</strong> – </td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Identical to the provided value except it may have been converted
-to the correct type</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">value</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">ValueError: – If the value is not the correct type, or does not match the pattern</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Identical to the provided value except it may have been converted
+to the correct type</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+<p>:raises ValueError:: If the value is not the correct type, or does not match the pattern</p>
 </dd></dl>
 
 </dd></dl>
@@ -271,7 +263,7 @@ will reject the device.</p>
 together an example container. The class can be invoked in the same way you
 would usually handle class inheritance, the only difference is that you specify
 class attributes as EntryInfo objects:</p>
-<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">happi.device</span> <span class="k">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">EntryInfo</span>
 
 <span class="k">class</span> <span class="nc">MyDevice</span><span class="p">(</span><span class="n">Device</span><span class="p">):</span>
@@ -293,28 +285,28 @@ field, and also enforce that user enter a specific format of information.</p>
 real value is given it will be checked against the specified <code class="docutils literal notranslate"><span class="pre">enforce</span></code>
 keyword, raising <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if invalid. Here is a table for how the
 <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> check the type</p>
-<table border="1" class="docutils">
+<table class="docutils align-center">
 <colgroup>
-<col width="21%" />
-<col width="79%" />
+<col style="width: 21%" />
+<col style="width: 79%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Enforce</th>
-<th class="head">Method of enforcement</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Enforce</p></th>
+<th class="head"><p>Method of enforcement</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>None</td>
-<td>Any value will work</td>
+<tbody>
+<tr class="row-even"><td><p>None</p></td>
+<td><p>Any value will work</p></td>
 </tr>
-<tr class="row-odd"><td>type</td>
-<td>type(value)</td>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p>type(value)</p></td>
 </tr>
-<tr class="row-even"><td>list</td>
-<td>list.index(value)</td>
+<tr class="row-even"><td><p>list</p></td>
+<td><p>list.index(value)</p></td>
 </tr>
-<tr class="row-odd"><td>regex</td>
-<td>regex.match(value) != None</td>
+<tr class="row-odd"><td><p>regex</p></td>
+<td><p>regex.match(value) != None</p></td>
 </tr>
 </tbody>
 </table>

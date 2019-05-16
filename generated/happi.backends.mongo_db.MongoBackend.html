@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.mongo_db.MongoBackend &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
+  <title>happi.backends.mongo_db.MongoBackend &mdash; Happi Deck 1.2.1+56.g37017f4 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+41.g7354727
+                1.2.1+56.g37017f4
               </div>
             
           
@@ -179,22 +179,18 @@
 <dt id="happi.backends.mongo_db.MongoBackend">
 <em class="property">class </em><code class="descclassname">happi.backends.mongo_db.</code><code class="descname">MongoBackend</code><span class="sig-paren">(</span><em>host=None</em>, <em>user=None</em>, <em>pw=None</em>, <em>db=None</em>, <em>collection=None</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.mongo_db.MongoBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction for MongoDB backend</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – Hostname for MongoDB</li>
-<li><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – Username for MongoDB instance</li>
-<li><strong>pw</strong> (<em>str</em><em>, </em><em>optional</em>) – Password for given username</li>
-<li><strong>host</strong> – Host of the MongoDB instance</li>
-<li><strong>db</strong> (<em>str</em><em>, </em><em>optional</em>) – Database name within the MongoDB instance</li>
-<li><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Time to wait for connection attempt</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – Hostname for MongoDB</p></li>
+<li><p><strong>user</strong> (<em>str</em><em>, </em><em>optional</em>) – Username for MongoDB instance</p></li>
+<li><p><strong>pw</strong> (<em>str</em><em>, </em><em>optional</em>) – Password for given username</p></li>
+<li><p><strong>host</strong> – Host of the MongoDB instance</p></li>
+<li><p><strong>db</strong> (<em>str</em><em>, </em><em>optional</em>) – Database name within the MongoDB instance</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Time to wait for connection attempt</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="method">
 <dt id="happi.backends.mongo_db.MongoBackend.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>host=None</em>, <em>user=None</em>, <em>pw=None</em>, <em>db=None</em>, <em>collection=None</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.mongo_db.MongoBackend.__init__" title="Permalink to this definition">¶</a></dt>
@@ -202,35 +198,35 @@
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#happi.backends.mongo_db.MongoBackend.__init__" title="happi.backends.mongo_db.MongoBackend.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([host,&nbsp;user,&nbsp;pw,&nbsp;db,&nbsp;collection,&nbsp;…])</td>
-<td>Initialize self.</td>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#happi.backends.mongo_db.MongoBackend.__init__" title="happi.backends.mongo_db.MongoBackend.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([host, user, pw, db, collection, …])</p></td>
+<td><p>Initialize self.</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</td>
-<td>Delete a device instance from the database</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</p></td>
+<td><p>Delete a device instance from the database</p></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([multiples])</td>
-<td>Find an instance or instances that matches the search criteria</td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([multiples])</p></td>
+<td><p>Find an instance or instances that matches the search criteria</p></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id,&nbsp;post[,&nbsp;insert])</td>
-<td>Save information to the database</td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id, post[, insert])</p></td>
+<td><p>Save information to the database</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
+<table class="longtable docutils align-center">
 <colgroup>
-<col width="10%" />
-<col width="90%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_devices</span></code></td>
-<td>List of all device sub-dictionaries</td>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_devices</span></code></p></td>
+<td><p>List of all device sub-dictionaries</p></td>
 </tr>
 </tbody>
 </table>

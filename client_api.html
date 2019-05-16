@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Client API &mdash; Happi Deck 1.2.1+41.g7354727 documentation</title>
+  <title>Client API &mdash; Happi Deck 1.2.1+56.g37017f4 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+41.g7354727
+                1.2.1+56.g37017f4
               </div>
             
           
@@ -169,56 +169,38 @@
 <dt id="happi.Client">
 <em class="property">class </em><code class="descclassname">happi.</code><code class="descname">Client</code><span class="sig-paren">(</span><em>database=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client" title="Permalink to this definition">¶</a></dt>
 <dd><p>The client to control the contents of the Happi Database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>database</strong> (<em>happi.backends.Backend</em>) – A already instantiated backend</li>
-<li><strong>kwargs</strong> – Passed to the <cite>db_type</cite> backend</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<em>happi.backends.Backend</em>) – A already instantiated backend</p></li>
+<li><p><strong>kwargs</strong> – Passed to the <cite>db_type</cite> backend</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="happi.Client.device_types">
 <code class="descname">device_types</code><a class="headerlink" href="#happi.Client.device_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mapping of HappiItem namees to class types</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">dict</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">DatabaseError: – Raised if the Client fails to instantiate the Database</td>
-</tr>
-</tbody>
-</table>
+<p>:raises DatabaseError:: Raised if the Client fails to instantiate the Database</p>
 <dl class="method">
 <dt id="happi.Client.add_device">
 <code class="descname">add_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.add_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a new device into the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – The device to store in the database</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">EntryError: – If all of the mandatory information for the device has not been
-specified or there is already a device with that <code class="docutils literal notranslate"><span class="pre">id</span></code> in the
-database</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device</strong> (<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – The device to store in the database</p>
+</dd>
+</dl>
+<p>:raises EntryError:: If all of the mandatory information for the device has not been
+    specified or there is already a device with that <code class="docutils literal notranslate"><span class="pre">id</span></code> in the
+    database</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -231,35 +213,29 @@ database</td>
 <dt id="happi.Client.create_device">
 <code class="descname">create_device</code><span class="sig-paren">(</span><em>device_cls</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.create_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new device</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>device_cls</strong> (<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a> or name of class) – The Device HappiItem to instantiate</li>
-<li><strong>kwargs</strong> – Information to pass through to the device, upon initialization</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device_cls</strong> (<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a> or name of class) – The Device HappiItem to instantiate</p></li>
+<li><p><strong>kwargs</strong> – Information to pass through to the device, upon initialization</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An instantiated version of the device</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">device</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">TypeError: – If the provided class is not a subclass of <a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An instantiated version of the device</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>device</p>
+</dd>
+</dl>
+<p>:raises TypeError:: If the provided class is not a subclass of <a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></p>
 <p class="rubric">Example</p>
-<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
 <span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#happi.Client.device_types" title="happi.Client.device_types"><code class="xref py py-attr docutils literal notranslate"><span class="pre">device_types</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#happi.Client.device_types" title="happi.Client.device_types"><code class="xref py py-attr docutils literal notranslate"><span class="pre">device_types</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -267,19 +243,15 @@ database</td>
 <dt id="happi.Client.export">
 <code class="descname">export</code><span class="sig-paren">(</span><em>path=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>sep='\t'</em>, <em>attrs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.export" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export the contents of the database into a text file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>path</strong> (<em>File Handle</em>) – File-like object to save text file</li>
-<li><strong>sep</strong> (<em>str</em>) – Separator to place inbetween columns of information</li>
-<li><strong>attrs</strong> (<em>iterable</em>) – Attributes to include, these will be a list of values</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>File Handle</em>) – File-like object to save text file</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator to place inbetween columns of information</p></li>
+<li><p><strong>attrs</strong> (<em>iterable</em>) – Attributes to include, these will be a list of values</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -290,19 +262,16 @@ database</td>
 points to a specific configuration file. If this is not present, the
 variable set by <code class="docutils literal notranslate"><span class="pre">$XDG_CONFIG_HOME</span></code> or if  that is not set
 <code class="docutils literal notranslate"><span class="pre">~/.config</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>path</strong> – Absolute path to configuration file</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">EnvironmentError: – If no configuration file can be found by the methodology detailed
-above</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>path</strong> – Absolute path to configuration file</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p>:raises EnvironmentError:: If no configuration file can be found by the methodology detailed
+    above</p>
 </dd></dl>
 
 <dl class="method">
@@ -310,20 +279,20 @@ above</td>
 <code class="descname">find_device</code><span class="sig-paren">(</span><em>**post</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.find_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used to query the database for an individual HappiItem</p>
 <p>If multiple devices are found, only the first is returned</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>post</strong> – Information to pertinent to the device</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">SearchError</span></code> – If no match for the given information is found</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>device</strong> – A device that matches the characteristics given</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>post</strong> – Information to pertinent to the device</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>SearchError</strong> – If no match for the given information is found</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>device</strong> – A device that matches the characteristics given</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -333,23 +302,21 @@ above</td>
 <p>If multiple matches are found, a single document will be returned to
 the user. How the database will choose to select this device is based
 on each individual implementation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kwargs</strong> – Add information to locate the device in keyword pairs</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>document</strong> – A dict that matches the specified information.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body">SearchError: – If no document with the given information is found</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Add information to locate the device in keyword pairs</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>document</strong> – A dict that matches the specified information.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p>:raises SearchError:: If no document with the given information is found</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_device()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_device()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a></p>
 </div>
 </dd></dl>
 
@@ -358,22 +325,19 @@ on each individual implementation</p>
 <em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>cfg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.from_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a client from a configuration file specification</p>
 <p>Configuration files looking something along the lines of:</p>
-<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">DEFAULT</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">DEFAULT</span><span class="p">]</span>
 <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">json</span>
 </pre></div>
 </div>
 <p>All key value pairs will be passed directly into backend construction
 with the exception of the key <code class="docutils literal notranslate"><span class="pre">backend</span></code> which can be used to specify
 a specific type of backend if this differs from the configured default.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cfg</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a configuration file. If not entered, <a class="reference internal" href="#happi.Client.find_config" title="happi.Client.find_config"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_config()</span></code></a>
-will be use.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cfg</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to a configuration file. If not entered, <a class="reference internal" href="#happi.Client.find_config" title="happi.Client.find_config"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_config()</span></code></a>
+will be use.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -381,74 +345,63 @@ will be use.</td>
 <code class="descname">load_device</code><span class="sig-paren">(</span><em>use_cache=True</em>, <em>**post</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.load_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find a device in the database and instantiate it</p>
 <p>Essentially a shortcut for:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
 <span class="n">device</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>post</strong> – Passed to <a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a></li>
-<li><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Choice to use a cached device. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code> for more
-information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>post</strong> – Passed to <a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a></p></li>
+<li><p><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Choice to use a cached device. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code> for more
+information</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Instantiated object</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">obj</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Instantiated object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>obj</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="happi.Client.remove_device">
 <code class="descname">remove_device</code><span class="sig-paren">(</span><em>device</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.remove_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a device from the database</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>device</strong> (<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – HappiItem to be removed from the database</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device</strong> (<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – HappiItem to be removed from the database</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="happi.Client.search">
 <code class="descname">search</code><span class="sig-paren">(</span><em>start=0.0</em>, <em>end=None</em>, <em>as_dict=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search the database for a device or devices</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>as_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – Return the information as a list of dictionaries or a list of
-<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></li>
-<li><strong>start</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum beamline position to include devices</li>
-<li><strong>end</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum beamline position to include devices</li>
-<li><strong>kwargs</strong> – Information to filter through the database structured as key, value
-pairs for the desired pieces of EntryInfo</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>as_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – Return the information as a list of dictionaries or a list of
+<a class="reference internal" href="containers.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></p></li>
+<li><p><strong>start</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum beamline position to include devices</p></li>
+<li><p><strong>end</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum beamline position to include devices</p></li>
+<li><p><strong>kwargs</strong> – Information to filter through the database structured as key, value
+pairs for the desired pieces of EntryInfo</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>Either a list of devices or dictionaries</em></li>
-<li><em>Example</em></li>
-<li><em>.. code::</em> – gate_valves = client.search(type=’Valve’)
-hxr_valves  = client.search(type=’Valve’, beamline=’HXR’)</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Either a list of devices or dictionaries</em></p></li>
+<li><p><em>Example</em></p></li>
+<li><p><em>.. code::</em> – gate_valves = client.search(type=’Valve’)
+hxr_valves  = client.search(type=’Valve’, beamline=’HXR’)</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -457,16 +410,14 @@ hxr_valves  = client.search(type=’Valve’, beamline=’HXR’)</li>
 <dd><p>Validate all of the devices in the database by attempting to initialize
 them and asserting their mandatory information is present. Information
 is written to the logger</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ids</strong> – List of device ids that have failed verification</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>ids</strong> – List of device ids that have failed verification</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
