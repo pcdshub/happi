@@ -535,3 +535,34 @@ class Client:
         # If found nothing
         raise EnvironmentError("No happi configuration file found. "
                                "Check HAPPI_CFG.")
+
+    def choices_for_field(self, field):
+        """
+        List all choices for a given field
+
+        Parameters
+        ----------
+        field : string
+            search field to list all possible choices for
+            i.e 'beamline', 'name', 'z', 'prefix', etc.
+
+        Raises
+        ------
+        SearchError
+            If no devices in the database have an entry for the given field
+
+        Returns
+        -------
+        field_choices : list
+            list of choices for a given field that are in the database
+        """
+        field_choices = set()
+        for dev in self.all_devices:
+            try:  # Want to ignore error if 'dev' doesn't have 'field'
+                choice = getattr(dev, field)
+                field_choices.add(choice)
+            except AttributeError:
+                pass
+        if len(field_choices) == 0:
+            raise SearchError('No entries found with given field')
+        return field_choices
