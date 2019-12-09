@@ -12,41 +12,16 @@ from ..errors import DatabaseError
 logger = logging.getLogger(__name__)
 
 
-# Declare our motor types
-motor_types = {'MMS': 'pcdsdevices.epics_motor.IMS',
-               'MMN': 'pcdsdevices.epics_motor.Newport',
-               'MZM': 'pcdsdevices.epics_motor.PMC100'}
-
-
-def guess_motor_class(prefix):
-    """
-    Guess the corresponding pcdsdevices.epics_motor class based on prefix
-
-    Parameters
-    ----------
-    prefix : str
-
-    Returns
-    -------
-    device_class : str
-        Type of EpicsMotor. If not, we assume
-        `pcdsdevices.epics_motor.PCDSMotorBase`
-    """
-    for _typ in motor_types:
-        if _typ in prefix:
-            return motor_types[_typ]
-    return 'pcdsdevices.epics_motor.PCDSMotorBase'
-
-
 class QSBackend(JSONBackend):
     """
     Questionniare Backend
 
     This backend connects to the LCLS questionnaire and looks at devices with
-    the key pattern pcds-*-setup-*-*. These fields are then combined and turned
-    into proper happi devices. The translation of table name to pcdsdevices
-    class is determined by the :attr:`.device_translations` dictionary. The
-    beamline is determined by looking where the proposal was submitted.
+    the key pattern pcds-{}-setup-{}-{}. These fields are then combined and
+    turned into proper happi devices. The translation of table name to
+    ``happi.HappiItem`` is determined by the :attr:`.device_translations`
+    dictionary. The beamline is determined by looking where the proposal was
+    submitted.
 
     Unlike the other backends, this one is read-only. All changes to the device
     information should be done via the web interface. Finally, in order to
@@ -58,21 +33,24 @@ class QSBackend(JSONBackend):
 
     Parameters
     ----------
-    run_no : int
-        Desired run number i.e 16
-
-    proposal: str
-        Proposal identifier i.e "LR32"
+    expname : str
+        The experiment name from the elog, e.g. xcslp1915
     """
-    device_translations = {'motors': guess_motor_class}
+    device_translations = {'motors': 'Motor', 'trig': 'Trigger',
+                           'ao': 'Acromag', 'ai': 'Acromag'}
 
-    def __init__(self, run_no, proposal, **kwargs):
+    def __init__(self, expname, **kwargs):
         # Create our client and gather the raw information from the client
         self.qs = QuestionnaireClient(**kwargs)
 
-        # Ensure that our user entered a valid run number and proposal
-        # identification
-        run_no = 'run{}'.format(run_no)
+        # Ensure that our user entered a valid expname
+        exp_dict = self.qs.getExpName2URAWIProposalIDs()
+        try:
+            proposal = exp_dict[expname]
+        except KeyError:
+            err = '{} is not a valid experiment name.'
+            raise ValueError(err.format(expname))
+        run_no = 'run{}'.format(expname[-2:])
         try:
             logger.debug("Requesting list of proposals in %s", run_no)
             prop_ids = self.qs.getProposalsListForRun(run_no)
@@ -104,8 +82,8 @@ class QSBackend(JSONBackend):
         raw = self.qs.getProposalDetailsForRun(run_no, proposal)
         for table, _class in self.device_translations.items():
             # Create a regex pattern to find all the appropriate pattern match
-            pattern = re.compile('pcdssetup-{}-'
-                                 'setup-(\d+)-(\w+)'.format(table))
+            pattern = re.compile(r'pcdssetup-{}'
+                                 r'-(\d+)-(\w+)'.format(table))
             # Search for all keys that match the device and store in a
             # temporary dictionary
             devices = dict()
@@ -130,8 +108,7 @@ class QSBackend(JSONBackend):
                         post = {'name': dev_info.pop('name'),
                                 'prefix': dev_info['pvbase'],
                                 'beamline': beamline,
-                                'device_class': _class(dev_info['pvbase']),
-                                'type': 'Device',
+                                'type': _class,
                                 # TODO: We should not assume that we are using
                                 # the prefix as _id. Other backends do not make
                                 # this assumption. This will require moving the
@@ -145,7 +122,7 @@ class QSBackend(JSONBackend):
                             if not post.get(key):
                                 raise Exception("Unable to create a device "
                                                 " without %s".format(key))
-                    except Exception as exc:
+                    except Exception:
                         logger.warning("Unable to create an object from "
                                        "Questionnaire table %s row %s",
                                        table, num)

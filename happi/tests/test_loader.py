@@ -24,7 +24,7 @@ def test_fill_template(device):
     template = "blah"
     assert template == fill_template(template, device, enforce_type=True)
     # Check that we do not enforce a NoneType
-    template = "{{screen}}"
+    template = "{{detailed_screen}}"
     assert fill_template(template, device, enforce_type=True) is None
 
 
@@ -45,7 +45,7 @@ def test_caching():
                    device_class='types.SimpleNamespace', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
-    assert d.prefix in cache
+    assert d.name in cache
     assert id(td) == id(from_container(d))
     assert id(td) != id(from_container(d, use_cache=False))
     # Modify md and check we see a reload
@@ -56,7 +56,7 @@ def test_caching():
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
-    assert id(td) == id(from_container(d))
+    assert id(td) != id(from_container(d))
     assert id(td) != id(from_container(d, use_cache=False))
 
 

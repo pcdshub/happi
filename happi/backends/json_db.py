@@ -1,7 +1,7 @@
 """
 Backend implemenation using simplejson
 """
-import fcntl
+import os
 import os.path
 import logging
 
@@ -11,6 +11,13 @@ from .core import Backend
 from ..errors import SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
+
+
+try:
+    import fcntl
+except ImportError:
+    logger.warning("Unable to import 'fcntl'. Will be unable to lock files")
+    fcntl = None
 
 
 class JSONBackend(metaclass=Backend):
@@ -57,19 +64,19 @@ class JSONBackend(metaclass=Backend):
         filling a new database, an empty but valid JSON file is created
         """
         # Do not overwrite existing databases
-        if os.path.exists(self.path):
+        if os.path.exists(self.path) and os.stat(self.path).st_size > 0:
             raise PermissionError("File {} already exists. Can not initialize "
                                   "a new database.".format(self.path))
         # Dump an empty dictionary
-        json.dump({}, open(self.path, "w+"))
+        with open(self.path, "w+") as f:
+            json.dump({}, f)
 
     def load(self):
         """
         Load the JSON database
         """
-        # Create file handle
-        handle = open(self.path, 'r')
-        return json.load(handle)
+        with open(self.path, 'r') as f:
+            return json.load(f)
 
     def store(self, db):
         """
@@ -85,17 +92,18 @@ class JSONBackend(metaclass=Backend):
         BlockingIOError:
             If the file is already being used by another happi operation
         """
-        # Create file handle
-        handle = open(self.path, 'w+')
-        # Create lock in filesystem
-        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        # Dump to file
-        try:
-            json.dump(db, handle, sort_keys=True, indent=4)
+        with open(self.path, 'w+') as f:
+            # Create lock in filesystem
+            if fcntl is not None:
+                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            # Dump to file
+            try:
+                json.dump(db, f, sort_keys=True, indent=4)
 
-        finally:
-            # Release lock in filesystem
-            fcntl.flock(handle, fcntl.LOCK_UN)
+            finally:
+                if fcntl is not None:
+                    # Release lock in filesystem
+                    fcntl.flock(f, fcntl.LOCK_UN)
 
     def find(self, _id=None, multiples=False, **kwargs):
         """

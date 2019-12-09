@@ -10,17 +10,21 @@ source:
 requirements:
     build:
       - python
-
+      - setuptools
 
     run:
       - jinja2
       - prettytable
+      - psdm_qs_cli  >=0.2.3
       - simplejson
       - pymongo 
       - python
+      - coloredlogs
 test:
     imports:
       - happi
+    commands:
+      - happi --help
 
     requires: 
       - pytest

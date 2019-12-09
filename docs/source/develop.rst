@@ -88,3 +88,24 @@ These should have no default value. When entering information you will not
 neccesarily see a difference in between optional and mandatory
 :class:`.EntryInfo`, however the database client will reject the device if
 these fields don't have values associated with them. 
+
+
+Loading Devices
+^^^^^^^^^^^^^^^
+Part of happi's job is to contain the information necessary to load the Python
+representation of an object. This information is stored as a ``device_class``,
+``args`` and ``kwargs``. The former stores a string that indicates the Python
+class of the device, the other two indicate the information that is needed to
+instantiate it. With this information both :func:`.from_container` and
+:func:`.load_devices` will handle importing modules and instantiating your
+device. To keep track of the container the device that was instantiated has an
+attribute attached ``.md`` which will return the original container.
+
+Often information contained in the ``args`` or ``kwargs`` will be duplicated in
+other parts of the container. For instance most ``ophyd`` objects will want a
+``name`` and ``prefix`` on initialization. Instead of repeating that
+information you can just use a template and have the information automatically
+populated for you by the container itself. For instance, in the aforementioned
+example `device.args = ["{{prefix}}"]` would substitute the attribute listed as
+`Device.prefix` in as an argument. If the template contains the substituted
+attribute alone the type will also be converted.

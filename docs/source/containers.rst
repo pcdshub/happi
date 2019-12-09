@@ -11,6 +11,11 @@ base that more specific devices will inherit from.
 .. autoclass:: happi.Device
    :members:
 
+These inherit from the most generic information that can be included:
+
+.. autoclass:: happi.HappiItem
+   :members:
+
 Containers
 ----------
 Each of the containers below share the attributes and entries of the generic
@@ -32,3 +37,11 @@ basis.
    happi.containers.PulsePicker
    happi.containers.LODCM
    happi.containers.MovableStand
+   happi.containers.Motor
+
+Loading Containers
+------------------
+
+.. autofunction:: happi.from_container
+
+.. autofunction:: happi.load_devices

@@ -5,23 +5,23 @@ import os.path
 import pytest
 import simplejson
 
-from .conftest import (requires_questionnaire, requires_mongomock,
-                       mockmongoclient)
+from .conftest import requires_questionnaire, requires_mongomock
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi import Client
+from happi.containers import Motor, Trigger, Acromag
 
 
 @pytest.fixture(scope='function')
-def mockmongo():
-    return mockmongoclient().backend
+def mockmongo(mockmongoclient):
+    return mockmongoclient.backend
 
 
 @pytest.fixture(scope='function')
 def mockjson(device_info, valve_info):
     # Write underlying database
     with open('testing.json', 'w+') as handle:
-        simplejson.dump({device_info['prefix']: device_info},
+        simplejson.dump({device_info['_id']: device_info},
                         handle)
     # Return handle name
     yield JSONBackend('testing.json')
@@ -59,20 +59,20 @@ def test_mongo_find(valve_info, device_info, mockmongo):
 def test_mongo_save(mockmongo, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
-        mockmongo.save(device_info['prefix'], device_info, insert=True)
+        mockmongo.save(device_info[Client._id], device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):
-        mockmongo.save(valve_info['prefix'], valve_info, insert=False)
+        mockmongo.save(valve_info[Client._id], valve_info, insert=False)
 
     # Add to database
-    mockmongo.save(valve_info['prefix'], valve_info, insert=True)
+    mockmongo.save(valve_info[Client._id], valve_info, insert=True)
     assert mockmongo._collection.find_one(valve_info) == valve_info
 
 
 @requires_mongomock
 def test_mongo_delete(mockmongo, device_info):
-    mockmongo.delete(device_info['prefix'])
+    mockmongo.delete(device_info[Client._id])
     assert mockmongo._collection.find_one(device_info) is None
 
 
@@ -80,8 +80,8 @@ def test_json_find(valve_info, device_info, mockjson):
     mm = mockjson
     # Write underlying database
     with open(mm.path, 'w+') as handle:
-        simplejson.dump({valve_info['prefix']: valve_info,
-                         device_info['prefix']: device_info},
+        simplejson.dump({valve_info['_id']: valve_info,
+                         device_info['_id']: device_info},
                         handle)
     # No single device expected
     assert mm.find(beamline='BLERG', multiples=False) == []
@@ -105,21 +105,21 @@ def test_json_find(valve_info, device_info, mockjson):
 
 
 def test_json_delete(mockjson, device_info):
-    mockjson.delete(device_info['prefix'])
+    mockjson.delete(device_info[Client._id])
     assert device_info not in mockjson.all_devices
 
 
 def test_json_save(mockjson, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
-        mockjson.save(device_info['prefix'], device_info, insert=True)
+        mockjson.save(device_info[Client._id], device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):
-        mockjson.save(valve_info['prefix'], valve_info, insert=False)
+        mockjson.save(valve_info[Client._id], valve_info, insert=False)
 
     # Add to database
-    mockjson.save(valve_info['prefix'], valve_info, insert=True)
+    mockjson.save(valve_info[Client._id], valve_info, insert=True)
     assert valve_info in mockjson.all_devices
 
 
@@ -147,19 +147,17 @@ def test_json_initialize():
 
 @requires_questionnaire
 def test_qs_find(mockqsbackend):
-    assert len(mockqsbackend.find(beamline='TST', multiples=True)) == 6
+    assert len(mockqsbackend.find(beamline='TST', multiples=True)) == 14
     assert len(mockqsbackend.find(name='sam_r', multiples=True)) == 1
 
 
 @requires_questionnaire
 def test_qsbackend_with_client(mockqsbackend):
     c = Client(database=mockqsbackend)
-    assert len(c.all_devices) == 6
-    assert all([d.device_class == 'pcdsdevices.epics_motor.IMS'
-                for d in c.all_devices])
-
-
-@requires_questionnaire
-def test_guess_motor_class():
-    from happi.backends.qs_db import guess_motor_class
-    assert guess_motor_class('Tst:MMN:01') == 'pcdsdevices.epics_motor.Newport'
+    assert len(c.all_devices) == 14
+    assert all([isinstance(d, Motor) or isinstance(d, Trigger)
+                or isinstance(d, Acromag) for d in c.all_devices])
+    device_types = [device.__class__ for device in c.all_devices]
+    assert device_types.count(Motor) == 6
+    assert device_types.count(Trigger) == 2
+    assert device_types.count(Acromag) == 6

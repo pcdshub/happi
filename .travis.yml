@@ -7,16 +7,38 @@ env:
     - secure: "fm24dkhTyNsLIsu0mFnAHLQI8pPsdWTjW8xxRLmBRylpWxkuaCnd8LItSHt6v0MMNvM+PegZShYwypkeJDi24GTKYvEbKGnlHCw7YesMabJFGg3nqz0SpwTXoLdbm0lP72jv8znDhz1hOUvs8uKkkzg/fmx50INceAPQt9bn0Zwmvthh+pb7mepMTeJFHfo5392hB8h4xFi1aDsBZyDu2c3zRrUUDjuxIezpVIdzE0jOK0lhToIT9ziCAjPvBTONF3tNi5yvEepCTsHwMOhVK4mwh7RN9yEUcADaXUNg23NfQsM1YuaS/rRpw9wL93120Y0qK7r8iLNo/JyKCx8EgHOJ1qlYwavH9A1oVNHVNTnV7eVflGFZQXGZM4yhlZwBfAXYs3CRY8f1OniQfEzWJ0E3LDxZnNXDIBZyjUM3ecjc5ZgqpBnrw+NqAsBPWArGvY0/Ap9YvJOo1XWB/DvabNbJu74oBJNOJwU7Lk0kU0dMP+p6MMZa+ICwRCwmO9qn9qG03l7CexK/7JyUSFUODS1Lj3u+pm6LGb/1HOGdX+CzNOd4nm7zXlCJ3VINawfOxYcarGpen52vOqLeglRJPXjMd0MhMfzy6Kj4ahQNHwBscscu3JpPHCQzLxBN5zMftfJvmBrWJVqI/B7lvmRM9K4h1q3NTjP0i64lo76SHwQ="
 matrix:
   include:
-      - python: 3.5
-        env: PCDS_CHANNEL=pcds-tag  
-      - python: 3.5
-        env: PCDS_CHANNEL=pcds-dev
       - python: 3.6
-        env: PCDS_CHANNEL=pcds-dev  
+        env:
+           - PCDS_CHANNEL=pcds-dev  
+           - USE_MONGO=1
+           - CONDA_UPLOAD=1
+      - python: 3.6
+        env:
+           - PCDS_CHANNEL=pcds-tag
+           - USE_MONGO=0
+           - CONDA_UPLOAD=0
       - python: 3.6
         env:
            - BUILD_DOCS=1
            - PCDS_CHANNEL=pcds-tag
+           - USE_MONGO=1
+           - CONDA_UPLOAD=1
+      # Modification needed (https://github.com/travis-ci/travis-ci/issues/9815)
+      - python: 3.7
+        dist: xenial
+        sudo: true
+        env:
+           - PCDS_CHANNEL=pcds-tag
+           - USE_MONGO=1
+           - CONDA_UPLOAD=1
+      - python: 3.7
+        dist: xenial
+        sudo: true
+        env:
+           - PCDS_CHANNEL=pcds-dev
+           - USE_MONGO=1
+           - CONDA_UPLOAD=1
+
 install:
   - sudo apt-get update
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
@@ -37,7 +59,11 @@ install:
   - source activate test-environment
   # TODO: mongomock is not currently available via conda. Ultimately we should
   # probably build this ourselves, but until that day we resort to `pip`
-  - pip install mongomock
+  - |
+    if [[ "$USE_MONGO" == "1" ]]; then
+      pip install mongomock
+    fi
+
 script:
   - coverage run run_tests.py
   - coverage report -m
@@ -47,7 +73,6 @@ script:
   - |
     if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY_PCDSHUB_HAPPI" && $BUILD_DOCS ]]; then
       pushd docs
-      sphinx-autogen -o source/generated source/*.rst 
       make html
       popd
       # Publish docs.
@@ -57,12 +82,13 @@ script:
 after_success:
   - codecov
   - |
-    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $PCDS_CHANNEL == 'pcds-tag' ]]; then
-      export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
-      anaconda upload bld-dir/linux-64/*.tar.bz2
-    fi
-  - |
-    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $TRAVIS_BRANCH == 'master' && $TRAVIS_TAG == '' && $PCDS_CHANNEL == 'pcds-dev' ]]; then
-      export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
-      anaconda upload bld-dir/linux-64/*.tar.bz2
+    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $CONDA_UPLOAD == '1' ]]; then
+      if [[ $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $PCDS_CHANNEL == 'pcds-tag' ]]; then
+        export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
+        anaconda upload bld-dir/linux-64/*.tar.bz2
+      fi
+      if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_TAG == '' && $PCDS_CHANNEL == 'pcds-dev' ]]; then
+        export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
+        anaconda upload bld-dir/linux-64/*.tar.bz2
+      fi
     fi

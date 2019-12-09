@@ -287,3 +287,43 @@ class MovableStand(Device):
     stand.enforce = list
     system = copy(Device.system)
     system.default = 'changeover'
+
+
+class Motor(Device):
+    """
+    A Generic EpicsMotor
+    """
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.Motor'
+    system = copy(Device.system)
+    system.default = 'motion'
+
+
+class AreaDetector(Device):
+    """
+    A Generic EpicsCamera
+    """
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.PCDSDetector'
+    system = copy(Device.system)
+    system.default = 'camera'
+
+
+class Acromag(Device):
+    """
+    A Generic class for Acromag
+    """
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.Acromag'
+    system = copy(Device.system)
+    system.default = 'acromag'
+
+
+class Trigger(Device):
+    """
+    A Generic class for Controls Triggers
+    """
+    device_class = copy(Device.device_class)
+    device_class.default = 'pcdsdevices.device_types.Trigger'
+    system = copy(Device.system)
+    system.default = 'timing'

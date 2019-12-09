@@ -1,13 +1,16 @@
+import os
 import sys
 import math
 import logging
 import inspect
 import time as ttime
+import configparser
 
 from . import containers
-from .device import Device
+from .device import HappiItem, Device
 from .errors import EntryError, DatabaseError, SearchError
-from .backends import backend
+from .backends import backend, _get_backend
+from .loader import from_container
 
 logger = logging.getLogger(__name__)
 
@@ -27,25 +30,26 @@ class Client:
     Attributes
     ----------
     device_types : dict
-        Mapping of Container namees to class types
+        Mapping of HappiItem namees to class types
 
     Raises
     -----
     DatabaseError:
         Raised if the Client fails to instantiate the Database
     """
-    # Device information
+    # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
-    _id = 'prefix'
+    _id = 'name'
     # Store device types seen by client
-    device_types = {'Device': Device}
+    device_types = {'Device': Device,
+                    'HappiItem': HappiItem}
 
     def __init__(self, database=None, **kwargs):
-        # Get Container Mapping
+        # Get HappiItem Mapping
         self.device_types.update(dict([(name, cls) for (name, cls) in
                                        inspect.getmembers(containers,
                                                           inspect.isclass)
-                                       if issubclass(cls, Device)]))
+                                       if issubclass(cls, HappiItem)]))
         # Use supplied backend
         if database:
             self.backend = database
@@ -85,6 +89,8 @@ class Client:
         --------
         :meth:`.find_device`, :meth:`.search`
         """
+        if len(kwargs) == 0:
+            raise SearchError('No information pertinent to device given')
         # Request information from backend
         post = self.backend.find(multiples=False, **kwargs)
         # Check result, if not found let the user know
@@ -99,8 +105,8 @@ class Client:
 
         Parameters
         ----------
-        device_cls : :class:`.Device` or name of class
-            The Device Container to instantiate
+        device_cls : :class:`.HappiItem` or name of class
+            The Device HappiItem to instantiate
 
         kwargs :
             Information to pass through to the device, upon initialization
@@ -113,7 +119,7 @@ class Client:
         Raises
         ------
         TypeError:
-            If the provided class is not a subclass of :class:`.Device`
+            If the provided class is not a subclass of :class:`.HappiItem`
 
 
         Example
@@ -130,10 +136,10 @@ class Client:
         # If specified by a string
         if device_cls in self.device_types:
             device_cls = self.device_types[device_cls]
-        # Check that this is a valid Container
-        if not issubclass(device_cls, Device):
+        # Check that this is a valid HappiItem
+        if not issubclass(device_cls, HappiItem):
             raise TypeError('{!r} is not a subclass of '
-                            'Device'.format(device_cls))
+                            'HappiItem'.format(device_cls))
         device = device_cls(**kwargs)
         # Add the method to the device
         device.save = lambda: self.add_device(device)
@@ -145,7 +151,7 @@ class Client:
 
         Parameters
         ----------
-        device : :class:`.Device`
+        device : :class:`.HappiItem`
             The device to store in the database
 
         Raises
@@ -159,12 +165,12 @@ class Client:
         # Store post
         self._store(device, insert=True)
         # Log success
-        logger.info('Device %r has been succesfully added to the '
+        logger.info('HappiItem %r has been succesfully added to the '
                     'database', device)
 
     def find_device(self, **post):
         """
-        Used to query the database for an individual Device
+        Used to query the database for an individual HappiItem
 
         If multiple devices are found, only the first is returned
 
@@ -180,12 +186,12 @@ class Client:
 
         Returns
         -------
-        device : :class:`.Device`
+        device : :class:`.HappiItem`
             A device that matches the characteristics given
         """
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
-        # Instantiate Device
+        # Instantiate HappiItem
         logger.debug("Instantiating device based on found information ...")
         try:
             device = self.create_device(doc['type'], **doc)
@@ -198,6 +204,34 @@ class Client:
         # Add the save method to the device
         device.save = lambda: self._store(device, insert=False)
         return device
+
+    def load_device(self, use_cache=True, **post):
+        """
+        Find a device in the database and instantiate it
+
+        Essentially a shortcut for:
+
+        .. code:: python
+
+            container = client.find_device(name='...')
+            device = from_container(container)
+
+        Parameters
+        ----------
+        post:
+            Passed to :meth:`.Client.find_device`
+
+        use_cache: bool, optional
+            Choice to use a cached device. See :meth:`.from_container` for more
+            information
+
+        Returns
+        -------
+        obj:
+            Instantiated object
+        """
+        cntr = self.find_device(**post)
+        return from_container(cntr, use_cache=use_cache)
 
     def validate(self):
         """
@@ -215,10 +249,10 @@ class Client:
         for post in self.backend.all_devices:
             # Try and load device based on database info
             try:
-                # Device identification
+                # HappiItem identification
                 _id = post[self._id]
                 logger.debug('Attempting to initialize %s...', _id)
-                # Load Device
+                # Load HappiItem
                 device = self.find_device(**post)
                 logger.debug('Attempting to validate ...')
                 self._validate_device(device)
@@ -248,7 +282,7 @@ class Client:
         -----------
         as_dict : bool, optional
             Return the information as a list of dictionaries or a list of
-            :class:`.Device` containers
+            :class:`.HappiItem`
 
         start : float, optional
             Minimum beamline position to include devices
@@ -316,7 +350,7 @@ class Client:
                                       for attr in attrs])
                             + '\n')
                 except KeyError as e:
-                    logger.error("Device %s was missing attribute %s",
+                    logger.error("HappiItem %s was missing attribute %s",
                                  dev.name, e)
 
     def remove_device(self, device):
@@ -325,12 +359,12 @@ class Client:
 
         Parameters
         ----------
-        device : :class:`.Device`
-            Device to be removed from the database
+        device : :class:`.HappiItem`
+            HappiItem to be removed from the database
         """
-        # Device Check
-        if not isinstance(device, Device):
-            raise ValueError("Must supply an object of type `Device`")
+        # HappiItem Check
+        if not isinstance(device, HappiItem):
+            raise ValueError("Must supply an object of type `HappiItem`")
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
         # Check that device is in the database
@@ -351,9 +385,9 @@ class Client:
         logger.debug('Validating device %r ...', device)
 
         # Check type
-        if not isinstance(device, Device):
+        if not isinstance(device, HappiItem):
             raise ValueError('{!r} is not a subclass of '
-                             'Device'.format(device))
+                             'HappiItem'.format(device))
         logger.debug('Checking mandatory information has been entered ...')
         # Check that all mandatory info has been entered
         missing = [info.key for info in device.entry_info
@@ -364,7 +398,7 @@ class Client:
             raise EntryError('Missing mandatory information ({}) for {}'
                              ''.format(', '.join(missing),
                                        device.__class__.__name__))
-        logger.debug('Device %r has been validated.', device)
+        logger.debug('HappiItem %r has been validated.', device)
 
     def _store(self, device, insert=False):
         """
@@ -372,8 +406,8 @@ class Client:
 
         Parameters
         ----------
-        post : :class:`.Device`
-            Device to save
+        post : :class:`.HappiItem`
+            HappiItem to save
 
         insert : bool, optional
             Set to True if this is a new entry
@@ -403,7 +437,7 @@ class Client:
         # Note that device has some unrecognized metadata
         for key in post.keys():
             if key not in device.info_names:
-                logger.debug("Device %r defines an extra piece of "
+                logger.debug("HappiItem %r defines an extra piece of "
                              "information under the keyword %s",
                              device, key)
         # Add metadata from the Client Side
@@ -414,9 +448,121 @@ class Client:
         try:
             _id = post[self._id]
         except KeyError:
-            raise EntryError('Device did not supply the proper information to '
-                             'interface with the database, missing {}'
+            raise EntryError('HappiItem did not supply the proper information '
+                             'to interface with the database, missing {}'
                              ''.format(self._id))
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
+
+    @classmethod
+    def from_config(cls, cfg=None):
+        """
+        Create a client from a configuration file specification
+
+        Configuration files looking something along the lines of:
+
+        .. code::
+
+            [DEFAULT]
+            path=path/to/my/db.json
+
+        All key value pairs will be passed directly into backend construction
+        with the exception of the key ``backend`` which can be used to specify
+        a specific type of backend if this differs from the configured default.
+
+        Parameters
+        ----------
+        cfg: str, optional
+            Path to a configuration file. If not entered, :meth:`.find_config`
+            will be use.
+        """
+        # Find a configuration file
+        if not cfg:
+            cfg = cls.find_config()
+        # Parse configuration file
+        cfg_parser = configparser.ConfigParser()
+        cfg_file = cfg_parser.read(cfg)
+        logger.debug("Loading configuration file at %r", cfg_file)
+        db_info = cfg_parser['DEFAULT']
+        # If a backend is specified use it, otherwise default
+        if 'backend' in db_info:
+            db_str = db_info.pop('backend')
+            db = _get_backend(db_str)
+        else:
+            db = backend
+        logger.debug("Using Happi backend %r", db)
+        # Create our database with provided kwargs
+        return cls(database=db(**dict(db_info.items())))
+
+    @staticmethod
+    def find_config():
+        """
+        Search for a ``happi`` configuration file
+
+        We first query the environment variable ``$HAPPI_CFG`` to see if this
+        points to a specific configuration file. If this is not present, the
+        variable set by ``$XDG_CONFIG_HOME`` or if  that is not set
+        ``~/.config``
+
+        Returns
+        -------
+        path: str
+            Absolute path to configuration file
+
+        Raises
+        ------
+        EnvironmentError:
+            If no configuration file can be found by the methodology detailed
+            above
+        """
+        # Point to with an environment variable
+        if os.environ.get('HAPPI_CFG', False):
+            happi_cfg = os.environ.get('HAPPI_CFG')
+            logger.debug("Found $HAPPI_CFG specification for Client "
+                         "configuration at %s", happi_cfg)
+            return happi_cfg
+        # Search in the current directory and home directory
+        else:
+            config_dir = (os.environ.get('XDG_CONFIG_HOME')
+                          or os.path.expanduser('~/.config'))
+            logger.debug('Searching for Happi config in %s', config_dir)
+            for path in ('.happi.cfg', 'happi.cfg'):
+                full_path = os.path.join(config_dir, path)
+                if os.path.exists(full_path):
+                    logger.debug("Found configuration file at %r", full_path)
+                    return full_path
+        # If found nothing
+        raise EnvironmentError("No happi configuration file found. "
+                               "Check HAPPI_CFG.")
+
+    def choices_for_field(self, field):
+        """
+        List all choices for a given field
+
+        Parameters
+        ----------
+        field : string
+            search field to list all possible choices for
+            i.e 'beamline', 'name', 'z', 'prefix', etc.
+
+        Raises
+        ------
+        SearchError
+            If no devices in the database have an entry for the given field
+
+        Returns
+        -------
+        field_choices : list
+            list of choices for a given field that are in the database
+        """
+        field_choices = set()
+        for dev in self.all_devices:
+            try:  # Want to ignore error if 'dev' doesn't have 'field'
+                choice = getattr(dev, field)
+                field_choices.add(choice)
+            except AttributeError:
+                pass
+        if len(field_choices) == 0:
+            raise SearchError('No entries found with given field')
+        return field_choices
