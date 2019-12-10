@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Client &mdash; Happi Deck 1.2.1+63.gea76755 documentation</title>
+  <title>Using the Client &mdash; Happi Deck 1.2.1+76.g0951640 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+63.gea76755
+                1.2.1+76.g0951640
               </div>
             
           
@@ -191,7 +191,7 @@ has a hook to create new devices.</p>
 information to be stored.</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi.backends.json_db</span> <span class="kn">import</span> <span class="n">JSONBackend</span>
 
-<span class="gp">In [2]: </span><span class="n">db</span> <span class="o">=</span> <span class="n">JSONBackend</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;doc_test.json&#39;</span><span class="p">,</span> <span class="n">initialize</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">In [2]: </span><span class="n">db</span> <span class="o">=</span> <span class="n">JSONBackend</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;doc_test.json&#39;</span><span class="p">,</span> <span class="n">initialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you are connecting to an existing database you can pass the information
@@ -234,20 +234,20 @@ corresponding objects or as a dictionary</p>
 <span class="go">[Device (name=my_device, prefix=PV:BASE, z=345.5),</span>
 <span class="go"> Device (name=my_device2, prefix=PV:BASE2, z=355.5)]</span>
 
-<span class="gp">In [10]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">                                                                                                                 Out[10]: </span>
+<span class="gp">In [10]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gh">Out[10]: </span><span class="go"></span>
 <span class="go">[{&#39;_id&#39;: &#39;my_device&#39;,</span>
 <span class="go">  &#39;active&#39;: True,</span>
 <span class="go">  &#39;args&#39;: [&#39;name&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;XRT&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Thu May 16 21:02:31 2019&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
 <span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
 <span class="go">  &#39;embedded_screen&#39;: None,</span>
 <span class="go">  &#39;engineering_screen&#39;: None,</span>
 <span class="go">  &#39;kwargs&#39;: {},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Thu May 16 21:02:31 2019&#39;,</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device&#39;,</span>
@@ -261,14 +261,14 @@ corresponding objects or as a dictionary</p>
 <span class="go">  &#39;active&#39;: True,</span>
 <span class="go">  &#39;args&#39;: [&#39;name&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;MFX&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Thu May 16 21:02:31 2019&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
 <span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
 <span class="go">  &#39;embedded_screen&#39;: None,</span>
 <span class="go">  &#39;engineering_screen&#39;: None,</span>
 <span class="go">  &#39;kwargs&#39;: {},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Thu May 16 21:02:31 2019&#39;,</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device2&#39;,</span>
@@ -286,7 +286,7 @@ beamline</p>
 <span class="gh">Out[11]: </span><span class="go">[Device (name=my_device2, prefix=PV:BASE2, z=355.5)]</span>
 
 <span class="gp">In [12]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">)</span>
-<span class="go">                                                              Out[12]: [Device (name=my_device, prefix=PV:BASE, z=345.5)]</span>
+<span class="gh">Out[12]: </span><span class="go">[Device (name=my_device, prefix=PV:BASE, z=345.5)]</span>
 </pre></div>
 </div>
 <p>You can also explicitly load a single device. The advantage of this method is
@@ -294,15 +294,15 @@ you won’t have to parse a list of returned devices. If nothing meets your give
 criteria, an <code class="docutils literal notranslate"><span class="pre">SearchError</span></code> will be raised</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [13]: </span><span class="n">device</span> <span class="o">=</span>  <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE2&#39;</span><span class="p">)</span>
 
-<span class="gp">In [14]: </span><span class="k">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="gp">In [14]: </span><span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <span class="go">PV:BASE2 my_device2</span>
 
 <span class="gp">In [15]: </span><span class="k">try</span><span class="p">:</span>
 <span class="gp">   ....: </span>    <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;non-existant&#39;</span><span class="p">)</span>
 <span class="gp">   ....: </span><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-<span class="gp">   ....: </span>    <span class="k">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+<span class="gp">   ....: </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 <span class="gp">   ....: </span>
-<span class="go">                    No device information found that matches the search criteria</span>
+<span class="go">No device information found that matches the search criteria</span>
 </pre></div>
 </div>
 </div>

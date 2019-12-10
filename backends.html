@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Supported Backends &mdash; Happi Deck 1.2.1+63.gea76755 documentation</title>
+  <title>Supported Backends &mdash; Happi Deck 1.2.1+76.g0951640 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+63.gea76755
+                1.2.1+76.g0951640
               </div>
             
           
@@ -176,29 +176,31 @@
 <p>All backends inherit from the following metaclass</p>
 <dl class="class">
 <dt id="happi.backends.core.Backend">
-<em class="property">class </em><code class="descclassname">happi.backends.core.</code><code class="descname">Backend</code><a class="headerlink" href="#happi.backends.core.Backend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.backends.core.</code><code class="sig-name descname">Backend</code><a class="headerlink" href="#happi.backends.core.Backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract interface for backend database</p>
 <dl class="method">
 <dt id="happi.backends.core.Backend.delete">
-<code class="descname">delete</code><span class="sig-paren">(</span><em>_id</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.delete" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">_id</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a device instance from the database</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>_id</strong> (<em>str</em>) – ID of device</p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>PermissionError:</strong> – If the write operation fails due to issues with permissions</p>
+</dd>
 </dl>
-<p>:raises PermissionError:: If the write operation fails due to issues with permissions</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="happi.backends.core.Backend.devices">
-<code class="descname">devices</code><a class="headerlink" href="#happi.backends.core.Backend.devices" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract property </em><code class="sig-name descname">devices</code><a class="headerlink" href="#happi.backends.core.Backend.devices" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of all device sub-dictionaries</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="happi.backends.core.Backend.find">
-<code class="descname">find</code><span class="sig-paren">(</span><em>multiples=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.find" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param">multiples=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find an instance or instances that matches the search criteria</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -213,7 +215,7 @@ information</p></li>
 
 <dl class="method">
 <dt id="happi.backends.core.Backend.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>_id</em>, <em>post</em>, <em>insert=True</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.save" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">_id</em>, <em class="sig-param">post</em>, <em class="sig-param">insert=True</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save information to the database</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -223,18 +225,22 @@ information</p></li>
 <li><p><strong>insert</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not this a new device to the database</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>DuplicateError:</strong> – If insert is True, but there is already a device with the provided
+    _id</p></li>
+<li><p><strong>SearchError:</strong> – If insert is False, but there is no device with the provided _id</p></li>
+<li><p><strong>PermissionError:</strong> – If the write operation fails due to issues with permissions</p></li>
+</ul>
+</dd>
 </dl>
-<p>:raises DuplicateError:: If insert is True, but there is already a device with the provided
-    _id
-:raises SearchError:: If insert is False, but there is no device with the provided _id
-:raises PermissionError:: If the write operation fails due to issues with permissions</p>
 </dd></dl>
 
 </dd></dl>
 
 <div class="section" id="backend-choices">
 <h2>Backend Choices<a class="headerlink" href="#backend-choices" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
