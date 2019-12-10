@@ -1,3 +1,5 @@
+import pytest
+
 from happi import Device, EntryInfo, cache
 from happi.loader import fill_template, from_container, load_devices
 from happi.utils import create_alias
@@ -67,7 +69,9 @@ def test_add_md():
     assert obj.md.name == 'Test'
 
 
-def test_load_devices():
+@pytest.mark.parametrize('threaded', [False, True])
+@pytest.mark.parametrize('post_load', [None, lambda x: None])
+def test_load_devices(threaded, post_load):
     # Create a bunch of devices to load
     devs = [TimeDevice(name='Test 1', prefix='Tst1:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
@@ -81,7 +85,8 @@ def test_load_devices():
             Device(name='Bad', prefix='Not:Here', beamline='BAD',
                    device_class='non.existant')]
     # Load our devices
-    space = load_devices(*devs, pprint=True)
+    space = load_devices(*devs, pprint=True, use_cache=False,
+                         threaded=threaded, post_load=post_load)
     # Check all our devices are there
     assert all([create_alias(dev.name) in space.__dict__ for dev in devs])
     # Devices were loading properly or exceptions were stored
