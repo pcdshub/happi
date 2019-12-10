@@ -161,12 +161,13 @@ def import_class(device_class):
 
     Parameters
     ----------
-    device_class : ``str``
-        The module path to find the class e.g. "pcdsdevices.device_types.IPM"
+    device_class : str
+        The module path to find the class e.g.
+        ``"pcdsdevices.device_types.IPM"``
 
     Returns
     -------
-    cls : ``type``
+    cls : type
         The class referred to by the input string.
     """
     mod, cls = device_class.rsplit('.', 1)
@@ -193,13 +194,13 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
 
     Parameters
     ----------
-    args :
+    *devices :
         List of happi containers to load
 
     pprint: bool, optional
         Print results of device loads
 
-    namespace : obj, optional
+    namespace : object, optional
         Namespace to collect loaded devices in. By default this will be a
         ``types.SimpleNamespace``
 
@@ -208,11 +209,10 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
         devices.
 
     threaded : bool, optional
-        Set to True to create each device in a background thread.
-        Note that this assumes that no two devices in the *devices input are
-        the same device. You are not guaranteed to load from the cache
-        correctly if you ask for the same device to be loaded twice in the same
-        threaded load.
+        Set to True to create each device in a background thread.  Note that
+        this assumes that no two devices provided are the same. You are not
+        guaranteed to load from the cache correctly if you ask for the same
+        device to be loaded twice in the same threaded load.
 
     post_load : function, optional
         Function of one argument to run on each device after instantiation.
