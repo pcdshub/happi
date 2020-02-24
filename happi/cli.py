@@ -5,9 +5,12 @@ This module defines the ``happi`` command line utility
 
 import argparse
 import sys
-import happi
 import logging
+
+from IPython import start_ipython
 import coloredlogs
+
+import happi
 from .errors import SearchError
 
 logger = logging.getLogger(__name__)
@@ -31,6 +34,15 @@ parser_search = subparsers.add_parser('search', help='Search the happi '
 parser_search.add_argument('search_criteria', nargs=argparse.REMAINDER,
                            help='search criteria: FIELD VALUE')
 parser_add = subparsers.add_parser('add', help='Add new entries')
+parser_edit = subparsers.add_parser('edit', help='Change existing entry')
+parser_edit.add_argument('name', help='Device to edit')
+parser_edit.add_argument('edits', nargs='+',
+                         help='Edits of the form field=value')
+parser_load = subparsers.add_parser('load',
+                                    help='Open IPython terminal with '
+                                         'device loaded')
+parser_load.add_argument('device_names', nargs='+',
+                         help='Devices to load')
 
 
 def happi_cli(args):
@@ -38,10 +50,10 @@ def happi_cli(args):
 
     # Logging Level handling
     if args.verbose:
-        level = "DEBUG"
-        shown_logger = logging.getLogger('happi')
-    else:
         shown_logger = logging.getLogger()
+        level = "DEBUG"
+    else:
+        shown_logger = logging.getLogger('happi')
         level = "INFO"
     coloredlogs.install(level=level, logger=shown_logger,
                         fmt='[%(asctime)s] - %(levelname)s -  %(message)s')
@@ -125,6 +137,22 @@ def happi_cli(args):
             device.save()
         else:
             logger.info('Aborting')
+    elif args.cmd == 'edit':
+        logger.debug('Starting edit block')
+        device = client.find_device(name=args.name)
+        for edit in args.edits:
+            field, value = edit.split('=')
+            logger.info(f'Setting {args.name}.{field} = {value}')
+            setattr(device, field, value)
+        device.save()
+        device.show_info()
+    elif args.cmd == 'load':
+        logger.debug('Starting load block')
+        logger.info(f'Creating shell with devices {args.device_names}')
+        devices = {}
+        for name in args.device_names:
+            devices[name] = client.load_device(name=name)
+        start_ipython(argv=['--quick'], user_ns=devices)
 
 
 def main():
