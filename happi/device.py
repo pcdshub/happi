@@ -394,7 +394,7 @@ class Device(HappiItem):
     args = copy.copy(HappiItem.args)
     args.default = ['{{prefix}}']
     kwargs = copy.copy(HappiItem.kwargs)
-    args.default = {'name': '{{name}}'}
+    kwargs.default = {'name': '{{name}}'}
 
     def __repr__(self):
         return '{} (name={}, prefix={}, z={})'.format(
