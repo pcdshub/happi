@@ -30,6 +30,7 @@ parser_search = subparsers.add_parser('search', help='Search the happi '
                                       'database')
 parser_search.add_argument('search_criteria', nargs=argparse.REMAINDER,
                            help='search criteria: FIELD VALUE')
+parser_add = subparsers.add_parser('add', help='Add new entries')
 
 
 def happi_cli(args):
@@ -83,6 +84,46 @@ def happi_cli(args):
             return devices
         else:
             logger.error('No devices found')
+    elif args.cmd == 'add':
+        logger.debug('Starting interactive add')
+        logger.info('Please select a device type, or press enter for generic '
+                    f'Device container: {list(client.device_types.keys())}\n')
+        response = input()
+        if response and response not in client.device_types:
+            logger.info('Invalid device container f{response}')
+            return
+        elif not response:
+            response = 'Device'
+
+        container = client.device_types[response]
+        kwargs = {}
+        for info in container.entry_info:
+            valid_value = False
+            while not valid_value:
+                logger.info(f'Enter value for {info}, enforce={info.enforce}')
+                item_value = input()
+                if not item_value:
+                    if info.optional:
+                        logger.info(f'Selecting default value {info.default}')
+                        item_value = info.default
+                    else:
+                        logger.info('Not an optional field!')
+                        continue
+                try:
+                    info.enforce_value(item_value)
+                    valid_value = True
+                    kwargs[info.key] = item_value
+                except Exception:
+                    logger.info(f'Invalid value {item_value}')
+
+        logger.info('Please confirm the following info is correct:'
+                    f'Container={container}, opts={kwargs}')
+        ok = input('y/N')
+        if 'y' in ok:
+            logger.info('Adding device')
+            client.add_device(container, **kwargs)
+        else:
+            logger.info('Aborting')
 
 
 def main():
