@@ -11,7 +11,6 @@ from IPython import start_ipython
 import coloredlogs
 
 import happi
-from .errors import SearchError
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +30,8 @@ subparsers = parser.add_subparsers(help='Subparsers to search, add, edit',
                                    dest='cmd')
 parser_search = subparsers.add_parser('search', help='Search the happi '
                                       'database')
-parser_search.add_argument('search_criteria', nargs=argparse.REMAINDER,
-                           help='search criteria: FIELD VALUE')
+parser_search.add_argument('search_criteria', nargs='+',
+                           help='search criteria: FIELD=VALUE')
 parser_add = subparsers.add_parser('add', help='Add new entries')
 parser_edit = subparsers.add_parser('edit', help='Change existing entry')
 parser_edit.add_argument('name', help='Device to edit')
@@ -72,18 +71,10 @@ def happi_cli(args):
     if args.cmd == 'search':
         logger.debug("We're in the search block")
 
-        # Ensure we have an even number of search elements
-        # Should always have key:value pairs
-        if len(args.search_criteria) % 2 != 0:
-            raise SearchError('Search criteria should be given as key '
-                              'value pair\ni.e:\n'
-                              'happi search beamline MFX stand DG1')
-
         # Get search criteria into dictionary for use by client
         client_args = {}
-        for i in range(0, len(args.search_criteria), 2):
-            criteria = args.search_criteria[i]
-            value = args.search_criteria[i+1]
+        for user_arg in args.search_criteria:
+            criteria, value = user_arg.split('=')
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
                 value = float(value)
