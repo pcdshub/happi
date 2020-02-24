@@ -76,7 +76,7 @@ def happi_cli(args):
         # Get search criteria into dictionary for use by client
         client_args = {}
         for user_arg in args.search_criteria:
-            criteria, value = user_arg.split('=')
+            criteria, value = user_arg.split('=', 1)
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
                 value = float(value)
@@ -144,7 +144,7 @@ def happi_cli(args):
         logger.debug('Starting edit block')
         device = client.find_device(name=args.name)
         for edit in args.edits:
-            field, value = edit.split('=')
+            field, value = edit.split('=', 1)
             logger.info(f'Setting {args.name}.{field} = {value}')
             setattr(device, field, value)
         device.save()
