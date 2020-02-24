@@ -368,10 +368,16 @@ class Device(HappiItem):
                        optional=False, enforce=str)
     beamline = EntryInfo('Section of beamline the device belongs',
                          optional=False, enforce=str)
+    location_group = EntryInfo('Grouping parameter for device location',
+                               optional=False, enforce=str)
+    functional_group = EntryInfo('Grouping parameter for device function',
+                                 optional=False, enforce=str)
     z = EntryInfo('Beamline position of the device',
                   enforce=float, default=-1.0)
     stand = EntryInfo('Acronym for stand, must be three alphanumeric '
-                      'characters', enforce=re.compile(r'[A-Z0-9]{3}$'))
+                      'characters like an LCLSI stand (e.g. DG3) or follow '
+                      'the LCLSII stand naming convention (e.g. L0S04).',
+                      enforce=re.compile(r'[A-Z0-9]{3}$|[A-Z][0-9]S[0-9]{2}$'))
     detailed_screen = EntryInfo('The absolute path to the main control screen',
                                 enforce=str)
     embedded_screen = EntryInfo('The absolute path to the '
