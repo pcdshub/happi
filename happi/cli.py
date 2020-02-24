@@ -118,10 +118,11 @@ def happi_cli(args):
 
         logger.info('Please confirm the following info is correct:'
                     f'Container={container}, opts={kwargs}')
-        ok = input('y/N')
+        ok = input('y/N\n')
         if 'y' in ok:
             logger.info('Adding device')
-            client.add_device(container, **kwargs)
+            device = client.create_device(container, **kwargs)
+            device.save()
         else:
             logger.info('Aborting')
 
