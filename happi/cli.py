@@ -96,7 +96,7 @@ def happi_cli(args):
             # Must use the same container if cloning
             response = clone_source.__class__.__name__
         else:
-            logger.info('Please select a device type, or press enter for generic '
+            logger.info('Please select a container, or press enter for generic '
                         f'Device container: {list(client.device_types.keys())}\n')
             response = input()
             if response and response not in client.device_types:
