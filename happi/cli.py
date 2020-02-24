@@ -128,12 +128,12 @@ def happi_cli(args):
                 except Exception:
                     logger.info(f'Invalid value {item_value}')
 
-        logger.info('Please confirm the following info is correct:'
-                    f'Container={container}, opts={kwargs}')
+        device = client.create_device(container, **kwargs)
+        logger.info('Please confirm the following info is correct:')
+        device.show_info()
         ok = input('y/N\n')
         if 'y' in ok:
             logger.info('Adding device')
-            device = client.create_device(container, **kwargs)
             device.save()
         else:
             logger.info('Aborting')
