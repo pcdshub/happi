@@ -250,8 +250,9 @@ class HappiItem(metaclass=InfoMeta):
                       note  = 'Example',          #Piece of arbitrary metadata
                      )
     """
-    name = EntryInfo('Shorthand name for the device',
-                     optional=False, enforce=str)
+    name = EntryInfo('Shorthand python-valid name for the device',
+                     optional=False,
+                     enforce=re.compile(r'[a-z][a-z\_0-9]{2,78}$'))
     device_class = EntryInfo("Python class that represents the Device",
                              enforce=str)
     args = EntryInfo("Arguments to pass to device_class",
