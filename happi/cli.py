@@ -76,7 +76,14 @@ def happi_cli(args):
         # Get search criteria into dictionary for use by client
         client_args = {}
         for user_arg in args.search_criteria:
-            criteria, value = user_arg.split('=', 1)
+            if '=' in user_arg:
+                criteria, value = user_arg.split('=', 1)
+            else:
+                criteria = 'name'
+                value = user_arg
+            if criteria in client_args:
+                logger.error(f'Recieved duplicate search criteria {criteria}')
+                return
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
                 value = float(value)
