@@ -31,7 +31,10 @@ subparsers = parser.add_subparsers(help='Subparsers to search, add, edit',
 parser_search = subparsers.add_parser('search', help='Search the happi '
                                       'database')
 parser_search.add_argument('search_criteria', nargs='+',
-                           help='search criteria: FIELD=VALUE')
+                           help='Search criteria: field=value. If field= is '
+                                'omitted, it will be assumed to be "name". '
+                                'You may include as many search criteria as '
+                                'you like.')
 parser_add = subparsers.add_parser('add', help='Add new entries')
 parser_add.add_argument('--clone', default='',
                         help='Name of device to use for default parameters')
