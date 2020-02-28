@@ -250,8 +250,9 @@ class HappiItem(metaclass=InfoMeta):
                       note  = 'Example',          #Piece of arbitrary metadata
                      )
     """
-    name = EntryInfo('Shorthand name for the device',
-                     optional=False, enforce=str)
+    name = EntryInfo('Shorthand python-valid name for the device',
+                     optional=False,
+                     enforce=re.compile(r'[a-z][a-z\_0-9]{2,78}$'))
     device_class = EntryInfo("Python class that represents the Device",
                              enforce=str)
     args = EntryInfo("Arguments to pass to device_class",
@@ -368,10 +369,16 @@ class Device(HappiItem):
                        optional=False, enforce=str)
     beamline = EntryInfo('Section of beamline the device belongs',
                          optional=False, enforce=str)
+    location_group = EntryInfo('Grouping parameter for device location',
+                               optional=False, enforce=str)
+    functional_group = EntryInfo('Grouping parameter for device function',
+                                 optional=False, enforce=str)
     z = EntryInfo('Beamline position of the device',
                   enforce=float, default=-1.0)
     stand = EntryInfo('Acronym for stand, must be three alphanumeric '
-                      'characters', enforce=re.compile(r'[A-Z0-9]{3}$'))
+                      'characters like an LCLSI stand (e.g. DG3) or follow '
+                      'the LCLSII stand naming convention (e.g. L0S04).',
+                      enforce=re.compile(r'[A-Z0-9]{3}$|[A-Z][0-9]S[0-9]{2}$'))
     detailed_screen = EntryInfo('The absolute path to the main control screen',
                                 enforce=str)
     embedded_screen = EntryInfo('The absolute path to the '
@@ -394,7 +401,7 @@ class Device(HappiItem):
     args = copy.copy(HappiItem.args)
     args.default = ['{{prefix}}']
     kwargs = copy.copy(HappiItem.kwargs)
-    args.default = {'name': '{{name}}'}
+    kwargs.default = {'name': '{{name}}'}
 
     def __repr__(self):
         return '{} (name={}, prefix={}, z={})'.format(
