@@ -74,7 +74,7 @@ class HappiDeviceListView(QtWidgets.QListView):
             itm.setFlags(itm.flags() & ~QtCore.Qt.ItemIsEditable)
             return itm
 
-        items = []
+        items = [create_item(entry) for entry in self._happi_entries]
         if not self._happi_entries:
             return
         for entry in self._happi_entries:
