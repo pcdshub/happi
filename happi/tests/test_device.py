@@ -96,8 +96,8 @@ def test_show_info(device, device_info):
 
 
 def test_device_equivalance():
-    a = Device(name='a', prefix='b')
-    b = Device(name='a', prefix='b')
-    c = Device(name='c', prefix='b')
+    a = Device(name='abcd', prefix='b')
+    b = Device(name='abcd', prefix='b')
+    c = Device(name='cbcd', prefix='b')
     assert a == b
     assert not c == a
