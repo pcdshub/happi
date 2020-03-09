@@ -30,7 +30,7 @@ def test_fill_template(device):
 
 def test_from_container():
     # Create a datetime device
-    d = TimeDevice(name='Test', prefix='Tst:This:1', beamline='TST',
+    d = TimeDevice(name='test', prefix='Tst:This:1', beamline='TST',
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
@@ -41,7 +41,7 @@ def test_from_container():
 
 def test_caching():
     # Create a datetime device
-    d = TimeDevice(name='Test', prefix='Tst:This:2', beamline='TST',
+    d = TimeDevice(name='test', prefix='Tst:This:2', beamline='TST',
                    device_class='types.SimpleNamespace', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
@@ -52,7 +52,7 @@ def test_caching():
     d.days = 12
     assert id(td) != id(from_container(d, use_cache=True))
     # Check with a device where metadata is unavailable
-    d = TimeDevice(name='Test', prefix='Tst:Delta:3', beamline='TST',
+    d = TimeDevice(name='test', prefix='Tst:Delta:3', beamline='TST',
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
     td = from_container(d)
@@ -61,28 +61,28 @@ def test_caching():
 
 
 def test_add_md():
-    d = Device(name='Test', prefix='Tst:This:3',
+    d = Device(name='test', prefix='Tst:This:3',
                beamline="TST", args=list(),
                device_class="happi.Device")
     obj = from_container(d, attach_md=True)
     assert obj.md.beamline == 'TST'
-    assert obj.md.name == 'Test'
+    assert obj.md.name == 'test'
 
 
 @pytest.mark.parametrize('threaded', [False, True])
 @pytest.mark.parametrize('post_load', [None, lambda x: None])
 def test_load_devices(threaded, post_load):
     # Create a bunch of devices to load
-    devs = [TimeDevice(name='Test 1', prefix='Tst1:This', beamline='TST',
+    devs = [TimeDevice(name='test_1', prefix='Tst1:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
                        kwargs={'days': '{{days}}', 'seconds': 30}),
-            TimeDevice(name='Test 2', prefix='Tst2:This', beamline='TST',
+            TimeDevice(name='test_2', prefix='Tst2:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
                        kwargs={'days': '{{days}}', 'seconds': 30}),
-            TimeDevice(name='Test 3', prefix='Tst3:This', beamline='TST',
+            TimeDevice(name='test_3', prefix='Tst3:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
                        kwargs={'days': '{{days}}', 'seconds': 30}),
-            Device(name='Bad', prefix='Not:Here', beamline='BAD',
+            Device(name='bad', prefix='Not:Here', beamline='BAD',
                    device_class='non.existant')]
     # Load our devices
     space = load_devices(*devs, pprint=True, use_cache=False,
