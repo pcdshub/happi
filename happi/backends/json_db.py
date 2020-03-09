@@ -76,7 +76,10 @@ class JSONBackend(metaclass=Backend):
         Load the JSON database
         """
         with open(self.path, 'r') as f:
-            return json.load(f)
+            raw_json = f.read()
+
+        # Allow for empty files to be considered valid databases:
+        return json.loads(raw_json) if raw_json else {}
 
     def store(self, db):
         """
