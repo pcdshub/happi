@@ -17,7 +17,7 @@ class HappiDeviceListView(QtWidgets.QListView):
         Additional arguments to be passed to the QListView constructor.
     """
     def __init__(self, parent=None, client=None, **kwargs):
-        super(HappiDeviceListView, self).__init__(parent=parent,
+        super().__init__(parent=parent,
                                                   **kwargs)
         self._client = client
         self.model = QtGui.QStandardItemModel()
