@@ -45,13 +45,6 @@ class HappiDeviceListView(QtWidgets.QListView):
 
     @client.setter
     def client(self, client):
-        """
-        The client to use for search.
-
-        Parameters
-        ----------
-        client : happi.Client
-        """
         self._client = client
 
     def search(self, *args, **kwargs):
