@@ -85,7 +85,10 @@ def happi_cli(args):
                 criteria = 'name'
                 value = user_arg
             if criteria in client_args:
-                logger.error(f'Recieved duplicate search criteria {criteria}')
+                logger.error(
+                    'Received duplicate search criteria %s=%r (was %r)',
+                    criteria, value, client_args[criteria]
+                )
                 return
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
