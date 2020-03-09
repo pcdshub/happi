@@ -14,26 +14,33 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope='function')
-def happi_cfg():
+def xdg_config_home(tmp_path):
+    config_home = tmp_path / 'xdg_config_home'
+    config_home.mkdir()
+    return config_home
+
+
+@pytest.fixture(scope='function')
+def happi_cfg(tmp_path, xdg_config_home):
     # Store current happi config
     xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
     happi_cfg = os.environ.get("HAPPI_CFG", '')
+
     # Setup environment variables
-    os.environ['XDG_CONFIG_HOME'] = os.getcwd()
+    os.environ['XDG_CONFIG_HOME'] = str(xdg_config_home)
     os.environ['HAPPI_CFG'] = ''
+
     # Write file
-    fname = os.path.join(os.getcwd(), 'happi.cfg')
-    with open(fname, 'w+') as handle:
-        handle.write("""\
+    happi_cfg = xdg_config_home / 'happi.cfg'
+    happi_cfg.write_text("""\
 [DEFAULT]
 backend=json
 path=db.json
 """)
-    yield fname
+    yield str(happi_cfg)
     # Restore environment variables
-    os.environ["HAPPI_CFG"] = happi_cfg
+    os.environ["HAPPI_CFG"] = str(happi_cfg)
     os.environ["XDG_CONFIG_HOME"] = xdg_cfg
-    os.remove(fname)
 
 
 def test_find_document(happi_client, device_info):

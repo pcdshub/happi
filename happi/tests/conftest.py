@@ -47,7 +47,10 @@ def device_info():
             'type': 'Device',
             'device_class': 'types.SimpleNamespace',
             'args': list(),
-            'kwargs': {'hi': 'oh hello'}}
+            'kwargs': {'hi': 'oh hello'},
+            'location_group': 'LOC',
+            'functional_group': 'FUNC',
+            }
 
 
 @pytest.fixture(scope='function')
@@ -63,7 +66,10 @@ def valve_info():
             'prefix': 'BASE:VGC:PV',
             '_id': 'name',
             'beamline': 'LCLS',
-            'mps': 'MPS:VGC:PV'}
+            'mps': 'MPS:VGC:PV',
+            'location_group': 'LOC',
+            'functional_group': 'FUNC',
+            }
 
 
 @pytest.fixture(scope='function')

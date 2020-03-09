@@ -145,12 +145,14 @@ def test_json_initialize():
     os.remove("testing.json")
 
 
+@pytest.mark.xfail
 @requires_questionnaire
 def test_qs_find(mockqsbackend):
     assert len(mockqsbackend.find(beamline='TST', multiples=True)) == 14
     assert len(mockqsbackend.find(name='sam_r', multiples=True)) == 1
 
 
+@pytest.mark.xfail
 @requires_questionnaire
 def test_qsbackend_with_client(mockqsbackend):
     c = Client(database=mockqsbackend)

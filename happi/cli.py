@@ -85,7 +85,10 @@ def happi_cli(args):
                 criteria = 'name'
                 value = user_arg
             if criteria in client_args:
-                logger.error(f'Recieved duplicate search criteria {criteria}')
+                logger.error(
+                    'Received duplicate search criteria %s=%r (was %r)',
+                    criteria, value, client_args[criteria]
+                )
                 return
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
@@ -106,8 +109,10 @@ def happi_cli(args):
             # Must use the same container if cloning
             response = clone_source.__class__.__name__
         else:
-            logger.info('Please select a container, or press enter for generic '
-                        f'Device container: {list(client.device_types.keys())}\n')
+            logger.info(
+                'Please select a container, or press enter for generic '
+                'Device container: %r', list(client.device_types)
+            )
             response = input()
             if response and response not in client.device_types:
                 logger.info('Invalid device container f{response}')

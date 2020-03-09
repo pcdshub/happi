@@ -1,33 +1,28 @@
 # test_cli.py
 
 import pytest
-import os
 import happi
 from happi.cli import happi_cli
-from happi.errors import SearchError
 
 
 @pytest.fixture(scope='function')
-def happi_cfg():
-    fname = os.path.join(os.getcwd(), 'happi.cfg')
-    with open(fname, 'w+') as handle:
-        handle.write("""\
+def happi_cfg(tmp_path, db):
+    happi_cfg_path = tmp_path / 'happi.cfg'
+    happi_cfg_path.write_text(f"""\
 [DEFAULT]'
 backend=json
-path=db.json
+path={db}
 """)
-    yield fname
-    os.remove(fname)
+    return str(happi_cfg_path.absolute())
 
 
 @pytest.fixture(scope='function')
-def db():
-    fname = os.path.join(os.getcwd(), 'db.json')
-    with open(fname, 'w+') as handle:
-        handle.write("""\
+def db(tmp_path):
+    json_path = tmp_path / 'db.json'
+    json_path.write_text("""\
 {
-    "TST:BASE:PIM": {
-        "_id": "TST:BASE:PIM",
+    "TST_BASE_PIM": {
+        "_id": "TST_BASE_PIM",
         "active": true,
         "args": [
             "{{prefix}}"
@@ -49,8 +44,8 @@ def db():
         "type": "PIM",
         "z": 3.0
     },
-    "TST:BASE:PIM2": {
-        "_id": "TST:BASE:PIM2",
+    "TST_BASE_PIM2": {
+        "_id": "TST_BASE_PIM2",
         "active": true,
         "args": [
             "{{prefix}}"
@@ -74,8 +69,7 @@ def db():
     }
 }
 """)
-    yield fname
-    os.remove(fname)
+    return str(json_path.absolute())
 
 
 def test_cli_version(capsys):
@@ -85,25 +79,17 @@ def test_cli_version(capsys):
     assert happi.__file__ in readout.out
 
 
-def test_search(happi_cfg, db):
-    config_name = os.path.join(os.getcwd(), 'happi.cfg')
-    client = happi.client.Client.from_config(cfg=config_name)
+def test_search(happi_cfg):
+    client = happi.client.Client.from_config(cfg=happi_cfg)
     devices = client.search(beamline="TST")
-    devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name,
-                                       'search', 'beamline', 'TST'])
+    devices_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg,
+                                       'search', 'beamline=TST'])
     assert devices == devices_cli
 
 
-def test_search_z(happi_cfg, db):
-    config_name = os.path.join(os.getcwd(), 'happi.cfg')
-    client = happi.client.Client.from_config(cfg=config_name)
+def test_search_z(happi_cfg):
+    client = happi.client.Client.from_config(cfg=happi_cfg)
     devices = client.search(z=6.0)
-    devices_cli = happi.cli.happi_cli(['--verbose', '--path', config_name,
-                                       'search', 'z', '6.0'])
+    devices_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg,
+                                       'search', 'z=6.0'])
     assert devices == devices_cli
-
-
-def test_odd_criteria(happi_cfg, db):
-    config_name = os.path.join(os.getcwd(), 'happi.cfg')
-    with pytest.raises(SearchError):
-        happi.cli.happi_cli(['--path', config_name, 'search', 'beamline'])

@@ -20,6 +20,7 @@ requirements:
       - pymongo 
       - python
       - coloredlogs
+
 test:
     imports:
       - happi
@@ -28,6 +29,7 @@ test:
 
     requires: 
       - pytest
+      - ipython
 
 about:
   home: https://github.com/pcdshub/happi

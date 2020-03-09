@@ -116,8 +116,10 @@ class EntryInfo(object):
         elif isinstance(self.enforce, Pattern):
             # Try and match regex patttern, otherwise raise ValueError
             if not self.enforce.match(value):
-                raise ValueError('{} did not match the enforced pattern {}'
-                                 ''.format(self.key, self.enforce.pattern))
+                raise ValueError(
+                    f'{self.key}={value!r} did not match the enforced pattern'
+                    f'{self.enforce.pattern}'
+                )
             return value
 
         # Invalid enforcement
