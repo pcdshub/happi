@@ -95,8 +95,3 @@ def test_search_z(happi_cfg):
     devices_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg,
                                        'search', 'z=6.0'])
     assert devices == devices_cli
-
-
-def test_odd_criteria(happi_cfg):
-    with pytest.raises(SearchError):
-        happi.cli.happi_cli(['--path', happi_cfg, 'search', 'beamline'])
