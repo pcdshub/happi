@@ -1,10 +1,8 @@
 # test_cli.py
 
 import pytest
-import os
 import happi
 from happi.cli import happi_cli
-from happi.errors import SearchError
 
 
 @pytest.fixture(scope='function')
