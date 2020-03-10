@@ -28,7 +28,8 @@ class HappiDeviceExplorer(QtWidgets.QFrame):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
-    db_path = pathlib.Path(__file__).parent.parent / "db.json"
+    file_path = pathlib.Path(__file__).resolve()
+    db_path = file_path.parent.parent / "db.json"
     cli = happi.Client(path=db_path)
     w = HappiDeviceExplorer()
     w.view.client = cli
