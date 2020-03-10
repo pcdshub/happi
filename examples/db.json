@@ -1,0 +1,52 @@
+{
+	"TV1L0-VGC-1": {
+		"_id": "TV1L0-VGC-1",
+		"active": true,
+		"args": [],
+		"beamline": "DEMO_BEAMLINE",
+		"creation": "Tue Feb 27 10:41:25 2018",
+		"device_class": "ophyd.sim.SynAxis",
+		"kwargs": {
+			"name": "{{name}}"
+		},
+		"last_edit": "Thu Apr 12 14:40:08 2018",
+		"macros": null,
+		"name": "tv1l0_vgc_1",
+		"parent": null,
+		"prefix": "TV1L0-VGC-1",
+		"screen": null,
+		"stand": "ST1",
+		"system": "Device",
+		"type": "Vacuum",
+		"z": 1035.5,
+		"invalid": true,
+		"functional_group": "Vacuum",
+		"location_group": "S 1"
+	},
+
+	"TV1L0-VGC-2": {
+		"_id": "TV1L0-VGC-2",
+		"active": true,
+		"args": [],
+		"beamline": "DEMO_BEAMLINE",
+		"creation": "Tue Feb 27 10:41:25 2018",
+		"device_class": "ophyd.sim.SynAxis",
+		"kwargs": {
+			"name": "{{name}}"
+		},
+		"last_edit": "Thu Apr 12 14:40:08 2018",
+		"macros": null,
+		"name": "tv1l0_vgc_2",
+		"parent": null,
+		"prefix": "TV1L0-VGC-2",
+		"screen": null,
+		"stand": "ST1",
+		"system": "Device",
+		"type": "Vacuum",
+		"z": 1035.6,
+		"invalid": true,
+		"functional_group": "Vacuum",
+		"location_group": "S 2"
+	}
+
+}
