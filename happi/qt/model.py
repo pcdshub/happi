@@ -127,6 +127,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
     """
     def __init__(self, parent=None, client=None, **kwargs):
         super().__init__(parent=parent, client=client, **kwargs)
+        self.setSortingEnabled(True)
         self._models = dict()
         self._groups = []
         self._active_group = ""
