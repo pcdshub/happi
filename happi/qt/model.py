@@ -199,10 +199,15 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
             root = QtGui.QStandardItem(key_value)
             # Disable edit
             root.setFlags(root.flags() & ~QtCore.Qt.ItemIsEditable)
-            # Pack the entries into the root
-            root.setData(entries)
-            for entry in entries:
-                root.appendRow(self.create_item(entry))
+
+            if len(entries) == 1 and entries[0].name == key_value:
+                root.setData(entries[0])
+            else:
+                #Pack the entries into the root
+                root.setData(entries)
+
+                for entry in entries:
+                    root.appendRow(self.create_item(entry))
             model.appendRow(root)
 
         self._models[field] = model
