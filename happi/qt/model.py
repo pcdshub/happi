@@ -203,7 +203,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
             if len(entries) == 1 and entries[0].name == key_value:
                 root.setData(entries[0])
             else:
-                #Pack the entries into the root
+                # Pack the entries into the root
                 root.setData(entries)
 
                 for entry in entries:
