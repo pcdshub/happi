@@ -101,3 +101,8 @@ def test_device_equivalance():
     c = Device(name='cbcd', prefix='b')
     assert a == b
     assert not c == a
+
+
+def test_dictify():
+    a = Device(name='abcd', prefix='b')
+    assert dict(a) == a.post()
