@@ -4,11 +4,11 @@ This module defines the ``happi`` command line utility
 # cli.py
 
 import argparse
-import sys
 import logging
+import sys
 
-from IPython import start_ipython
 import coloredlogs
+from IPython import start_ipython
 
 import happi
 

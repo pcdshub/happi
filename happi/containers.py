@@ -3,6 +3,7 @@ Define subclasses of Device for specific hardware.
 """
 import re
 from copy import copy, deepcopy
+
 from .device import Device, EntryInfo
 
 

@@ -1,9 +1,9 @@
 ############
 # Standard #
 ############
-import os
-import logging
 import argparse
+import logging
+import os
 import subprocess
 from distutils.spawn import find_executable
 
@@ -150,4 +150,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
