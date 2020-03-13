@@ -1,10 +1,10 @@
 import copy
+import logging
 import re
 import sys
-import logging
 import warnings
-
 from collections import OrderedDict
+
 from prettytable import PrettyTable
 
 from .errors import ContainerError

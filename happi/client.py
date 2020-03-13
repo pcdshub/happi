@@ -1,15 +1,15 @@
+import configparser
+import inspect
+import logging
+import math
 import os
 import sys
-import math
-import logging
-import inspect
 import time as ttime
-import configparser
 
 from . import containers
-from .device import HappiItem, Device
-from .errors import EntryError, DatabaseError, SearchError
-from .backends import backend, _get_backend
+from .backends import _get_backend, backend
+from .device import Device, HappiItem
+from .errors import DatabaseError, EntryError, SearchError
 from .loader import from_container
 
 logger = logging.getLogger(__name__)

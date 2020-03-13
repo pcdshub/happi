@@ -1,11 +1,11 @@
 """
 Functions to instantiate the Python representations of happi Containers
 """
+import asyncio
+import importlib
+import logging
 import sys
 import types
-import logging
-import importlib
-import asyncio
 from functools import partial
 from multiprocessing.pool import ThreadPool
 
