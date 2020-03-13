@@ -1,20 +1,11 @@
-############
-# Standard #
-############
 import argparse
 import logging
 import os
 import subprocess
 from distutils.spawn import find_executable
 
-###############
-# Third Party #
-###############
 from jinja2 import Environment
 
-##########
-# Module #
-##########
 import happi
 
 logger = logging.getLogger(__name__)
@@ -27,7 +18,7 @@ Example:
     %(prog)s XRT_M2  --embedded
 
 This launches the embedded EDL screen for the device contained within the Happi
-database with the name 'XRT_M2' 
+database with the name 'XRT_M2'
 """
 
 def launch(path, wait=True, wd=None, macros=None):
