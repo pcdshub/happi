@@ -46,7 +46,11 @@ class JSONBackend(metaclass=Backend):
         """
         All of the devices in the database
         """
-        return list(self.load().values())
+        try:
+            json = self.load()
+        except FileNotFoundError:
+            json = {}
+        return list(json.values())
 
     def initialize(self):
         """
