@@ -15,6 +15,12 @@ from .loader import from_container
 logger = logging.getLogger(__name__)
 
 
+def _looks_like_database(obj):
+    'Does the given object look like a backend we can use?'
+    return all(callable(getattr(obj, attr, None))
+               for attr in ('find', 'all_devices', 'delete', 'save'))
+
+
 class Client:
     """
     The client to control the contents of the Happi Database
@@ -53,6 +59,9 @@ class Client:
         # Use supplied backend
         if database:
             self.backend = database
+            if not _looks_like_database(database):
+                raise ValueError(f'{database} does not look like a database; '
+                                 f'expecting an instantiated happi backend')
         # Load database
         else:
             logger.debug("No database given, using '%s'", backend)
