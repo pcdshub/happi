@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def _looks_like_database(obj):
     'Does the given object look like a backend we can use?'
-    return all(callable(getattr(obj, attr, None))
+    return all(hasattr(obj, attr)
                for attr in ('find', 'all_devices', 'delete', 'save'))
 
 
@@ -489,6 +489,10 @@ class Client:
         # Find a configuration file
         if not cfg:
             cfg = cls.find_config()
+
+        if not os.path.exists(cfg):
+            raise RuntimeError(f'happi configuration file not found: {cfg!r}')
+
         # Parse configuration file
         cfg_parser = configparser.ConfigParser()
         cfg_file = cfg_parser.read(cfg)
