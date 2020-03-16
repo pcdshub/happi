@@ -6,22 +6,20 @@ import simplejson
 
 from happi import Client, Device
 from happi.backends.json_db import JSONBackend
-from happi.backends.mongo_db import MongoBackend
 
 logger = logging.getLogger(__name__)
 
-supported_backends = ['json']
-# Conditional import of mongomock
+# Conditional import of pymongo, mongomock
 try:
+    from happi.backends.mongo_db import MongoBackend
     from mongomock import MongoClient
-    has_mongomock = True
-    supported_backends.append('mongo')
+    supported_backends = ['json', 'mongo']
 except ImportError as exc:
     logger.warning('Error importing mongomock : -> %s', exc)
-    has_mongomock = False
+    supported_backends = ['json']
 
-requires_mongomock = pytest.mark.skipif(not has_mongomock,
-                                        reason='Missing mongomock')
+requires_mongo = pytest.mark.skipif('mongo' not in supported_backends,
+                                    reason='Missing mongo')
 
 # Conditional import of psdm_qs_cli
 try:
@@ -90,32 +88,32 @@ def mockjsonclient(device_info):
 
 
 @pytest.fixture(scope='function')
+@requires_mongo
 def mockmongoclient(device_info):
     with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
-        if has_mongomock:
-            mc = MongoClient()
-            mc['test_db'].create_collection('test_collect')
-            mock_mongo.return_value = mc
-            # Client
-            backend = MongoBackend(db='test_db',
-                                   collection='test_collect')
-            client = Client(database=backend)
-            # Insert a single device
-            client.backend._collection.insert_one(device_info)
-            return client
-        else:
-            return None
+        mc = MongoClient()
+        mc['test_db'].create_collection('test_collect')
+        mock_mongo.return_value = mc
+        # Client
+        backend = MongoBackend(db='test_db',
+                               collection='test_collect')
+        client = Client(database=backend)
+        # Insert a single device
+        client.backend._collection.insert_one(device_info)
+        return client
 
 
-@pytest.fixture(scope='function',
-                params=supported_backends)
-def happi_client(request, mockmongoclient, mockjsonclient):
-    if request.param == 'json':
+if 'mongo' in supported_backends:
+    @pytest.fixture(scope='function', params=supported_backends)
+    def happi_client(request, mockmongoclient, mockjsonclient):
+        if request.param == 'json':
+            return mockjsonclient
+        if request.param == 'mongo':
+            return mockmongoclient
+else:
+    @pytest.fixture(scope='function', params=supported_backends)
+    def happi_client(request, mockjsonclient):
         return mockjsonclient
-    elif request.param == 'mongo':
-        return mockmongoclient
-    else:
-        raise RuntimeError(f"Unknown client type {request.param}")
 
 
 @pytest.fixture(scope='module')
