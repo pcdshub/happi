@@ -8,6 +8,7 @@ import time as ttime
 
 from . import containers
 from .backends import _get_backend, backend
+from .backends.core import _Backend
 from .device import Device, HappiItem
 from .errors import DatabaseError, EntryError, SearchError
 from .loader import from_container
@@ -16,8 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 def _looks_like_database(obj):
-    'Does the given object look like a backend we can use?'
-    return all(hasattr(obj, attr)
+    """
+    Does the given object look like a backend we can use or does it inherit
+    from _Backend
+    """
+    return isinstance(obj, _Backend) or all(hasattr(obj, attr)
                for attr in ('find', 'all_devices', 'delete', 'save'))
 
 
@@ -36,7 +40,7 @@ class Client:
     Attributes
     ----------
     device_types : dict
-        Mapping of HappiItem namees to class types
+        Mapping of HappiItem names to class types
 
     Raises
     -----

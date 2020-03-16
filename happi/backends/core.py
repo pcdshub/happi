@@ -1,24 +1,22 @@
 """
-Abstract backend database options
+Base backend database options
 """
-import abc
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class Backend(abc.ABCMeta):
+class _Backend:
     """
-    Abstract interface for backend database
+    Base class for backend database
     """
-    @abc.abstractproperty
-    def devices(self):
+
+    def all_devices(self):
         """
         List of all device sub-dictionaries
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     def find(self, multiples=False, **kwargs):
         """
         Find an instance or instances that matches the search criteria
@@ -34,7 +32,6 @@ class Backend(abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     def save(self, _id, post, insert=True):
         """
         Save information to the database
@@ -64,7 +61,6 @@ class Backend(abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     def delete(self, _id):
         """
         Delete a device instance from the database
