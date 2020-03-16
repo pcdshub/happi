@@ -52,7 +52,7 @@ class MongoBackend(metaclass=Backend):
         self._db = self._client[db]
         # Load collection
         try:
-            if collection not in self._db.collection_names():
+            if collection not in self._db.list_collection_names():
                 raise DatabaseError('Unable to locate collection {} '
                                     'in database'.format(collection))
             self._collection = self._db[collection]

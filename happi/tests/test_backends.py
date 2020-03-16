@@ -5,7 +5,7 @@ import os.path
 import pytest
 import simplejson
 
-from .conftest import requires_questionnaire, requires_mongomock
+from .conftest import requires_questionnaire, requires_mongo
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi import Client
@@ -30,7 +30,7 @@ def mockjson(device_info, valve_info):
     os.remove('testing.json')
 
 
-@requires_mongomock
+@requires_mongo
 def test_mongo_find(valve_info, device_info, mockmongo):
     mm = mockmongo
     mm._collection.insert_one(valve_info)
@@ -55,7 +55,7 @@ def test_mongo_find(valve_info, device_info, mockmongo):
     assert all([info in result for info in (device_info, valve_info)])
 
 
-@requires_mongomock
+@requires_mongo
 def test_mongo_save(mockmongo, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
@@ -70,7 +70,7 @@ def test_mongo_save(mockmongo, device_info, valve_info):
     assert mockmongo._collection.find_one(valve_info) == valve_info
 
 
-@requires_mongomock
+@requires_mongo
 def test_mongo_delete(mockmongo, device_info):
     mockmongo.delete(device_info[Client._id])
     assert mockmongo._collection.find_one(device_info) is None
