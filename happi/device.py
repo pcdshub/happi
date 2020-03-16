@@ -1,3 +1,4 @@
+import collections
 import copy
 import logging
 import re
@@ -141,18 +142,15 @@ class EntryInfo(object):
         return '\n'.join(doc)
 
     def __get__(self, instance, owner):
-
         if instance is None:
             return self
 
         return instance.__dict__[self.key]
 
     def __set__(self, instance, value):
-
         instance.__dict__[self.key] = self.enforce_value(value)
 
     def __repr__(self):
-
         return 'EntryInfo {} (optional={}, default={})'.format(self.key,
                                                                self.optional,
                                                                self.default)
@@ -162,53 +160,54 @@ class EntryInfo(object):
                          enforce=self.enforce, default=self.default)
 
 
-class InfoMeta(type):
-
-    def __new__(cls, name, bases, clsdict):
-        clsobj = super(InfoMeta, cls).__new__(cls, name, bases, clsdict)
-
+class _HappiItemBase:
+    def __init_subclass__(cls, **kargs):
         # These attributes are used by device so can not be overwritten
-        RESERVED_ATTRS = ['info_names', 'entry_info',
-                          'mandatory_info', '_info_attrs',
-                          'post', 'save', 'creation', '_id',
-                          'last_edit']
+        RESERVED_ATTRS = [
+            '_id', '_info_attrs',
+            'creation', 'entry_info', 'info_names', 'last_edit',
+            'mandatory_info', 'post', 'save',
+            ]
 
         # Create dict to hold information
-        clsobj._info_attrs = OrderedDict()
+        cls._info_attrs = OrderedDict()
 
         # Handle multiple inheritance
-        for base in reversed(bases):
-
+        for base in reversed(cls.mro()[1:]):
             if not hasattr(base, '_info_attrs'):
                 continue
 
             for attr, info in base._info_attrs.items():
-                clsobj._info_attrs[attr] = info
+                cls._info_attrs[attr] = info
 
         # Load from highest classEntry
-        for attr, value in clsdict.items():
-            if isinstance(value, EntryInfo):
-                if attr in RESERVED_ATTRS:
-                    raise TypeError("The attribute name %r is used by the "
-                                    "Device class and can not be used as "
-                                    "a name for EntryInfo. Choose a different "
-                                    "name" % attr)
+        entries = [(attr, entry)
+                   for attr, entry in cls.__dict__.items()
+                   if isinstance(entry, EntryInfo)
+                   ]
 
-                clsobj._info_attrs[attr] = value
+        for attr, entry in entries:
+            if attr in RESERVED_ATTRS:
+                raise TypeError(
+                    f"The attribute name {attr} is used by the Device class "
+                    f"and cannot be used as a name for EntryInfo. Choose a "
+                    f"different name."
+                )
+
+            cls._info_attrs[attr] = entry
 
         # Notify Info of key names
-        for attr, info in clsobj._info_attrs.items():
+        for attr, info in cls._info_attrs.items():
             info.key = attr
+
         # Create docstring information
-        for info in clsobj._info_attrs.values():
-            info.__doc__ = info.make_docstring(clsobj)
+        for info in cls._info_attrs.values():
+            info.__doc__ = info.make_docstring(cls)
         # Store Entry Information
-        clsobj.entry_info = list(clsobj._info_attrs.values())
-
-        return clsobj
+        cls.entry_info = list(cls._info_attrs.values())
 
 
-class HappiItem(metaclass=InfoMeta):
+class HappiItem(_HappiItemBase, collections.abc.Mapping):
     """
     The smallest description of an object that can be entered in ``happi``
 
@@ -337,6 +336,17 @@ class HappiItem(metaclass=InfoMeta):
             post.update(self.extraneous)
 
         return post
+
+    def __getitem__(self, item):
+        return self.post()[item]
+
+    def __iter__(self):
+        yield from self.info_names
+        if self.extraneous:
+            yield from self.extraneous
+
+    def __len__(self):
+        return len(self.post())
 
     @property
     def screen(self):
