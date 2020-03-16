@@ -504,9 +504,18 @@ class Client:
             db = _get_backend(db_str)
         else:
             db = backend
+
         logger.debug("Using Happi backend %r", db)
         # Create our database with provided kwargs
-        return cls(database=db(**dict(db_info.items())))
+        try:
+            return cls(database=db(**dict(db_info.items())))
+        except Exception as ex:
+            raise RuntimeError(
+                f'Unable to instantiate the client. Please verify that '
+                f'your HAPPI_CFG points to the correct file and has '
+                f'the required configuration settings. In {cfg!r}, found '
+                f'settings: {dict(db_info)}.'
+            ) from ex
 
     @staticmethod
     def find_config():
