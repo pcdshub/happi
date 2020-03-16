@@ -60,8 +60,8 @@ class Client:
         if database:
             self.backend = database
             if not _looks_like_database(database):
-                raise ValueError(f'{database} does not look like a database; '
-                                 f'expecting an instantiated happi backend')
+                raise ValueError(f'{database!r} does not look like a database;'
+                                 f' expecting an instantiated happi backend')
         # Load database
         else:
             logger.debug("No database given, using '%s'", backend)
