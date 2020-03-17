@@ -3,7 +3,7 @@ Supported Backends
 
 All backends inherit from the following metaclass
 
-.. autoclass:: happi.backends.core.Backend
+.. autoclass:: happi.backends.core._Backend
    :members:
 
 Backend Choices

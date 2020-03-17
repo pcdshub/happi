@@ -42,7 +42,7 @@ about how to configure your default backend choice
 
     client = Client(path='doc_test.json')
 
-    device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5)
+    device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1")
     
     device.save()
 
@@ -51,7 +51,7 @@ explicitly using :meth:`.Device.save`
 
 .. ipython:: python
 
-    device = Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5)
+    device = Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5, location_group="Loc2", functional_group="Func2")
    
     client.add_device(device)
 
