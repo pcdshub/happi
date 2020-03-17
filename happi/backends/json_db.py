@@ -2,6 +2,7 @@
 Backend implemenation using simplejson
 """
 import contextlib
+import itertools
 import os
 import os.path
 import logging
@@ -131,6 +132,36 @@ class JSONBackend(_Backend):
                     # Release lock in filesystem
                     fcntl.flock(f, fcntl.LOCK_UN)
 
+    def _iterative_compare(self, _id, comparison):
+        """
+        Yields documents which either match ``_id`` or such that the predicate
+        ``comparison(name, doc)`` returns True.
+
+        Parameters
+        ----------
+        _id : str or None
+            ID of device
+        comparison : callable
+            A comparison function with a signature of (device_id, doc)
+        """
+        db = self._load_or_initialize()
+        if not db:
+            return
+
+        try:
+            yield db[_id]
+            # If an _id match exists, exit early
+            return
+        except KeyError:
+            ...
+
+        for name, doc in db.items():
+            try:
+                if comparison(name, doc):
+                    yield doc
+            except Exception as ex:
+                logger.debug('Comparison method failed: %s', ex, exc_info=ex)
+
     def find(self, _id=None, multiples=False, **kwargs):
         """
         Find an instance or instances that matches the search criteria
@@ -144,29 +175,19 @@ class JSONBackend(_Backend):
         kwargs :
             Requested information
         """
-        db = self._load_or_initialize()
-        if not db:
-            return []
-
-        # Search by _id, separated for speed
-        if _id:
-            try:
-                matches = [db[_id]]
-            except KeyError:
-                matches = []
-        else:
+        def comparison(name, doc):
             # Find devices matching kwargs
-            matches = [doc for doc in db.values()
-                       if all([value == doc[key]
-                               for key, value in kwargs.items()])]
+            return all(value == doc[key]
+                       for key, value in kwargs.items())
 
-        if not multiples:
-            try:
-                matches = matches[0]
-            except IndexError:
-                matches = []
+        gen = self._iterative_compare(_id, comparison)
+        if multiples:
+            return list(gen)
 
-        return matches
+        matches = list(itertools.islice(gen, 1))
+        # TODO: API - it does not seem right to return a list or a device
+        #       this non-match should be None
+        return matches[0] if matches else []
 
     def save(self, _id, post, insert=True):
         """
