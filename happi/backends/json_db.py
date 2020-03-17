@@ -1,6 +1,7 @@
 """
 Backend implemenation using simplejson
 """
+import contextlib
 import os
 import os.path
 import logging
@@ -18,6 +19,16 @@ try:
 except ImportError:
     logger.warning("Unable to import 'fcntl'. Will be unable to lock files")
     fcntl = None
+
+
+@contextlib.contextmanager
+def _load_and_store_context(backend):
+    '''
+    A context manager to load, and optionally store the JSON database at the end
+    '''
+    db = backend._load_or_initialize()
+    yield db
+    backend.store(db)
 
 
 class JSONBackend(_Backend):
@@ -41,15 +52,24 @@ class JSONBackend(_Backend):
         if initialize:
             self.initialize()
 
+    def _load_or_initialize(self):
+        '''
+        Load an existing database or initialize a new one.
+        '''
+        try:
+            return self.load()
+        except FileNotFoundError as ex:
+            logger.debug('Initializing new database')
+
+        self.initialize()
+        return self.load()
+
     @property
     def all_devices(self):
         """
         All of the devices in the database
         """
-        try:
-            json = self.load()
-        except FileNotFoundError:
-            json = {}
+        json = self._load_or_initialize()
         return list(json.values())
 
     def initialize(self):
@@ -72,8 +92,7 @@ class JSONBackend(_Backend):
             raise PermissionError("File {} already exists. Can not initialize "
                                   "a new database.".format(self.path))
         # Dump an empty dictionary
-        with open(self.path, "w+") as f:
-            json.dump({}, f)
+        self.store({})
 
     def load(self):
         """
@@ -125,8 +144,9 @@ class JSONBackend(_Backend):
         kwargs :
             Requested information
         """
-        # Load database
-        db = self.load()
+        db = self._load_or_initialize()
+        if not db:
+            return []
 
         # Search by _id, separated for speed
         if _id:
@@ -134,9 +154,8 @@ class JSONBackend(_Backend):
                 matches = [db[_id]]
             except KeyError:
                 matches = []
-
-        # Find devices matching kwargs
         else:
+            # Find devices matching kwargs
             matches = [doc for doc in db.values()
                        if all([value == doc[key]
                                for key, value in kwargs.items()])]
@@ -176,32 +195,22 @@ class JSONBackend(_Backend):
         PermissionError:
             If the write operation fails due to issues with permissions
         """
-
-        try:
-            # Load database
-            db = self.load()
-        except FileNotFoundError:
-            logger.debug('Initializing new database for device %s', _id)
-            self.initialize()
-            db = self.load()
-
-        # New device
-        if insert:
-            if _id in db.keys():
-                raise DuplicateError("Device {} already exists".format(_id))
-            # Add _id keyword
-            post.update({'_id': _id})
-            # Add to database
-            db[_id] = post
-        # Updating device
-        else:
-            # Edit information
-            try:
-                db[_id].update(post)
-            except KeyError:
-                raise SearchError("No device found {}".format(_id))
-        # Save changes
-        self.store(db)
+        with _load_and_store_context(self) as db:
+            # New device
+            if insert:
+                if _id in db.keys():
+                    raise DuplicateError("Device {} already exists".format(_id))
+                # Add _id keyword
+                post.update({'_id': _id})
+                # Add to database
+                db[_id] = post
+            # Updating device
+            else:
+                # Edit information
+                try:
+                    db[_id].update(post)
+                except KeyError:
+                    raise SearchError("No device found {}".format(_id))
 
     def delete(self, _id):
         """
@@ -217,12 +226,8 @@ class JSONBackend(_Backend):
         PermissionError:
             If the write operation fails due to issues with permissions
         """
-        # Load database
-        db = self.load()
-        # Remove device
-        try:
-            db.pop(_id)
-        except KeyError:
-            logger.warning("Device %s not found in database", _id)
-        # Store database
-        self.store(db)
+        with _load_and_store_context(self) as db:
+            try:
+                db.pop(_id)
+            except KeyError:
+                logger.warning("Device %s not found in database", _id)
