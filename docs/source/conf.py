@@ -43,6 +43,10 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosectionlabel'
              ]
 
+# In case we don't have the backend libraries installed
+# we can still build the docs
+autodoc_mock_imports = ['psdm_qs_cli', 'pymongo']
+
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
