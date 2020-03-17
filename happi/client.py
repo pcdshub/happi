@@ -7,7 +7,7 @@ import sys
 import time as ttime
 
 from . import containers
-from .backends import _get_backend, DEFAULT_BACKEND
+from .backends import BACKENDS, DEFAULT_BACKEND
 from .backends.core import _Backend
 from .device import Device, HappiItem
 from .errors import DatabaseError, EntryError, SearchError
@@ -510,7 +510,12 @@ class Client:
         # If a backend is specified use it, otherwise default
         if 'backend' in db_kwargs:
             db_str = db_kwargs.pop('backend')
-            backend = _get_backend(db_str)
+            try:
+                backend = BACKENDS[db_str]
+            except KeyError:
+                raise RuntimeError(
+                    f'Happi backend {db_str!r} unavailable'
+                ) from None
         else:
             backend = DEFAULT_BACKEND
 
