@@ -14,9 +14,13 @@ happi.containers.MovableStand
    .. autosummary::
    
       ~MovableStand.__init__
+      ~MovableStand.get
+      ~MovableStand.items
+      ~MovableStand.keys
       ~MovableStand.post
       ~MovableStand.save
       ~MovableStand.show_info
+      ~MovableStand.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.MovableStand
       ~MovableStand.embedded_screen
       ~MovableStand.engineering_screen
       ~MovableStand.entry_info
+      ~MovableStand.functional_group
       ~MovableStand.info_names
       ~MovableStand.kwargs
       ~MovableStand.lightpath
+      ~MovableStand.location_group
       ~MovableStand.macros
       ~MovableStand.mandatory_info
       ~MovableStand.name

@@ -14,9 +14,13 @@ happi.containers.PulsePicker
    .. autosummary::
    
       ~PulsePicker.__init__
+      ~PulsePicker.get
+      ~PulsePicker.items
+      ~PulsePicker.keys
       ~PulsePicker.post
       ~PulsePicker.save
       ~PulsePicker.show_info
+      ~PulsePicker.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.PulsePicker
       ~PulsePicker.embedded_screen
       ~PulsePicker.engineering_screen
       ~PulsePicker.entry_info
+      ~PulsePicker.functional_group
       ~PulsePicker.info_names
       ~PulsePicker.kwargs
       ~PulsePicker.lightpath
+      ~PulsePicker.location_group
       ~PulsePicker.macros
       ~PulsePicker.mandatory_info
       ~PulsePicker.name

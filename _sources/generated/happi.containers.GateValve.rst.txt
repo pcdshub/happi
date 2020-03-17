@@ -14,9 +14,13 @@ happi.containers.GateValve
    .. autosummary::
    
       ~GateValve.__init__
+      ~GateValve.get
+      ~GateValve.items
+      ~GateValve.keys
       ~GateValve.post
       ~GateValve.save
       ~GateValve.show_info
+      ~GateValve.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.GateValve
       ~GateValve.embedded_screen
       ~GateValve.engineering_screen
       ~GateValve.entry_info
+      ~GateValve.functional_group
       ~GateValve.info_names
       ~GateValve.kwargs
       ~GateValve.lightpath
+      ~GateValve.location_group
       ~GateValve.macros
       ~GateValve.mandatory_info
       ~GateValve.name

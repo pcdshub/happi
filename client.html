@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Client &mdash; Happi Deck 1.2.1+76.g0951640 documentation</title>
+  <title>Using the Client &mdash; Happi Deck 1.4.0+16.gf54d9f9 documentation</title>
   
 
   
@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+76.g0951640
+                1.4.0+16.gf54d9f9
               </div>
             
           
@@ -201,14 +201,14 @@ about how to configure your default backend choice</p>
 
 <span class="gp">In [4]: </span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;doc_test.json&#39;</span><span class="p">)</span>
 
-<span class="gp">In [5]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;XRT&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">345.5</span><span class="p">)</span>
+<span class="gp">In [5]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;XRT&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">345.5</span><span class="p">,</span> <span class="n">location_group</span><span class="o">=</span><span class="s2">&quot;Loc1&quot;</span><span class="p">,</span> <span class="n">functional_group</span><span class="o">=</span><span class="s2">&quot;Func1&quot;</span><span class="p">)</span>
 
 <span class="gp">In [6]: </span><span class="n">device</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Alternatively, you can create the device separately and add the device
 explicitly using <code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.save()</span></code></p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE2&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">355.5</span><span class="p">)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE2&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">355.5</span><span class="p">,</span> <span class="n">location_group</span><span class="o">=</span><span class="s2">&quot;Loc2&quot;</span><span class="p">,</span> <span class="n">functional_group</span><span class="o">=</span><span class="s2">&quot;Func2&quot;</span><span class="p">)</span>
 
 <span class="gp">In [8]: </span><span class="n">client</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
@@ -238,17 +238,19 @@ corresponding objects or as a dictionary</p>
 <span class="gh">Out[10]: </span><span class="go"></span>
 <span class="go">[{&#39;_id&#39;: &#39;my_device&#39;,</span>
 <span class="go">  &#39;active&#39;: True,</span>
-<span class="go">  &#39;args&#39;: [&#39;name&#39;],</span>
+<span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;XRT&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Tue Mar 17 22:30:26 2020&#39;,</span>
 <span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
 <span class="go">  &#39;embedded_screen&#39;: None,</span>
 <span class="go">  &#39;engineering_screen&#39;: None,</span>
-<span class="go">  &#39;kwargs&#39;: {},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
+<span class="go">  &#39;functional_group&#39;: &#39;Func1&#39;,</span>
+<span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Tue Mar 17 22:30:26 2020&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
+<span class="go">  &#39;location_group&#39;: &#39;Loc1&#39;,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device&#39;,</span>
 <span class="go">  &#39;parent&#39;: None,</span>
@@ -259,17 +261,19 @@ corresponding objects or as a dictionary</p>
 <span class="go">  &#39;z&#39;: 345.5},</span>
 <span class="go"> {&#39;_id&#39;: &#39;my_device2&#39;,</span>
 <span class="go">  &#39;active&#39;: True,</span>
-<span class="go">  &#39;args&#39;: [&#39;name&#39;],</span>
+<span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
 <span class="go">  &#39;beamline&#39;: &#39;MFX&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
+<span class="go">  &#39;creation&#39;: &#39;Tue Mar 17 22:30:26 2020&#39;,</span>
 <span class="go">  &#39;detailed_screen&#39;: None,</span>
 <span class="go">  &#39;device_class&#39;: None,</span>
 <span class="go">  &#39;documentation&#39;: None,</span>
 <span class="go">  &#39;embedded_screen&#39;: None,</span>
 <span class="go">  &#39;engineering_screen&#39;: None,</span>
-<span class="go">  &#39;kwargs&#39;: {},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Tue Dec 10 18:04:09 2019&#39;,</span>
+<span class="go">  &#39;functional_group&#39;: &#39;Func2&#39;,</span>
+<span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
+<span class="go">  &#39;last_edit&#39;: &#39;Tue Mar 17 22:30:26 2020&#39;,</span>
 <span class="go">  &#39;lightpath&#39;: False,</span>
+<span class="go">  &#39;location_group&#39;: &#39;Loc2&#39;,</span>
 <span class="go">  &#39;macros&#39;: None,</span>
 <span class="go">  &#39;name&#39;: &#39;my_device2&#39;,</span>
 <span class="go">  &#39;parent&#39;: None,</span>

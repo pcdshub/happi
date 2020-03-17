@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Device Containers &mdash; Happi Deck 1.2.1+76.g0951640 documentation</title>
+  <title>Device Containers &mdash; Happi Deck 1.4.0+16.gf54d9f9 documentation</title>
   
 
   
@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+76.g0951640
+                1.4.0+16.gf54d9f9
               </div>
             
           
@@ -233,6 +233,12 @@ device as well as various</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="happi.Device.functional_group">
+<code class="sig-name descname">functional_group</code><a class="headerlink" href="#happi.Device.functional_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grouping parameter for device function</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="happi.Device.kwargs">
 <code class="sig-name descname">kwargs</code><a class="headerlink" href="#happi.Device.kwargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Keyword arguments to pass to device_class</p>
@@ -242,6 +248,12 @@ device as well as various</p>
 <dt id="happi.Device.lightpath">
 <code class="sig-name descname">lightpath</code><a class="headerlink" href="#happi.Device.lightpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the device should be included in the LCLS Lightpath</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="happi.Device.location_group">
+<code class="sig-name descname">location_group</code><a class="headerlink" href="#happi.Device.location_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grouping parameter for device location</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -259,7 +271,7 @@ device as well as various</p>
 <dl class="attribute">
 <dt id="happi.Device.stand">
 <code class="sig-name descname">stand</code><a class="headerlink" href="#happi.Device.stand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Acronym for stand, must be three alphanumeric characters</p>
+<dd><p>Acronym for stand, must be three alphanumeric characters like an LCLSI stand (e.g. DG3) or follow the LCLSII stand naming convention (e.g. L0S04).</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -370,7 +382,7 @@ correspond to a specific EntryInfo</p>
 <dl class="attribute">
 <dt id="happi.HappiItem.name">
 <code class="sig-name descname">name</code><a class="headerlink" href="#happi.HappiItem.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shorthand name for the device</p>
+<dd><p>Shorthand python-valid name for the device</p>
 </dd></dl>
 
 <dl class="attribute">

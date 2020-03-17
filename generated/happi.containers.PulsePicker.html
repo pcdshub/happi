@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.PulsePicker &mdash; Happi Deck 1.2.1+76.g0951640 documentation</title>
+  <title>happi.containers.PulsePicker &mdash; Happi Deck 1.4.0+16.gf54d9f9 documentation</title>
   
 
   
@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+76.g0951640
+                1.4.0+16.gf54d9f9
               </div>
             
           
@@ -233,14 +233,26 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.PulsePicker.__init__" title="happi.containers.PulsePicker.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">post</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(k[,d])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">post</span></code>()</p></td>
 <td><p>Create a document to be loaded into the happi database</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>()</p></td>
 <td><p>Overwritten when the device is loaded from the client</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_info</span></code>([handle])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_info</span></code>([handle])</p></td>
 <td><p>Show the device information in a PrettyTable</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -278,14 +290,20 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">entry_info</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">functional_group</span></code></p></td>
+<td><p>Grouping parameter for device function</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></p></td>
 <td><p>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
 <td><p>Keyword arguments to pass to device_class</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lightpath</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lightpath</span></code></p></td>
 <td><p>If the device should be included in the LCLS Lightpath</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">location_group</span></code></p></td>
+<td><p>Grouping parameter for device location</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">macros</span></code></p></td>
 <td><p>The EDM macro string asscociated with the with the device.</p></td>
@@ -294,7 +312,7 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <td><p>Mandatory information for the device to be initialized</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
-<td><p>Shorthand name for the device</p></td>
+<td><p>Shorthand python-valid name for the device</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></p></td>
 <td><p>If the device is a component of another, enter the name</p></td>
@@ -306,7 +324,7 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stand</span></code></p></td>
-<td><p>Acronym for stand, must be three alphanumeric characters</p></td>
+<td><p>Acronym for stand, must be three alphanumeric characters like an LCLSI stand (e.g.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">system</span></code></p></td>
 <td><p>The system the device is involved with, i.e Vacuum, Timing e.t.c</p></td>

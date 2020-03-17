@@ -14,9 +14,13 @@ happi.containers.OffsetMirror
    .. autosummary::
    
       ~OffsetMirror.__init__
+      ~OffsetMirror.get
+      ~OffsetMirror.items
+      ~OffsetMirror.keys
       ~OffsetMirror.post
       ~OffsetMirror.save
       ~OffsetMirror.show_info
+      ~OffsetMirror.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.OffsetMirror
       ~OffsetMirror.embedded_screen
       ~OffsetMirror.engineering_screen
       ~OffsetMirror.entry_info
+      ~OffsetMirror.functional_group
       ~OffsetMirror.info_names
       ~OffsetMirror.kwargs
       ~OffsetMirror.lightpath
+      ~OffsetMirror.location_group
       ~OffsetMirror.macros
       ~OffsetMirror.mandatory_info
       ~OffsetMirror.name

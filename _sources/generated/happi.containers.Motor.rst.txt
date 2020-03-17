@@ -14,9 +14,13 @@ happi.containers.Motor
    .. autosummary::
    
       ~Motor.__init__
+      ~Motor.get
+      ~Motor.items
+      ~Motor.keys
       ~Motor.post
       ~Motor.save
       ~Motor.show_info
+      ~Motor.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.Motor
       ~Motor.embedded_screen
       ~Motor.engineering_screen
       ~Motor.entry_info
+      ~Motor.functional_group
       ~Motor.info_names
       ~Motor.kwargs
       ~Motor.lightpath
+      ~Motor.location_group
       ~Motor.macros
       ~Motor.mandatory_info
       ~Motor.name

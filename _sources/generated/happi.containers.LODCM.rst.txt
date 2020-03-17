@@ -14,9 +14,13 @@ happi.containers.LODCM
    .. autosummary::
    
       ~LODCM.__init__
+      ~LODCM.get
+      ~LODCM.items
+      ~LODCM.keys
       ~LODCM.post
       ~LODCM.save
       ~LODCM.show_info
+      ~LODCM.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.LODCM
       ~LODCM.embedded_screen
       ~LODCM.engineering_screen
       ~LODCM.entry_info
+      ~LODCM.functional_group
       ~LODCM.info_names
       ~LODCM.kwargs
       ~LODCM.lightpath
+      ~LODCM.location_group
       ~LODCM.macros
       ~LODCM.mandatory_info
       ~LODCM.mono_line

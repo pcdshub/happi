@@ -14,9 +14,13 @@ happi.containers.IPM
    .. autosummary::
    
       ~IPM.__init__
+      ~IPM.get
+      ~IPM.items
+      ~IPM.keys
       ~IPM.post
       ~IPM.save
       ~IPM.show_info
+      ~IPM.values
    
    
 
@@ -36,9 +40,11 @@ happi.containers.IPM
       ~IPM.embedded_screen
       ~IPM.engineering_screen
       ~IPM.entry_info
+      ~IPM.functional_group
       ~IPM.info_names
       ~IPM.kwargs
       ~IPM.lightpath
+      ~IPM.location_group
       ~IPM.macros
       ~IPM.mandatory_info
       ~IPM.name

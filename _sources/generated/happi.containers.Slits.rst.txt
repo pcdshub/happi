@@ -14,9 +14,13 @@ happi.containers.Slits
    .. autosummary::
    
       ~Slits.__init__
+      ~Slits.get
+      ~Slits.items
+      ~Slits.keys
       ~Slits.post
       ~Slits.save
       ~Slits.show_info
+      ~Slits.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.Slits
       ~Slits.embedded_screen
       ~Slits.engineering_screen
       ~Slits.entry_info
+      ~Slits.functional_group
       ~Slits.info_names
       ~Slits.kwargs
       ~Slits.lightpath
+      ~Slits.location_group
       ~Slits.macros
       ~Slits.mandatory_info
       ~Slits.name

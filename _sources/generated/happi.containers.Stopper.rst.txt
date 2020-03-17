@@ -14,9 +14,13 @@ happi.containers.Stopper
    .. autosummary::
    
       ~Stopper.__init__
+      ~Stopper.get
+      ~Stopper.items
+      ~Stopper.keys
       ~Stopper.post
       ~Stopper.save
       ~Stopper.show_info
+      ~Stopper.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.Stopper
       ~Stopper.embedded_screen
       ~Stopper.engineering_screen
       ~Stopper.entry_info
+      ~Stopper.functional_group
       ~Stopper.info_names
       ~Stopper.kwargs
       ~Stopper.lightpath
+      ~Stopper.location_group
       ~Stopper.macros
       ~Stopper.mandatory_info
       ~Stopper.name

@@ -14,9 +14,13 @@ happi.containers.Attenuator
    .. autosummary::
    
       ~Attenuator.__init__
+      ~Attenuator.get
+      ~Attenuator.items
+      ~Attenuator.keys
       ~Attenuator.post
       ~Attenuator.save
       ~Attenuator.show_info
+      ~Attenuator.values
    
    
 
@@ -35,9 +39,11 @@ happi.containers.Attenuator
       ~Attenuator.embedded_screen
       ~Attenuator.engineering_screen
       ~Attenuator.entry_info
+      ~Attenuator.functional_group
       ~Attenuator.info_names
       ~Attenuator.kwargs
       ~Attenuator.lightpath
+      ~Attenuator.location_group
       ~Attenuator.macros
       ~Attenuator.mandatory_info
       ~Attenuator.n_filters

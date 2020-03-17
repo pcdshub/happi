@@ -82,7 +82,7 @@ substitute our EntryInfo in place of these brackets.
         evr = happi.EntryInfo('EVR Trigger for Camera')
 
     #Instantiate
-    cam = Camera(name='Opal', prefix='BASE:CAM:PV',
+    cam = Camera(name='opal', prefix='BASE:CAM:PV',
                  beamline='TST', evr='EVR:TRIG:PV')
 
     #Link our EDL screens 

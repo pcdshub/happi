@@ -14,9 +14,13 @@ happi.containers.PIM
    .. autosummary::
    
       ~PIM.__init__
+      ~PIM.get
+      ~PIM.items
+      ~PIM.keys
       ~PIM.post
       ~PIM.save
       ~PIM.show_info
+      ~PIM.values
    
    
 
@@ -36,9 +40,11 @@ happi.containers.PIM
       ~PIM.embedded_screen
       ~PIM.engineering_screen
       ~PIM.entry_info
+      ~PIM.functional_group
       ~PIM.info_names
       ~PIM.kwargs
       ~PIM.lightpath
+      ~PIM.location_group
       ~PIM.macros
       ~PIM.mandatory_info
       ~PIM.name

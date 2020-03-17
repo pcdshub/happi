@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Supported Backends &mdash; Happi Deck 1.2.1+76.g0951640 documentation</title>
+  <title>Supported Backends &mdash; Happi Deck 1.4.0+16.gf54d9f9 documentation</title>
   
 
   
@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.2.1+76.g0951640
+                1.4.0+16.gf54d9f9
               </div>
             
           
@@ -175,12 +175,18 @@
 <h1>Supported Backends<a class="headerlink" href="#supported-backends" title="Permalink to this headline">¶</a></h1>
 <p>All backends inherit from the following metaclass</p>
 <dl class="class">
-<dt id="happi.backends.core.Backend">
-<em class="property">class </em><code class="sig-prename descclassname">happi.backends.core.</code><code class="sig-name descname">Backend</code><a class="headerlink" href="#happi.backends.core.Backend" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract interface for backend database</p>
+<dt id="happi.backends.core._Backend">
+<em class="property">class </em><code class="sig-prename descclassname">happi.backends.core.</code><code class="sig-name descname">_Backend</code><a class="headerlink" href="#happi.backends.core._Backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for backend database</p>
 <dl class="method">
-<dt id="happi.backends.core.Backend.delete">
-<em class="property">abstract </em><code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">_id</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.delete" title="Permalink to this definition">¶</a></dt>
+<dt id="happi.backends.core._Backend.all_devices">
+<em class="property">property </em><code class="sig-name descname">all_devices</code><a class="headerlink" href="#happi.backends.core._Backend.all_devices" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all device sub-dictionaries</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="happi.backends.core._Backend.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">_id</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a device instance from the database</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -193,14 +199,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="happi.backends.core.Backend.devices">
-<em class="property">abstract property </em><code class="sig-name descname">devices</code><a class="headerlink" href="#happi.backends.core.Backend.devices" title="Permalink to this definition">¶</a></dt>
-<dd><p>List of all device sub-dictionaries</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="happi.backends.core.Backend.find">
-<em class="property">abstract </em><code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param">multiples=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.find" title="Permalink to this definition">¶</a></dt>
+<dt id="happi.backends.core._Backend.find">
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param">multiples=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find an instance or instances that matches the search criteria</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -214,8 +214,8 @@ information</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="happi.backends.core.Backend.save">
-<em class="property">abstract </em><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">_id</em>, <em class="sig-param">post</em>, <em class="sig-param">insert=True</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core.Backend.save" title="Permalink to this definition">¶</a></dt>
+<dt id="happi.backends.core._Backend.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">_id</em>, <em class="sig-param">post</em>, <em class="sig-param">insert=True</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save information to the database</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
