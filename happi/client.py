@@ -7,7 +7,7 @@ import sys
 import time as ttime
 
 from . import containers
-from .backends import _get_backend, backend
+from .backends import _get_backend, DEFAULT_BACKEND
 from .backends.core import _Backend
 from .device import Device, HappiItem
 from .errors import DatabaseError, EntryError, SearchError
@@ -72,12 +72,13 @@ class Client:
                                  f' expecting an instantiated happi backend')
         # Load database
         else:
-            logger.debug("No database given, using '%s'", backend)
+            logger.debug("No database given, using '%s'", DEFAULT_BACKEND)
             try:
-                self.backend = backend(**kwargs)
+                self.backend = DEFAULT_BACKEND(**kwargs)
             except Exception as exc:
-                raise DatabaseError("Failed to instantiate "
-                                    "a {} backend".format(backend)) from exc
+                raise DatabaseError(
+                    f"Failed to instantiate a {DEFAULT_BACKEND} backend"
+                ) from exc
 
     def find_document(self, **kwargs):
         """
@@ -505,24 +506,25 @@ class Client:
         cfg_parser = configparser.ConfigParser()
         cfg_file = cfg_parser.read(cfg)
         logger.debug("Loading configuration file at %r", cfg_file)
-        db_info = cfg_parser['DEFAULT']
+        db_kwargs = cfg_parser['DEFAULT']
         # If a backend is specified use it, otherwise default
-        if 'backend' in db_info:
-            db_str = db_info.pop('backend')
-            db = _get_backend(db_str)
+        if 'backend' in db_kwargs:
+            db_str = db_kwargs.pop('backend')
+            backend = _get_backend(db_str)
         else:
-            db = backend
+            backend = DEFAULT_BACKEND
 
-        logger.debug("Using Happi backend %r", db)
+        logger.debug("Using Happi backend %r with kwargs", backend, db_kwargs)
         # Create our database with provided kwargs
         try:
-            return cls(database=db(**dict(db_info.items())))
+            database = backend(**db_kwargs)
+            return cls(database=database)
         except Exception as ex:
             raise RuntimeError(
                 f'Unable to instantiate the client. Please verify that '
                 f'your HAPPI_CFG points to the correct file and has '
                 f'the required configuration settings. In {cfg!r}, found '
-                f'settings: {dict(db_info)}.'
+                f'settings: {dict(db_kwargs)}.'
             ) from ex
 
     @staticmethod
