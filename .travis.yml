@@ -7,48 +7,43 @@ env:
     - secure: "fm24dkhTyNsLIsu0mFnAHLQI8pPsdWTjW8xxRLmBRylpWxkuaCnd8LItSHt6v0MMNvM+PegZShYwypkeJDi24GTKYvEbKGnlHCw7YesMabJFGg3nqz0SpwTXoLdbm0lP72jv8znDhz1hOUvs8uKkkzg/fmx50INceAPQt9bn0Zwmvthh+pb7mepMTeJFHfo5392hB8h4xFi1aDsBZyDu2c3zRrUUDjuxIezpVIdzE0jOK0lhToIT9ziCAjPvBTONF3tNi5yvEepCTsHwMOhVK4mwh7RN9yEUcADaXUNg23NfQsM1YuaS/rRpw9wL93120Y0qK7r8iLNo/JyKCx8EgHOJ1qlYwavH9A1oVNHVNTnV7eVflGFZQXGZM4yhlZwBfAXYs3CRY8f1OniQfEzWJ0E3LDxZnNXDIBZyjUM3ecjc5ZgqpBnrw+NqAsBPWArGvY0/Ap9YvJOo1XWB/DvabNbJu74oBJNOJwU7Lk0kU0dMP+p6MMZa+ICwRCwmO9qn9qG03l7CexK/7JyUSFUODS1Lj3u+pm6LGb/1HOGdX+CzNOd4nm7zXlCJ3VINawfOxYcarGpen52vOqLeglRJPXjMd0MhMfzy6Kj4ahQNHwBscscu3JpPHCQzLxBN5zMftfJvmBrWJVqI/B7lvmRM9K4h1q3NTjP0i64lo76SHwQ="
 matrix:
   include:
+      - name: flake8 linting
+        python: 3.6
+        env: LINT_PYTHON=happi
       - python: 3.6
         env:
-           - PCDS_CHANNEL=pcds-dev
-           - USE_MONGO=1
-           - CONDA_UPLOAD=1
-      - python: 3.6
-        env:
-           - PCDS_CHANNEL=pcds-tag
-           - USE_MONGO=0
            - CONDA_UPLOAD=0
+           - PCDS_CHANNEL=pcds-dev
       - python: 3.6
         env:
            - BUILD_DOCS=1
            - PCDS_CHANNEL=pcds-tag
-           - USE_MONGO=1
-           - CONDA_UPLOAD=1
-      # Modification needed (https://github.com/travis-ci/travis-ci/issues/9815)
       - python: 3.7
-        dist: xenial
-        sudo: true
         env:
            - PCDS_CHANNEL=pcds-tag
-           - USE_MONGO=1
-           - CONDA_UPLOAD=1
       - python: 3.7
-        dist: xenial
-        sudo: true
         env:
            - PCDS_CHANNEL=pcds-dev
-           - USE_MONGO=1
-           - CONDA_UPLOAD=1
+      - python: 3.8
+  allow_failures:
+    - python: 3.8
 
 install:
-  - sudo apt-get update
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - git clone --depth 1 git://github.com/pcdshub/pcds-ci-helpers.git
+  - source pcds-ci-helpers/travis/init.sh
+
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda install conda-build anaconda-client
   - conda update -q conda conda-build
-  - conda config --append channels $PCDS_CHANNEL
+  - conda config --remove channels defaults
+  - |
+    if [[ ! -z "${PCDS_CHANNEL}" ]]; then
+      conda config --append channels $PCDS_CHANNEL
+    fi
   - conda config --append channels conda-forge
   # Useful for debugging any issues with conda
   - conda info -a
@@ -57,21 +52,14 @@ install:
   - conda config --add channels "file://`pwd`/bld-dir"
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION happi --file dev-requirements.txt
   - source activate test-environment
-  # TODO: mongomock is not currently available via conda. Ultimately we should
-  # probably build this ourselves, but until that day we resort to `pip`
-  - |
-    if [[ "$USE_MONGO" == "1" ]]; then
-      pip install mongomock
-    fi
 
 script:
   - coverage run run_tests.py
   - coverage report -m
-  - flake8 happi
   - set -e
   # Build docs.
   - |
-    if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY_PCDSHUB_HAPPI" && $BUILD_DOCS ]]; then
+    if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY_PCDSHUB_HAPPI" && "${BUILD_DOCS:=0}" == '1' ]]; then
       pushd docs
       make html
       popd
@@ -82,7 +70,7 @@ script:
 after_success:
   - codecov
   - |
-    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && $CONDA_UPLOAD == '1' ]]; then
+    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && "${CONDA_UPLOAD:=1}" == '1' ]]; then
       if [[ $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $PCDS_CHANNEL == 'pcds-tag' ]]; then
         export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
         anaconda upload bld-dir/linux-64/*.tar.bz2

@@ -8,4 +8,3 @@ mongomock
 sphinx
 sphinx_rtd_theme
 psdm_qs_cli
-flake8
