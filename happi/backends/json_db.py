@@ -7,7 +7,7 @@ import logging
 
 import simplejson as json
 
-from .core import Backend
+from .core import _Backend
 from ..errors import SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ except ImportError:
     fcntl = None
 
 
-class JSONBackend(metaclass=Backend):
+class JSONBackend(_Backend):
     """
     JSON database
 

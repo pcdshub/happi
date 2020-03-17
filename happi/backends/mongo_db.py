@@ -6,13 +6,13 @@ import logging
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
 
-from .core import Backend
+from .core import _Backend
 from ..errors import DatabaseError, SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
 
-class MongoBackend(metaclass=Backend):
+class MongoBackend(_Backend):
     """
     Abstraction for MongoDB backend
 
