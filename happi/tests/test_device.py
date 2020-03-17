@@ -1,5 +1,6 @@
-import re
+import copy
 import io
+import re
 
 import pytest
 
@@ -106,3 +107,12 @@ def test_device_equivalance():
 def test_dictify():
     a = Device(name='abcd', prefix='b')
     assert dict(a) == a.post()
+
+
+def test_device_copy():
+    a = Device(name='abcd', prefix='b')
+    b = copy.copy(a)
+    assert dict(a) == dict(b)
+
+    c = copy.deepcopy(a)
+    assert dict(a) == dict(c)

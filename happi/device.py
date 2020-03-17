@@ -273,12 +273,10 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
             else:
                 setattr(self, info.key, info.default)
         # Handle additional information
+        self.extraneous = kwargs
         if kwargs:
             logger.debug('Additional information for %s was defined %s',
-                         self.name, ', '.join(kwargs.keys()))
-            self.extraneous = kwargs
-        else:
-            self.extraneous = {}
+                         self.name, ', '.join(self.extraneous))
 
     @property
     def info_names(self):
@@ -347,6 +345,12 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
 
     def __len__(self):
         return len(self.post())
+
+    def __copy__(self):
+        return type(self)(**dict(self))
+
+    def __deepcopy__(self, memo):
+        return self.__copy__()
 
     @property
     def screen(self):
