@@ -1,5 +1,10 @@
 __all__ = ['backend', 'BACKENDS', 'DEFAULT_BACKEND']
 import os
+import logging
+
+
+logger = logging.getLogger(__name__)
+
 
 def _get_backend(backend):
     if backend == 'mongodb':
