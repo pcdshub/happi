@@ -21,8 +21,12 @@ def _looks_like_database(obj):
     Does the given object look like a backend we can use or does it inherit
     from _Backend
     """
-    return isinstance(obj, _Backend) or all(hasattr(obj, attr)
-               for attr in ('find', 'all_devices', 'delete', 'save'))
+    return (isinstance(obj, _Backend) or
+            all(
+                hasattr(obj, attr) for attr in (
+                    'find', 'all_devices', 'delete', 'save')
+                )
+            )
 
 
 class Client:

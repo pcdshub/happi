@@ -11,6 +11,7 @@ class _Backend:
     Base class for backend database
     """
 
+    @property
     def all_devices(self):
         """
         List of all device sub-dictionaries
