@@ -8,6 +8,9 @@ def _get_backend(backend):
     if backend == 'json':
         from .json_db import JSONBackend
         return JSONBackend
+    if backend == 'qs':
+        from .qs_db import QSBackend
+        return QSBackend
     raise ValueError(f'Unknown backend {backend!r}')
 
 
@@ -23,6 +26,11 @@ def _get_backends():
         backends['mongodb'] = _get_backend('mongodb')
     except ImportError as ex:
         logger.warning('MongoDB backend unavailable: %s', ex)
+
+    try:
+        backends['qs'] = _get_backend('qs')
+    except ImportError as ex:
+        logger.warning('Questionnaire backend unavailable: %s', ex)
 
     return backends
 
