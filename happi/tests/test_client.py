@@ -189,6 +189,13 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     assert len(res) == 2
 
 
+def test_get_by_id(happi_client, device, valve, device_info, valve_info):
+    happi_client.add_device(valve)
+    name = valve_info['name']
+    for k, v in valve_info.items():
+        assert happi_client[name][k] == valve_info[k]
+
+
 def test_remove_device(happi_client, device, valve, device_info):
     happi_client.remove_device(device)
     assert list(happi_client.backend.find(device_info)) == []

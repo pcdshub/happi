@@ -292,6 +292,9 @@ class Client:
         """
         return self.search()
 
+    def __getitem__(self, key):
+        return self.backend.get_by_id(key)
+
     def search(self, start=0., end=None, as_dict=False, **kwargs):
         """
         Search the database for a device or devices

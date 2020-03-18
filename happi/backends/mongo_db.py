@@ -86,6 +86,18 @@ class MongoBackend(_Backend):
         """
         yield from self._collection.find(device_info)
 
+    def get_by_id(self, _id):
+        """
+        Get a device by ID if it exists, or None
+
+        Parameters
+        ----------
+        _id : str
+            The device ID
+        """
+        for item in self._collection.find({'_id': _id}):
+            return item
+
     def find_regex(self, to_match, *, flags=re.IGNORECASE):
         """
         Yield all instances that match the given search criteria
