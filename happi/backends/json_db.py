@@ -177,8 +177,8 @@ class JSONBackend(_Backend):
             Find a single result or all results matching the provided
             information
 
-        kwargs :
-            Requested information
+        **kwargs
+            Requested information, all of which must match
         """
         def comparison(name, doc):
             # Find devices matching kwargs
@@ -209,7 +209,7 @@ class JSONBackend(_Backend):
             Find a single result or all results matching the provided
             information
 
-        kwargs :
+        **kwargs
             Requested information, where the values are regular expressions.
         """
         if _id is None:
