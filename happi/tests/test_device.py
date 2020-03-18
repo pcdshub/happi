@@ -114,5 +114,10 @@ def test_device_copy():
     b = copy.copy(a)
     assert dict(a) == dict(b)
 
+
+def test_device_deepcopy():
+    a = Device(name='abcd', prefix='abc', kwargs={'abc': 'def'})
+
     c = copy.deepcopy(a)
-    assert dict(a) == dict(c)
+    assert a.kwargs == c.kwargs
+    assert id(a.kwargs) != id(c.kwargs)

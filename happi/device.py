@@ -347,10 +347,11 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         return len(self.post())
 
     def __copy__(self):
-        return type(self)(**dict(self))
+        return self.__deepcopy__({})
 
     def __deepcopy__(self, memo):
-        return self.__copy__()
+        device_info = copy.deepcopy(dict(self))
+        return type(self)(**device_info)
 
     @property
     def screen(self):
