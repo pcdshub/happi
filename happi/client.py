@@ -3,6 +3,7 @@ import inspect
 import itertools
 import logging
 import os
+import re
 import sys
 import time as ttime
 
@@ -360,6 +361,41 @@ class Client:
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
         items = self.backend.find(kwargs)
+        if as_dict:
+            return list(items)
+
+        return [self.find_device(**info) for info in items]
+
+    def search_regex(self, flags=re.IGNORECASE, as_dict=False, **kwargs):
+        """
+        Search the database for a device or devices
+
+        Parameters
+        -----------
+        as_dict : bool, optional
+            Return the information as a list of dictionaries or a list of
+            :class:`.HappiItem`
+
+        flags : int, optional
+            Defaulting to ``re.IGNORECASE``, these flags are used for the
+            regular expressions passed in.
+
+        **kwargs
+            Information to filter through the database structured as key, value
+            pairs for the desired pieces of EntryInfo.  Every value is allowed
+            to contain a Python regular expression.
+
+        Returns
+        -------
+        Either a list of devices or dictionaries
+
+        Example
+        .. code::
+
+            gate_valves = client.search_regex(beamline='Valve.*')
+            three_valves = client.search_regex(_id='VALVE[123]')
+        """
+        items = self.backend.find_regex(kwargs, flags=flags)
         if as_dict:
             return list(items)
 

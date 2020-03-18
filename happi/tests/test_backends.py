@@ -103,53 +103,7 @@ def test_json_find(valve_info, device_info, mockjson):
                for info in (device_info, valve_info))
 
 
-@pytest.fixture(scope='function')
-def three_valves(happi_client):
-    valve1 = {'name': 'VALVE1',
-              'z': 300,
-              'prefix': 'BASE:VGC1:PV',
-              '_id': 'VALVE1',
-              'beamline': 'LCLS',
-              'mps': 'MPS:VGC:PV',
-              'location_group': 'LOC',
-              'functional_group': 'FUNC',
-              }
-
-    valve2 = {'name': 'VALVE2',
-              'z': 301,
-              'prefix': 'BASE:VGC2:PV',
-              '_id': 'VALVE2',
-              'beamline': 'LCLS',
-              'mps': 'MPS:VGC:PV',
-              'location_group': 'LOC',
-              'functional_group': 'FUNC',
-              }
-
-    valve3 = {'name': 'VALVE3',
-              'z': 301,
-              'prefix': 'BASE:VGC3:PV',
-              '_id': 'VALVE3',
-              'beamline': 'LCLS',
-              'mps': 'MPS:VGC:PV',
-              'location_group': 'LOC',
-              'functional_group': 'FUNC',
-              }
-
-    for dev in happi_client.all_devices:
-        happi_client.backend.delete(dev['_id'])
-
-    valves = dict(
-        VALVE1=valve1,
-        VALVE2=valve2,
-        VALVE3=valve3,
-    )
-
-    for name, valve in valves.items():
-        happi_client.backend.save(name, valve, insert=True)
-    return valves
-
-
-def test_mongo_find_regex(happi_client, three_valves):
+def test_find_regex(happi_client, three_valves):
     def find(**kwargs):
         return list(happi_client.backend.find_regex(kwargs))
 

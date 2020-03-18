@@ -1,5 +1,6 @@
 import os
 import logging
+import re
 import tempfile
 import types
 
@@ -180,7 +181,6 @@ def test_search_range(happi_client, device, valve, device_info, valve_info):
     # Search between two points
     res = happi_client.search_range('z', start=0, end=500)
     assert len(res) == 2
-
     # Search between two points, nothing found
     res = happi_client.search_range('z', start=10000, end=500000)
     assert not res
@@ -190,6 +190,25 @@ def test_search_range(happi_client, device, valve, device_info, valve_info):
     # Search invalid range
     with pytest.raises(ValueError):
         happi_client.search_range('z', start=1000, end=5)
+
+
+def test_search_regex(happi_client, three_valves):
+    def find(**kwargs):
+        return [
+            item.post() for item in
+            happi_client.search_regex(**kwargs, flags=re.IGNORECASE)
+        ]
+
+    valve1 = happi_client.find_device(**happi_client['VALVE1']).post()
+    valve2 = happi_client.find_device(**happi_client['VALVE2']).post()
+    valve3 = happi_client.find_device(**happi_client['VALVE3']).post()
+
+    assert find(beamline='LCLS') == [valve1, valve2, valve3]
+    assert find(beamline='lcls') == [valve1, valve2, valve3]
+    assert find(beamline='nomatch') == []
+    assert find(_id=r'VALVE\d') == [valve1, valve2, valve3]
+    assert find(_id='VALVE[13]') == [valve1, valve3]
+    assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
 
 
 def test_get_by_id(happi_client, device, valve, device_info, valve_info):

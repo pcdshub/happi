@@ -215,3 +215,61 @@ def mockqsbackend():
         # Instantiate a fake device
         backend = QSBackend('tstlr3216')
         return backend
+
+
+@pytest.fixture(scope='function')
+def three_valves(happi_client):
+    valve1 = {'name': 'valve1',
+              'z': 300,
+              'prefix': 'BASE:VGC1:PV',
+              '_id': 'VALVE1',
+              'beamline': 'LCLS',
+              'mps': 'MPS:VGC:PV',
+              'type': 'Device',
+              'location_group': 'LOC',
+              'functional_group': 'FUNC',
+              'device_class': 'types.SimpleNamespace',
+              'args': list(),
+              'kwargs': {'hi': 'oh hello'},
+              }
+
+    valve2 = {'name': 'valve2',
+              'z': 301,
+              'prefix': 'BASE:VGC2:PV',
+              '_id': 'VALVE2',
+              'beamline': 'LCLS',
+              'mps': 'MPS:VGC:PV',
+              'type': 'Device',
+              'location_group': 'LOC',
+              'functional_group': 'FUNC',
+              'device_class': 'types.SimpleNamespace',
+              'args': list(),
+              'kwargs': {'hi': 'oh hello'},
+              }
+
+    valve3 = {'name': 'valve3',
+              'z': 301,
+              'prefix': 'BASE:VGC3:PV',
+              '_id': 'VALVE3',
+              'beamline': 'LCLS',
+              'mps': 'MPS:VGC:PV',
+              'location_group': 'LOC',
+              'functional_group': 'FUNC',
+              'type': 'Device',
+              'device_class': 'types.SimpleNamespace',
+              'args': list(),
+              'kwargs': {'hi': 'oh hello'},
+              }
+
+    for dev in happi_client.all_devices:
+        happi_client.backend.delete(dev['_id'])
+
+    valves = dict(
+        VALVE1=valve1,
+        VALVE2=valve2,
+        VALVE3=valve3,
+    )
+
+    for name, valve in valves.items():
+        happi_client.backend.save(name, valve, insert=True)
+    return valves
