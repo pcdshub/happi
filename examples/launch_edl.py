@@ -10,7 +10,7 @@ import happi
 
 logger = logging.getLogger(__name__)
 
-description="""\
+description = """\
 Launch the EDL screen for a Happi device based on the information contained
 within the database
 
@@ -20,6 +20,7 @@ Example:
 This launches the embedded EDL screen for the device contained within the Happi
 database with the name 'XRT_M2'
 """
+
 
 def launch(path, wait=True, wd=None, macros=None):
     """
@@ -91,18 +92,17 @@ def launch(path, wait=True, wd=None, macros=None):
 
 
 def main():
-    #Parse command line
+    # Parse command line
     fclass = argparse.RawDescriptionHelpFormatter
     parser = argparse.ArgumentParser(epilog=description,
                                      formatter_class=fclass)
 
-    #Arguments
+    # Arguments
     parser.add_argument('name', help='Name of Device')
 
-    parser.add_argument('-e','--embedded', dest='embedded',
+    parser.add_argument('-e', '--embedded', dest='embedded',
                         help='Choice to use embedded screen',
                         default=False, action='store_true')
-
 
     parser.add_argument('-b', '--block', dest='block',
                         help='Block the main thread while '
@@ -113,7 +113,7 @@ def main():
                         help='Directory to launch screen from',
                         default=None)
 
-    #Parse arguments
+    # Parse arguments
     args = parser.parse_args()
     client = happi.Client()
 
@@ -126,18 +126,19 @@ def main():
               ''.format(args.name))
         return
 
-    #Create string of macros based on template
-    env    = Environment().from_string(device.macros)
+    # Create string of macros based on template
+    env = Environment().from_string(device.macros)
     macros = env.render(**device.post())
 
-    #Gather screen path
+    # Gather screen path
     if args.embedded:
         screen = device.embedded_screen
     else:
         screen = device.main_screen
 
-    #Launch screen
+    # Launch screen
     launch(screen, wait=args.block, wd=args.dir, macros=macros)
+
 
 if __name__ == '__main__':
     main()
