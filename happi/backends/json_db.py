@@ -5,6 +5,7 @@ import contextlib
 import os
 import os.path
 import logging
+import math
 import re
 
 import simplejson as json
@@ -176,6 +177,31 @@ class JSONBackend(_Backend):
         def comparison(name, doc):
             return all(value == doc[key]
                        for key, value in to_match.items())
+
+        yield from self._iterative_compare(comparison)
+
+    def find_range(self, key, *, start, stop=None, to_match):
+        """
+        Find an instance or instances that matches the search criteria,
+        using regular expressions.
+
+        Parameters
+        ----------
+        to_match : dict
+            Requested information, where the values are regular expressions.
+        """
+        def comparison(name, doc):
+            if all(value == doc[k] for k, value in to_match.items()):
+                value = doc.get(key)
+                try:
+                    return start <= value < stop
+                except Exception:
+                    ...
+
+        if stop is None:
+            stop = math.inf
+        if start >= stop:
+            raise ValueError(f"Invalid range: {start} >= {stop}")
 
         yield from self._iterative_compare(comparison)
 
