@@ -72,30 +72,16 @@ class MongoBackend(_Backend):
         """
         return self._collection.find()
 
-    def find(self, multiples=False, **kwargs):
+    def find(self, device_info):
         """
-        Find an instance or instances that matches the search criteria
+        Yield all instances that match the given search criteria
 
         Parameters
         ----------
-        multiples : bool
-            Find a single result or all results matching the provided
-            information
-
-        kwargs :
+        device_info : dict
             Requested information
         """
-        # Find all matches
-        cur = list(self._collection.find(kwargs))
-        # Only return a single device if requested
-        if not multiples:
-            # Grab first item
-            try:
-                cur = cur[0]
-            # If no items were returned
-            except IndexError:
-                logger.debug("No items found when searching for multiples")
-        return cur
+        yield from self._collection.find(device_info)
 
     def save(self, _id, post, insert=True):
         """

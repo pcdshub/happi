@@ -34,25 +34,24 @@ def mockjson(device_info, valve_info):
 def test_mongo_find(valve_info, device_info, mockmongo):
     mm = mockmongo
     mm._collection.insert_one(valve_info)
-    # No single device expected
-    assert mm.find(beamline='BLERG', multiples=False) == []
+
+    def find(**kwargs):
+        return list(mm.find(kwargs))
+
+    assert find(beamline='BLERG') == []
     # Single device by id
-    assert device_info == mm.find(_id=device_info['_id'],
-                                  multiples=False)
+    assert [device_info] == find(_id=device_info['_id'])
     # Single device by kwarg
-    assert valve_info == mm.find(prefix=valve_info['prefix'],
-                                 multiples=False)
+    assert [valve_info] == find(prefix=valve_info['prefix'])
     # No multiple devices expected
-    assert mm.find(beamline='BLERG', multiples=False) == []
+    assert find(beamline='BLERG') == []
     # Multiple devices by id
-    assert [device_info] == mm.find(_id=device_info['_id'],
-                                    multiples=True)
+    assert [device_info] == find(_id=device_info['_id'])
     # Multiple devices by kwarg
-    assert [device_info] == mm.find(prefix=device_info['prefix'],
-                                    multiples=True)
+    assert [device_info] == find(prefix=device_info['prefix'])
     # Multiple devices expected
-    result = mm.find(beamline='LCLS', multiples=True)
-    assert all([info in result for info in (device_info, valve_info)])
+    assert all(info in find(beamline='LCLS')
+               for info in (device_info, valve_info))
 
 
 @requires_mongo
