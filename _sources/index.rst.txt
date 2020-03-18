@@ -1,7 +1,7 @@
 HAPPI - Heuristic Access to Positions of Photon Instruments
 ===========================================================
 Happi is a database to hold generic information for devices
-along the LCLS photon beamline.  
+along the LCLS photon beamline.
 
 This is general purpose database for PCDS to organize information on any device
 along the beamline. The general structure of the Python API allows users to use

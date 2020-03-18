@@ -11,7 +11,7 @@ developer to specify fields that are inherit to every device of a specific
 type, in addition by specifying these keys using the :class:`.EntryInfo`
 object, you have even greater control by declaring optional vs. mandatory,
 default options when a user does not enter the value, and enforce specific
-types. 
+types.
 
 .. autoclass:: happi.device.EntryInfo
    :members:
@@ -21,7 +21,7 @@ Using a Device
 In order to ensure that information is entered into the database in an
 organized fashion, the client will only accept classes that inherit from
 :class:`.Device`. Each device will have the key information represented as
-class attributes, available to be manipulated like any other regular property    
+class attributes, available to be manipulated like any other regular property
 
 Editing the information for a container is a simple as:
 
@@ -40,7 +40,7 @@ a keyword, or enter it into the :attr:`.Device.extraneous` dictionary.
 While you are free to play around with the device attributes, when loading the
 object into the database you will need to make sure that all of the
 :attr:`.Device.mandatory_info` has been entered, otherwise the client
-will reject the device. 
+will reject the device.
 
 Example Class
 ^^^^^^^^^^^^^
@@ -87,7 +87,7 @@ Finally, fields that are important to the device can be marked as mandatory.
 These should have no default value. When entering information you will not
 neccesarily see a difference in between optional and mandatory
 :class:`.EntryInfo`, however the database client will reject the device if
-these fields don't have values associated with them. 
+these fields don't have values associated with them.
 
 
 Loading Devices
