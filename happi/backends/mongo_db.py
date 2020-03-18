@@ -75,16 +75,48 @@ class MongoBackend(_Backend):
         """
         return self._collection.find()
 
-    def find(self, device_info):
+    def find(self, to_match):
         """
         Yield all instances that match the given search criteria
 
         Parameters
         ----------
-        device_info : dict
+        to_match : dict
             Requested information
         """
-        yield from self._collection.find(device_info)
+        yield from self._collection.find(to_match)
+
+    def find_range(self, key, *, start, stop=None, to_match):
+        """
+        Find an instance or instances that matches the search criteria, such
+        that ``start <= entry[key] < stop``.
+
+        Parameters
+        ----------
+        key : str
+            The database key to search
+
+        start : int or float
+            Inclusive minimum value to filter ``key`` on
+
+        end : float, optional
+            Exclusive maximum value to filter ``key`` on
+
+        to_match : dict
+            Requested information, where the values must match exactly
+        """
+        if key in to_match:
+            raise ValueError('Cannot specify the same key in `to_match` as '
+                             'the key for the range.')
+
+        match = {key: {'$gte': start}}
+        if stop is not None:
+            if start >= stop:
+                raise ValueError(f"Invalid range: {start} >= {stop}")
+            match[key]['$lt'] = stop
+
+        match.update(**to_match)
+        yield from self._collection.find(match)
 
     def get_by_id(self, _id):
         """

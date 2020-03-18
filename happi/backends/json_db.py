@@ -182,13 +182,22 @@ class JSONBackend(_Backend):
 
     def find_range(self, key, *, start, stop=None, to_match):
         """
-        Find an instance or instances that matches the search criteria,
-        using regular expressions.
+        Find an instance or instances that matches the search criteria, such
+        that ``start <= entry[key] < stop``.
 
         Parameters
         ----------
+        key : str
+            The database key to search
+
+        start : int or float
+            Inclusive minimum value to filter ``key`` on
+
+        end : float, optional
+            Exclusive maximum value to filter ``key`` on
+
         to_match : dict
-            Requested information, where the values are regular expressions.
+            Requested information, where the values must match exactly
         """
         def comparison(name, doc):
             if all(value == doc[k] for k, value in to_match.items()):
@@ -198,6 +207,9 @@ class JSONBackend(_Backend):
                 except Exception:
                     ...
 
+        if key in to_match:
+            raise ValueError('Cannot specify the same key in `to_match` as '
+                             'the key for the range.')
         if stop is None:
             stop = math.inf
         if start >= stop:
