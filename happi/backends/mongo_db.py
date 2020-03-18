@@ -163,4 +163,6 @@ class MongoBackend(_Backend):
         _id : str
             ID of device
         """
-        self._collection.delete_one({'_id': _id})
+        res = self._collection.delete_one({'_id': _id})
+        if res.deleted_count < 1:
+            raise ValueError(f'ID not found in database: {_id!r}')
