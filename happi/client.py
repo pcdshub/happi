@@ -384,12 +384,8 @@ class Client:
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
         # Check that device is in the database
-        try:
-            _id = getattr(device, self._id)
-            self.backend.delete(_id)
-        except SearchError:
-            logger.exception('Target device was not found in the database')
-            raise
+        _id = getattr(device, self._id)
+        self.backend.delete(_id)
 
     def _validate_device(self, device):
         """
