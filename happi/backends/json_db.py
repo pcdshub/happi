@@ -262,4 +262,6 @@ class JSONBackend(_Backend):
             try:
                 db.pop(_id)
             except KeyError:
-                logger.warning("Device %s not found in database", _id)
+                raise SearchError(
+                    f'ID not found in database: {_id!r}'
+                ) from None

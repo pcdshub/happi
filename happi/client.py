@@ -386,13 +386,10 @@ class Client:
         # Check that device is in the database
         try:
             _id = getattr(device, self._id)
-            self.find_document(_id=_id)
-        # Log and re-raise
+            self.backend.delete(_id)
         except SearchError:
             logger.exception('Target device was not found in the database')
             raise
-        else:
-            self.backend.delete(_id)
 
     def _validate_device(self, device):
         """
