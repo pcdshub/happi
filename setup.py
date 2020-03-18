@@ -1,10 +1,8 @@
 import versioneer
 from setuptools import (setup, find_packages)
 
-with open('requirements.txt') as f:
-    requirements = f.read().split()
-
-requirements = [r for r in requirements if not r.startswith('git+')]
+with open('requirements.txt', 'rt') as f:
+    requirements = f.read().splitlines()
 
 setup(name='happi',
       version=versioneer.get_version(),
