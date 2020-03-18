@@ -103,9 +103,8 @@ def test_json_find(valve_info, device_info, mockjson):
                for info in (device_info, valve_info))
 
 
-def test_mongo_find_regex(valve_info, device_info, mockmongo):
-    mm = mockmongo
-    # Write underlying database
+@pytest.fixture(scope='function')
+def three_valves(happi_client):
     valve1 = {'name': 'VALVE1',
               'z': 300,
               'prefix': 'BASE:VGC1:PV',
@@ -136,72 +135,27 @@ def test_mongo_find_regex(valve_info, device_info, mockmongo):
               'functional_group': 'FUNC',
               }
 
-    for dev in mm.all_devices:
-        mm.delete(dev['_id'])
+    for dev in happi_client.all_devices:
+        happi_client.backend.delete(dev['_id'])
 
-    for dev in mm.all_devices:
-        print('found', dev)
+    valves = dict(
+        VALVE1=valve1,
+        VALVE2=valve2,
+        VALVE3=valve3,
+    )
 
-    mm.save('VALVE1', valve1, insert=True)
-    mm.save('VALVE2', valve2, insert=True)
-    mm.save('VALVE3', valve3, insert=True)
+    for name, valve in valves.items():
+        happi_client.backend.save(name, valve, insert=True)
+    return valves
 
+
+def test_mongo_find_regex(happi_client, three_valves):
     def find(**kwargs):
-        return list(mm.find_regex(kwargs))
+        return list(happi_client.backend.find_regex(kwargs))
 
-    assert find(beamline='LCLS') == [valve1, valve2, valve3]
-    assert find(beamline='lcls') == [valve1, valve2, valve3]
-    assert find(beamline='nomatch') == []
-    assert find(_id=r'VALVE\d') == [valve1, valve2, valve3]
-    assert find(_id='VALVE[13]') == [valve1, valve3]
-    assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
-
-
-def test_json_find_regex(valve_info, device_info, mockjson):
-    mm = mockjson
-    # Write underlying database
-    valve1 = {'name': 'VALVE1',
-              'z': 300,
-              'prefix': 'BASE:VGC1:PV',
-              '_id': 'VALVE1',
-              'beamline': 'LCLS',
-              'mps': 'MPS:VGC:PV',
-              'location_group': 'LOC',
-              'functional_group': 'FUNC',
-              }
-
-    valve2 = {'name': 'VALVE2',
-              'z': 301,
-              'prefix': 'BASE:VGC2:PV',
-              '_id': 'VALVE2',
-              'beamline': 'LCLS',
-              'mps': 'MPS:VGC:PV',
-              'location_group': 'LOC',
-              'functional_group': 'FUNC',
-              }
-
-    valve3 = {'name': 'VALVE3',
-              'z': 301,
-              'prefix': 'BASE:VGC3:PV',
-              '_id': 'VALVE3',
-              'beamline': 'LCLS',
-              'mps': 'MPS:VGC:PV',
-              'location_group': 'LOC',
-              'functional_group': 'FUNC',
-              }
-
-    with open(mm.path, 'w+') as handle:
-        simplejson.dump(
-            {'VALVE1': valve1,
-             'VALVE2': valve2,
-             'VALVE3': valve3,
-             },
-            handle
-        )
-
-    def find(**kwargs):
-        return list(mm.find_regex(kwargs))
-
+    valve1 = three_valves['VALVE1']
+    valve2 = three_valves['VALVE2']
+    valve3 = three_valves['VALVE3']
     assert find(beamline='LCLS') == [valve1, valve2, valve3]
     assert find(beamline='lcls') == [valve1, valve2, valve3]
     assert find(beamline='nomatch') == []
