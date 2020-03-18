@@ -2,7 +2,6 @@ import configparser
 import inspect
 import itertools
 import logging
-import math
 import os
 import sys
 import time as ttime
@@ -295,7 +294,47 @@ class Client:
     def __getitem__(self, key):
         return self.backend.get_by_id(key)
 
-    def search(self, start=0., end=None, as_dict=False, **kwargs):
+    def search_range(self, key, start, end=None, as_dict=False, **kwargs):
+        """
+        Search the database for a device or devices
+
+        Parameters
+        -----------
+        key : str
+            Database key to search
+
+        start : float, optional
+            Minimum beamline position to include devices
+
+        end : float, optional
+            Maximum beamline position to include devices
+
+        as_dict : bool, optional
+            Return the information as a list of dictionaries or a list of
+            :class:`.HappiItem`
+
+        **kwargs
+            Information to filter through the database structured as key, value
+            pairs for the desired pieces of EntryInfo
+
+        Returns
+        -------
+        Either a list of devices or dictionaries
+
+        Example
+        .. code::
+
+            gate_valves = client.search_key('z', 0, 100, type='Valve')
+            hxr_valves  = client.search_key('z', 0, 100, type='Valve',
+                                            beamline='HXR')
+        """
+        items = self.backend.find_range(key, start, end, kwargs)
+        if as_dict:
+            return list(items)
+
+        return [self.find_device(**info) for info in items]
+
+    def search(self, as_dict=False, **kwargs):
         """
         Search the database for a device or devices
 
@@ -305,13 +344,7 @@ class Client:
             Return the information as a list of dictionaries or a list of
             :class:`.HappiItem`
 
-        start : float, optional
-            Minimum beamline position to include devices
-
-        end : float, optional
-            Maximum beamline position to include devices
-
-        kwargs :
+        **kwargs
             Information to filter through the database structured as key, value
             pairs for the desired pieces of EntryInfo
 
@@ -326,18 +359,6 @@ class Client:
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
         items = self.backend.find(kwargs)
-        # If beamline position matters
-        if start or end:
-            if not end:
-                end = math.inf
-            if start >= end:
-                raise ValueError("Invalid beamline range")
-            # Find all values within range
-            items = [info for info in items
-                     if start <= info['z'] and info['z'] < end]
-
-        if not items:
-            return None
         if as_dict:
             return list(items)
 
