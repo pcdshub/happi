@@ -2,6 +2,9 @@
 PyMongo Backend Implementation
 """
 import logging
+import re
+
+import bson.regex
 
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
@@ -82,6 +85,26 @@ class MongoBackend(_Backend):
             Requested information
         """
         yield from self._collection.find(device_info)
+
+    def find_regex(self, to_match, *, flags=re.IGNORECASE):
+        """
+        Yield all instances that match the given search criteria
+
+        Parameters
+        ----------
+        to_match : dict
+            Requested information, with each value being a regular expression
+        """
+        regexes = {}
+        for key, value in to_match.items():
+            try:
+                reg = re.compile(value, flags=flags)
+                regexes[key] = bson.regex.Regex.from_native(reg)
+            except Exception as ex:
+                raise ValueError(f'Failed to create regular expression from '
+                                 f'{key}={value!r}: {ex}') from ex
+
+        yield from self._collection.find(regexes)
 
     def save(self, _id, post, insert=True):
         """
