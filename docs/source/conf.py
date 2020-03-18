@@ -17,12 +17,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import happi
 import os
 import sys
-import sphinx_rtd_theme
+import sphinx_rtd_theme  # noqa
 
-module_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../')
-sys.path.insert(0,module_path)
+module_path = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), '../../')
+sys.path.insert(0, module_path)
 
 
 # -- General configuration ------------------------------------------------
@@ -41,7 +43,7 @@ extensions = ['sphinx.ext.autodoc',
               'IPython.sphinxext.ipython_directive',
               'IPython.sphinxext.ipython_console_highlighting',
               'sphinx.ext.autosectionlabel'
-             ]
+              ]
 
 # In case we don't have the backend libraries installed
 # we can still build the docs
@@ -71,7 +73,6 @@ author = 'SLAC National Accelerator Laboratory'
 # built documents.
 #
 # The short X.Y version.
-import happi
 version = happi.__version__
 # The full version, including alpha/beta/rc tags.
 release = happi.__version__
@@ -169,6 +170,3 @@ texinfo_documents = [
      author, 'HappiDeck', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

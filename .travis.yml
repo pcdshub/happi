@@ -9,7 +9,7 @@ matrix:
   include:
       - python: 3.6
         env:
-           - PCDS_CHANNEL=pcds-dev  
+           - PCDS_CHANNEL=pcds-dev
            - USE_MONGO=1
            - CONDA_UPLOAD=1
       - python: 3.6
