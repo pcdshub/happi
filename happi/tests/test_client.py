@@ -162,7 +162,7 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     assert loaded_device.z == device_info['z']
     assert loaded_device.beamline == device_info['beamline']
     # No results
-    assert happi_client.search(name='not') is None
+    assert not happi_client.search(name='not')
     # Returned as dict
     res = happi_client.search(as_dict=True, **device_info)
     loaded_device = res[0]
@@ -176,7 +176,7 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     loaded_device = res[0]
     # Search between two points, nothing found
     res = happi_client.search(start=10000, end=500000)
-    assert res is None
+    assert not res
     # Search without an endpoint
     res = happi_client.search(start=0)
     assert len(res) == 2
@@ -191,7 +191,7 @@ def test_search(happi_client, device, valve, device_info, valve_info):
 
 def test_remove_device(happi_client, device, valve, device_info):
     happi_client.remove_device(device)
-    assert happi_client.backend.find(**device_info) == []
+    assert list(happi_client.backend.find(device_info)) == []
     # Invalid Device
     with pytest.raises(ValueError):
         happi_client.remove_device(5)

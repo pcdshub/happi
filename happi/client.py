@@ -1,5 +1,6 @@
 import configparser
 import inspect
+import itertools
 import logging
 import math
 import os
@@ -109,13 +110,12 @@ class Client:
         """
         if len(kwargs) == 0:
             raise SearchError('No information pertinent to device given')
-        # Request information from backend
-        post = self.backend.find(multiples=False, **kwargs)
-        # Check result, if not found let the user know
-        if not post:
-            raise SearchError('No device information found that '
-                              'matches the search criteria')
-        return post
+
+        matches = list(itertools.islice(self.backend.find(kwargs), 1))
+        if not matches:
+            raise SearchError(
+                'No device information found that matches the search criteria')
+        return matches[0]
 
     def create_device(self, device_cls, **kwargs):
         """
@@ -322,10 +322,7 @@ class Client:
             gate_valves = client.search(type='Valve')
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
-        try:
-            cur = self.backend.find(multiples=True, **kwargs)
-        except TypeError:
-            return None
+        items = self.backend.find(kwargs)
         # If beamline position matters
         if start or end:
             if not end:
@@ -333,14 +330,15 @@ class Client:
             if start >= end:
                 raise ValueError("Invalid beamline range")
             # Find all values within range
-            cur = [info for info in cur
-                   if start <= info['z'] and info['z'] < end]
-        if not cur:
+            items = [info for info in items
+                     if start <= info['z'] and info['z'] < end]
+
+        if not items:
             return None
-        elif as_dict:
-            return cur
-        else:
-            return [self.find_device(**info) for info in cur]
+        if as_dict:
+            return list(items)
+
+        return [self.find_device(**info) for info in items]
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """

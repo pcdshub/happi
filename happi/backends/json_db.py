@@ -2,7 +2,6 @@
 Backend implemenation using simplejson
 """
 import contextlib
-import itertools
 import os
 import os.path
 import logging
@@ -134,31 +133,18 @@ class JSONBackend(_Backend):
                     # Release lock in filesystem
                     fcntl.flock(f, fcntl.LOCK_UN)
 
-    def _iterative_compare(self, _id, comparison, *, exit_on_id_match=True):
+    def _iterative_compare(self, comparison):
         """
-        Yields documents which either match ``_id`` or such that the predicate
-        ``comparison(name, doc)`` returns True.
+        Yields documents in which ``comparison(name, doc)`` returns True.
 
         Parameters
         ----------
-        _id : str or None
-            ID of device
         comparison : callable
             A comparison function with a signature of (device_id, doc)
-        exit_on_id_match : bool, optional
-            If a matching ID is found, yield only it.
         """
         db = self._load_or_initialize()
         if not db:
             return
-
-        try:
-            yield db[_id]
-            if exit_on_id_match:
-                # If an _id match exists, exit early
-                return
-        except KeyError:
-            ...
 
         for name, doc in db.items():
             try:
@@ -167,79 +153,52 @@ class JSONBackend(_Backend):
             except Exception as ex:
                 logger.debug('Comparison method failed: %s', ex, exc_info=ex)
 
-    def find(self, _id=None, multiples=False, **kwargs):
+    def get_by_id(self, id_):
+        '''
+        Get a device by ID if it exists, or None
+
+        Parameters
+        ----------
+        id_
+        '''
+        db = self._load_or_initialize()
+        return db.get(id_)
+
+    def find(self, to_match):
         """
         Find an instance or instances that matches the search criteria
 
         Parameters
         ----------
-        multiples : bool
-            Find a single result or all results matching the provided
-            information
-
-        **kwargs
+        to_match : dict
             Requested information, all of which must match
         """
         def comparison(name, doc):
-            # Find devices matching kwargs
             return all(value == doc[key]
-                       for key, value in kwargs.items())
+                       for key, value in to_match.items())
 
-        gen = self._iterative_compare(_id, comparison)
-        if multiples:
-            return list(gen)
+        yield from self._iterative_compare(comparison)
 
-        matches = list(itertools.islice(gen, 1))
-        # TODO: API - it does not seem right to return a list or a device
-        #       this non-match should be None
-        return matches[0] if matches else []
-
-    def find_regex(self, _id=None, flags=re.IGNORECASE, multiples=False,
-                   **kwargs):
+    def find_regex(self, to_match, *, flags=re.IGNORECASE):
         """
         Find an instance or instances that matches the search criteria,
         using regular expressions.
 
         Parameters
         ----------
-        _id : str or None
-            A regular expression or a device name
-
-        multiples : bool
-            Find a single result or all results matching the provided
-            information
-
-        **kwargs
+        to_match : dict
             Requested information, where the values are regular expressions.
         """
-        if _id is None:
-            def id_comparison(name):
-                ...
-        else:
-            _id = re.compile(_id, flags=flags)
-
-            def id_comparison(name):
-                return _id.match(name)
-
-        regexes = {
-            key: re.compile(value, flags=flags)
-            for key, value in kwargs.items()
-        }
-
         def comparison(name, doc):
-            if id_comparison(name):
-                return True
             return regexes and all(key in doc and regex.match(doc[key])
                                    for key, regex in regexes.items())
 
-        gen = self._iterative_compare(_id, comparison)
-        if multiples:
-            return list(gen)
+        regexes = {
+            key: re.compile(value, flags=flags)
+            for key, value in to_match.items()
+        }
 
-        matches = list(itertools.islice(gen, 1))
-        # TODO: API - it does not seem right to return a list or a device
-        #       this non-match should be None
-        return matches[0] if matches else []
+        yield from self._iterative_compare(comparison)
 
     def save(self, _id, post, insert=True):
         """
