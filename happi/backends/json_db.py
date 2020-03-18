@@ -6,6 +6,7 @@ import itertools
 import os
 import os.path
 import logging
+import re
 
 import simplejson as json
 
@@ -25,7 +26,8 @@ except ImportError:
 @contextlib.contextmanager
 def _load_and_store_context(backend):
     '''
-    A context manager to load, and optionally store the JSON database at the end
+    A context manager to load, and optionally store the JSON database at the
+    end
     '''
     db = backend._load_or_initialize()
     yield db
@@ -59,7 +61,7 @@ class JSONBackend(_Backend):
         '''
         try:
             return self.load()
-        except FileNotFoundError as ex:
+        except FileNotFoundError:
             logger.debug('Initializing new database')
 
         self.initialize()
@@ -132,7 +134,7 @@ class JSONBackend(_Backend):
                     # Release lock in filesystem
                     fcntl.flock(f, fcntl.LOCK_UN)
 
-    def _iterative_compare(self, _id, comparison):
+    def _iterative_compare(self, _id, comparison, *, exit_on_id_match=True):
         """
         Yields documents which either match ``_id`` or such that the predicate
         ``comparison(name, doc)`` returns True.
@@ -143,6 +145,8 @@ class JSONBackend(_Backend):
             ID of device
         comparison : callable
             A comparison function with a signature of (device_id, doc)
+        exit_on_id_match : bool, optional
+            If a matching ID is found, yield only it.
         """
         db = self._load_or_initialize()
         if not db:
@@ -150,8 +154,9 @@ class JSONBackend(_Backend):
 
         try:
             yield db[_id]
-            # If an _id match exists, exit early
-            return
+            if exit_on_id_match:
+                # If an _id match exists, exit early
+                return
         except KeyError:
             ...
 
@@ -179,6 +184,53 @@ class JSONBackend(_Backend):
             # Find devices matching kwargs
             return all(value == doc[key]
                        for key, value in kwargs.items())
+
+        gen = self._iterative_compare(_id, comparison)
+        if multiples:
+            return list(gen)
+
+        matches = list(itertools.islice(gen, 1))
+        # TODO: API - it does not seem right to return a list or a device
+        #       this non-match should be None
+        return matches[0] if matches else []
+
+    def find_regex(self, _id=None, flags=re.IGNORECASE, multiples=False,
+                   **kwargs):
+        """
+        Find an instance or instances that matches the search criteria,
+        using regular expressions.
+
+        Parameters
+        ----------
+        _id : str or None
+            A regular expression or a device name
+
+        multiples : bool
+            Find a single result or all results matching the provided
+            information
+
+        kwargs :
+            Requested information, where the values are regular expressions.
+        """
+        if _id is None:
+            def id_comparison(name):
+                ...
+        else:
+            _id = re.compile(_id, flags=flags)
+
+            def id_comparison(name):
+                return _id.match(name)
+
+        regexes = {
+            key: re.compile(value, flags=flags)
+            for key, value in kwargs.items()
+        }
+
+        def comparison(name, doc):
+            if id_comparison(name):
+                return True
+            return regexes and all(key in doc and regex.match(doc[key])
+                                   for key, regex in regexes.items())
 
         gen = self._iterative_compare(_id, comparison)
         if multiples:
@@ -220,7 +272,7 @@ class JSONBackend(_Backend):
             # New device
             if insert:
                 if _id in db.keys():
-                    raise DuplicateError("Device {} already exists".format(_id))
+                    raise DuplicateError(f"Device {_id} already exists")
                 # Add _id keyword
                 post.update({'_id': _id})
                 # Add to database

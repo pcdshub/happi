@@ -104,6 +104,62 @@ def test_json_find(valve_info, device_info, mockjson):
     assert all([info in result for info in (device_info, valve_info)])
 
 
+def test_json_find_regex(valve_info, device_info, mockjson):
+    mm = mockjson
+    # Write underlying database
+    valve1 = {'name': 'VALVE1',
+              'z': 300,
+              'prefix': 'BASE:VGC1:PV',
+              '_id': 'VALVE1',
+              'beamline': 'LCLS',
+              'mps': 'MPS:VGC:PV',
+              'location_group': 'LOC',
+              'functional_group': 'FUNC',
+              }
+
+    valve2 = {'name': 'VALVE2',
+              'z': 301,
+              'prefix': 'BASE:VGC2:PV',
+              '_id': 'VALVE2',
+              'beamline': 'LCLS',
+              'mps': 'MPS:VGC:PV',
+              'location_group': 'LOC',
+              'functional_group': 'FUNC',
+              }
+
+    valve3 = {'name': 'VALVE3',
+              'z': 301,
+              'prefix': 'BASE:VGC3:PV',
+              '_id': 'VALVE3',
+              'beamline': 'LCLS',
+              'mps': 'MPS:VGC:PV',
+              'location_group': 'LOC',
+              'functional_group': 'FUNC',
+              }
+
+    with open(mm.path, 'w+') as handle:
+        simplejson.dump(
+            {'VALVE1': valve1,
+             'VALVE2': valve2,
+             'VALVE3': valve3,
+             },
+            handle
+        )
+
+    assert mm.find_regex(beamline='LCLS', multiples=False) == valve1
+    assert mm.find_regex(beamline='LCLS', multiples=True) == [
+        valve1, valve2, valve3]
+    assert mm.find_regex(beamline='lcls', multiples=True) == [
+        valve1, valve2, valve3]
+    assert mm.find_regex(beamline='nomatch', multiples=True) == []
+    assert mm.find_regex(_id=r'VALVE\d', multiples=True) == [
+        valve1, valve2, valve3]
+    assert mm.find_regex(_id='VALVE[13]', multiples=True) == [
+        valve1, valve3]
+    assert mm.find_regex(prefix='BASE:VGC[23]:PV', multiples=True) == [
+        valve2, valve3]
+
+
 def test_json_delete(mockjson, device_info):
     mockjson.delete(device_info[Client._id])
     assert device_info not in mockjson.all_devices
