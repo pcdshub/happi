@@ -1,6 +1,6 @@
 [run]
 source =
-    happi 
+    happi
 [report]
 omit =
     #tests

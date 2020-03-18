@@ -21,7 +21,7 @@ Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
 A new device must be a subclass of the basic container :class:`.Device`.
 While you are free to use the initialized object whereever you see fit, the client
-has a hook to create new devices. 
+has a hook to create new devices.
 
 Before we can create our first client, we need to create a backend for our device
 information to be stored.
@@ -43,7 +43,7 @@ about how to configure your default backend choice
     client = Client(path='doc_test.json')
 
     device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1")
-    
+
     device.save()
 
 Alternatively, you can create the device separately and add the device
@@ -52,7 +52,7 @@ explicitly using :meth:`.Device.save`
 .. ipython:: python
 
     device = Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5, location_group="Loc2", functional_group="Func2")
-   
+
     client.add_device(device)
 
 The main advantage of the first method is that all of the container classes are
@@ -61,7 +61,7 @@ easily accessed with a string. Keep in mind, that either way, all of the
 mandatory information needs to be given to the device before it can be loaded
 into the database. For more information on device creation see
 :ref:`device_label`.
-    
+
 Searching the Database
 ^^^^^^^^^^^^^^^^^^^^^^
 There are two ways to load information from the database
@@ -74,7 +74,7 @@ First, lets look for all the devices of type generic ``Device``, as first their
 corresponding objects or as a dictionary
 
 .. ipython:: python
-    
+
     client.search(type='Device')
 
     client.search(type='Device', as_dict=True)
@@ -85,14 +85,14 @@ beamline
 
 
 .. ipython:: python
-    
+
     client.search(type='Device', beamline='MFX')
-   
+
     client.search(type='Device', start=314.4, end=348.6)
 
 You can also explicitly load a single device. The advantage of this method is
 you won't have to parse a list of returned devices. If nothing meets your given
-criteria, an ``SearchError`` will be raised 
+criteria, an ``SearchError`` will be raised
 
 .. ipython:: python
 
@@ -118,9 +118,9 @@ the Device information.
 .. ipython:: python
 
     my_motor = client.find_device(prefix='PV:BASE')
-    
+
     my_motor.z = 425.4
-    
+
     my_motor.save()
 
 .. note::
@@ -128,15 +128,15 @@ the Device information.
     Because the database uses the ``prefix`` key as a device's identification you
     can not edit this information in the same way. Instead you must explicitly
     remove the device and then use :meth:`.Client.add_device` to create a new
-    entry. 
-    
+    entry.
+
 Finally, lets clean up our example objects by using
 :meth:`.Client.remove_device` to clean them from the database
 
 .. ipython:: python
 
     device_1 = client.find_device(name='my_device')
-    
+
     device_2 = client.find_device(name='my_device2')
 
     for device in (device_1, device_2):
@@ -151,4 +151,3 @@ chosen backend directly, but in order to save time you can create an
 environment variable ``HAPPI_BACKEND`` and set this to ``"mongodb"``. This well
 tell the library to assume you want to use the :class:`.MongoBackend`.
 Otherwise, the library uses the :class:`.JSONBackend`.
-

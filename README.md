@@ -48,7 +48,7 @@ Install the most recent tagged build: `conda install happi -c pcds-tag -c conda-
 
 Install the most recent development build: `conda install happi -c pcds-dev - conda-forge`
 
-## Basic Usage 
+## Basic Usage
 
 The `happi.Client` is your main interface to the underlying device database.
 You have the choice of either creating your database backend by hand or using

@@ -73,7 +73,7 @@ The main thing to note is the use of keywords found within the repeated
 brackets. When this string is loaded as a ``Template``, we can easily
 substitute our EntryInfo in place of these brackets.
 
-.. ipython:: python 
+.. ipython:: python
 
     import happi
 
@@ -85,7 +85,7 @@ substitute our EntryInfo in place of these brackets.
     cam = Camera(name='opal', prefix='BASE:CAM:PV',
                  beamline='TST', evr='EVR:TRIG:PV')
 
-    #Link our EDL screens 
+    #Link our EDL screens
     cam.main_screen = 'my_screens/camera.edl'
 
     #Add our macros template
@@ -96,7 +96,7 @@ utilize the information will do something similar to the script below to
 substitute device information into our template
 
 .. ipython:: python
-    
+
     from jinja2 import Environment
 
     #Create new template
