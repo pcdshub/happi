@@ -324,9 +324,9 @@ class Client:
         Example
         .. code::
 
-            gate_valves = client.search_key('z', 0, 100, type='Valve')
-            hxr_valves  = client.search_key('z', 0, 100, type='Valve',
-                                            beamline='HXR')
+            gate_valves = client.search_range('z', 0, 100, type='Valve')
+            hxr_valves  = client.search_range('z', 0, 100, type='Valve',
+                                              beamline='HXR')
         """
         items = self.backend.find_range(key, start=start, stop=end,
                                         to_match=kwargs)

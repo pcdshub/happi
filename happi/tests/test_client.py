@@ -170,23 +170,26 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     assert loaded_device['name'] == device_info['name']
     assert loaded_device['z'] == device_info['z']
     assert loaded_device['beamline'] == device_info['beamline']
+    # Search off keyword
+    res = happi_client.search(beamline='LCLS')
+    assert len(res) == 2
+
+
+def test_search_range(happi_client, device, valve, device_info, valve_info):
+    happi_client.add_device(valve)
     # Search between two points
     res = happi_client.search_range('z', start=0, end=500)
     assert len(res) == 2
-    loaded_device = res[0]
+
     # Search between two points, nothing found
     res = happi_client.search_range('z', start=10000, end=500000)
     assert not res
     # Search without an endpoint
     res = happi_client.search_range('z', start=0)
     assert len(res) == 2
-    loaded_device = res[1]
     # Search invalid range
     with pytest.raises(ValueError):
         happi_client.search_range('z', start=1000, end=5)
-    # Search off keyword
-    res = happi_client.search(beamline='LCLS')
-    assert len(res) == 2
 
 
 def test_get_by_id(happi_client, device, valve, device_info, valve_info):
