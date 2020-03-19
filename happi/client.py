@@ -1,3 +1,4 @@
+import collections
 import configparser
 import inspect
 import itertools
@@ -28,6 +29,49 @@ def _looks_like_database(obj):
                     'find', 'all_devices', 'delete', 'save')
                 )
             )
+
+
+class Metadata(collections.abc.Mapping):
+    def __init__(self, client, metadata):
+        self._device = None
+        self._instantiated = None
+        self.client = client
+        self.metadata = metadata
+
+    @property
+    def device(self):
+        'Get the happi.Device container'
+        if self._device is None:
+            self._device = self.client.find_device(**self.metadata)
+        return self._device
+
+    def get(self, attach_md=True, use_cache=True, threaded=False):
+        '''(get) ''' + from_container.__doc__
+        if self._instantiated is None:
+            self._instantiated = from_container(
+                self.device, attach_md=attach_md, use_cache=use_cache,
+                threaded=threaded
+            )
+        return self._instantiated
+
+    def post(self):
+        'Return the full happi.Device post metadata'
+        return self.device.post()
+
+    def __getitem__(self, item):
+        return self.metadata[item]
+
+    def __iter__(self):
+        yield from self.metadata
+
+    def __len__(self):
+        return len(self.metadata)
+
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}(client={self.client}, '
+            f'metadata={self.metadata})'
+        )
 
 
 class Client:
@@ -293,7 +337,7 @@ class Client:
         return self.search()
 
     def __getitem__(self, key):
-        return self.backend.get_by_id(key)
+        return Metadata(client=self, metadata=self.backend.get_by_id(key))
 
     def search_range(self, key, start, end=None, as_dict=False, **kwargs):
         """

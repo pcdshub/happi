@@ -199,9 +199,9 @@ def test_search_regex(happi_client, three_valves):
             happi_client.search_regex(**kwargs, flags=re.IGNORECASE)
         ]
 
-    valve1 = happi_client.find_device(**happi_client['VALVE1']).post()
-    valve2 = happi_client.find_device(**happi_client['VALVE2']).post()
-    valve3 = happi_client.find_device(**happi_client['VALVE3']).post()
+    valve1 = happi_client['VALVE1'].post()
+    valve2 = happi_client['VALVE2'].post()
+    valve3 = happi_client['VALVE3'].post()
 
     assert find(beamline='LCLS') == [valve1, valve2, valve3]
     assert find(beamline='lcls') == [valve1, valve2, valve3]
@@ -273,3 +273,17 @@ def test_choices_for_field(happi_client):
     assert prefix_choices == {'BASE:PV'}
     with pytest.raises(SearchError):
         happi_client.choices_for_field('not_a_field')
+
+
+def test_metadata_proxy(happi_client, three_valves):
+    valve1 = happi_client['VALVE1']
+    print(repr(valve1))
+    print(dict(valve1))
+    base_keys = list(valve1.metadata)
+
+    def only_basic_keys(md):
+        return {k: v for k, v in md.items() if k in base_keys}
+
+    assert valve1.metadata == only_basic_keys(valve1.device.post())
+    assert valve1.metadata == only_basic_keys(valve1.post())
+    assert isinstance(valve1.get(), types.SimpleNamespace)
