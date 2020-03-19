@@ -187,9 +187,9 @@ class _HappiItemBase:
         for attr, entry in entries:
             if attr in RESERVED_ATTRS:
                 raise TypeError(
-                    f"The attribute name {attr} is used by the Device class "
-                    f"and cannot be used as a name for EntryInfo. Choose a "
-                    f"different name."
+                    f"The attribute name {attr} is used by the HappiItem "
+                    f"class and cannot be used as a name for EntryInfo. "
+                    f"Choose a different name."
                 )
 
             cls._info_attrs[attr] = entry
@@ -201,8 +201,12 @@ class _HappiItemBase:
         # Create docstring information
         for info in cls._info_attrs.values():
             info.__doc__ = info.make_docstring(cls)
+
         # Store Entry Information
         cls.entry_info = list(cls._info_attrs.values())
+        cls.info_names = [info.key for info in cls.entry_info]
+        cls.mandatory_info = [info.key for info in cls.entry_info
+                              if not info.optional]
 
 
 class HappiItem(_HappiItemBase, collections.abc.Mapping):
@@ -276,19 +280,6 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
             logger.debug('Additional information for %s was defined %s',
                          self.name, ', '.join(self.extraneous))
 
-    @property
-    def info_names(self):
-        """
-        Names of all :class:`.EntryInfo` for the item
-        """
-        return [info.key for info in self.entry_info]
-
-    @property
-    def mandatory_info(self):
-        """
-        Mandatory information for the device instance to be initialized
-        """
-        return [info.key for info in self.entry_info if not info.optional]
 
     def show_info(self, handle=sys.stdout):
         """
