@@ -99,6 +99,7 @@ class Client:
     # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'name'
+    _results_wrap_class = Metadata
     # Store device types seen by client
     device_types = {'Device': Device,
                     'HappiItem': HappiItem}
@@ -337,7 +338,18 @@ class Client:
         return self.search()
 
     def __getitem__(self, key):
+        'Get a device ID'
         return Metadata(client=self, metadata=self.backend.get_by_id(key))
+
+    def _get_search_results(self, items, as_dict, *, wrap_cls=None):
+        '''
+        Return search results to the user, optionally wrapping with a class
+        '''
+        wrap_cls = wrap_cls or self._results_wrap_class
+        if as_dict:
+            return [Metadata(client=self, metadata=d) for d in items]
+
+        return [self.find_device(**info) for info in items]
 
     def search_range(self, key, start, end=None, as_dict=False, **kwargs):
         """
@@ -375,10 +387,7 @@ class Client:
         """
         items = self.backend.find_range(key, start=start, stop=end,
                                         to_match=kwargs)
-        if as_dict:
-            return list(items)
-
-        return [self.find_device(**info) for info in items]
+        return self._get_search_results(items, as_dict=as_dict)
 
     def search(self, as_dict=False, **kwargs):
         """
@@ -405,10 +414,7 @@ class Client:
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
         items = self.backend.find(kwargs)
-        if as_dict:
-            return list(items)
-
-        return [self.find_device(**info) for info in items]
+        return self._get_search_results(items, as_dict=as_dict)
 
     def search_regex(self, flags=re.IGNORECASE, as_dict=False, **kwargs):
         """
@@ -440,10 +446,7 @@ class Client:
             three_valves = client.search_regex(_id='VALVE[123]')
         """
         items = self.backend.find_regex(kwargs, flags=flags)
-        if as_dict:
-            return list(items)
-
-        return [self.find_device(**info) for info in items]
+        return self._get_search_results(items, as_dict=as_dict)
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """
