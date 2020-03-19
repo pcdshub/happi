@@ -32,11 +32,31 @@ def _looks_like_database(obj):
 
 
 class SearchResult(collections.abc.Mapping):
-    def __init__(self, client, metadata, *, device=None):
+    '''
+    A single search result from ``Client.search``
+
+    This result can be keyed for metadata as in::
+        result['name']
+
+    The HappiItem can be readily retrieved::
+        result.device
+
+    Or the object may be instantiated::
+        result.get()
+
+    Attributes
+    ----------
+    device : happi.HappiItem
+        The container
+    metadata : dict
+        The HappiItem metadata
+    '''
+
+    def __init__(self, client, device):
         self._device = device
         self._instantiated = None
         self.client = client
-        self.metadata = metadata
+        self.metadata = device.post()
 
     @property
     def device(self):
@@ -53,10 +73,6 @@ class SearchResult(collections.abc.Mapping):
                 threaded=threaded
             )
         return self._instantiated
-
-    def post(self):
-        'Return the full happi.Device post metadata'
-        return self.device.post()
 
     def __getitem__(self, item):
         return self.metadata[item]
@@ -339,7 +355,12 @@ class Client(collections.abc.Mapping):
 
     def __getitem__(self, key):
         'Get a device ID'
-        return SearchResult(client=self, metadata=self.backend.get_by_id(key))
+        try:
+            device = self.find_device(**self.backend.get_by_id(key))
+        except Exception as ex:
+            raise KeyError(key) from ex
+
+        return SearchResult(client=self, device=device)
 
     def __iter__(self):
         for info in self.backend.find({}):
@@ -353,8 +374,7 @@ class Client(collections.abc.Mapping):
         Return search results to the user, optionally wrapping with a class
         '''
         wrap_cls = wrap_cls or self._results_wrap_class
-        return [wrap_cls(client=self, metadata=info,
-                         device=self.find_device(**info))
+        return [wrap_cls(client=self, device=self.find_device(**info))
                 for info in items]
 
     def search_range(self, key, start, end=None, **kwargs):
@@ -403,7 +423,8 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        Either a list of devices or dictionaries
+        res : list of SearchResult
+            The search results
 
         Example
         .. code::
