@@ -216,7 +216,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
     :attr:`HappiItem.info_names` can be used to assign values to
     :class:`.EntryInfo` upon initialization.  Pieces of information that are
     deemed mandatory by the class must be filled in before the device is loaded
-    into the database. See :attr:`Device.mandatory_info` to see which
+    into the database. See :attr:`.mandatory_info` to see which
     attributes are neccesary.
 
     Additional metadata can be given to the device in the form of keywords on
@@ -247,23 +247,23 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
     -------
     .. code ::
 
-        d = HappiItem(name = 'my_device',         #Alias name for device
-                      note  = 'Example',          #Piece of arbitrary metadata
+        d = HappiItem(name = 'my_device',         # Alias name for device
+                      note  = 'Example',          # Piece of arbitrary metadata
                      )
     """
-    name = EntryInfo('Shorthand python-valid name for the device',
+    name = EntryInfo('Shorthand Python-valid name for the Python instance',
                      optional=False,
                      enforce=re.compile(r'[a-z][a-z\_0-9]{2,78}$'))
-    device_class = EntryInfo("Python class that represents the Device",
+    device_class = EntryInfo("Python class that represents the instance",
                              enforce=str)
     args = EntryInfo("Arguments to pass to device_class",
                      enforce=list, default=[])
     kwargs = EntryInfo("Keyword arguments to pass to device_class",
                        enforce=dict, default={})
-    active = EntryInfo('Whether the device is actively deployed',
+    active = EntryInfo('Whether the instance is actively deployed',
                        enforce=bool, default=True)
-    parent = EntryInfo('If the device is a component of another, '
-                       'enter the name', enforce=str)
+    documentation = EntryInfo("Relevant documentation for the instance",
+                              enforce=str)
 
     def __init__(self, **kwargs):
         # Load given information into device class
@@ -281,20 +281,20 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
     @property
     def info_names(self):
         """
-        Names of all :class:`.EntryInfo` for the device
+        Names of all :class:`.EntryInfo` for the item
         """
         return [info.key for info in self.entry_info]
 
     @property
     def mandatory_info(self):
         """
-        Mandatory information for the device to be initialized
+        Mandatory information for the device instance to be initialized
         """
         return [info.key for info in self.entry_info if not info.optional]
 
     def show_info(self, handle=sys.stdout):
         """
-        Show the device information in a PrettyTable
+        Show the device instance information in a PrettyTable
 
         Parameters
         ----------
@@ -353,16 +353,9 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         device_info = copy.deepcopy(dict(self))
         return type(self)(**device_info)
 
-    @property
-    def screen(self):
-        warnings.warn("The 'screen' keyword is no longer used in Happi as it "
-                      "lacks specificity. Use one of detailed_screen, "
-                      "embedded_screen, or engineering screen instead")
-        return self.detailed_screen
-
     def save(self):
         """
-        Overwritten when the device is loaded from the client
+        Overwritten when the device instance is loaded from the client
         """
         raise NotImplementedError
 
@@ -374,9 +367,39 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         return (self.post() == other.post())
 
 
+class OphydItem(HappiItem):
+    prefix = EntryInfo('A base PV for all related records',
+                       optional=False, enforce=str)
+
+    args = copy.copy(HappiItem.args)
+    args.default = ['{{prefix}}']
+    kwargs = copy.copy(HappiItem.kwargs)
+    kwargs.default = {'name': '{{name}}'}
+
+
+class LCLSItem(OphydItem):
+    beamline = EntryInfo('Section of beamline the device belongs',
+                         optional=False, enforce=str)
+    location_group = EntryInfo('LUCID grouping parameter for location',
+                               optional=False, enforce=str)
+    functional_group = EntryInfo('LUCID grouping parameter for function',
+                                 optional=False, enforce=str)
+    z = EntryInfo('Beamline position of the device',
+                  enforce=float, default=-1.0)
+    stand = EntryInfo('Acronym for stand, must be three alphanumeric '
+                      'characters like an LCLSI stand (e.g. DG3) or follow '
+                      'the LCLSII stand naming convention (e.g. L0S04).',
+                      enforce=re.compile(r'[A-Z0-9]{3}$|[A-Z][0-9]S[0-9]{2}$'))
+    lightpath = EntryInfo("If the device should be included in the "
+                          "LCLS Lightpath", enforce=bool, default=False)
+
+
 class Device(HappiItem):
     """
-    A Generic Device
+    Deprecated due to confusing naming
+
+    Original docstring:
+    A Generic Device container
 
     Meant for any object will be loaded to represent a physical object in the
     controls system. Contains information on the physical location of the
@@ -415,10 +438,17 @@ class Device(HappiItem):
                           "LCLS Lightpath", enforce=bool, default=False)
     documentation = EntryInfo("Relevant documentation for the Device",
                               enforce=str)
+    parent = EntryInfo('If the device is a component of another, '
+                       'enter the name', enforce=str)
     args = copy.copy(HappiItem.args)
     args.default = ['{{prefix}}']
     kwargs = copy.copy(HappiItem.kwargs)
     kwargs.default = {'name': '{{name}}'}
+
+    def __init__(self, *args, **kwargs):
+        warnings.warn("happi.device.Device is deprecated. Please use "
+                      "OphydItem or LCLSItem."
+        super().__init__(*args, **kwargs)
 
     def __repr__(self):
         return '{} (name={}, prefix={}, z={})'.format(
@@ -426,3 +456,10 @@ class Device(HappiItem):
                                     self.name,
                                     self.prefix,
                                     self.z)
+
+    @property
+    def screen(self):
+        warnings.warn("The 'screen' keyword is no longer used in Happi as it "
+                      "lacks specificity. Use one of detailed_screen, "
+                      "embedded_screen, or engineering screen instead")
+        return self.detailed_screen
