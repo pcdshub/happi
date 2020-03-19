@@ -18,7 +18,7 @@ except ImportError:
     from re import _pattern_type as Pattern
 
 
-class EntryInfo(object):
+class EntryInfo:
     """
     A piece of information related to a specific device
 
