@@ -275,7 +275,7 @@ def test_choices_for_field(happi_client):
         happi_client.choices_for_field('not_a_field')
 
 
-def test_metadata_proxy(happi_client, three_valves):
+def test_searchresults(happi_client, three_valves):
     valve1 = happi_client['VALVE1']
     print(repr(valve1))
     print(dict(valve1))
@@ -287,3 +287,10 @@ def test_metadata_proxy(happi_client, three_valves):
     assert valve1.metadata == only_basic_keys(valve1.device.post())
     assert valve1.metadata == only_basic_keys(valve1.post())
     assert isinstance(valve1.get(), types.SimpleNamespace)
+
+
+def test_client_mapping(happi_client, three_valves):
+    assert len(happi_client) == 3
+    assert list(dict(happi_client)) == ['VALVE1', 'VALVE2', 'VALVE3']
+    for name in happi_client:
+        assert happi_client[name]['name']

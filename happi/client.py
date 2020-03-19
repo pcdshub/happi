@@ -74,7 +74,7 @@ class SearchResult(collections.abc.Mapping):
         )
 
 
-class Client:
+class Client(collections.abc.Mapping):
     """
     The client to control the contents of the Happi Database
 
@@ -340,6 +340,13 @@ class Client:
     def __getitem__(self, key):
         'Get a device ID'
         return SearchResult(client=self, metadata=self.backend.get_by_id(key))
+
+    def __iter__(self):
+        for info in self.backend.find({}):
+            yield info['_id']
+
+    def __len__(self):
+        return len(self.all_devices)
 
     def _get_search_results(self, items, *, wrap_cls=None):
         '''
