@@ -2,6 +2,9 @@
 PyMongo Backend Implementation
 """
 import logging
+import re
+
+import bson.regex
 
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
@@ -72,30 +75,80 @@ class MongoBackend(_Backend):
         """
         return self._collection.find()
 
-    def find(self, multiples=False, **kwargs):
+    def find(self, to_match):
         """
-        Find an instance or instances that matches the search criteria
+        Yield all instances that match the given search criteria
 
         Parameters
         ----------
-        multiples : bool
-            Find a single result or all results matching the provided
-            information
-
-        kwargs :
+        to_match : dict
             Requested information
         """
-        # Find all matches
-        cur = list(self._collection.find(kwargs))
-        # Only return a single device if requested
-        if not multiples:
-            # Grab first item
+        yield from self._collection.find(to_match)
+
+    def find_range(self, key, *, start, stop=None, to_match):
+        """
+        Find an instance or instances that matches the search criteria, such
+        that ``start <= entry[key] < stop``.
+
+        Parameters
+        ----------
+        key : str
+            The database key to search
+
+        start : int or float
+            Inclusive minimum value to filter ``key`` on
+
+        end : float, optional
+            Exclusive maximum value to filter ``key`` on
+
+        to_match : dict
+            Requested information, where the values must match exactly
+        """
+        if key in to_match:
+            raise ValueError('Cannot specify the same key in `to_match` as '
+                             'the key for the range.')
+
+        match = {key: {'$gte': start}}
+        if stop is not None:
+            if start >= stop:
+                raise ValueError(f"Invalid range: {start} >= {stop}")
+            match[key]['$lt'] = stop
+
+        match.update(**to_match)
+        yield from self._collection.find(match)
+
+    def get_by_id(self, _id):
+        """
+        Get a device by ID if it exists, or None
+
+        Parameters
+        ----------
+        _id : str
+            The device ID
+        """
+        for item in self._collection.find({'_id': _id}):
+            return item
+
+    def find_regex(self, to_match, *, flags=re.IGNORECASE):
+        """
+        Yield all instances that match the given search criteria
+
+        Parameters
+        ----------
+        to_match : dict
+            Requested information, with each value being a regular expression
+        """
+        regexes = {}
+        for key, value in to_match.items():
             try:
-                cur = cur[0]
-            # If no items were returned
-            except IndexError:
-                logger.debug("No items found when searching for multiples")
-        return cur
+                reg = re.compile(value, flags=flags)
+                regexes[key] = bson.regex.Regex.from_native(reg)
+            except Exception as ex:
+                raise ValueError(f'Failed to create regular expression from '
+                                 f'{key}={value!r}: {ex}') from ex
+
+        yield from self._collection.find(regexes)
 
     def save(self, _id, post, insert=True):
         """
@@ -154,4 +207,6 @@ class MongoBackend(_Backend):
         _id : str
             ID of device
         """
-        self._collection.delete_one({'_id': _id})
+        res = self._collection.delete_one({'_id': _id})
+        if res.deleted_count < 1:
+            raise SearchError(f'ID not found in database: {_id!r}')

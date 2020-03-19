@@ -95,11 +95,11 @@ def happi_cli(args):
                 value = float(value)
             client_args[criteria] = value
 
-        devices = client.search(**client_args)
-        if devices:
-            for dev in devices:
-                dev.show_info()
-            return devices
+        results = client.search(**client_args)
+        if results:
+            for res in results:
+                res.device.show_info()
+            return results
         else:
             logger.error('No devices found')
     elif args.cmd == 'add':

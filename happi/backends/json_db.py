@@ -1,9 +1,12 @@
 """
 Backend implemenation using simplejson
 """
+import contextlib
 import os
 import os.path
 import logging
+import math
+import re
 
 import simplejson as json
 
@@ -18,6 +21,17 @@ try:
 except ImportError:
     logger.warning("Unable to import 'fcntl'. Will be unable to lock files")
     fcntl = None
+
+
+@contextlib.contextmanager
+def _load_and_store_context(backend):
+    '''
+    A context manager to load, and optionally store the JSON database at the
+    end
+    '''
+    db = backend._load_or_initialize()
+    yield db
+    backend.store(db)
 
 
 class JSONBackend(_Backend):
@@ -41,15 +55,24 @@ class JSONBackend(_Backend):
         if initialize:
             self.initialize()
 
+    def _load_or_initialize(self):
+        '''
+        Load an existing database or initialize a new one.
+        '''
+        try:
+            return self.load()
+        except FileNotFoundError:
+            logger.debug('Initializing new database')
+
+        self.initialize()
+        return self.load()
+
     @property
     def all_devices(self):
         """
         All of the devices in the database
         """
-        try:
-            json = self.load()
-        except FileNotFoundError:
-            json = {}
+        json = self._load_or_initialize()
         return list(json.values())
 
     def initialize(self):
@@ -72,8 +95,7 @@ class JSONBackend(_Backend):
             raise PermissionError("File {} already exists. Can not initialize "
                                   "a new database.".format(self.path))
         # Dump an empty dictionary
-        with open(self.path, "w+") as f:
-            json.dump({}, f)
+        self.store({})
 
     def load(self):
         """
@@ -112,42 +134,109 @@ class JSONBackend(_Backend):
                     # Release lock in filesystem
                     fcntl.flock(f, fcntl.LOCK_UN)
 
-    def find(self, _id=None, multiples=False, **kwargs):
+    def _iterative_compare(self, comparison):
+        """
+        Yields documents in which ``comparison(name, doc)`` returns True.
+
+        Parameters
+        ----------
+        comparison : callable
+            A comparison function with a signature of (device_id, doc)
+        """
+        db = self._load_or_initialize()
+        if not db:
+            return
+
+        for name, doc in db.items():
+            try:
+                if comparison(name, doc):
+                    yield doc
+            except Exception as ex:
+                logger.debug('Comparison method failed: %s', ex, exc_info=ex)
+
+    def get_by_id(self, id_):
+        '''
+        Get a device by ID if it exists, or None
+
+        Parameters
+        ----------
+        id_
+        '''
+        db = self._load_or_initialize()
+        return db.get(id_)
+
+    def find(self, to_match):
         """
         Find an instance or instances that matches the search criteria
 
         Parameters
         ----------
-        multiples : bool
-            Find a single result or all results matching the provided
-            information
-
-        kwargs :
-            Requested information
+        to_match : dict
+            Requested information, all of which must match
         """
-        # Load database
-        db = self.load()
+        def comparison(name, doc):
+            return all(value == doc[key]
+                       for key, value in to_match.items())
 
-        # Search by _id, separated for speed
-        if _id:
-            try:
-                matches = [db[_id]]
-            except KeyError:
-                matches = []
+        yield from self._iterative_compare(comparison)
 
-        # Find devices matching kwargs
-        else:
-            matches = [doc for doc in db.values()
-                       if all([value == doc[key]
-                               for key, value in kwargs.items()])]
+    def find_range(self, key, *, start, stop=None, to_match):
+        """
+        Find an instance or instances that matches the search criteria, such
+        that ``start <= entry[key] < stop``.
 
-        if not multiples:
-            try:
-                matches = matches[0]
-            except IndexError:
-                matches = []
+        Parameters
+        ----------
+        key : str
+            The database key to search
 
-        return matches
+        start : int or float
+            Inclusive minimum value to filter ``key`` on
+
+        end : float, optional
+            Exclusive maximum value to filter ``key`` on
+
+        to_match : dict
+            Requested information, where the values must match exactly
+        """
+        def comparison(name, doc):
+            if all(value == doc[k] for k, value in to_match.items()):
+                value = doc.get(key)
+                try:
+                    return start <= value < stop
+                except Exception:
+                    ...
+
+        if key in to_match:
+            raise ValueError('Cannot specify the same key in `to_match` as '
+                             'the key for the range.')
+        if stop is None:
+            stop = math.inf
+        if start >= stop:
+            raise ValueError(f"Invalid range: {start} >= {stop}")
+
+        yield from self._iterative_compare(comparison)
+
+    def find_regex(self, to_match, *, flags=re.IGNORECASE):
+        """
+        Find an instance or instances that matches the search criteria,
+        using regular expressions.
+
+        Parameters
+        ----------
+        to_match : dict
+            Requested information, where the values are regular expressions.
+        """
+        def comparison(name, doc):
+            return regexes and all(key in doc and regex.match(doc[key])
+                                   for key, regex in regexes.items())
+
+        regexes = {
+            key: re.compile(value, flags=flags)
+            for key, value in to_match.items()
+        }
+
+        yield from self._iterative_compare(comparison)
 
     def save(self, _id, post, insert=True):
         """
@@ -176,32 +265,22 @@ class JSONBackend(_Backend):
         PermissionError:
             If the write operation fails due to issues with permissions
         """
-
-        try:
-            # Load database
-            db = self.load()
-        except FileNotFoundError:
-            logger.debug('Initializing new database for device %s', _id)
-            self.initialize()
-            db = self.load()
-
-        # New device
-        if insert:
-            if _id in db.keys():
-                raise DuplicateError("Device {} already exists".format(_id))
-            # Add _id keyword
-            post.update({'_id': _id})
-            # Add to database
-            db[_id] = post
-        # Updating device
-        else:
-            # Edit information
-            try:
-                db[_id].update(post)
-            except KeyError:
-                raise SearchError("No device found {}".format(_id))
-        # Save changes
-        self.store(db)
+        with _load_and_store_context(self) as db:
+            # New device
+            if insert:
+                if _id in db.keys():
+                    raise DuplicateError(f"Device {_id} already exists")
+                # Add _id keyword
+                post.update({'_id': _id})
+                # Add to database
+                db[_id] = post
+            # Updating device
+            else:
+                # Edit information
+                try:
+                    db[_id].update(post)
+                except KeyError:
+                    raise SearchError("No device found {}".format(_id))
 
     def delete(self, _id):
         """
@@ -217,12 +296,10 @@ class JSONBackend(_Backend):
         PermissionError:
             If the write operation fails due to issues with permissions
         """
-        # Load database
-        db = self.load()
-        # Remove device
-        try:
-            db.pop(_id)
-        except KeyError:
-            logger.warning("Device %s not found in database", _id)
-        # Store database
-        self.store(db)
+        with _load_and_store_context(self) as db:
+            try:
+                db.pop(_id)
+            except KeyError:
+                raise SearchError(
+                    f'ID not found in database: {_id!r}'
+                ) from None

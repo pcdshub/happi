@@ -81,15 +81,15 @@ def test_cli_version(capsys):
 
 def test_search(happi_cfg):
     client = happi.client.Client.from_config(cfg=happi_cfg)
-    devices = client.search(beamline="TST")
-    devices_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg,
-                                       'search', 'beamline=TST'])
-    assert devices == devices_cli
+    res = client.search(beamline="TST")
+    res_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'search',
+                                   'beamline=TST'])
+    assert [r.device for r in res] == [r.device for r in res_cli]
 
 
 def test_search_z(happi_cfg):
     client = happi.client.Client.from_config(cfg=happi_cfg)
-    devices = client.search(z=6.0)
-    devices_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg,
-                                       'search', 'z=6.0'])
-    assert devices == devices_cli
+    res = client.search(z=6.0)
+    res_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'search',
+                                   'z=6.0'])
+    assert [r.device for r in res] == [r.device for r in res_cli]

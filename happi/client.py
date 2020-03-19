@@ -1,8 +1,10 @@
+import collections
 import configparser
 import inspect
+import itertools
 import logging
-import math
 import os
+import re
 import sys
 import time as ttime
 
@@ -29,7 +31,66 @@ def _looks_like_database(obj):
             )
 
 
-class Client:
+class SearchResult(collections.abc.Mapping):
+    '''
+    A single search result from ``Client.search``
+
+    This result can be keyed for metadata as in::
+        result['name']
+
+    The HappiItem can be readily retrieved::
+        result.device
+
+    Or the object may be instantiated::
+        result.get()
+
+    Attributes
+    ----------
+    device : happi.HappiItem
+        The container
+    metadata : dict
+        The HappiItem metadata
+    '''
+
+    def __init__(self, client, device):
+        self._device = device
+        self._instantiated = None
+        self.client = client
+        self.metadata = device.post()
+
+    @property
+    def device(self):
+        'Get the happi.Device container'
+        if self._device is None:
+            self._device = self.client.find_device(**self.metadata)
+        return self._device
+
+    def get(self, attach_md=True, use_cache=True, threaded=False):
+        '''(get) ''' + from_container.__doc__
+        if self._instantiated is None:
+            self._instantiated = from_container(
+                self.device, attach_md=attach_md, use_cache=use_cache,
+                threaded=threaded
+            )
+        return self._instantiated
+
+    def __getitem__(self, item):
+        return self.metadata[item]
+
+    def __iter__(self):
+        yield from self.metadata
+
+    def __len__(self):
+        return len(self.metadata)
+
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}(client={self.client}, '
+            f'metadata={self.metadata})'
+        )
+
+
+class Client(collections.abc.Mapping):
     """
     The client to control the contents of the Happi Database
 
@@ -54,6 +115,7 @@ class Client:
     # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'name'
+    _results_wrap_class = SearchResult
     # Store device types seen by client
     device_types = {'Device': Device,
                     'HappiItem': HappiItem}
@@ -109,13 +171,12 @@ class Client:
         """
         if len(kwargs) == 0:
             raise SearchError('No information pertinent to device given')
-        # Request information from backend
-        post = self.backend.find(multiples=False, **kwargs)
-        # Check result, if not found let the user know
-        if not post:
-            raise SearchError('No device information found that '
-                              'matches the search criteria')
-        return post
+
+        matches = list(itertools.islice(self.backend.find(kwargs), 1))
+        if not matches:
+            raise SearchError(
+                'No device information found that matches the search criteria')
+        return matches[0]
 
     def create_device(self, device_cls, **kwargs):
         """
@@ -290,17 +351,40 @@ class Client:
         """
         A list of all contained devices
         """
-        return self.search()
+        return [res.device for res in self.search()]
 
-    def search(self, start=0., end=None, as_dict=False, **kwargs):
+    def __getitem__(self, key):
+        'Get a device ID'
+        try:
+            device = self.find_device(**self.backend.get_by_id(key))
+        except Exception as ex:
+            raise KeyError(key) from ex
+
+        return SearchResult(client=self, device=device)
+
+    def __iter__(self):
+        for info in self.backend.find({}):
+            yield info['_id']
+
+    def __len__(self):
+        return len(self.all_devices)
+
+    def _get_search_results(self, items, *, wrap_cls=None):
+        '''
+        Return search results to the user, optionally wrapping with a class
+        '''
+        wrap_cls = wrap_cls or self._results_wrap_class
+        return [wrap_cls(client=self, device=self.find_device(**info))
+                for info in items]
+
+    def search_range(self, key, start, end=None, **kwargs):
         """
         Search the database for a device or devices
 
         Parameters
         -----------
-        as_dict : bool, optional
-            Return the information as a list of dictionaries or a list of
-            :class:`.HappiItem`
+        key : str
+            Database key to search
 
         start : float, optional
             Minimum beamline position to include devices
@@ -308,7 +392,7 @@ class Client:
         end : float, optional
             Maximum beamline position to include devices
 
-        kwargs :
+        **kwargs
             Information to filter through the database structured as key, value
             pairs for the desired pieces of EntryInfo
 
@@ -319,28 +403,65 @@ class Client:
         Example
         .. code::
 
+            gate_valves = client.search_range('z', 0, 100, type='Valve')
+            hxr_valves  = client.search_range('z', 0, 100, type='Valve',
+                                              beamline='HXR')
+        """
+        items = self.backend.find_range(key, start=start, stop=end,
+                                        to_match=kwargs)
+        return self._get_search_results(items)
+
+    def search(self, **kwargs):
+        """
+        Search the database for a device or devices
+
+        Parameters
+        -----------
+        **kwargs
+            Information to filter through the database structured as key, value
+            pairs for the desired pieces of EntryInfo
+
+        Returns
+        -------
+        res : list of SearchResult
+            The search results
+
+        Example
+        .. code::
+
             gate_valves = client.search(type='Valve')
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
-        try:
-            cur = self.backend.find(multiples=True, **kwargs)
-        except TypeError:
-            return None
-        # If beamline position matters
-        if start or end:
-            if not end:
-                end = math.inf
-            if start >= end:
-                raise ValueError("Invalid beamline range")
-            # Find all values within range
-            cur = [info for info in cur
-                   if start <= info['z'] and info['z'] < end]
-        if not cur:
-            return None
-        elif as_dict:
-            return cur
-        else:
-            return [self.find_device(**info) for info in cur]
+        items = self.backend.find(kwargs)
+        return self._get_search_results(items)
+
+    def search_regex(self, flags=re.IGNORECASE, **kwargs):
+        """
+        Search the database for a device or devices
+
+        Parameters
+        -----------
+        flags : int, optional
+            Defaulting to ``re.IGNORECASE``, these flags are used for the
+            regular expressions passed in.
+
+        **kwargs
+            Information to filter through the database structured as key, value
+            pairs for the desired pieces of EntryInfo.  Every value is allowed
+            to contain a Python regular expression.
+
+        Returns
+        -------
+        Either a list of devices or dictionaries
+
+        Example
+        .. code::
+
+            gate_valves = client.search_regex(beamline='Valve.*')
+            three_valves = client.search_regex(_id='VALVE[123]')
+        """
+        items = self.backend.find_regex(kwargs, flags=flags)
+        return self._get_search_results(items)
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """
@@ -386,15 +507,8 @@ class Client:
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
         # Check that device is in the database
-        try:
-            _id = getattr(device, self._id)
-            self.find_document(_id=_id)
-        # Log and re-raise
-        except SearchError:
-            logger.exception('Target device was not found in the database')
-            raise
-        else:
-            self.backend.delete(_id)
+        _id = getattr(device, self._id)
+        self.backend.delete(_id)
 
     def _validate_device(self, device):
         """

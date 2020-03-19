@@ -1,5 +1,6 @@
 import os
 import logging
+import re
 import tempfile
 import types
 
@@ -156,42 +157,70 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     res = happi_client.search(name=device_info['name'])
     # Single search return
     assert len(res) == 1
-    loaded_device = res[0]
+    loaded_device = res[0].device
     assert loaded_device.prefix == device_info['prefix']
     assert loaded_device.name == device_info['name']
     assert loaded_device.z == device_info['z']
     assert loaded_device.beamline == device_info['beamline']
     # No results
-    assert happi_client.search(name='not') is None
+    assert not happi_client.search(name='not')
     # Returned as dict
-    res = happi_client.search(as_dict=True, **device_info)
-    loaded_device = res[0]
+    res = happi_client.search(**device_info)
+    loaded_device = res[0].device
     assert loaded_device['prefix'] == device_info['prefix']
     assert loaded_device['name'] == device_info['name']
     assert loaded_device['z'] == device_info['z']
     assert loaded_device['beamline'] == device_info['beamline']
-    # Search between two points
-    res = happi_client.search(start=0, end=500)
-    assert len(res) == 2
-    loaded_device = res[0]
-    # Search between two points, nothing found
-    res = happi_client.search(start=10000, end=500000)
-    assert res is None
-    # Search without an endpoint
-    res = happi_client.search(start=0)
-    assert len(res) == 2
-    loaded_device = res[1]
-    # Search invalid range
-    with pytest.raises(ValueError):
-        happi_client.search(start=1000, end=5)
     # Search off keyword
     res = happi_client.search(beamline='LCLS')
     assert len(res) == 2
 
 
+def test_search_range(happi_client, device, valve, device_info, valve_info):
+    happi_client.add_device(valve)
+    # Search between two points
+    res = happi_client.search_range('z', start=0, end=500)
+    assert len(res) == 2
+    # Search between two points, nothing found
+    res = happi_client.search_range('z', start=10000, end=500000)
+    assert not res
+    # Search without an endpoint
+    res = happi_client.search_range('z', start=0)
+    assert len(res) == 2
+    # Search invalid range
+    with pytest.raises(ValueError):
+        happi_client.search_range('z', start=1000, end=5)
+
+
+def test_search_regex(happi_client, three_valves):
+    def find(**kwargs):
+        return [
+            dict(item) for item in
+            happi_client.search_regex(**kwargs, flags=re.IGNORECASE)
+        ]
+
+    valve1 = dict(happi_client['VALVE1'])
+    valve2 = dict(happi_client['VALVE2'])
+    valve3 = dict(happi_client['VALVE3'])
+
+    assert find(beamline='LCLS') == [valve1, valve2, valve3]
+    assert find(beamline='lcls') == [valve1, valve2, valve3]
+    assert find(beamline='nomatch') == []
+    assert find(_id=r'VALVE\d') == [valve1, valve2, valve3]
+    assert find(_id='VALVE[13]') == [valve1, valve3]
+    assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
+
+
+def test_get_by_id(happi_client, device, valve, device_info, valve_info):
+    happi_client.add_device(valve)
+    name = valve_info['name']
+    for k, v in valve_info.items():
+        assert happi_client[name][k] == valve_info[k]
+
+
 def test_remove_device(happi_client, device, valve, device_info):
     happi_client.remove_device(device)
-    assert happi_client.backend.find(**device_info) == []
+    assert list(happi_client.backend.find(device_info)) == []
     # Invalid Device
     with pytest.raises(ValueError):
         happi_client.remove_device(5)
@@ -244,3 +273,18 @@ def test_choices_for_field(happi_client):
     assert prefix_choices == {'BASE:PV'}
     with pytest.raises(SearchError):
         happi_client.choices_for_field('not_a_field')
+
+
+def test_searchresults(happi_client, three_valves):
+    valve1 = happi_client['VALVE1']
+    print(repr(valve1))
+    print(dict(valve1))
+    assert valve1.metadata == valve1
+    assert isinstance(valve1.get(), types.SimpleNamespace)
+
+
+def test_client_mapping(happi_client, three_valves):
+    assert len(happi_client) == 3
+    assert list(dict(happi_client)) == ['VALVE1', 'VALVE2', 'VALVE3']
+    for name in happi_client:
+        assert happi_client[name]['name']
