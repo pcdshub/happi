@@ -31,9 +31,9 @@ def _looks_like_database(obj):
             )
 
 
-class Metadata(collections.abc.Mapping):
-    def __init__(self, client, metadata):
-        self._device = None
+class SearchResult(collections.abc.Mapping):
+    def __init__(self, client, metadata, *, device=None):
+        self._device = device
         self._instantiated = None
         self.client = client
         self.metadata = metadata
@@ -99,7 +99,7 @@ class Client:
     # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'name'
-    _results_wrap_class = Metadata
+    _results_wrap_class = SearchResult
     # Store device types seen by client
     device_types = {'Device': Device,
                     'HappiItem': HappiItem}
@@ -335,23 +335,22 @@ class Client:
         """
         A list of all contained devices
         """
-        return self.search()
+        return [res.device for res in self.search()]
 
     def __getitem__(self, key):
         'Get a device ID'
-        return Metadata(client=self, metadata=self.backend.get_by_id(key))
+        return SearchResult(client=self, metadata=self.backend.get_by_id(key))
 
-    def _get_search_results(self, items, as_dict, *, wrap_cls=None):
+    def _get_search_results(self, items, *, wrap_cls=None):
         '''
         Return search results to the user, optionally wrapping with a class
         '''
         wrap_cls = wrap_cls or self._results_wrap_class
-        if as_dict:
-            return [Metadata(client=self, metadata=d) for d in items]
+        return [wrap_cls(client=self, metadata=info,
+                         device=self.find_device(**info))
+                for info in items]
 
-        return [self.find_device(**info) for info in items]
-
-    def search_range(self, key, start, end=None, as_dict=False, **kwargs):
+    def search_range(self, key, start, end=None, **kwargs):
         """
         Search the database for a device or devices
 
@@ -365,10 +364,6 @@ class Client:
 
         end : float, optional
             Maximum beamline position to include devices
-
-        as_dict : bool, optional
-            Return the information as a list of dictionaries or a list of
-            :class:`.HappiItem`
 
         **kwargs
             Information to filter through the database structured as key, value
@@ -387,18 +382,14 @@ class Client:
         """
         items = self.backend.find_range(key, start=start, stop=end,
                                         to_match=kwargs)
-        return self._get_search_results(items, as_dict=as_dict)
+        return self._get_search_results(items)
 
-    def search(self, as_dict=False, **kwargs):
+    def search(self, **kwargs):
         """
         Search the database for a device or devices
 
         Parameters
         -----------
-        as_dict : bool, optional
-            Return the information as a list of dictionaries or a list of
-            :class:`.HappiItem`
-
         **kwargs
             Information to filter through the database structured as key, value
             pairs for the desired pieces of EntryInfo
@@ -414,18 +405,14 @@ class Client:
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
         items = self.backend.find(kwargs)
-        return self._get_search_results(items, as_dict=as_dict)
+        return self._get_search_results(items)
 
-    def search_regex(self, flags=re.IGNORECASE, as_dict=False, **kwargs):
+    def search_regex(self, flags=re.IGNORECASE, **kwargs):
         """
         Search the database for a device or devices
 
         Parameters
         -----------
-        as_dict : bool, optional
-            Return the information as a list of dictionaries or a list of
-            :class:`.HappiItem`
-
         flags : int, optional
             Defaulting to ``re.IGNORECASE``, these flags are used for the
             regular expressions passed in.
@@ -446,7 +433,7 @@ class Client:
             three_valves = client.search_regex(_id='VALVE[123]')
         """
         items = self.backend.find_regex(kwargs, flags=flags)
-        return self._get_search_results(items, as_dict=as_dict)
+        return self._get_search_results(items)
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """

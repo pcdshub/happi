@@ -157,7 +157,7 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     res = happi_client.search(name=device_info['name'])
     # Single search return
     assert len(res) == 1
-    loaded_device = res[0]
+    loaded_device = res[0].device
     assert loaded_device.prefix == device_info['prefix']
     assert loaded_device.name == device_info['name']
     assert loaded_device.z == device_info['z']
@@ -165,8 +165,8 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     # No results
     assert not happi_client.search(name='not')
     # Returned as dict
-    res = happi_client.search(as_dict=True, **device_info)
-    loaded_device = res[0]
+    res = happi_client.search(**device_info)
+    loaded_device = res[0].device
     assert loaded_device['prefix'] == device_info['prefix']
     assert loaded_device['name'] == device_info['name']
     assert loaded_device['z'] == device_info['z']
