@@ -160,7 +160,7 @@ class EntryInfo:
 
 class _HappiItemBase:
     def __init_subclass__(cls, **kargs):
-        # These attributes are used by device so can not be overwritten
+        # These attributes are not to be overwritten by subclasses
         RESERVED_ATTRS = [
             '_id', '_info_attrs',
             'creation', 'entry_info', 'info_names', 'last_edit',
