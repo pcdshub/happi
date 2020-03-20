@@ -19,12 +19,10 @@ for entry in _entries:
     if inspect.isclass(obj) and HappiItem in obj.mro():
         registry.add(obj)
     elif inspect.ismodule(obj):
-        registry.update([var for _, var in obj.__dict__.items()
-                         # Only classes
-                         if inspect.isclass(var)
-                         # Must inherit from HappiItem at some point
-                         and HappiItem in var.mro()
-                         # Avoid happi internal classes due to imports
-                         and not var.__module__.startswith('happi.')])
+        registry.update(
+            [var for _, var in inspect.getmembers(obj, inspect.isclass)
+             if issubclass(var, HappiItem)
+             # Avoid happi internal classes due to imports
+             and not var.__module__.startswith('happi.')])
 
-        locals().update({c.__name__: c for c in registry})
+locals().update({c.__name__: c for c in registry})
