@@ -61,7 +61,7 @@ class Device(HappiItem):
 
     def __init__(self, *args, **kwargs):
         warnings.warn("happi.device.Device is deprecated. Please use "
-                      "OphydItem or LCLSItem.", warnings.DeprecationWarning)
+                      "OphydItem or LCLSItem.", DeprecationWarning)
         super().__init__(*args, **kwargs)
 
     def __repr__(self):
@@ -76,5 +76,5 @@ class Device(HappiItem):
         warnings.warn("The 'screen' keyword is no longer used in Happi as it "
                       "lacks specificity. Use one of detailed_screen, "
                       "embedded_screen, or engineering screen instead",
-                      warnings.DeprecationWarning)
+                      DeprecationWarning)
         return self.detailed_screen
