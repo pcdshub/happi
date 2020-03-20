@@ -280,7 +280,6 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
             logger.debug('Additional information for %s was defined %s',
                          self.name, ', '.join(self.extraneous))
 
-
     def show_info(self, handle=sys.stdout):
         """
         Show the device instance information in a PrettyTable
