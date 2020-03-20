@@ -363,20 +363,3 @@ class OphydItem(HappiItem):
     args.default = ['{{prefix}}']
     kwargs = copy.copy(HappiItem.kwargs)
     kwargs.default = {'name': '{{name}}'}
-
-
-class LCLSItem(OphydItem):
-    beamline = EntryInfo('Section of beamline the device belongs',
-                         optional=False, enforce=str)
-    location_group = EntryInfo('LUCID grouping parameter for location',
-                               optional=False, enforce=str)
-    functional_group = EntryInfo('LUCID grouping parameter for function',
-                                 optional=False, enforce=str)
-    z = EntryInfo('Beamline position of the device',
-                  enforce=float, default=-1.0)
-    stand = EntryInfo('Acronym for stand, must be three alphanumeric '
-                      'characters like an LCLSI stand (e.g. DG3) or follow '
-                      'the LCLSII stand naming convention (e.g. L0S04).',
-                      enforce=re.compile(r'[A-Z0-9]{3}$|[A-Z][0-9]S[0-9]{2}$'))
-    lightpath = EntryInfo("If the device should be included in the "
-                          "LCLS Lightpath", enforce=bool, default=False)
