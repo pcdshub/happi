@@ -1,6 +1,5 @@
 import collections
 import configparser
-import inspect
 import itertools
 import logging
 import os
@@ -11,7 +10,7 @@ import time as ttime
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
 from .backends.core import _Backend
-from .device import Device, HappiItem
+from .item import HappiItem, OphydItem
 from .errors import DatabaseError, EntryError, SearchError
 from .loader import from_container
 
@@ -117,15 +116,12 @@ class Client(collections.abc.Mapping):
     _id = 'name'
     _results_wrap_class = SearchResult
     # Store device types seen by client
-    device_types = {'Device': Device,
+    device_types = {'OphydItem': OphydItem,
                     'HappiItem': HappiItem}
 
     def __init__(self, database=None, **kwargs):
         # Get HappiItem Mapping
-        self.device_types.update(dict([(name, cls) for (name, cls) in
-                                       inspect.getmembers(containers,
-                                                          inspect.isclass)
-                                       if issubclass(cls, HappiItem)]))
+        self.device_types.update(containers.registry)
         # Use supplied backend
         if database:
             self.backend = database
@@ -573,7 +569,12 @@ class Client(collections.abc.Mapping):
                              "information under the keyword %s",
                              device, key)
         # Add metadata from the Client Side
-        post.update({'type': device.__class__.__name__,
+        if device.__module__.startswith("happi."):
+            tpe = device.__class__.__name__
+        else:
+            pkg = device.__module__.split('.')[0]
+            tpe = f"{pkg}.{device.__class__.__name__}"
+        post.update({'type': tpe,
                      'creation': creation,
                      'last_edit': ttime.ctime()})
         # Find id
