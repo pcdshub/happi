@@ -111,14 +111,14 @@ def happi_cli(args):
         else:
             logger.info(
                 'Please select a container, or press enter for generic '
-                'Device container: %r', list(client.device_types)
+                'Ophyd Device container: %r', list(client.device_types)
             )
             response = input()
             if response and response not in client.device_types:
                 logger.info('Invalid device container f{response}')
                 return
             elif not response:
-                response = 'Device'
+                response = 'OphydItem'
 
         container = client.device_types[response]
         kwargs = {}
