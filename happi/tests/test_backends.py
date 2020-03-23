@@ -58,20 +58,20 @@ def test_mongo_find(valve_info, device_info, mockmongo):
 def test_mongo_save(mockmongo, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
-        mockmongo.save(device_info[Client._id], device_info, insert=True)
+        mockmongo.save(device_info[Client._id_key], device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):
-        mockmongo.save(valve_info[Client._id], valve_info, insert=False)
+        mockmongo.save(valve_info[Client._id_key], valve_info, insert=False)
 
     # Add to database
-    mockmongo.save(valve_info[Client._id], valve_info, insert=True)
+    mockmongo.save(valve_info[Client._id_key], valve_info, insert=True)
     assert mockmongo._collection.find_one(valve_info) == valve_info
 
 
 @requires_mongo
 def test_mongo_delete(mockmongo, device_info):
-    mockmongo.delete(device_info[Client._id])
+    mockmongo.delete(device_info[Client._id_key])
     assert mockmongo._collection.find_one(device_info) is None
 
 
@@ -119,21 +119,21 @@ def test_find_regex(happi_client, three_valves):
 
 
 def test_json_delete(mockjson, device_info):
-    mockjson.delete(device_info[Client._id])
+    mockjson.delete(device_info[Client._id_key])
     assert device_info not in mockjson.all_devices
 
 
 def test_json_save(mockjson, device_info, valve_info):
     # Duplicate device
     with pytest.raises(DuplicateError):
-        mockjson.save(device_info[Client._id], device_info, insert=True)
+        mockjson.save(device_info[Client._id_key], device_info, insert=True)
 
     # Device not found
     with pytest.raises(SearchError):
-        mockjson.save(valve_info[Client._id], valve_info, insert=False)
+        mockjson.save(valve_info[Client._id_key], valve_info, insert=False)
 
     # Add to database
-    mockjson.save(valve_info[Client._id], valve_info, insert=True)
+    mockjson.save(valve_info[Client._id_key], valve_info, insert=True)
     assert valve_info in mockjson.all_devices
 
 

@@ -148,7 +148,8 @@ def test_validate(happi_client):
     # No bad devices
     assert happi_client.validate() == list()
     # A single bad device
-    happi_client.backend.save('_id', {happi_client._id: 'bad'}, insert=True)
+    happi_client.backend.save('_id', {happi_client._id_key: 'bad'},
+                              insert=True)
     assert happi_client.validate() == ['bad']
 
 
