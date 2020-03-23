@@ -121,3 +121,12 @@ def test_device_deepcopy():
     c = copy.deepcopy(a)
     assert a.kwargs == c.kwargs
     assert id(a.kwargs) != id(c.kwargs)
+
+
+def test_add_and_save(three_valves, device, happi_client):
+    device.active = True
+    happi_client.add_device(device)
+    device.active = False
+    device.save()
+
+    assert not happi_client[device.name].device.active

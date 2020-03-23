@@ -221,7 +221,11 @@ class Client(collections.abc.Mapping):
                             'HappiItem'.format(device_cls))
         device = device_cls(**kwargs)
         # Add the method to the device
-        device.save = lambda: self.add_device(device)
+
+        def save_device():
+            self.add_device(device)
+
+        device.save = save_device
         return device
 
     def add_device(self, device):
@@ -241,11 +245,15 @@ class Client(collections.abc.Mapping):
             database
         """
         logger.info("Storing device %r ...", device)
-        # Store post
-        self._store(device, insert=True)
-        # Log success
+        _id = self._store(device, insert=True)
         logger.info('HappiItem %r has been succesfully added to the '
                     'database', device)
+
+        def save_device():
+            self._store(device, insert=False)
+
+        device.save = save_device
+        return _id
 
     def find_device(self, **post):
         """
