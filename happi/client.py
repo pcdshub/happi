@@ -114,7 +114,7 @@ class Client(collections.abc.Mapping):
     """
     # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
-    _id = 'name'
+    _id_key = 'name'
     _results_wrap_class = SearchResult
     # Store device types seen by client
     device_types = {'Device': Device,
@@ -221,7 +221,11 @@ class Client(collections.abc.Mapping):
                             'HappiItem'.format(device_cls))
         device = device_cls(**kwargs)
         # Add the method to the device
-        device.save = lambda: self.add_device(device)
+
+        def save_device():
+            self.add_device(device)
+
+        device.save = save_device
         return device
 
     def add_device(self, device):
@@ -241,11 +245,15 @@ class Client(collections.abc.Mapping):
             database
         """
         logger.info("Storing device %r ...", device)
-        # Store post
-        self._store(device, insert=True)
-        # Log success
+        _id = self._store(device, insert=True)
         logger.info('HappiItem %r has been succesfully added to the '
                     'database', device)
+
+        def save_device():
+            self._store(device, insert=False)
+
+        device.save = save_device
+        return _id
 
     def find_device(self, **post):
         """
@@ -329,7 +337,7 @@ class Client(collections.abc.Mapping):
             # Try and load device based on database info
             try:
                 # HappiItem identification
-                _id = post[self._id]
+                _id = post[self._id_key]
                 logger.debug('Attempting to initialize %s...', _id)
                 # Load HappiItem
                 device = self.find_device(**post)
@@ -507,7 +515,7 @@ class Client(collections.abc.Mapping):
         logger.info("Attempting to remove %r from the "
                     "collection ...", device)
         # Check that device is in the database
-        _id = getattr(device, self._id)
+        _id = getattr(device, self._id_key)
         self.backend.delete(_id)
 
     def _validate_device(self, device):
@@ -578,14 +586,15 @@ class Client(collections.abc.Mapping):
                      'last_edit': ttime.ctime()})
         # Find id
         try:
-            _id = post[self._id]
+            _id = post[self._id_key]
         except KeyError:
             raise EntryError('HappiItem did not supply the proper information '
                              'to interface with the database, missing {}'
-                             ''.format(self._id))
+                             ''.format(self._id_key))
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
         self.backend.save(_id, post, insert=insert)
+        return _id
 
     @classmethod
     def from_config(cls, cfg=None):
