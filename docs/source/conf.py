@@ -19,12 +19,18 @@
 #
 import happi
 import os
+import pathlib
 import sys
 import sphinx_rtd_theme  # noqa
 
 module_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '../../')
 sys.path.insert(0, module_path)
+
+try:
+    os.unlink(pathlib.Path(module_path) / 'docs' / 'doc_test.json')
+except FileNotFoundError:
+    ...
 
 
 # -- General configuration ------------------------------------------------
