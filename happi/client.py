@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time as ttime
+import warnings
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -39,14 +40,14 @@ class SearchResult(collections.abc.Mapping):
         result['name']
 
     The HappiItem can be readily retrieved::
-        result.device
+        result.item
 
     Or the object may be instantiated::
         result.get()
 
     Attributes
     ----------
-    device : happi.HappiItem
+    item : happi.HappiItem
         The container
     metadata : dict
         The HappiItem metadata
@@ -60,7 +61,11 @@ class SearchResult(collections.abc.Mapping):
 
     @property
     def device(self):
-        'Get the happi.Device container'
+        warnings.warn('SearchResult.device deprecated, use SearchResult.item')
+        return self.item
+
+    @property
+    def item(self):
         if self._device is None:
             self._device = self.client.find_device(**self.metadata)
         return self._device
@@ -69,7 +74,7 @@ class SearchResult(collections.abc.Mapping):
         '''(get) ''' + from_container.__doc__
         if self._instantiated is None:
             self._instantiated = from_container(
-                self.device, attach_md=attach_md, use_cache=use_cache,
+                self.item, attach_md=attach_md, use_cache=use_cache,
                 threaded=threaded
             )
         return self._instantiated
@@ -359,7 +364,15 @@ class Client(collections.abc.Mapping):
         """
         A list of all contained devices
         """
-        return [res.device for res in self.search()]
+        warnings.warn('Client.all_devices deprecated, use all_items')
+        return self.all_items
+
+    @property
+    def all_items(self):
+        """
+        A list of all contained devices
+        """
+        return [res.item for res in self.search()]
 
     def __getitem__(self, key):
         'Get a device ID'
@@ -409,6 +422,7 @@ class Client(collections.abc.Mapping):
         Either a list of devices or dictionaries
 
         Example
+        -------
         .. code::
 
             gate_valves = client.search_range('z', 0, 100, type='Valve')
@@ -435,6 +449,7 @@ class Client(collections.abc.Mapping):
             The search results
 
         Example
+        -------
         .. code::
 
             gate_valves = client.search(type='Valve')
@@ -463,6 +478,7 @@ class Client(collections.abc.Mapping):
         Either a list of devices or dictionaries
 
         Example
+        -------
         .. code::
 
             gate_valves = client.search_regex(beamline='Valve.*')
