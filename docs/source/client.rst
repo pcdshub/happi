@@ -42,7 +42,7 @@ about how to configure your default backend choice
 
     client = Client(path='doc_test.json')
 
-    device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1")
+    device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1", device_class='types.SimpleNamespace', args=[])
 
     device.save()
 
@@ -68,42 +68,97 @@ There are two ways to load information from the database
 :meth:`.Client.find_device` and :meth:`.Client.search`. The former should only
 be used to load one device at at a time. Both accept criteria in the from of
 keyword-value pairs to find the device or device/s you desire. Here are some
-example searches to demonstrate the power of the Happi Client
+example searches to demonstrate the power of the Happi Client.
 
-First, lets look for all the devices of type generic ``Device``, as first their
-corresponding objects or as a dictionary
+First, lets look for all the devices of type generic ``Device``:
 
 .. ipython:: python
 
-    client.search(type='Device')
+    results = client.search(type='Device')
 
-    client.search(type='Device', as_dict=True)
 
+This returns a list of zero or more :class:`SearchResult` instances, which can
+be used to introspect metadata or even instantiate the corresponding device
+instance.
+
+
+Working with the SearchResult
+"""""""""""""""""""""""""""""
+
+Representing a single search result from ``Client.search`` and its variants, a
+:class:`SearchResult` can be used in multiple ways.
+
+This result can be keyed for metadata as in:
+
+.. ipython:: python
+
+    result = results[0]
+    result['name']
+
+
+The :class:`HappiItem` can be readily retrieved:
+
+
+.. ipython:: python
+
+    result.item
+    type(result.item)
+
+
+Or the object may be instantiated:
+
+.. ipython:: python
+
+    result.get()
+
+
+See that :meth:`.SearchResult.get` returns the class we expect, based on the
+`device_class`.
+
+.. ipython:: python
+
+    result['device_class']
+    type(result.get())
 
 There are also some more advance methods to search specific areas of the
-beamline
+beamline or use programmer-friendly regular expressions, described in the
+upcoming sections.
+
+
+Searching for items on a beamline
+"""""""""""""""""""""""""""""""""
+
+To search for items on a beamline such as `MFX`, one would use the following:
 
 
 .. ipython:: python
 
     client.search(type='Device', beamline='MFX')
 
-    client.search(type='Device', start=314.4, end=348.6)
 
-You can also explicitly load a single device. The advantage of this method is
-you won't have to parse a list of returned devices. If nothing meets your given
-criteria, an ``SearchError`` will be raised
+Searching a range
+"""""""""""""""""
+
+Searching a Z-range on the beamline, or a range with any arbitrary key is also
+easy by way of :meth:`.Client.search_range`. For example:
 
 .. ipython:: python
 
-   device =  client.find_device(prefix='PV:BASE2')
+    client.search_range('z', start=314.4, end=348.6, type='Device')
 
-   print(device.prefix, device.name)
+This would return all devices between Z=314.4 and Z=348.6.
 
-   try:
-       client.find_device(name='non-existant')
-   except Exception as exc:
-       print(exc)
+Any numeric key can be filtered in the same way, replacing `'z'` with the key
+name.
+
+Searching with regular expressions
+""""""""""""""""""""""""""""""""""
+
+Any key can use a regular expression for searching by using :meth:`.Client.search_regex`
+
+.. ipython:: python
+
+    client.search_regex(name='my_device[2345]')
 
 
 Editing Device Information
