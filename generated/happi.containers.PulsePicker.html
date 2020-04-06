@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.PulsePicker &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>happi.containers.PulsePicker &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -186,14 +186,14 @@
             
   <div class="section" id="happi-containers-pulsepicker">
 <h1>happi.containers.PulsePicker<a class="headerlink" href="#happi-containers-pulsepicker" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.containers.PulsePicker">
-<em class="property">class </em><code class="sig-prename descclassname">happi.containers.</code><code class="sig-name descname">PulsePicker</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.PulsePicker" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.containers.</code><code class="sig-name descname">PulsePicker</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.PulsePicker" title="Permalink to this definition">¶</a></dt>
 <dd><p>A device that syncs with the timing system to control when beam arrives in
 the hutch. These have an additional states entry to define their in/out
 states pv. Pulse pickers will be assigned the beam control system by
 default.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.PulsePicker.prefix">
 <code class="sig-name descname">prefix</code><a class="headerlink" href="#happi.containers.PulsePicker.prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>The base PV should be the motor record base that the pulsepicker IOC
@@ -205,7 +205,7 @@ is built on top of e.g. “XCS:SB2:MMS:09”.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.PulsePicker.states">
 <code class="sig-name descname">states</code><a class="headerlink" href="#happi.containers.PulsePicker.states" title="Permalink to this definition">¶</a></dt>
 <dd><p>The additional state should be the states PV associated with the
@@ -217,9 +217,9 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="happi.containers.PulsePicker.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.PulsePicker.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.PulsePicker.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -230,7 +230,7 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.PulsePicker.__init__" title="happi.containers.PulsePicker.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.PulsePicker.__init__" title="happi.containers.PulsePicker.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(k[,d])</p></td>
@@ -246,10 +246,10 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <td><p>Create a document to be loaded into the happi database</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>()</p></td>
-<td><p>Overwritten when the device is loaded from the client</p></td>
+<td><p>Overwritten when the device instance is loaded from the client</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_info</span></code>([handle])</p></td>
-<td><p>Show the device information in a PrettyTable</p></td>
+<td><p>Show the device instance information in a PrettyTable</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</p></td>
 <td><p></p></td>
@@ -264,7 +264,7 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">active</span></code></p></td>
-<td><p>Whether the device is actively deployed</p></td>
+<td><p>Whether the instance is actively deployed</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">args</span></code></p></td>
 <td><p>Arguments to pass to device_class</p></td>
@@ -276,7 +276,7 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <td><p>The absolute path to the main control screen</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></p></td>
-<td><p>Python class that represents the Device</p></td>
+<td><p>Python class that represents the instance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">documentation</span></code></p></td>
 <td><p>Relevant documentation for the Device</p></td>
@@ -294,7 +294,7 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <td><p>Grouping parameter for device function</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></p></td>
-<td><p>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
 <td><p>Keyword arguments to pass to device_class</p></td>
@@ -309,10 +309,10 @@ pulsepicker in/out. An example of one such PV is “XCS:SB2:PP:Y”.</p>
 <td><p>The EDM macro string asscociated with the with the device.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatory_info</span></code></p></td>
-<td><p>Mandatory information for the device to be initialized</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
-<td><p>Shorthand python-valid name for the device</p></td>
+<td><p>Shorthand Python-valid name for the Python instance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></p></td>
 <td><p>If the device is a component of another, enter the name</p></td>

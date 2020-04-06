@@ -16,6 +16,9 @@ happi.backends.qs\_db.QSBackend
       ~QSBackend.__init__
       ~QSBackend.delete
       ~QSBackend.find
+      ~QSBackend.find_range
+      ~QSBackend.find_regex
+      ~QSBackend.get_by_id
       ~QSBackend.initialize
       ~QSBackend.load
       ~QSBackend.save

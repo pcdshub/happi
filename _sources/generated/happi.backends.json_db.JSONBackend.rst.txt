@@ -16,6 +16,9 @@ happi.backends.json\_db.JSONBackend
       ~JSONBackend.__init__
       ~JSONBackend.delete
       ~JSONBackend.find
+      ~JSONBackend.find_range
+      ~JSONBackend.find_regex
+      ~JSONBackend.get_by_id
       ~JSONBackend.initialize
       ~JSONBackend.load
       ~JSONBackend.save

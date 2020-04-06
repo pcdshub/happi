@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.OffsetMirror &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>happi.containers.OffsetMirror &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -186,14 +186,14 @@
             
   <div class="section" id="happi-containers-offsetmirror">
 <h1>happi.containers.OffsetMirror<a class="headerlink" href="#happi-containers-offsetmirror" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.containers.OffsetMirror">
-<em class="property">class </em><code class="sig-prename descclassname">happi.containers.</code><code class="sig-name descname">OffsetMirror</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.OffsetMirror" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.containers.</code><code class="sig-name descname">OffsetMirror</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.OffsetMirror" title="Permalink to this definition">¶</a></dt>
 <dd><p>A device that steers beam in the x direction by changing a pitch motor.
 These are used for beam delivery and alignment. These have additional
 entires for destinations and in/out state. Mirrors will have their system
 set to beam control by default.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.OffsetMirror.prefix">
 <code class="sig-name descname">prefix</code><a class="headerlink" href="#happi.containers.OffsetMirror.prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>The base PV should be a states PV that tells us which destination the
@@ -211,7 +211,7 @@ control motor record base instead.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.OffsetMirror.prefix_xy">
 <code class="sig-name descname">prefix_xy</code><a class="headerlink" href="#happi.containers.OffsetMirror.prefix_xy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Name of the X and Y motors if different than the standard prefix</p>
@@ -222,7 +222,7 @@ control motor record base instead.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.OffsetMirror.xgantry_prefix">
 <code class="sig-name descname">xgantry_prefix</code><a class="headerlink" href="#happi.containers.OffsetMirror.xgantry_prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prefix of the X Gantry PVs if different than the standard prefix</p>
@@ -233,9 +233,9 @@ control motor record base instead.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="happi.containers.OffsetMirror.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.OffsetMirror.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.OffsetMirror.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -246,7 +246,7 @@ control motor record base instead.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.OffsetMirror.__init__" title="happi.containers.OffsetMirror.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.OffsetMirror.__init__" title="happi.containers.OffsetMirror.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(k[,d])</p></td>
@@ -262,10 +262,10 @@ control motor record base instead.</p>
 <td><p>Create a document to be loaded into the happi database</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>()</p></td>
-<td><p>Overwritten when the device is loaded from the client</p></td>
+<td><p>Overwritten when the device instance is loaded from the client</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_info</span></code>([handle])</p></td>
-<td><p>Show the device information in a PrettyTable</p></td>
+<td><p>Show the device instance information in a PrettyTable</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</p></td>
 <td><p></p></td>
@@ -280,7 +280,7 @@ control motor record base instead.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">active</span></code></p></td>
-<td><p>Whether the device is actively deployed</p></td>
+<td><p>Whether the instance is actively deployed</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">args</span></code></p></td>
 <td><p>Arguments to pass to device_class</p></td>
@@ -292,7 +292,7 @@ control motor record base instead.</p>
 <td><p>The absolute path to the main control screen</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></p></td>
-<td><p>Python class that represents the Device</p></td>
+<td><p>Python class that represents the instance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">documentation</span></code></p></td>
 <td><p>Relevant documentation for the Device</p></td>
@@ -310,7 +310,7 @@ control motor record base instead.</p>
 <td><p>Grouping parameter for device function</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></p></td>
-<td><p>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
 <td><p>Keyword arguments to pass to device_class</p></td>
@@ -325,10 +325,10 @@ control motor record base instead.</p>
 <td><p>The EDM macro string asscociated with the with the device.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatory_info</span></code></p></td>
-<td><p>Mandatory information for the device to be initialized</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
-<td><p>Shorthand python-valid name for the device</p></td>
+<td><p>Shorthand Python-valid name for the Python instance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></p></td>
 <td><p>If the device is a component of another, enter the name</p></td>

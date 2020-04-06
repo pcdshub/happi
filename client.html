@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Client &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>Using the Client &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -89,7 +89,13 @@
 <li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Client</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#creating-a-new-entry">Creating a New Entry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#searching-the-database">Searching the Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#searching-the-database">Searching the Database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-the-searchresult">Working with the SearchResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-for-items-on-a-beamline">Searching for items on a beamline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-a-range">Searching a range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-with-regular-expressions">Searching with regular expressions</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#editing-device-information">Editing Device Information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#selecting-a-backend">Selecting a Backend</a></li>
 </ul>
@@ -201,7 +207,7 @@ about how to configure your default backend choice</p>
 
 <span class="gp">In [4]: </span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;doc_test.json&#39;</span><span class="p">)</span>
 
-<span class="gp">In [5]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;XRT&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">345.5</span><span class="p">,</span> <span class="n">location_group</span><span class="o">=</span><span class="s2">&quot;Loc1&quot;</span><span class="p">,</span> <span class="n">functional_group</span><span class="o">=</span><span class="s2">&quot;Func1&quot;</span><span class="p">)</span>
+<span class="gp">In [5]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;XRT&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">345.5</span><span class="p">,</span> <span class="n">location_group</span><span class="o">=</span><span class="s2">&quot;Loc1&quot;</span><span class="p">,</span> <span class="n">functional_group</span><span class="o">=</span><span class="s2">&quot;Func1&quot;</span><span class="p">,</span> <span class="n">device_class</span><span class="o">=</span><span class="s1">&#39;types.SimpleNamespace&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[])</span>
 
 <span class="gp">In [6]: </span><span class="n">device</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 </pre></div>
@@ -211,6 +217,7 @@ explicitly using <code class="xref py py-meth docutils literal notranslate"><spa
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">device</span> <span class="o">=</span> <span class="n">Device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE2&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">355.5</span><span class="p">,</span> <span class="n">location_group</span><span class="o">=</span><span class="s2">&quot;Loc2&quot;</span><span class="p">,</span> <span class="n">functional_group</span><span class="o">=</span><span class="s2">&quot;Func2&quot;</span><span class="p">)</span>
 
 <span class="gp">In [8]: </span><span class="n">client</span><span class="o">.</span><span class="n">add_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gh">Out[8]: </span><span class="go">&#39;my_device2&#39;</span>
 </pre></div>
 </div>
 <p>The main advantage of the first method is that all of the container classes are
@@ -226,88 +233,78 @@ into the database. For more information on device creation see
 <a class="reference internal" href="client_api.html#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a> and <a class="reference internal" href="client_api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a>. The former should only
 be used to load one device at at a time. Both accept criteria in the from of
 keyword-value pairs to find the device or device/s you desire. Here are some
-example searches to demonstrate the power of the Happi Client</p>
-<p>First, lets look for all the devices of type generic <code class="docutils literal notranslate"><span class="pre">Device</span></code>, as first their
-corresponding objects or as a dictionary</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">)</span>
-<span class="gh">Out[9]: </span><span class="go"></span>
-<span class="go">[Device (name=my_device, prefix=PV:BASE, z=345.5),</span>
-<span class="go"> Device (name=my_device2, prefix=PV:BASE2, z=355.5)]</span>
+example searches to demonstrate the power of the Happi Client.</p>
+<p>First, lets look for all the devices of type generic <code class="docutils literal notranslate"><span class="pre">Device</span></code>:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns a list of zero or more <code class="xref py py-class docutils literal notranslate"><span class="pre">SearchResult</span></code> instances, which can
+be used to introspect metadata or even instantiate the corresponding device
+instance.</p>
+<div class="section" id="working-with-the-searchresult">
+<h3>Working with the SearchResult<a class="headerlink" href="#working-with-the-searchresult" title="Permalink to this headline">¶</a></h3>
+<p>Representing a single search result from <code class="docutils literal notranslate"><span class="pre">Client.search</span></code> and its variants, a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SearchResult</span></code> can be used in multiple ways.</p>
+<p>This result can be keyed for metadata as in:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [10]: </span><span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="gp">In [10]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">as_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gh">Out[10]: </span><span class="go"></span>
-<span class="go">[{&#39;_id&#39;: &#39;my_device&#39;,</span>
-<span class="go">  &#39;active&#39;: True,</span>
-<span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
-<span class="go">  &#39;beamline&#39;: &#39;XRT&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Wed Mar 18 23:07:48 2020&#39;,</span>
-<span class="go">  &#39;detailed_screen&#39;: None,</span>
-<span class="go">  &#39;device_class&#39;: None,</span>
-<span class="go">  &#39;documentation&#39;: None,</span>
-<span class="go">  &#39;embedded_screen&#39;: None,</span>
-<span class="go">  &#39;engineering_screen&#39;: None,</span>
-<span class="go">  &#39;functional_group&#39;: &#39;Func1&#39;,</span>
-<span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Wed Mar 18 23:07:48 2020&#39;,</span>
-<span class="go">  &#39;lightpath&#39;: False,</span>
-<span class="go">  &#39;location_group&#39;: &#39;Loc1&#39;,</span>
-<span class="go">  &#39;macros&#39;: None,</span>
-<span class="go">  &#39;name&#39;: &#39;my_device&#39;,</span>
-<span class="go">  &#39;parent&#39;: None,</span>
-<span class="go">  &#39;prefix&#39;: &#39;PV:BASE&#39;,</span>
-<span class="go">  &#39;stand&#39;: None,</span>
-<span class="go">  &#39;system&#39;: None,</span>
-<span class="go">  &#39;type&#39;: &#39;Device&#39;,</span>
-<span class="go">  &#39;z&#39;: 345.5},</span>
-<span class="go"> {&#39;_id&#39;: &#39;my_device2&#39;,</span>
-<span class="go">  &#39;active&#39;: True,</span>
-<span class="go">  &#39;args&#39;: [&#39;{{prefix}}&#39;],</span>
-<span class="go">  &#39;beamline&#39;: &#39;MFX&#39;,</span>
-<span class="go">  &#39;creation&#39;: &#39;Wed Mar 18 23:07:48 2020&#39;,</span>
-<span class="go">  &#39;detailed_screen&#39;: None,</span>
-<span class="go">  &#39;device_class&#39;: None,</span>
-<span class="go">  &#39;documentation&#39;: None,</span>
-<span class="go">  &#39;embedded_screen&#39;: None,</span>
-<span class="go">  &#39;engineering_screen&#39;: None,</span>
-<span class="go">  &#39;functional_group&#39;: &#39;Func2&#39;,</span>
-<span class="go">  &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;},</span>
-<span class="go">  &#39;last_edit&#39;: &#39;Wed Mar 18 23:07:48 2020&#39;,</span>
-<span class="go">  &#39;lightpath&#39;: False,</span>
-<span class="go">  &#39;location_group&#39;: &#39;Loc2&#39;,</span>
-<span class="go">  &#39;macros&#39;: None,</span>
-<span class="go">  &#39;name&#39;: &#39;my_device2&#39;,</span>
-<span class="go">  &#39;parent&#39;: None,</span>
-<span class="go">  &#39;prefix&#39;: &#39;PV:BASE2&#39;,</span>
-<span class="go">  &#39;stand&#39;: None,</span>
-<span class="go">  &#39;system&#39;: None,</span>
-<span class="go">  &#39;type&#39;: &#39;Device&#39;,</span>
-<span class="go">  &#39;z&#39;: 355.5}]</span>
+<span class="gp">In [11]: </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+<span class="gh">Out[11]: </span><span class="go">&#39;my_device&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code> can be readily retrieved:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [12]: </span><span class="n">result</span><span class="o">.</span><span class="n">item</span>
+<span class="gh">Out[12]: </span><span class="go">Device (name=my_device, prefix=PV:BASE, z=345.5)</span>
+
+<span class="gp">In [13]: </span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">item</span><span class="p">)</span>
+<span class="gh">Out[13]: </span><span class="go">happi.device.Device</span>
+</pre></div>
+</div>
+<p>Or the object may be instantiated:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gh">Out[14]: </span><span class="go">namespace(md=Device (name=my_device, prefix=PV:BASE, z=345.5), name=&#39;my_device&#39;)</span>
+</pre></div>
+</div>
+<p>See that <a class="reference internal" href="client_api.html#happi.SearchResult.get" title="happi.SearchResult.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SearchResult.get()</span></code></a> returns the class we expect, based on the
+<cite>device_class</cite>.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [15]: </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;device_class&#39;</span><span class="p">]</span>
+<span class="gh">Out[15]: </span><span class="go">&#39;types.SimpleNamespace&#39;</span>
+
+<span class="gp">In [16]: </span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+<span class="gh">Out[16]: </span><span class="go">types.SimpleNamespace</span>
 </pre></div>
 </div>
 <p>There are also some more advance methods to search specific areas of the
-beamline</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
-<span class="gh">Out[11]: </span><span class="go">[Device (name=my_device2, prefix=PV:BASE2, z=355.5)]</span>
-
-<span class="gp">In [12]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">)</span>
-<span class="gh">Out[12]: </span><span class="go">[Device (name=my_device, prefix=PV:BASE, z=345.5)]</span>
+beamline or use programmer-friendly regular expressions, described in the
+upcoming sections.</p>
+</div>
+<div class="section" id="searching-for-items-on-a-beamline">
+<h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Permalink to this headline">¶</a></h3>
+<p>To search for items on a beamline such as <cite>MFX</cite>, one would use the following:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [17]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
+<span class="gh">Out[17]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7fc5e1ebbcf8&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Mon Apr  6 22:11:16 2020&#39;, &#39;last_edit&#39;: &#39;Mon Apr  6 22:11:16 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
-<p>You can also explicitly load a single device. The advantage of this method is
-you won’t have to parse a list of returned devices. If nothing meets your given
-criteria, an <code class="docutils literal notranslate"><span class="pre">SearchError</span></code> will be raised</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [13]: </span><span class="n">device</span> <span class="o">=</span>  <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE2&#39;</span><span class="p">)</span>
-
-<span class="gp">In [14]: </span><span class="nb">print</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-<span class="go">PV:BASE2 my_device2</span>
-
-<span class="gp">In [15]: </span><span class="k">try</span><span class="p">:</span>
-<span class="gp">   ....: </span>    <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;non-existant&#39;</span><span class="p">)</span>
-<span class="gp">   ....: </span><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-<span class="gp">   ....: </span>    <span class="nb">print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-<span class="gp">   ....: </span>
-<span class="go">No device information found that matches the search criteria</span>
+</div>
+<div class="section" id="searching-a-range">
+<h3>Searching a range<a class="headerlink" href="#searching-a-range" title="Permalink to this headline">¶</a></h3>
+<p>Searching a Z-range on the beamline, or a range with any arbitrary key is also
+easy by way of <a class="reference internal" href="client_api.html#happi.Client.search_range" title="happi.Client.search_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_range()</span></code></a>. For example:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_range</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">)</span>
+<span class="gh">Out[18]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7fc5e1ebbcf8&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE&#39;, &#39;beamline&#39;: &#39;XRT&#39;, &#39;location_group&#39;: &#39;Loc1&#39;, &#39;functional_group&#39;: &#39;Func1&#39;, &#39;z&#39;: 345.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Mon Apr  6 22:11:16 2020&#39;, &#39;last_edit&#39;: &#39;Mon Apr  6 22:11:16 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
+</div>
+<p>This would return all devices between Z=314.4 and Z=348.6.</p>
+<p>Any numeric key can be filtered in the same way, replacing <cite>‘z’</cite> with the key
+name.</p>
+</div>
+<div class="section" id="searching-with-regular-expressions">
+<h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this headline">¶</a></h3>
+<p>Any key can use a regular expression for searching by using <a class="reference internal" href="client_api.html#happi.Client.search_regex" title="happi.Client.search_regex"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_regex()</span></code></a></p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_regex</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device[2345]&#39;</span><span class="p">)</span>
+<span class="gh">Out[19]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7fc5e1ebbcf8&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Mon Apr  6 22:11:16 2020&#39;, &#39;last_edit&#39;: &#39;Mon Apr  6 22:11:16 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="editing-device-information">
@@ -318,11 +315,12 @@ criteria, an <code class="docutils literal notranslate"><span class="pre">Search
 the dataprefix. When the device is retreived this way the class method
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">Device.save()</span></code> is overwritten, simply call this when you are done editing
 the Device information.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [16]: </span><span class="n">my_motor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [20]: </span><span class="n">my_motor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;PV:BASE&#39;</span><span class="p">)</span>
 
-<span class="gp">In [17]: </span><span class="n">my_motor</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mf">425.4</span>
+<span class="gp">In [21]: </span><span class="n">my_motor</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mf">425.4</span>
 
-<span class="gp">In [18]: </span><span class="n">my_motor</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="gp">In [22]: </span><span class="n">my_motor</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="gh">Out[22]: </span><span class="go">&#39;my_device&#39;</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -334,11 +332,11 @@ entry.</p>
 </div>
 <p>Finally, lets clean up our example objects by using
 <a class="reference internal" href="client_api.html#happi.Client.remove_device" title="happi.Client.remove_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.remove_device()</span></code></a> to clean them from the database</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="n">device_1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">)</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [23]: </span><span class="n">device_1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">)</span>
 
-<span class="gp">In [20]: </span><span class="n">device_2</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">)</span>
+<span class="gp">In [24]: </span><span class="n">device_2</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">)</span>
 
-<span class="gp">In [21]: </span><span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="p">(</span><span class="n">device_1</span><span class="p">,</span> <span class="n">device_2</span><span class="p">):</span>
+<span class="gp">In [25]: </span><span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="p">(</span><span class="n">device_1</span><span class="p">,</span> <span class="n">device_2</span><span class="p">):</span>
 <span class="gp">   ....: </span>    <span class="n">client</span><span class="o">.</span><span class="n">remove_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="gp">   ....: </span>
 </pre></div>

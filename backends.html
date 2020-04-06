@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Supported Backends &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>Supported Backends &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -174,19 +174,19 @@
   <div class="section" id="supported-backends">
 <h1>Supported Backends<a class="headerlink" href="#supported-backends" title="Permalink to this headline">¶</a></h1>
 <p>All backends inherit from the following metaclass</p>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.backends.core._Backend">
 <em class="property">class </em><code class="sig-prename descclassname">happi.backends.core.</code><code class="sig-name descname">_Backend</code><a class="headerlink" href="#happi.backends.core._Backend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for backend database</p>
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.core._Backend.all_devices">
 <em class="property">property </em><code class="sig-name descname">all_devices</code><a class="headerlink" href="#happi.backends.core._Backend.all_devices" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of all device sub-dictionaries</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.core._Backend.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">_id</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a device instance from the database</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -198,9 +198,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.core._Backend.find">
-<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param">multiples=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.find" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">multiples</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find an instance or instances that matches the search criteria</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -213,9 +213,9 @@ information</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.core._Backend.save">
-<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">_id</em>, <em class="sig-param">post</em>, <em class="sig-param">insert=True</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.save" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_id</span></em>, <em class="sig-param"><span class="n">post</span></em>, <em class="sig-param"><span class="n">insert</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save information to the database</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating New Device Types &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>Creating New Device Types &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -182,9 +182,9 @@ type, in addition by specifying these keys using the <a class="reference interna
 object, you have even greater control by declaring optional vs. mandatory,
 default options when a user does not enter the value, and enforce specific
 types.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.device.EntryInfo">
-<em class="property">class </em><code class="sig-prename descclassname">happi.device.</code><code class="sig-name descname">EntryInfo</code><span class="sig-paren">(</span><em class="sig-param">doc=None</em>, <em class="sig-param">optional=True</em>, <em class="sig-param">enforce=None</em>, <em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.device.EntryInfo" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.device.</code><code class="sig-name descname">EntryInfo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">doc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optional</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">enforce</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.device.EntryInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>A piece of information related to a specific device</p>
 <p>These are entered as class attributes for a given device container. They
 help control the information entered into a device</p>
@@ -215,9 +215,9 @@ are demanding a certain type.</p></li>
     <span class="n">number</span>   <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Device number&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="happi.device.EntryInfo.enforce_value">
-<code class="sig-name descname">enforce_value</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.device.EntryInfo.enforce_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">enforce_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.device.EntryInfo.enforce_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enforce the rules of the EntryInfo</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

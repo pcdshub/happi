@@ -16,6 +16,9 @@ happi.backends.mongo\_db.MongoBackend
       ~MongoBackend.__init__
       ~MongoBackend.delete
       ~MongoBackend.find
+      ~MongoBackend.find_range
+      ~MongoBackend.find_regex
+      ~MongoBackend.get_by_id
       ~MongoBackend.save
    
    

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.json_db.JSONBackend &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>happi.backends.json_db.JSONBackend &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -175,9 +175,9 @@
             
   <div class="section" id="happi-backends-json-db-jsonbackend">
 <h1>happi.backends.json_db.JSONBackend<a class="headerlink" href="#happi-backends-json-db-jsonbackend" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.backends.json_db.JSONBackend">
-<em class="property">class </em><code class="sig-prename descclassname">happi.backends.json_db.</code><code class="sig-name descname">JSONBackend</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">initialize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.json_db.JSONBackend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.backends.json_db.</code><code class="sig-name descname">JSONBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">initialize</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.json_db.JSONBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>JSON database</p>
 <p>The happi information is kept in a single dictionary large dictionary that
 is stored using <cite>simplejson</cite></p>
@@ -189,9 +189,9 @@ is stored using <cite>simplejson</cite></p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.json_db.JSONBackend.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">initialize=False</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.json_db.JSONBackend.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">initialize</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.json_db.JSONBackend.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -208,19 +208,28 @@ is stored using <cite>simplejson</cite></p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</p></td>
 <td><p>Delete a device instance from the database</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([_id, multiples])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>(to_match)</p></td>
 <td><p>Find an instance or instances that matches the search criteria</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_range</span></code>(key, *, start[, stop])</p></td>
+<td><p>Find an instance or instances that matches the search criteria, such that <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">&lt;=</span> <span class="pre">entry[key]</span> <span class="pre">&lt;</span> <span class="pre">stop</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_regex</span></code>(to_match, *[, flags])</p></td>
+<td><p>Find an instance or instances that matches the search criteria, using regular expressions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_id</span></code>(id_)</p></td>
+<td><p>Get a device by ID if it exists, or None</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code>()</p></td>
 <td><p>Initialize a new JSON file database</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>()</p></td>
 <td><p>Load the JSON database</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id, post[, insert])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id, post[, insert])</p></td>
 <td><p>Save information to the database</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">store</span></code>(db)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">store</span></code>(db)</p></td>
 <td><p>Stache the database back into JSON</p></td>
 </tr>
 </tbody>

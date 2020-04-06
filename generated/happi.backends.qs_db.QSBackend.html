@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>happi.backends.qs_db.QSBackend &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -175,9 +175,9 @@
             
   <div class="section" id="happi-backends-qs-db-qsbackend">
 <h1>happi.backends.qs_db.QSBackend<a class="headerlink" href="#happi-backends-qs-db-qsbackend" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.backends.qs_db.QSBackend">
-<em class="property">class </em><code class="sig-prename descclassname">happi.backends.qs_db.</code><code class="sig-name descname">QSBackend</code><span class="sig-paren">(</span><em class="sig-param">expname</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.backends.qs_db.</code><code class="sig-name descname">QSBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expname</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Questionniare Backend</p>
 <p>This backend connects to the LCLS questionnaire and looks at devices with
 the key pattern pcds-{}-setup-{}-{}. These fields are then combined and
@@ -197,9 +197,9 @@ searches.</p>
 <dd class="field-odd"><p><strong>expname</strong> (<em>str</em>) – The experiment name from the elog, e.g. xcslp1915</p>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.qs_db.QSBackend.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">expname</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">expname</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.qs_db.QSBackend.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -216,19 +216,28 @@ searches.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</p></td>
 <td><p>The current implementation of this backend is read-only</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([_id, multiples])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>(to_match)</p></td>
 <td><p>Find an instance or instances that matches the search criteria</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_range</span></code>(key, *, start[, stop])</p></td>
+<td><p>Find an instance or instances that matches the search criteria, such that <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">&lt;=</span> <span class="pre">entry[key]</span> <span class="pre">&lt;</span> <span class="pre">stop</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_regex</span></code>(to_match, *[, flags])</p></td>
+<td><p>Find an instance or instances that matches the search criteria, using regular expressions.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_id</span></code>(id_)</p></td>
+<td><p>Get a device by ID if it exists, or None</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code>()</p></td>
 <td><p>Can not initialize a new Questionnaire entry from API</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code>()</p></td>
 <td><p>Return the structured dictionary of information</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(*args, **kwargs)</p></td>
 <td><p>The current implementation of this backend is read-only</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">store</span></code>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">store</span></code>(*args, **kwargs)</p></td>
 <td><p>The current implementation of this backend is read-only</p></td>
 </tr>
 </tbody>

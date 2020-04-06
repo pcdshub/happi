@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.backends.mongo_db.MongoBackend &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>happi.backends.mongo_db.MongoBackend &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -175,9 +175,9 @@
             
   <div class="section" id="happi-backends-mongo-db-mongobackend">
 <h1>happi.backends.mongo_db.MongoBackend<a class="headerlink" href="#happi-backends-mongo-db-mongobackend" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.backends.mongo_db.MongoBackend">
-<em class="property">class </em><code class="sig-prename descclassname">happi.backends.mongo_db.</code><code class="sig-name descname">MongoBackend</code><span class="sig-paren">(</span><em class="sig-param">host=None</em>, <em class="sig-param">user=None</em>, <em class="sig-param">pw=None</em>, <em class="sig-param">db=None</em>, <em class="sig-param">collection=None</em>, <em class="sig-param">timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.mongo_db.MongoBackend" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.backends.mongo_db.</code><code class="sig-name descname">MongoBackend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">user</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">db</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">collection</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.mongo_db.MongoBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction for MongoDB backend</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -191,9 +191,9 @@
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="happi.backends.mongo_db.MongoBackend.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">host=None</em>, <em class="sig-param">user=None</em>, <em class="sig-param">pw=None</em>, <em class="sig-param">db=None</em>, <em class="sig-param">collection=None</em>, <em class="sig-param">timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.mongo_db.MongoBackend.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">user</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pw</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">db</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">collection</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.mongo_db.MongoBackend.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -210,10 +210,19 @@
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete</span></code>(_id)</p></td>
 <td><p>Delete a device instance from the database</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>([multiples])</p></td>
-<td><p>Find an instance or instances that matches the search criteria</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find</span></code>(to_match)</p></td>
+<td><p>Yield all instances that match the given search criteria</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id, post[, insert])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_range</span></code>(key, *, start[, stop])</p></td>
+<td><p>Find an instance or instances that matches the search criteria, such that <code class="docutils literal notranslate"><span class="pre">start</span> <span class="pre">&lt;=</span> <span class="pre">entry[key]</span> <span class="pre">&lt;</span> <span class="pre">stop</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_regex</span></code>(to_match, *[, flags])</p></td>
+<td><p>Yield all instances that match the given search criteria</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_id</span></code>(_id)</p></td>
+<td><p>Get a device by ID if it exists, or None</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>(_id, post[, insert])</p></td>
 <td><p>Save information to the database</p></td>
 </tr>
 </tbody>

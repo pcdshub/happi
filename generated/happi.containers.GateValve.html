@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>happi.containers.GateValve &mdash; Happi Deck 1.4.0+31.g91a3055 documentation</title>
+  <title>happi.containers.GateValve &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+31.g91a3055
+                1.4.0+74.g53661e2
               </div>
             
           
@@ -186,13 +186,13 @@
             
   <div class="section" id="happi-containers-gatevalve">
 <h1>happi.containers.GateValve<a class="headerlink" href="#happi-containers-gatevalve" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="happi.containers.GateValve">
-<em class="property">class </em><code class="sig-prename descclassname">happi.containers.</code><code class="sig-name descname">GateValve</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.GateValve" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">happi.containers.</code><code class="sig-name descname">GateValve</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.GateValve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Standard isolation valves. Generally, these close when there is a
 problem and beam is not allowed. Devices made with this class will be set
 as part of the vacuum system.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.GateValve.prefix">
 <code class="sig-name descname">prefix</code><a class="headerlink" href="#happi.containers.GateValve.prefix" title="Permalink to this definition">¶</a></dt>
 <dd><p>The prefix pv should be the record one level below the state and
@@ -206,7 +206,7 @@ be used to check that “VGC” is found in the base PV.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="happi.containers.GateValve.veto">
 <code class="sig-name descname">veto</code><a class="headerlink" href="#happi.containers.GateValve.veto" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set this to True if the gate valve is a veto device.</p>
@@ -217,9 +217,9 @@ be used to check that “VGC” is found in the base PV.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="happi.containers.GateValve.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.GateValve.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.GateValve.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
@@ -230,7 +230,7 @@ be used to check that “VGC” is found in the base PV.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.GateValve.__init__" title="happi.containers.GateValve.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#happi.containers.GateValve.__init__" title="happi.containers.GateValve.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize self.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code>(k[,d])</p></td>
@@ -246,10 +246,10 @@ be used to check that “VGC” is found in the base PV.</p>
 <td><p>Create a document to be loaded into the happi database</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code>()</p></td>
-<td><p>Overwritten when the device is loaded from the client</p></td>
+<td><p>Overwritten when the device instance is loaded from the client</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_info</span></code>([handle])</p></td>
-<td><p>Show the device information in a PrettyTable</p></td>
+<td><p>Show the device instance information in a PrettyTable</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code>()</p></td>
 <td><p></p></td>
@@ -264,7 +264,7 @@ be used to check that “VGC” is found in the base PV.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">active</span></code></p></td>
-<td><p>Whether the device is actively deployed</p></td>
+<td><p>Whether the instance is actively deployed</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">args</span></code></p></td>
 <td><p>Arguments to pass to device_class</p></td>
@@ -276,7 +276,7 @@ be used to check that “VGC” is found in the base PV.</p>
 <td><p>The absolute path to the main control screen</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></p></td>
-<td><p>Python class that represents the Device</p></td>
+<td><p>Python class that represents the instance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">documentation</span></code></p></td>
 <td><p>Relevant documentation for the Device</p></td>
@@ -294,7 +294,7 @@ be used to check that “VGC” is found in the base PV.</p>
 <td><p>Grouping parameter for device function</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">info_names</span></code></p></td>
-<td><p>Names of all <a class="reference internal" href="../develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> for the device</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
 <td><p>Keyword arguments to pass to device_class</p></td>
@@ -309,10 +309,10 @@ be used to check that “VGC” is found in the base PV.</p>
 <td><p>The EDM macro string asscociated with the with the device.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatory_info</span></code></p></td>
-<td><p>Mandatory information for the device to be initialized</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
-<td><p>Shorthand python-valid name for the device</p></td>
+<td><p>Shorthand Python-valid name for the Python instance</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></p></td>
 <td><p>If the device is a component of another, enter the name</p></td>
