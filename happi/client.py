@@ -409,6 +409,7 @@ class Client(collections.abc.Mapping):
         Either a list of devices or dictionaries
 
         Example
+        -------
         .. code::
 
             gate_valves = client.search_range('z', 0, 100, type='Valve')
@@ -435,6 +436,7 @@ class Client(collections.abc.Mapping):
             The search results
 
         Example
+        -------
         .. code::
 
             gate_valves = client.search(type='Valve')
@@ -463,6 +465,7 @@ class Client(collections.abc.Mapping):
         Either a list of devices or dictionaries
 
         Example
+        -------
         .. code::
 
             gate_valves = client.search_regex(beamline='Valve.*')
