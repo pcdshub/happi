@@ -1,5 +1,6 @@
 import collections
 import configparser
+import inspect
 import itertools
 import logging
 import os
@@ -10,7 +11,7 @@ import time as ttime
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
 from .backends.core import _Backend
-from .item import HappiItem, OphydItem
+from .item import HappiItem
 from .errors import DatabaseError, EntryError, SearchError
 from .loader import from_container
 
@@ -101,11 +102,6 @@ class Client(collections.abc.Mapping):
     kwargs:
         Passed to the `db_type` backend
 
-    Attributes
-    ----------
-    device_types : dict
-        Mapping of HappiItem names to class types
-
     Raises
     -----
     DatabaseError:
@@ -115,13 +111,8 @@ class Client(collections.abc.Mapping):
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id = 'name'
     _results_wrap_class = SearchResult
-    # Store device types seen by client
-    device_types = {'OphydItem': OphydItem,
-                    'HappiItem': HappiItem}
 
     def __init__(self, database=None, **kwargs):
-        # Get HappiItem Mapping
-        self.device_types.update(containers.registry)
         # Use supplied backend
         if database:
             self.backend = database
@@ -204,13 +195,11 @@ class Client(collections.abc.Mapping):
             device = client.create_device(Device,   name='my_device' ...)
             device = client.create_device('Device', name='my_device',...)
 
-        See Also
-        --------
-        :attr:`.device_types`
         """
         # If specified by a string
-        if device_cls in self.device_types:
-            device_cls = self.device_types[device_cls]
+        if not inspect.isclass(device_cls) \
+                and device_cls in containers.registry:
+            device_cls = containers.registry[device_cls]
         # Check that this is a valid HappiItem
         if not issubclass(device_cls, HappiItem):
             raise TypeError('{!r} is not a subclass of '
@@ -569,11 +558,8 @@ class Client(collections.abc.Mapping):
                              "information under the keyword %s",
                              device, key)
         # Add metadata from the Client Side
-        if device.__module__.startswith("happi."):
-            tpe = device.__class__.__name__
-        else:
-            pkg = device.__module__.split('.')[0]
-            tpe = f"{pkg}.{device.__class__.__name__}"
+
+        tpe = containers.registry.entry_for_class(device.__class__)
         post.update({'type': tpe,
                      'creation': creation,
                      'last_edit': ttime.ctime()})

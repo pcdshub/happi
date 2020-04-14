@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 import simplejson
 
-from happi import Client, Device
+from happi import Client, OphydItem
 from happi.backends.json_db import JSONBackend
 
 logger = logging.getLogger(__name__)
@@ -35,6 +35,18 @@ requires_questionnaire = pytest.mark.skipif(not has_qs_cli,
                                             reason='Missing psdm_qs_cli')
 
 
+try:
+    import pcdsdevices  # noqa
+    has_pcdsdevices = True
+except ImportError as exc:
+    logger.warning('error importing pcdsdevices : -> %s', exc)
+    has_pcdsdevices = False
+
+
+requires_pcdsdevices = pytest.mark.skipif(not has_pcdsdevices,
+                                          reason='Missing pcdsdevices')
+
+
 @pytest.fixture(scope='function')
 def device_info():
     return {'name': 'alias',
@@ -53,7 +65,7 @@ def device_info():
 
 @pytest.fixture(scope='function')
 def device(device_info):
-    t = Device(**device_info)
+    t = OphydItem(**device_info)
     return t
 
 
@@ -72,7 +84,7 @@ def valve_info():
 
 @pytest.fixture(scope='function')
 def valve(valve_info):
-    t = Device(**valve_info)
+    t = OphydItem(**valve_info)
     return t
 
 
@@ -225,7 +237,7 @@ def three_valves(happi_client):
               '_id': 'VALVE1',
               'beamline': 'LCLS',
               'mps': 'MPS:VGC:PV',
-              'type': 'Device',
+              'type': 'OphydItem',
               'location_group': 'LOC',
               'functional_group': 'FUNC',
               'device_class': 'types.SimpleNamespace',
@@ -239,7 +251,7 @@ def three_valves(happi_client):
               '_id': 'VALVE2',
               'beamline': 'LCLS',
               'mps': 'MPS:VGC:PV',
-              'type': 'Device',
+              'type': 'OphydItem',
               'location_group': 'LOC',
               'functional_group': 'FUNC',
               'device_class': 'types.SimpleNamespace',
@@ -255,7 +267,7 @@ def three_valves(happi_client):
               'mps': 'MPS:VGC:PV',
               'location_group': 'LOC',
               'functional_group': 'FUNC',
-              'type': 'Device',
+              'type': 'OphydItem',
               'device_class': 'types.SimpleNamespace',
               'args': list(),
               'kwargs': {'hi': 'oh hello'},

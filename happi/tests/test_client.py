@@ -8,7 +8,6 @@ import pytest
 
 from happi import Client, Device
 from happi.backends.json_db import JSONBackend
-from happi.containers import GateValve
 from happi.errors import SearchError, DuplicateError, EntryError
 
 logger = logging.getLogger(__name__)
@@ -72,29 +71,6 @@ def test_create_device(happi_client, device_info):
     # Invalid Entry
     with pytest.raises(TypeError):
         happi_client.create_device(int)
-
-
-def test_create_valve(happi_client, valve_info):
-    device = happi_client.create_device(GateValve, **valve_info)
-    assert isinstance(device, GateValve)
-    assert device.prefix == valve_info['prefix']
-    assert device.name == valve_info['name']
-    assert device.z == valve_info['z']
-    assert device.beamline == valve_info['beamline']
-    # Specify string as class
-    device = happi_client.create_device('GateValve', **valve_info)
-    assert isinstance(device, GateValve)
-    assert device.prefix == valve_info['prefix']
-    assert device.name == valve_info['name']
-    assert device.z == valve_info['z']
-    assert device.beamline == valve_info['beamline']
-    # Save
-    device.save()
-    loaded_device = happi_client.find_device(**valve_info)
-    assert loaded_device.prefix == valve_info['prefix']
-    assert loaded_device.name == valve_info['name']
-    assert loaded_device.z == valve_info['z']
-    assert loaded_device.beamline == valve_info['beamline']
 
 
 def test_all_devices(happi_client, device):

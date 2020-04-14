@@ -5,11 +5,11 @@ import os.path
 import pytest
 import simplejson
 
-from .conftest import requires_questionnaire, requires_mongo
+from .conftest import (requires_questionnaire, requires_mongo,
+                       requires_pcdsdevices)
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi import Client
-from happi.containers import Motor, Trigger, Acromag
 
 
 @pytest.fixture(scope='function')
@@ -168,7 +168,10 @@ def test_qs_find(mockqsbackend):
 
 @pytest.mark.xfail
 @requires_questionnaire
+@requires_pcdsdevices
 def test_qsbackend_with_client(mockqsbackend):
+    from pcdsdevices.device_types import Motor, Trigger, Acromag
+
     c = Client(database=mockqsbackend)
     assert len(c.all_devices) == 14
     assert all([isinstance(d, Motor) or isinstance(d, Trigger)
