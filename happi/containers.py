@@ -3,13 +3,15 @@ import inspect
 import entrypoints
 
 from .item import HappiItem, OphydItem
+from .device import Device
 
 logger = logging.getLogger(__name__)
 
 HAPPI_ENTRY_POINT_KEY = "happi.containers"
 
 
-DEFAULT_REGISTRY = {'OphydItem': OphydItem,
+DEFAULT_REGISTRY = {'Device': Device,
+                    'OphydItem': OphydItem,
                     'HappiItem': HappiItem}
 
 

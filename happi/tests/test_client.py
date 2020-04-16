@@ -6,7 +6,7 @@ import types
 
 import pytest
 
-from happi import Client, Device
+from happi import Client, OphydItem
 from happi.backends.json_db import JSONBackend
 from happi.errors import SearchError, DuplicateError, EntryError
 
@@ -47,27 +47,21 @@ def test_find_document(happi_client, device_info):
     doc = happi_client.find_document(**device_info)
     assert doc.pop('prefix') == device_info['prefix']
     assert doc.pop('name') == device_info['name']
-    assert doc.pop('z') == device_info['z']
-    assert doc.pop('beamline') == device_info['beamline']
     # Remove id and check
     prefix = device_info.pop('prefix')
     doc = happi_client.find_document(**device_info)
 
     assert doc.pop('prefix') == prefix
     assert doc.pop('name') == device_info['name']
-    assert doc.pop('z') == device_info['z']
-    assert doc.pop('beamline') == device_info['beamline']
     # Not available
     with pytest.raises(SearchError):
         doc = happi_client.find_document(prefix='Does not Exist')
 
 
 def test_create_device(happi_client, device_info):
-    device = happi_client.create_device(Device, **device_info)
+    device = happi_client.create_device(OphydItem, **device_info)
     assert device.prefix == device_info['prefix']
     assert device.name == device_info['name']
-    assert device.z == device_info['z']
-    assert device.beamline == device_info['beamline']
     # Invalid Entry
     with pytest.raises(TypeError):
         happi_client.create_device(int)
@@ -83,7 +77,7 @@ def test_add_device(happi_client, valve):
     with pytest.raises(DuplicateError):
         happi_client.add_device(valve)
     # No incompletes
-    d = Device()
+    d = OphydItem()
     with pytest.raises(EntryError):
         happi_client.add_device(d)
 
@@ -93,26 +87,19 @@ def test_add_and_find_device(happi_client, valve, valve_info):
     loaded_device = happi_client.find_device(**valve_info)
     assert loaded_device.prefix == valve.prefix
     assert loaded_device.name == valve.name
-    assert loaded_device.z == valve.z
-    assert loaded_device.beamline == valve.beamline
 
 
 def test_find_device(happi_client, device_info):
     device = happi_client.find_device(**device_info)
-    assert isinstance(device, Device)
+    assert isinstance(device, OphydItem)
     assert device.prefix == device_info['prefix']
     assert device.name == device_info['name']
-    assert device.z == device_info['z']
-    assert device.beamline == device_info['beamline']
     # Test edit and save
     device.stand = 'DG3'
     device.save()
     loaded_device = happi_client.find_device(**device_info)
     assert loaded_device.prefix == device_info['prefix']
     assert loaded_device.name == device_info['name']
-    assert loaded_device.z == device_info['z']
-    assert loaded_device.beamline == device_info['beamline']
-    assert loaded_device.stand == 'DG3'
     # Bad load
     bad = {'a': 'b'}
     happi_client.backend.save('a', bad, insert=True)
@@ -136,8 +123,6 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     loaded_device = res[0].device
     assert loaded_device.prefix == device_info['prefix']
     assert loaded_device.name == device_info['name']
-    assert loaded_device.z == device_info['z']
-    assert loaded_device.beamline == device_info['beamline']
     # No results
     assert not happi_client.search(name='not')
     # Returned as dict
@@ -145,8 +130,6 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     loaded_device = res[0].device
     assert loaded_device['prefix'] == device_info['prefix']
     assert loaded_device['name'] == device_info['name']
-    assert loaded_device['z'] == device_info['z']
-    assert loaded_device['beamline'] == device_info['beamline']
     # Search off keyword
     res = happi_client.search(beamline='LCLS')
     assert len(res) == 2
@@ -241,8 +224,6 @@ def test_from_cfg(happi_cfg):
 
 
 def test_choices_for_field(happi_client):
-    beamline_choices = happi_client.choices_for_field('beamline')
-    assert beamline_choices == {'LCLS'}
     name_choices = happi_client.choices_for_field('name')
     assert name_choices == {'alias'}
     prefix_choices = happi_client.choices_for_field('prefix')

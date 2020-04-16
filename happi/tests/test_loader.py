@@ -14,18 +14,19 @@ def test_fill_template(device):
     template = "{{name}}"
     assert device.name == fill_template(template, device)
     # Check that we can enforce a type
-    template = '{{z}}'
-    z = fill_template(template, device, enforce_type=True)
-    assert isinstance(z, float)
+    template = '{{active}}'
+    active = fill_template(template, device, enforce_type=True)
+    assert isinstance(active, bool)
     # Check that we will convert a more complex template
-    template = '{{z*100}}'
-    assert z*100 == fill_template(template, device, enforce_type=True)
+    template = '{{name|length()}}'
+    text_len = fill_template(template, device, enforce_type=False)
+    assert len(device.name) == int(text_len)
     # Check that we can handle non-jinja template
     template = "blah"
     assert template == fill_template(template, device, enforce_type=True)
     # Check that we do not enforce a NoneType
     template = "{{detailed_screen}}"
-    assert fill_template(template, device, enforce_type=True) is None
+    assert fill_template(template, device, enforce_type=True) == ""
 
 
 def test_from_container():

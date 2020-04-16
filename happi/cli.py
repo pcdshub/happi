@@ -111,8 +111,10 @@ def happi_cli(args):
             # Must use the same container if cloning
             response = registry.entry_from_class(clone_source.__class__)
         else:
+            # Keep Device at registry for backwards compatibility but filter
+            # it out of new devices options
             options = os.linesep.join(
-                [k for k, _ in registry.items()]
+                [k for k, _ in registry.items() if k != "Device"]
             )
             logger.info(
                 'Please select a container, or press enter for generic '

@@ -29,7 +29,7 @@ def db(tmp_path):
         ],
         "beamline": "TST",
         "creation": "Tue Jan 29 09:46:00 2019",
-        "device_class": "pcdsdevices.device_types.PIM",
+        "device_class": "types.SimpleNamespace",
         "kwargs": {
             "name": "{{name}}"
         },
@@ -41,7 +41,7 @@ def db(tmp_path):
         "screen": null,
         "stand": "BAS",
         "system": "diagnostic",
-        "type": "PIM",
+        "type": "OphydItem",
         "z": 3.0
     },
     "TST_BASE_PIM2": {
@@ -52,7 +52,7 @@ def db(tmp_path):
         ],
         "beamline": "TST",
         "creation": "Wed Jan 30 09:46:00 2019",
-        "device_class": "pcdsdevices.device_types.PIM",
+        "device_class": "types.SimpleNamespace",
         "kwargs": {
             "name": "{{name}}"
         },
@@ -64,7 +64,7 @@ def db(tmp_path):
         "screen": null,
         "stand": "BAS",
         "system": "diagnostic",
-        "type": "PIM",
+        "type": "OphydItem",
         "z": 6.0
     }
 }

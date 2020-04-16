@@ -54,7 +54,7 @@ def device_info():
             '_id': 'alias',
             'prefix': 'BASE:PV',
             'beamline': 'LCLS',
-            'type': 'Device',
+            'type': 'OphydItem',
             'device_class': 'types.SimpleNamespace',
             'args': list(),
             'kwargs': {'hi': 'oh hello'},
