@@ -1,6 +1,5 @@
 import collections
 import configparser
-import inspect
 import itertools
 import logging
 import os
@@ -197,8 +196,7 @@ class Client(collections.abc.Mapping):
 
         """
         # If specified by a string
-        if not inspect.isclass(device_cls) \
-                and device_cls in containers.registry:
+        if device_cls in containers.registry:
             device_cls = containers.registry[device_cls]
         # Check that this is a valid HappiItem
         if not issubclass(device_cls, HappiItem):
