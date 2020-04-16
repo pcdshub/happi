@@ -5,6 +5,7 @@ This module defines the ``happi`` command line utility
 
 import argparse
 import logging
+import os
 import sys
 
 import coloredlogs
@@ -104,23 +105,29 @@ def happi_cli(args):
             logger.error('No devices found')
     elif args.cmd == 'add':
         logger.debug('Starting interactive add')
+        registry = happi.containers.registry
         if args.clone:
             clone_source = client.find_device(name=args.clone)
             # Must use the same container if cloning
-            response = clone_source.__class__.__name__
+            response = registry.entry_from_class(clone_source.__class__)
         else:
+            # Keep Device at registry for backwards compatibility but filter
+            # it out of new devices options
+            options = os.linesep.join(
+                [k for k, _ in registry.items() if k != "Device"]
+            )
             logger.info(
                 'Please select a container, or press enter for generic '
-                'Device container: %r', list(client.device_types)
+                'Ophyd Device container: %s%s', os.linesep, options
             )
             response = input()
-            if response and response not in client.device_types:
+            if response and response not in registry:
                 logger.info('Invalid device container f{response}')
                 return
             elif not response:
-                response = 'Device'
+                response = 'OphydItem'
 
-        container = client.device_types[response]
+        container = registry[response]
         kwargs = {}
         for info in container.entry_info:
             valid_value = False

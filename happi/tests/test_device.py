@@ -16,8 +16,6 @@ def test_get(device, device_info):
 def test_init(device, device_info):
     assert device.prefix == device_info['prefix']
     assert device.name == device_info['name']
-    assert device.z == device_info['z']
-    assert device.beamline == device_info['beamline']
 
 
 def test_list_enforce():
@@ -53,12 +51,12 @@ def test_set(device):
 
 
 def test_optional(device):
-    assert device.parent is None
+    assert device.documentation is None
 
 
 def test_enforce(device):
     with pytest.raises(ValueError):
-        device.z = 'Non-Float'
+        device.name = 'Invalid!Name'
 
 
 def test_container_error():
@@ -68,7 +66,7 @@ def test_container_error():
 
 
 def test_mandatory_info(device):
-    for info in ('prefix', 'name', 'beamline'):
+    for info in ('prefix', 'name'):
         assert info in device.mandatory_info
 
 
@@ -82,8 +80,6 @@ def test_post(device, device_info):
     post = device.post()
     assert post['prefix'] == device_info['prefix']
     assert post['name'] == device_info['name']
-    assert post['z'] == device_info['z']
-    assert post['beamline'] == device_info['beamline']
 
 
 def test_show_info(device, device_info):
