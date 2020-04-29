@@ -371,7 +371,7 @@ class Client(collections.abc.Mapping):
             yield info['_id']
 
     def __len__(self):
-        return len(self.all_devices)
+        return len(self.all_items)
 
     def _get_search_results(self, items, *, wrap_cls=None):
         '''
