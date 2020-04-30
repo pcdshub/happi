@@ -371,7 +371,7 @@ class Client(collections.abc.Mapping):
             yield info['_id']
 
     def __len__(self):
-        return len(self.all_devices)
+        return len(self.all_items)
 
     def _get_search_results(self, items, *, wrap_cls=None):
         '''
@@ -486,7 +486,7 @@ class Client(collections.abc.Mapping):
             Attributes to include, these will be a list of values
         """
         # Load documents
-        devs = self.all_devices
+        devs = self.all_items
         logger.info('Creating file at %s ...', path)
         # Load device information
         with path as f:
@@ -718,7 +718,7 @@ class Client(collections.abc.Mapping):
             list of choices for a given field that are in the database
         """
         field_choices = set()
-        for dev in self.all_devices:
+        for dev in self.all_items:
             try:  # Want to ignore error if 'dev' doesn't have 'field'
                 choice = getattr(dev, field)
                 field_choices.add(choice)
