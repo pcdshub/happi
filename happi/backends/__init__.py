@@ -25,17 +25,17 @@ def _get_backends():
     try:
         backends['json'] = _get_backend('json')
     except ImportError as ex:
-        logger.warning('JSON backend unavailable: %s', ex)
+        logger.debug('JSON backend unavailable: %s', ex)
 
     try:
         backends['mongodb'] = _get_backend('mongodb')
     except ImportError as ex:
-        logger.warning('MongoDB backend unavailable: %s', ex)
+        logger.debug('MongoDB backend unavailable: %s', ex)
 
     try:
         backends['qs'] = _get_backend('qs')
     except ImportError as ex:
-        logger.warning('Questionnaire backend unavailable: %s', ex)
+        logger.debug('Questionnaire backend unavailable: %s', ex)
 
     return backends
 
