@@ -121,7 +121,7 @@ class QSBackend(JSONBackend):
                         for key in ['prefix', 'name']:
                             if not post.get(key):
                                 raise Exception("Unable to create a device "
-                                                " without %s".format(key))
+                                                " without %s" % key)
                     except Exception:
                         logger.warning("Unable to create an object from "
                                        "Questionnaire table %s row %s",
