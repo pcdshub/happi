@@ -47,8 +47,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinx.ext.autosummary',
               'IPython.sphinxext.ipython_directive',
-              'IPython.sphinxext.ipython_console_highlighting',
-              'sphinx.ext.autosectionlabel'
+              'IPython.sphinxext.ipython_console_highlighting'
               ]
 
 # In case we don't have the backend libraries installed
