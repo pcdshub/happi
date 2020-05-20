@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release Notes &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
+  <title>Release History &mdash; Happi Deck 1.6.0+7.g1c03639 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="happi.containers.Motor" href="generated/happi.containers.Motor.html" /> 
+    <link rel="prev" title="Containers" href="containers.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0+74.g53661e2
+                1.6.0+7.g1c03639
               </div>
             
           
@@ -93,14 +93,69 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Device Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v1-6-0-2020-04-30">v1.6.0 (2020-04-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-5-0-2020-04-06">v1.5.0 (2020-04-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-4-0-2020-03-13">v1.4.0 (2020-03-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#enhancements">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-3-0-2019-12-10">v1.3.0 (2019-12-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Enhancements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-2-1-2019-03-07">v1.2.1 (2019-03-07)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-2-0-2018-12-19">v1.2.0 (2018-12-19)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deprecations">Deprecations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fixes">Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#maintenance">Maintenance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Maintenance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v1-0-0-2018-01-31">v1.0.0 (2018-01-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build">Build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-5-0-2017-11-11">v0.5.0 (2017-11-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api-changes">API Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Deprecations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-4-0-2017-04-04">v0.4.0 (2017-04-04)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">API Changes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-3-0-2017-03-22">v0.3.0 (2017-03-22)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">API Changes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -148,7 +203,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Release Notes</li>
+      <li>Release History</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,58 +222,316 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="release-notes">
-<h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="release-history">
+<h1>Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v1-6-0-2020-04-30">
+<h2>v1.6.0 (2020-04-30)<a class="headerlink" href="#v1-6-0-2020-04-30" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>LCLS-specific containers are moved out of happi, and into
+<a class="reference external" href="https://github.com/pcdshub/pcdsdevices/tree/master/pcdsdevices/happi">pcdsdevices</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OphydItem</span></code> is now the preferred “basic” <code class="docutils literal notranslate"><span class="pre">ophyd.Device</span></code>
+container, with the intention of fully deprecating <code class="docutils literal notranslate"><span class="pre">Device</span></code> to
+avoid naming confusion</p></li>
+<li><p>Minor internal fixes</p></li>
+</ul>
+</div>
+<div class="section" id="v1-5-0-2020-04-06">
+<h2>v1.5.0 (2020-04-06)<a class="headerlink" href="#v1-5-0-2020-04-06" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Refactor search methods, supporting mongo and JSON backends</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">search</span></code> - search by key/value pairs as kwargs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">search_range</span></code> - search for a range of values in a specific key</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">search_regex</span></code> - search for key/value pairs as kwargs, with
+values being regular expressions</p></li>
+<li><p>Adds <code class="docutils literal notranslate"><span class="pre">SearchResult</span></code> container, allowing for access of metadata
+or device instantiation</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Client['item']</span></code> supported</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">happi.Device</span></code> is now marked as deprecated</p>
+<ul>
+<li><p>Migrate to <code class="docutils literal notranslate"><span class="pre">happi.OphydItem</span></code></p></li>
+</ul>
+</li>
+<li><p>Documentation building fixed and made more accurate</p></li>
+<li><p>Internal refactoring</p>
+<ul>
+<li><p>Reduce usage of metaclasses</p></li>
+<li><p>pymongo/mongomock are truly optional test dependencies now</p></li>
+<li><p>Added pre-commit configuration for developer quality-of-life</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HappiItem</span></code>s are now <code class="docutils literal notranslate"><span class="pre">copy.copy()</span></code>-able</p></li>
+<li><p>Backends supply generators and not lists</p></li>
+</ul>
+</li>
+<li><p>Fixed many oustanding issues with the JSON backend</p></li>
+</ul>
+</div>
+<div class="section" id="v1-4-0-2020-03-13">
+<h2>v1.4.0 (2020-03-13)<a class="headerlink" href="#v1-4-0-2020-03-13" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="enhancements">
+<h3>Enhancements<a class="headerlink" href="#enhancements" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Add an add command for cli, e.g. happi add to start an interactive
+device adder</p></li>
+<li><p>Add an edit command for cli, e.g. happi edit im3l0 location=750
+prefix=IM3L0:PPM</p></li>
+<li><p>Change search command syntax to be simpler (more like edit)</p></li>
+<li><p>Add a load command for cli, e.g. happi load im3l0 im1l1 -&gt; IPython
+session plus other changes made in dev to “get it working”</p></li>
+<li><p>Add two new Happi-aware Qt widgets: HappiDeviceListView &amp;
+HappiDeviceTreeView</p></li>
+</ul>
+</div>
+<div class="section" id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Initialize database if it does not yet exists</p></li>
+<li><p>Fix broken tests</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v1-3-0-2019-12-10">
+<h2>v1.3.0 (2019-12-10)<a class="headerlink" href="#v1-3-0-2019-12-10" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>Enhancements<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Command line script allow users to search and add devices
+<a class="reference external" href="https://github.com/pcdshub/happi/issues/84">#84</a></p></li>
+<li><p>Base <code class="docutils literal notranslate"><span class="pre">Container</span></code> object now available with minimum amount of
+<code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> <a class="reference external" href="https://github.com/pcdshub/happi/issues/92">#92</a></p></li>
+<li><p>Allow Happi to load more devices from LCLS questionnaire
+<a class="reference external" href="https://github.com/pcdshub/happi/issues/94">#94</a></p></li>
+<li><p>New function <code class="docutils literal notranslate"><span class="pre">list_choices</span></code> added to <code class="docutils literal notranslate"><span class="pre">happi.Client</span></code> to allow user
+to know what beamlines, prefixes, names, etc. will return results.</p></li>
+<li><p>Threaded <code class="docutils literal notranslate"><span class="pre">load_devices</span></code> with option to specify a callback when
+devices are ready
+<a class="reference external" href="https://github.com/pcdshub/happi/issues/67">#67</a></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v1-2-1-2019-03-07">
+<h2>v1.2.1 (2019-03-07)<a class="headerlink" href="#v1-2-1-2019-03-07" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Bug Fixes<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>The test suite now passes without the <code class="docutils literal notranslate"><span class="pre">mongomock</span></code> backend
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/89">#89</a>)</p></li>
+<li><p>Ensure our file handles are properly closed in the JSON backend by
+using context managers
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/87">#87</a>)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v1-2-0-2018-12-19">
+<h2>v1.2.0 (2018-12-19)<a class="headerlink" href="#v1-2-0-2018-12-19" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>Enhancements<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Client</span></code> now has a method <code class="docutils literal notranslate"><span class="pre">load_device</span></code> for searching the
+database for a <code class="docutils literal notranslate"><span class="pre">Container</span></code> and then loading the corresponding
+object based on <code class="docutils literal notranslate"><span class="pre">device_class</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>. This is a
+shortcut to combine two previously existing features
+<code class="docutils literal notranslate"><span class="pre">Client.find_device</span></code> and <code class="docutils literal notranslate"><span class="pre">happi.loader.from_container</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Client.from_config</span></code> will create a <code class="docutils literal notranslate"><span class="pre">Client</span></code> object from a
+provided configuration file. You can either pass this file in
+explicitly, specify it via the the environment variable
+<code class="docutils literal notranslate"><span class="pre">$HAPPI_CFG</span></code>, or it will be searched for in <code class="docutils literal notranslate"><span class="pre">~config</span></code> or wherever
+you specify your `$XDG_CONFIG_HOME environment variable</p></li>
+<li><p>Additional keywords were added to the base <code class="docutils literal notranslate"><span class="pre">Device</span></code> container;
+<code class="docutils literal notranslate"><span class="pre">lightpath</span></code>, <code class="docutils literal notranslate"><span class="pre">documentation</span></code> and <code class="docutils literal notranslate"><span class="pre">embedded_screen</span></code>,
+<code class="docutils literal notranslate"><span class="pre">detailed_screen</span></code> and <code class="docutils literal notranslate"><span class="pre">engineering_screen</span></code></p></li>
+<li><p>There is now a base container for a <code class="docutils literal notranslate"><span class="pre">Motor</span></code> object.</p></li>
+</ul>
+</div>
+<div class="section" id="deprecations">
+<h3>Deprecations<a class="headerlink" href="#deprecations" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">screen</span></code> is longer a supported key. This was too generic and the
+three keys detailed above allow the user more specificity.</p></li>
+</ul>
+</div>
+<div class="section" id="fixes">
+<h3>Fixes<a class="headerlink" href="#fixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">JSONBackend</span></code> no longer relies on <code class="docutils literal notranslate"><span class="pre">fcntl</span></code> a Linux only module
+of the Python standard library.</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="v1-1-2-2018-08-30">
 <h2>v1.1.2 (2018-08-30)<a class="headerlink" href="#v1-1-2-2018-08-30" title="Permalink to this headline">¶</a></h2>
-<p><strong>Maintenance</strong></p>
+<div class="section" id="maintenance">
+<h3>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>In <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code>, the provided container is compared against
-the cached version of the device to find discrepancies. This means that
-modified container objects will always load a new Device. (#62)</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> uses newer methods available in the <code class="docutils literal notranslate"><span class="pre">psdm_qs_cli</span></code> to
-determine the proposal from the experiment name. This is more robust against
-exotic experiment naming schemas than prior implementations (#68)</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">from_container</span></code>, the provided container is compared against the
+cached version of the device to find discrepancies. This means that
+modified container objects will always load a new Device.
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/62">#62</a>)</p></li>
+<li><p>The QSBackend uses newer methods available in the psdm_qs_cli to
+determine the proposal from the experiment name. This is more robust
+against exotic experiment naming schemas than prior implementations
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/68">#68</a>)</p></li>
 </ul>
+</div>
 </div>
 <div class="section" id="v1-1-1-2018-03-08">
 <h2>v1.1.1 (2018-03-08)<a class="headerlink" href="#v1-1-1-2018-03-08" title="Permalink to this headline">¶</a></h2>
-<p><strong>Enhancements</strong></p>
+<div class="section" id="id4">
+<h3>Enhancements<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> guesses which a type of motor based on the <code class="docutils literal notranslate"><span class="pre">prefix</span></code>.
-Currently this supports <code class="docutils literal notranslate"><span class="pre">Newport</span></code>, <code class="docutils literal notranslate"><span class="pre">IMS</span></code>, and <code class="docutils literal notranslate"><span class="pre">PMC100</span></code> motors. While there is
-not an explicit dependency, this will require <code class="docutils literal notranslate"><span class="pre">pcdsdevices</span> <span class="pre">&gt;=</span> <span class="pre">0.5.0</span></code> to load
-properly (#51)</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> guesses which a type of motor based on the
+<code class="docutils literal notranslate"><span class="pre">prefix</span></code>. Currently this supports <code class="docutils literal notranslate"><span class="pre">Newport</span></code>, <code class="docutils literal notranslate"><span class="pre">IMS</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">PMC100</span></code> motors. While there is not an explicit dependency, this
+will require <code class="docutils literal notranslate"><span class="pre">pcdsdevices</span> <span class="pre">&gt;=</span> <span class="pre">0.5.0</span></code> to load properly
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/51">#51</a>)</p></li>
 </ul>
-<p><strong>Bug Fixes</strong></p>
+</div>
+<div class="section" id="id5">
+<h3>Bug Fixes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Templating is more robust when dealing with types. This includes a fatal case
-where the default for an <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (#50)</p></li>
-<li><p>A proper error message is returned if an entry in the table does not have the
-requisite information to load (#53 )</p></li>
+<li><p>Templating is more robust when dealing with types. This includes a
+fatal case where the default for an <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/50">#50</a>)</p></li>
+<li><p>A proper error message is returned if an entry in the table does not
+have the requisite information to load
+(<a class="reference external" href="https://github.com/pcdshub/happi/issues/53">#53</a> )</p></li>
 </ul>
+</div>
 </div>
 <div class="section" id="v1-1-0-2018-02-13">
 <h2>v1.1.0 (2018-02-13)<a class="headerlink" href="#v1-1-0-2018-02-13" title="Permalink to this headline">¶</a></h2>
 <p>Ownership of this repository has been transferred to
 <a class="reference external" href="https://github.com/pcdshub">https://github.com/pcdshub</a></p>
-<p><strong>Enhancements</strong></p>
+<div class="section" id="id6">
+<h3>Enhancements<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<p>Happi now has a cache so the repeated requests to load the same device
+do not spawn multiple objects.</p>
+</div>
+<div class="section" id="id7">
+<h3>Maintenance<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Happi now has a cache so the repeated requests to load the same device do
-not spawn multiple objects.</p></li>
+<li><p>Cleaner logging messages</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments
+associated with different authentication methods.</p></li>
 </ul>
-<p><strong>Maintenance</strong></p>
+</div>
+</div>
+<div class="section" id="v1-0-0-2018-01-31">
+<h2>v1.0.0 (2018-01-31)<a class="headerlink" href="#v1-0-0-2018-01-31" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id8">
+<h3>Enhancements<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>Cleaner logging messages</p>
-<ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments</dt><dd><p>associated with different authentication methods.</p>
-</dd>
-</dl>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">happi</span></code> now handles loading devices with the built-in <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code>
+-&gt; args, kwargs and device_class. Simply enter the proper information
+in these fields, either directly inputting information or using
+<code class="docutils literal notranslate"><span class="pre">jinja2</span></code> templating. The functions <code class="docutils literal notranslate"><span class="pre">from_container</span></code> and
+<code class="docutils literal notranslate"><span class="pre">load_devices</span></code> will then handle the necessary imports and
+initialize devices for you</p></li>
+<li><p>Select which backend you want to use with the environment variable
+<code class="docutils literal notranslate"><span class="pre">$HAPPI_BACKEND</span></code></p></li>
+<li><p>Backend to read from the PCDS Questionnaire</p></li>
+<li><p>All containers work out of the box with <code class="docutils literal notranslate"><span class="pre">pcdsdevices</span> <span class="pre">&gt;=</span> <span class="pre">0.3.0</span></code> ##
+API</p></li>
+<li><p>All backends are stored in the <code class="docutils literal notranslate"><span class="pre">backends</span></code> directory.</p></li>
+<li><p>The default plugin is now considered to be <code class="docutils literal notranslate"><span class="pre">JSONBackend</span></code></p></li>
+<li><p>The function formerly called <code class="docutils literal notranslate"><span class="pre">load_device</span></code> is now <code class="docutils literal notranslate"><span class="pre">find_device</span></code>.</p></li>
 </ul>
-</li>
+</div>
+<div class="section" id="build">
+<h3>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jinja2</span></code> is now a dependency</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">psdm_qs_cli</span></code> is now an optional dependency if you want to use the
+Questionnaire backend</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pymongo</span></code> is now an optional dependency if you do not want to use
+the MongoDB backend</p></li>
+<li><p>Only tested against Python <code class="docutils literal notranslate"><span class="pre">3.5.x</span></code> and <code class="docutils literal notranslate"><span class="pre">3.6.x</span></code></p></li>
+<li><p>Sent to the <code class="docutils literal notranslate"><span class="pre">pcds-tag</span></code> and <code class="docutils literal notranslate"><span class="pre">pcds-dev</span></code> Anaconda channels instead
+of the <code class="docutils literal notranslate"><span class="pre">skywalker</span></code> channels</p></li>
 </ul>
+</div>
+</div>
+<div class="section" id="v0-5-0-2017-11-11">
+<h2>v0.5.0 (2017-11-11)<a class="headerlink" href="#v0-5-0-2017-11-11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h3>Enhancements<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">happi</span></code> now supports multiple backends. The required database
+operations are templated in the <code class="docutils literal notranslate"><span class="pre">happi.backends.Backend</span></code> The
+existing mongoDB support was kept as the default, but the an
+additional JSON backend was added. The choice of database type can be
+entered as an argument to the <code class="docutils literal notranslate"><span class="pre">happi.Client</span></code></p></li>
+<li><p>Conda builds of <code class="docutils literal notranslate"><span class="pre">happi</span></code> are now available at <code class="docutils literal notranslate"><span class="pre">skywalker-tag</span></code> and
+<code class="docutils literal notranslate"><span class="pre">skywalker-dev</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>Bug Fixes<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Devices comparison now works properly. The listed prefix and names
+are compared.</p></li>
+</ul>
+</div>
+<div class="section" id="api-changes">
+<h3>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Mirror</span></code> container has been changed to the more specific name
+<code class="docutils literal notranslate"><span class="pre">OffsetMirror</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>Deprecations<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">happi</span></code> will no longer support Python 2.7</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v0-4-0-2017-04-04">
+<h2>v0.4.0 (2017-04-04)<a class="headerlink" href="#v0-4-0-2017-04-04" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id12">
+<h3>Bug Fixes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Removed dependency on mongomock in conda-recipe</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MockClient</span></code> creates entire <code class="docutils literal notranslate"><span class="pre">device_types</span></code> container mapping</p></li>
+</ul>
+</div>
+<div class="section" id="id13">
+<h3>API Changes<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Renamed alias -&gt; name, and base -&gt; prefix for Ophyd compatibility</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v0-3-0-2017-03-22">
+<h2>v0.3.0 (2017-03-22)<a class="headerlink" href="#v0-3-0-2017-03-22" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id14">
+<h3>Enhancements<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Added Python 2.7 support</p></li>
+<li><p>Added macros keyword for EDM support</p></li>
+<li><p>Added CI tools for Travis, Codecov</p></li>
+<li><p>Changed tests to use a <code class="docutils literal notranslate"><span class="pre">mongomock.MockClient</span></code> instead of an actual
+mongoDB instance</p></li>
+<li><p>Device can now <code class="docutils literal notranslate"><span class="pre">show_info</span></code> and print a table output of all entered
+information</p></li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h3>Bug Fixes<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">active</span></code> EntryInfo should default to True</p></li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h3>API Changes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Moved the tests directory into the package to make it easily
+importable by other modules hoping to use a MockClient</p></li>
+<li><p>Introduced explicit dependencies on <code class="docutils literal notranslate"><span class="pre">six</span></code>, <code class="docutils literal notranslate"><span class="pre">mongomock</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">prettytable</span></code></p></li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -231,7 +544,7 @@ not spawn multiple objects.</p></li>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="generated/happi.containers.Motor.html" class="btn btn-neutral float-left" title="happi.containers.Motor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="containers.html" class="btn btn-neutral float-left" title="Containers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

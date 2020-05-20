@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Client API &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
+  <title>Client API &mdash; Happi Deck 1.6.0+7.g1c03639 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+74.g53661e2
+                1.6.0+7.g1c03639
               </div>
             
           
@@ -94,11 +94,11 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Client API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Device Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="releases.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
 </ul>
 
             
@@ -176,21 +176,8 @@
 <li><p><strong>kwargs</strong> – Passed to the <cite>db_type</cite> backend</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="py attribute">
-<dt id="happi.Client.device_types">
-<code class="sig-name descname">device_types</code><a class="headerlink" href="#happi.Client.device_types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mapping of HappiItem names to class types</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>DatabaseError:</strong> – Raised if the Client fails to instantiate the Database</p>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>DatabaseError:</strong> – Raised if the Client fails to instantiate the Database</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -267,10 +254,6 @@ i.e ‘beamline’, ‘name’, ‘z’, ‘prefix’, etc.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
 <span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#happi.Client.device_types" title="happi.Client.device_types"><code class="xref py py-attr docutils literal notranslate"><span class="pre">device_types</span></code></a></p>
 </div>
 </dd></dl>
 

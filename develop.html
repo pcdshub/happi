@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Creating New Device Types &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
+  <title>Creating New Device Types &mdash; Happi Deck 1.6.0+7.g1c03639 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                1.4.0+74.g53661e2
+                1.6.0+7.g1c03639
               </div>
             
           
@@ -100,11 +100,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Device Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="releases.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
 </ul>
 
             
@@ -171,7 +171,7 @@
             
   <div class="section" id="creating-new-device-types">
 <h1>Creating New Device Types<a class="headerlink" href="#creating-new-device-types" title="Permalink to this headline">¶</a></h1>
-<p>Container objects are built using both the base <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class as well
+<p>Container objects are built using both the base <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> class as well
 as instances of the <a class="reference internal" href="#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>.</p>
 <div class="section" id="entry-info">
 <h2>Entry Info<a class="headerlink" href="#entry-info" title="Permalink to this headline">¶</a></h2>
@@ -243,7 +243,7 @@ to the correct type</p>
 <h2>Using a Device<a class="headerlink" href="#using-a-device" title="Permalink to this headline">¶</a></h2>
 <p>In order to ensure that information is entered into the database in an
 organized fashion, the client will only accept classes that inherit from
-<a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a>. Each device will have the key information represented as
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code>. Each device will have the key information represented as
 class attributes, available to be manipulated like any other regular property</p>
 <p>Editing the information for a container is a simple as:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">Device</span>
@@ -253,7 +253,7 @@ class attributes, available to be manipulated like any other regular property</p
 <span class="gp">In [3]: </span><span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;new_name&#39;</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="containers.html#happi.Device" title="happi.Device"><code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code></a> class also supports extraneous data that may not have been
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code> class also supports extraneous data that may not have been
 captured when the original container was created. You can either enter this as
 a keyword, or enter it into the <code class="xref py py-attr docutils literal notranslate"><span class="pre">Device.extraneous</span></code> dictionary.</p>
 <p>While you are free to play around with the device attributes, when loading the

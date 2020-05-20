@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi Deck 1.4.0+74.g53661e2 documentation</title>
+  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi Deck 1.6.0+7.g1c03639 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.4.0+74.g53661e2
+                1.6.0+7.g1c03639
               </div>
             
           
@@ -93,11 +93,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Device Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="releases.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
 </ul>
 
             
@@ -168,7 +168,7 @@
 along the LCLS photon beamline.</p>
 <p>This is general purpose database for PCDS to organize information on any device
 along the beamline. The general structure of the Python API allows users to use
-<a class="reference internal" href="containers.html#device-label"><span class="std std-ref">Device Containers</span></a> to enter structured information into the database, while
+<a class="reference internal" href="containers.html#device-label"><span class="std std-ref">Containers</span></a> to enter structured information into the database, while
 still proivding the flexibility needed for abitrary metadata.</p>
 <p>Before entering any information, please consult the <a class="reference internal" href="conventions.html#convention-label"><span class="std std-ref">Conventions</span></a>
 page. While the client is intelligent enough to catch certain errors
@@ -186,16 +186,71 @@ there are still standards within the group we need to uphold.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Device Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="releases.html">Release Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-6-0-2020-04-30">v1.6.0 (2020-04-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-5-0-2020-04-06">v1.5.0 (2020-04-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-4-0-2020-03-13">v1.4.0 (2020-03-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#enhancements">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-3-0-2019-12-10">v1.3.0 (2019-12-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id1">Enhancements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-2-1-2019-03-07">v1.2.1 (2019-03-07)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id2">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-2-0-2018-12-19">v1.2.0 (2018-12-19)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id3">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#deprecations">Deprecations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#fixes">Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#maintenance">Maintenance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id4">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id5">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id6">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id7">Maintenance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-0-0-2018-01-31">v1.0.0 (2018-01-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id8">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#build">Build</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v0-5-0-2017-11-11">v0.5.0 (2017-11-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id9">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id10">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#api-changes">API Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id11">Deprecations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v0-4-0-2017-04-04">v0.4.0 (2017-04-04)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id12">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id13">API Changes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v0-3-0-2017-03-22">v0.3.0 (2017-03-22)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id14">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id15">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="releases.html#id16">API Changes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

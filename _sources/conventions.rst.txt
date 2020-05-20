@@ -21,7 +21,7 @@ prefix
 ++++++
 This should be the prefix for all of the PVs contained within the device. It does
 not matter if this is an invalid record by itself. Each Device Container will
-have it's own convention for base PV. See :ref:`Containers`.
+have it's own convention for base PV. See :ref:`device_label`.
 
 
 beamline
