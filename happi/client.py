@@ -378,8 +378,15 @@ class Client(collections.abc.Mapping):
         Return search results to the user, optionally wrapping with a class
         '''
         wrap_cls = wrap_cls or self._results_wrap_class
-        return [wrap_cls(client=self, device=self.find_device(**info))
-                for info in items]
+        results = []
+        for info in items:
+            try:
+                result = wrap_cls(client=self, device=self.find_device(**info))
+                results.append(result)
+            except Exception:
+                logger.warning('Entry for %s is malformed. Skipping.',
+                               info['name'])
+        return results
 
     def search_range(self, key, start, end=None, **kwargs):
         """
