@@ -1,5 +1,6 @@
 import collections
 import configparser
+import inspect
 import itertools
 import logging
 import os
@@ -203,10 +204,17 @@ class Client(collections.abc.Mapping):
         # If specified by a string
         if device_cls in containers.registry:
             device_cls = containers.registry[device_cls]
+
         # Check that this is a valid HappiItem
-        if not issubclass(device_cls, HappiItem):
-            raise TypeError('{!r} is not a subclass of '
-                            'HappiItem'.format(device_cls))
+        if isinstance(device_cls, str):
+            raise TypeError(
+                f'The device class {device_cls!r} is not in the registry'
+            )
+
+        if (not inspect.isclass(device_cls) or
+                not issubclass(device_cls, HappiItem)):
+            raise TypeError(f'{device_cls!r} is not a subclass of HappiItem')
+
         device = device_cls(**kwargs)
         # Add the method to the device
 
