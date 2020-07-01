@@ -2,6 +2,23 @@
  Release History
 =================
 
+v1.6.1 (2020-07-01)
+===================
+
+Bugfixes
+--------
+-   Do not raise an exception on single malformed entries uncovered during
+    a search. Treat these as missing entries. This was causing an issue
+    where queries like ``all_devices`` would fail outright.
+-   Fix issue where ``device_cls`` string would leak through and raise a
+    bad/confusing exception during ``create_device``
+
+Maintenance
+-----
+-   Reduce missing backends log messages from ``warning`` to ``debug``.
+-   Fix docs failing to build and related issues.
+-   Add ``requirements.txt`` file to ``MANIFEST.in``.
+
 
 v1.6.0 (2020-04-30)
 ===================
