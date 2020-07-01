@@ -14,7 +14,7 @@ Bugfixes
     bad/confusing exception during ``create_device``
 
 Maintenance
------
+-----------
 -   Reduce missing backends log messages from ``warning`` to ``debug``.
 -   Fix docs failing to build and related issues.
 -   Add ``requirements.txt`` file to ``MANIFEST.in``.
