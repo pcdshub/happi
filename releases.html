@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Release History &mdash; Happi Deck 1.6.0+17.g7f3325a documentation</title>
+  <title>Release History &mdash; Happi Deck 1.6.1 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Containers" href="containers.html" /> 
@@ -49,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Happi Deck
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Happi Deck
           
 
           
@@ -59,7 +60,7 @@
             
             
               <div class="version">
-                1.6.0+17.g7f3325a
+                1.6.1
               </div>
             
           
@@ -76,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -98,6 +100,11 @@
 <p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v1-6-1-2020-07-01">v1.6.1 (2020-07-01)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#maintenance">Maintenance</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-6-0-2020-04-30">v1.6.0 (2020-04-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-5-0-2020-04-06">v1.5.0 (2020-04-06)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-4-0-2020-03-13">v1.4.0 (2020-03-13)</a><ul>
@@ -120,40 +127,40 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#maintenance">Maintenance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Maintenance</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">Enhancements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id5">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id6">Enhancements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Maintenance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Maintenance</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v1-0-0-2018-01-31">v1.0.0 (2018-01-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Enhancements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#build">Build</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-0-2017-11-11">v0.5.0 (2017-11-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Enhancements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Bug Fixes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#api-changes">API Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">Deprecations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Deprecations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-0-2017-04-04">v0.4.0 (2017-04-04)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id12">Bug Fixes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id13">API Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">API Changes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-3-0-2017-03-22">v0.3.0 (2017-03-22)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id14">Enhancements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">Bug Fixes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id16">API Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Enhancements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">API Changes</a></li>
 </ul>
 </li>
 </ul>
@@ -163,6 +170,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -201,7 +209,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Release History</li>
     
@@ -224,6 +232,27 @@
             
   <div class="section" id="release-history">
 <h1>Release History<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v1-6-1-2020-07-01">
+<h2>v1.6.1 (2020-07-01)<a class="headerlink" href="#v1-6-1-2020-07-01" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bugfixes">
+<h3>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Do not raise an exception on single malformed entries uncovered during
+a search. Treat these as missing entries. This was causing an issue
+where queries like <code class="docutils literal notranslate"><span class="pre">all_devices</span></code> would fail outright.</p></li>
+<li><p>Fix issue where <code class="docutils literal notranslate"><span class="pre">device_cls</span></code> string would leak through and raise a
+bad/confusing exception during <code class="docutils literal notranslate"><span class="pre">create_device</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="maintenance">
+<h3>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Reduce missing backends log messages from <code class="docutils literal notranslate"><span class="pre">warning</span></code> to <code class="docutils literal notranslate"><span class="pre">debug</span></code>.</p></li>
+<li><p>Fix docs failing to build and related issues.</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file to <code class="docutils literal notranslate"><span class="pre">MANIFEST.in</span></code>.</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="v1-6-0-2020-04-30">
 <h2>v1.6.0 (2020-04-30)<a class="headerlink" href="#v1-6-0-2020-04-30" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -361,8 +390,8 @@ of the Python standard library.</p></li>
 </div>
 <div class="section" id="v1-1-2-2018-08-30">
 <h2>v1.1.2 (2018-08-30)<a class="headerlink" href="#v1-1-2-2018-08-30" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="maintenance">
-<h3>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Maintenance<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>In <code class="docutils literal notranslate"><span class="pre">from_container</span></code>, the provided container is compared against the
 cached version of the device to find discrepancies. This means that
@@ -377,8 +406,8 @@ against exotic experiment naming schemas than prior implementations
 </div>
 <div class="section" id="v1-1-1-2018-03-08">
 <h2>v1.1.1 (2018-03-08)<a class="headerlink" href="#v1-1-1-2018-03-08" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id4">
-<h3>Enhancements<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>Enhancements<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> guesses which a type of motor based on the
 <code class="docutils literal notranslate"><span class="pre">prefix</span></code>. Currently this supports <code class="docutils literal notranslate"><span class="pre">Newport</span></code>, <code class="docutils literal notranslate"><span class="pre">IMS</span></code>, and
@@ -387,8 +416,8 @@ will require <code class="docutils literal notranslate"><span class="pre">pcdsde
 (<a class="reference external" href="https://github.com/pcdshub/happi/issues/51">#51</a>)</p></li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h3>Bug Fixes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>Bug Fixes<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Templating is more robust when dealing with types. This includes a
 fatal case where the default for an <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>
@@ -403,13 +432,13 @@ have the requisite information to load
 <h2>v1.1.0 (2018-02-13)<a class="headerlink" href="#v1-1-0-2018-02-13" title="Permalink to this headline">¶</a></h2>
 <p>Ownership of this repository has been transferred to
 <a class="reference external" href="https://github.com/pcdshub">https://github.com/pcdshub</a></p>
-<div class="section" id="id6">
-<h3>Enhancements<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>Enhancements<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <p>Happi now has a cache so the repeated requests to load the same device
 do not spawn multiple objects.</p>
 </div>
-<div class="section" id="id7">
-<h3>Maintenance<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Maintenance<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Cleaner logging messages</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">QSBackend</span></code> was expanded to accommodate different keyword arguments
@@ -419,8 +448,8 @@ associated with different authentication methods.</p></li>
 </div>
 <div class="section" id="v1-0-0-2018-01-31">
 <h2>v1.0.0 (2018-01-31)<a class="headerlink" href="#v1-0-0-2018-01-31" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id8">
-<h3>Enhancements<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Enhancements<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">happi</span></code> now handles loading devices with the built-in <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code>
 -&gt; args, kwargs and device_class. Simply enter the proper information
@@ -454,8 +483,8 @@ of the <code class="docutils literal notranslate"><span class="pre">skywalker</s
 </div>
 <div class="section" id="v0-5-0-2017-11-11">
 <h2>v0.5.0 (2017-11-11)<a class="headerlink" href="#v0-5-0-2017-11-11" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id9">
-<h3>Enhancements<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>Enhancements<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">happi</span></code> now supports multiple backends. The required database
 operations are templated in the <code class="docutils literal notranslate"><span class="pre">happi.backends.Backend</span></code> The
@@ -466,8 +495,8 @@ entered as an argument to the <code class="docutils literal notranslate"><span c
 <code class="docutils literal notranslate"><span class="pre">skywalker-dev</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id10">
-<h3>Bug Fixes<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Bug Fixes<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Devices comparison now works properly. The listed prefix and names
 are compared.</p></li>
@@ -480,8 +509,8 @@ are compared.</p></li>
 <code class="docutils literal notranslate"><span class="pre">OffsetMirror</span></code></p></li>
 </ul>
 </div>
-<div class="section" id="id11">
-<h3>Deprecations<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Deprecations<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">happi</span></code> will no longer support Python 2.7</p></li>
 </ul>
@@ -489,15 +518,15 @@ are compared.</p></li>
 </div>
 <div class="section" id="v0-4-0-2017-04-04">
 <h2>v0.4.0 (2017-04-04)<a class="headerlink" href="#v0-4-0-2017-04-04" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id12">
-<h3>Bug Fixes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Bug Fixes<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Removed dependency on mongomock in conda-recipe</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MockClient</span></code> creates entire <code class="docutils literal notranslate"><span class="pre">device_types</span></code> container mapping</p></li>
 </ul>
 </div>
-<div class="section" id="id13">
-<h3>API Changes<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>API Changes<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Renamed alias -&gt; name, and base -&gt; prefix for Ophyd compatibility</p></li>
 </ul>
@@ -505,8 +534,8 @@ are compared.</p></li>
 </div>
 <div class="section" id="v0-3-0-2017-03-22">
 <h2>v0.3.0 (2017-03-22)<a class="headerlink" href="#v0-3-0-2017-03-22" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id14">
-<h3>Enhancements<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id15">
+<h3>Enhancements<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Added Python 2.7 support</p></li>
 <li><p>Added macros keyword for EDM support</p></li>
@@ -517,14 +546,14 @@ mongoDB instance</p></li>
 information</p></li>
 </ul>
 </div>
-<div class="section" id="id15">
-<h3>Bug Fixes<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Bug Fixes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">active</span></code> EntryInfo should default to True</p></li>
 </ul>
 </div>
-<div class="section" id="id16">
-<h3>API Changes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>API Changes<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Moved the tests directory into the package to make it easily
 importable by other modules hoping to use a MockClient</p></li>
@@ -553,11 +582,19 @@ importable by other modules hoping to use a MockClient</p></li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2017, SLAC National Accelerator Laboratory
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -568,7 +605,6 @@ importable by other modules hoping to use a MockClient</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

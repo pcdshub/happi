@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Using the Client &mdash; Happi Deck 1.6.0+17.g7f3325a documentation</title>
+  <title>Using the Client &mdash; Happi Deck 1.6.1 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Creating New Device Types" href="develop.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Happi Deck
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Happi Deck
           
 
           
@@ -60,7 +61,7 @@
             
             
               <div class="version">
-                1.6.0+17.g7f3325a
+                1.6.1
               </div>
             
           
@@ -77,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -116,6 +118,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -154,7 +157,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Using the Client</li>
     
@@ -284,7 +287,7 @@ upcoming sections.</p>
 <h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Permalink to this headline">¶</a></h3>
 <p>To search for items on a beamline such as <cite>MFX</cite>, one would use the following:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [17]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
-<span class="gh">Out[17]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f03433e7128&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Tue Jun  9 17:00:31 2020&#39;, &#39;last_edit&#39;: &#39;Tue Jun  9 17:00:31 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+<span class="gh">Out[17]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f6a76668ba8&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Jul  1 22:52:01 2020&#39;, &#39;last_edit&#39;: &#39;Wed Jul  1 22:52:01 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
 </div>
@@ -293,7 +296,7 @@ upcoming sections.</p>
 <p>Searching a Z-range on the beamline, or a range with any arbitrary key is also
 easy by way of <a class="reference internal" href="client_api.html#happi.Client.search_range" title="happi.Client.search_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_range()</span></code></a>. For example:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_range</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">)</span>
-<span class="gh">Out[18]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f03433e7128&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE&#39;, &#39;beamline&#39;: &#39;XRT&#39;, &#39;location_group&#39;: &#39;Loc1&#39;, &#39;functional_group&#39;: &#39;Func1&#39;, &#39;z&#39;: 345.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Tue Jun  9 17:00:31 2020&#39;, &#39;last_edit&#39;: &#39;Tue Jun  9 17:00:31 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+<span class="gh">Out[18]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f6a76668ba8&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE&#39;, &#39;beamline&#39;: &#39;XRT&#39;, &#39;location_group&#39;: &#39;Loc1&#39;, &#39;functional_group&#39;: &#39;Func1&#39;, &#39;z&#39;: 345.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Jul  1 22:52:01 2020&#39;, &#39;last_edit&#39;: &#39;Wed Jul  1 22:52:01 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
 <p>This would return all devices between Z=314.4 and Z=348.6.</p>
@@ -304,7 +307,7 @@ name.</p>
 <h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this headline">¶</a></h3>
 <p>Any key can use a regular expression for searching by using <a class="reference internal" href="client_api.html#happi.Client.search_regex" title="happi.Client.search_regex"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_regex()</span></code></a></p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_regex</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device[2345]&#39;</span><span class="p">)</span>
-<span class="gh">Out[19]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f03433e7128&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Tue Jun  9 17:00:31 2020&#39;, &#39;last_edit&#39;: &#39;Tue Jun  9 17:00:31 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+<span class="gh">Out[19]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f6a76668ba8&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Jul  1 22:52:01 2020&#39;, &#39;last_edit&#39;: &#39;Wed Jul  1 22:52:01 2020&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
 </div>
@@ -374,11 +377,19 @@ Otherwise, the library uses the <a class="reference internal" href="generated/ha
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2017, SLAC National Accelerator Laboratory
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -389,7 +400,6 @@ Otherwise, the library uses the <a class="reference internal" href="generated/ha
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

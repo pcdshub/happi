@@ -1,15 +1,18 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Containers &mdash; Happi Deck 1.6.0+17.g7f3325a documentation</title>
+  <title>Containers &mdash; Happi Deck 1.6.1 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
@@ -17,7 +20,9 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Release History" href="releases.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Happi Deck
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Happi Deck
           
 
           
@@ -60,7 +61,7 @@
             
             
               <div class="version">
-                1.6.0+17.g7f3325a
+                1.6.1
               </div>
             
           
@@ -77,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -108,6 +110,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -146,7 +149,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Containers</li>
     
@@ -214,15 +217,25 @@ clash with an existing piece of metadata that the client uses to organize
 devices.</p>
 <dl class="py attribute">
 <dt id="happi.HappiItem.entry_info">
-<code class="sig-name descname">entry_info</code><em class="property">: list</em><a class="headerlink" href="#happi.HappiItem.entry_info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">entry_info</code><a class="headerlink" href="#happi.HappiItem.entry_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>A list of all the <a class="reference internal" href="develop.html#happi.device.EntryInfo" title="happi.device.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> associated with the device</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="happi.HappiItem.extraneous">
-<code class="sig-name descname">extraneous</code><em class="property">: dict</em><a class="headerlink" href="#happi.HappiItem.extraneous" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extraneous</code><a class="headerlink" href="#happi.HappiItem.extraneous" title="Permalink to this definition">¶</a></dt>
 <dd><p>Storage for information supplied during initialization that does not
 correspond to a specific EntryInfo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="field-list simple">
@@ -410,11 +423,19 @@ threaded load.</p></li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2017, SLAC National Accelerator Laboratory
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -425,7 +446,6 @@ threaded load.</p></li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
