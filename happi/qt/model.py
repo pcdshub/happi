@@ -52,7 +52,7 @@ class HappiViewMixin(object):
 
     @staticmethod
     def create_item(entry):
-        itm = QtGui.QStandardItem(entry.item.name)
+        itm = QtGui.QStandardItem(entry.name)
         itm.setData(entry)
         itm.setFlags(itm.flags() & ~QtCore.Qt.ItemIsEditable)
         return itm
@@ -100,7 +100,7 @@ class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
         """
         if not self.entries():
             return
-        items = [self.create_item(entry) for entry in self.entries()]
+        items = [self.create_item(entry.item) for entry in self.entries()]
 
         self.model.clear()
 
@@ -134,7 +134,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
 
         self.proxy_model = QtCore.QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1)
-       # self.proxy_model.setRecursiveFilteringEnabled(True)
+        self.proxy_model.setRecursiveFilteringEnabled(True)
         self.proxy_model.setDynamicSortFilter(True)
         self.setModel(self.proxy_model)
 
@@ -187,8 +187,8 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
 
         for entry in self.entries():
             try:
-                field_val = get_happi_entry_value(entry, field)
-                entry_group[field_val].append(entry)
+                field_val = get_happi_entry_value(entry.item, field)
+                entry_group[field_val].append(entry.item)
             except ValueError:
                 logger.exception(
                     'Could not retrieve value for field %s at entry %s',

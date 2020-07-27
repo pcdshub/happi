@@ -90,7 +90,7 @@ if __name__ == "__main__":
     cli = happi.Client(path=db_path)
     w = HappiDeviceExplorer()
     w.view.client = cli
-    w.view.search(active=True)
+    w.view.search(type='OphydItem')
     w.show()
 
     app.exec_()
