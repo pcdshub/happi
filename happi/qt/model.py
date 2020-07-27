@@ -52,7 +52,7 @@ class HappiViewMixin(object):
 
     @staticmethod
     def create_item(entry):
-        itm = QtGui.QStandardItem(entry.name)
+        itm = QtGui.QStandardItem(entry.item.name)
         itm.setData(entry)
         itm.setFlags(itm.flags() & ~QtCore.Qt.ItemIsEditable)
         return itm
@@ -134,7 +134,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
 
         self.proxy_model = QtCore.QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1)
-        self.proxy_model.setRecursiveFilteringEnabled(True)
+       # self.proxy_model.setRecursiveFilteringEnabled(True)
         self.proxy_model.setDynamicSortFilter(True)
         self.setModel(self.proxy_model)
 

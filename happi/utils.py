@@ -11,7 +11,7 @@ def create_alias(name):
 
 
 def get_happi_entry_value(entry, key, search_extraneous=True):
-    extraneous = entry.extraneous
+    extraneous = entry.item.extraneous
     value = getattr(entry, key, None)
     if value is None and search_extraneous:
         # Try to look at extraneous

@@ -31,9 +31,10 @@ if __name__ == "__main__":
     file_path = pathlib.Path(__file__).resolve()
     db_path = file_path.parent.parent / "db.json"
     cli = happi.Client(path=db_path)
+    
     w = HappiDeviceExplorer()
     w.view.client = cli
-    w.view.search(beamline="DEMO_BEAMLINE")
+    w.view.search(type='OphydItem')
     w.show()
 
     app.exec_()
