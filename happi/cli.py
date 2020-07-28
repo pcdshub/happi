@@ -165,10 +165,18 @@ def happi_cli(args):
     elif args.cmd == 'edit':
         logger.debug('Starting edit block')
         device = client.find_device(name=args.name)
+        is_invalid_field = False
         for edit in args.edits:
             field, value = edit.split('=', 1)
-            logger.info(f'Setting {args.name}.{field} = {value}')
-            setattr(device, field, value)
+            try:
+                getattr(device, field)
+                logger.info('Setting %s.%s = %s', args.name, field, value)
+                setattr(device, field, value)
+            except Exception as e:
+                is_invalid_field = True
+                logger.error('Could not edit %s.%s: %s', args.name, field, e)
+        if is_invalid_field:
+            sys.exit(1)
         device.save()
         device.show_info()
     elif args.cmd == 'load':
