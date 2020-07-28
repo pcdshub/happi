@@ -23,7 +23,7 @@
             "{{prefix}}"
         ],
         "creation": "Thu Jul 23 17:06:44 2020",
-        "device_class": "ophyd.im.SynAxis",
+        "device_class": "ophyd.sim.SynAxis",
         "documentation": null,
         "kwargs": {
             "name": "{{name}}"
