@@ -170,7 +170,7 @@ def happi_cli(args):
             field, value = edit.split('=', 1)
             try:
                 getattr(device, field)
-                logger.info(f'Setting {args.name}.{field} = {value}')
+                logger.info('Setting %s.%s = %s', args.name, field, value)
                 setattr(device, field, value)
             except Exception:
                 is_invalid_field = True
