@@ -165,11 +165,18 @@ def happi_cli(args):
     elif args.cmd == 'edit':
         logger.debug('Starting edit block')
         device = client.find_device(name=args.name)
+        is_edited = False
         for edit in args.edits:
             field, value = edit.split('=', 1)
-            logger.info(f'Setting {args.name}.{field} = {value}')
-            setattr(device, field, value)
-        device.save()
+            try:
+                getattr(device, field)
+                logger.info(f'Setting {args.name}.{field} = {value}')
+                setattr(device, field, value)
+                is_edited = True
+            except AttributeError as ex:
+                logger.warning(f'Could not edit {args.name}.{field}: {ex}')
+        if is_edited:
+            device.save()
         device.show_info()
     elif args.cmd == 'load':
         logger.debug('Starting load block')
