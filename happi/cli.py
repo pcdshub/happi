@@ -174,7 +174,7 @@ def happi_cli(args):
                 setattr(device, field, value)
             except Exception:
                 is_invalid_field = True
-                logger.error(f'Could not edit {args.name}.{field}: {ex}')
+                logger.error('Could not edit %s.%s', args.name, field)
         if is_invalid_field:
             sys.exit(1)
         device.save()
