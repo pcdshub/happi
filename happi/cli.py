@@ -172,7 +172,7 @@ def happi_cli(args):
                 getattr(device, field)
                 logger.info(f'Setting {args.name}.{field} = {value}')
                 setattr(device, field, value)
-            except AttributeError as ex:
+            except Exception:
                 is_invalid_field = True
                 logger.error(f'Could not edit {args.name}.{field}: {ex}')
         if is_invalid_field:
