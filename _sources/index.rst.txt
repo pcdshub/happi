@@ -27,6 +27,7 @@ there are still standards within the group we need to uphold.
    client_api.rst
    backends.rst
    containers.rst
+   cli.rst
 
 .. toctree::
    :maxdepth: 0
