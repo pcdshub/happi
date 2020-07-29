@@ -46,6 +46,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'sphinx.ext.napoleon',
               'sphinx.ext.autosummary',
+              'sphinxarg.ext',
               'IPython.sphinxext.ipython_directive',
               'IPython.sphinxext.ipython_console_highlighting'
               ]

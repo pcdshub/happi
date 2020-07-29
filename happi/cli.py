@@ -15,42 +15,51 @@ import happi
 
 logger = logging.getLogger(__name__)
 
-# Argument Parser Setup
-parser = argparse.ArgumentParser(description='happi command line tool')
 
-# Optional args general to all happi operations
-parser.add_argument('--path', type=str,
-                    help='path to happi configuration file')
-parser.add_argument('--verbose', '-v', action='store_true',
-                    help='Show the degub logging stream')
-parser.add_argument('--version', '-V', action='store_true',
-                    help='Current version and location '
-                    'of Happi installation.')
-# Subparser to trigger search arguments
-subparsers = parser.add_subparsers(help='Subparsers to search, add, edit',
-                                   dest='cmd')
-parser_search = subparsers.add_parser('search', help='Search the happi '
-                                      'database')
-parser_search.add_argument('search_criteria', nargs='+',
-                           help='Search criteria: field=value. If field= is '
-                                'omitted, it will be assumed to be "name". '
-                                'You may include as many search criteria as '
-                                'you like.')
-parser_add = subparsers.add_parser('add', help='Add new entries')
-parser_add.add_argument('--clone', default='',
-                        help='Name of device to use for default parameters')
-parser_edit = subparsers.add_parser('edit', help='Change existing entry')
-parser_edit.add_argument('name', help='Device to edit')
-parser_edit.add_argument('edits', nargs='+',
-                         help='Edits of the form field=value')
-parser_load = subparsers.add_parser('load',
-                                    help='Open IPython terminal with '
-                                         'device loaded')
-parser_load.add_argument('device_names', nargs='+',
-                         help='Devices to load')
+def get_parser():
+    """
+    Defines HAPPI shell commands
+    """
+    # Argument Parser Setup
+    parser = argparse.ArgumentParser(description='happi command line tool')
+
+    # Optional args general to all happi operations
+    parser.add_argument('--path', type=str,
+                        help='path to happi configuration file')
+    parser.add_argument('--verbose', '-v', action='store_true',
+                        help='Show the degub logging stream')
+    parser.add_argument('--version', '-V', action='store_true',
+                        help='Current version and location '
+                        'of Happi installation.')
+    # Subparser to trigger search arguments
+    subparsers = parser.add_subparsers(help='Subparsers to search, add, edit',
+                                       dest='cmd')
+    parser_search = subparsers.add_parser('search', help='Search the happi '
+                                          'database')
+    parser_search.add_argument('search_criteria', nargs='+',
+                               help='Search criteria: '
+                               'field=value. If field= is '
+                               'omitted, it will be assumed to be "name". '
+                               'You may include as many search criteria as '
+                               'you like.')
+    parser_add = subparsers.add_parser('add', help='Add new entries')
+    parser_add.add_argument('--clone', default='',
+                            help='Name of device to use for default parameters'
+                            )
+    parser_edit = subparsers.add_parser('edit', help='Change existing entry')
+    parser_edit.add_argument('name', help='Device to edit')
+    parser_edit.add_argument('edits', nargs='+',
+                             help='Edits of the form field=value')
+    parser_load = subparsers.add_parser('load',
+                                        help='Open IPython terminal with '
+                                        'device loaded')
+    parser_load.add_argument('device_names', nargs='+',
+                             help='Devices to load')
+    return parser
 
 
 def happi_cli(args):
+    parser = get_parser()
     args = parser.parse_args(args)
 
     # Logging Level handling
