@@ -7,8 +7,8 @@ import happi.qt
 
 class HappiDeviceExplorer(QtWidgets.QFrame):
     _GROUP_KEYS = {'Name': 'name',
-                   'Function': 'functional_group',
-                   'Location': 'location_group'}
+                   'Type': 'type',
+                   'Device Class': 'device_class'}
 
     def __init__(self, parent=None):
         super(HappiDeviceExplorer, self).__init__(parent=parent)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     cli = happi.Client(path=db_path)
     w = HappiDeviceExplorer()
     w.view.client = cli
-    w.view.search(beamline="DEMO_BEAMLINE")
+    w.view.search(type='OphydItem')
     w.show()
 
     app.exec_()
