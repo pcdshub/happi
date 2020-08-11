@@ -4,9 +4,13 @@ This module defines the ``happi`` command line utility
 # cli.py
 
 import argparse
+import fnmatch
 import logging
 import os
 import sys
+import numpy
+import math
+import decimal
 
 import coloredlogs
 from IPython import start_ipython
@@ -88,6 +92,7 @@ def happi_cli(args):
 
         # Get search criteria into dictionary for use by client
         client_args = {}
+        results = []
         for user_arg in args.search_criteria:
             if '=' in user_arg:
                 criteria, value = user_arg.split('=', 1)
@@ -100,12 +105,32 @@ def happi_cli(args):
                     criteria, value, client_args[criteria]
                 )
                 return
-            if value.replace('.', '').isnumeric():
-                logger.debug('Changed %s to float', value)
-                value = float(value)
-            client_args[criteria] = value
+            if criteria == 'z' and ',' in value:
+                start = None
+                end = None
+                val = value.replace('[', '').replace(']', '').split(',')
+                if val[0] != '' and val[0] <= val[1]:
+                    try:
+                        start = decimal.Decimal(val[0])
+                        end = decimal.Decimal(val[1])
+                        dec = max(abs(start.as_tuple().exponent),
+                            abs(end.as_tuple().exponent))
+                        if dec != 0:
+                            step = dec/(10**dec)/dec
+                        else:
+                            dec = 1
+                            step =  dec/(10**dec)/dec
+                        for i in numpy.arange(float(start), float(end) + 1, step):
+                            s = math.floor(i * 10 ** dec) / 10 ** dec
+                            client_args[criteria] = fnmatch.translate(str(s))
+                            results += client.search_regex(**client_args)
+                    except Exception as ex:
+                        logger.info("The value is not numeric or something %s", ex)
+                        sys.exit()
 
-        results = client.search(**client_args)
+            client_args[criteria] = fnmatch.translate(value)
+
+        results += client.search_regex(**client_args)
         if results:
             for res in results:
                 res.device.show_info()
