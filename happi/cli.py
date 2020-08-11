@@ -105,6 +105,9 @@ def happi_cli(args):
                     criteria, value, client_args[criteria]
                 )
                 return
+            if value.replace('.', '').isnumeric():
+                logger.debug('Changed %s to float', value)
+                value = str(float(value))
             if criteria == 'z' and ',' in value:
                 start = None
                 end = None
