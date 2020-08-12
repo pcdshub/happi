@@ -107,8 +107,6 @@ def happi_cli(args):
                 logger.debug('Changed %s to float', value)
                 value = str(float(value))
 
-            # maybe don't check for z - not all of them have z?
-            # but could other fields have a comma? - i think they might
             if criteria == 'z' and ',' in value:
                 start = None
                 end = None
@@ -120,7 +118,7 @@ def happi_cli(args):
                     end = float(end)
                 except Exception as ex:
                     logger.error("Invalid numbers for the z range %s", ex)
-                    sys.exit()
+                    sys.exit(1)
                 if start < end:
                     results += client.search_range('z', start, end)
                 else:
@@ -136,11 +134,11 @@ def happi_cli(args):
         results += client.search_regex(**client_args)
 
         # find the repeated items
-        _size = len(results)
+        res_size = len(results)
         repeated = []
-        for i in range(_size):
+        for i in range(res_size):
             k = i + 1
-            for j in range(k, _size):
+            for j in range(k, res_size):
                 if results[i] == results[j] and results[i] not in repeated:
                     repeated.append(results[i])
 
