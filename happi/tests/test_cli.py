@@ -81,7 +81,7 @@ def test_cli_version(capsys):
 
 def test_search(happi_cfg):
     client = happi.client.Client.from_config(cfg=happi_cfg)
-    res = client.search(beamline="TST")
+    res = client.search_regex(beamline="TST")
     res_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'search',
                                    'beamline=TST'])
     assert [r.device for r in res] == [r.device for r in res_cli]
@@ -89,7 +89,15 @@ def test_search(happi_cfg):
 
 def test_search_z(happi_cfg):
     client = happi.client.Client.from_config(cfg=happi_cfg)
-    res = client.search(z=6.0)
+    res = client.search_regex(z="6.0")
     res_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'search',
                                    'z=6.0'])
+    assert [r.device for r in res] == [r.device for r in res_cli]
+
+
+def test_search_z_range(happi_cfg):
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    res = client.search_range('z', 3.0, 6.0)
+    res_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'search',
+                                   'z=[3.0,6.0]'])
     assert [r.device for r in res] == [r.device for r in res_cli]

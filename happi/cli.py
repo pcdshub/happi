@@ -8,9 +8,6 @@ import fnmatch
 import logging
 import os
 import sys
-import numpy
-import math
-import decimal
 
 import coloredlogs
 from IPython import start_ipython
@@ -92,6 +89,7 @@ def happi_cli(args):
 
         # Get search criteria into dictionary for use by client
         client_args = {}
+        z_is_range = False
         results = []
         for user_arg in args.search_criteria:
             if '=' in user_arg:
@@ -108,35 +106,59 @@ def happi_cli(args):
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
                 value = str(float(value))
+
+            # maybe don't check for z - not all of them have z?
+            # but could other fields have a comma? - i think they might
             if criteria == 'z' and ',' in value:
                 start = None
                 end = None
-                val = value.replace('[', '').replace(']', '').split(',')
-                if val[0] != '' and val[0] <= val[1]:
-                    try:
-                        start = decimal.Decimal(val[0])
-                        end = decimal.Decimal(val[1])
-                        dec = max(abs(start.as_tuple().exponent),
-                            abs(end.as_tuple().exponent))
-                        if dec != 0:
-                            step = dec/(10**dec)/dec
-                        else:
-                            dec = 1
-                            step =  dec/(10**dec)/dec
-                        for i in numpy.arange(float(start), float(end) + 1, step):
-                            s = math.floor(i * 10 ** dec) / 10 ** dec
-                            client_args[criteria] = fnmatch.translate(str(s))
-                            results += client.search_regex(**client_args)
-                    except Exception as ex:
-                        logger.info("The value is not numeric or something %s", ex)
-                        sys.exit()
+                z_is_range = True
+                try:
+                    start, end = value.replace(
+                        '[', '').replace(']', '').split(',')
+                    start = float(start)
+                    end = float(end)
+                except Exception as ex:
+                    logger.error("Invalid numbers for the z range %s", ex)
+                    sys.exit()
+                if start < end:
+                    results += client.search_range('z', start, end)
+                else:
+                    logger.error('Invalid z range')
 
-            client_args[criteria] = fnmatch.translate(value)
+            # skip the criteria for range values
+            # it won't be a valid criteria for search_regex()
+            if z_is_range and criteria == 'z':
+                pass
+            else:
+                client_args[criteria] = fnmatch.translate(value)
 
         results += client.search_regex(**client_args)
-        if results:
+
+        # find the repeated items
+        _size = len(results)
+        repeated = []
+        for i in range(_size):
+            k = i + 1
+            for j in range(k, _size):
+                if results[i] == results[j] and results[i] not in repeated:
+                    repeated.append(results[i])
+
+        # we only want to return the ones that have been repeated
+        # they have been matched with both serch_regex() & search_range()
+        if repeated:
+            for res in repeated:
+                res.item.show_info()
+            return repeated
+        # only matched with serach_regex()
+        elif results and not z_is_range:
             for res in results:
-                res.device.show_info()
+                res.item.show_info()
+            return results
+        # only matched with search_range()
+        elif results and z_is_range and len(args.search_criteria) == 1:
+            for res in results:
+                res.item.show_info()
             return results
         else:
             logger.error('No devices found')
