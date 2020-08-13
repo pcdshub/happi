@@ -89,7 +89,6 @@ def happi_cli(args):
 
         # Get search criteria into dictionary for use by client
         client_args = {}
-        results = []
         range_list = []
         regex_list = []
         is_range = False
@@ -146,7 +145,7 @@ def happi_cli(args):
                 if results[i] == results[j] and results[i] not in repeated:
                     repeated.append(results[i])
 
-        # we only want to return the ones that have been repeated
+        # we only want to return the ones that have been repeated when
         # they have been matched with both search_regex() & search_range()
         if repeated:
             for res in repeated:
