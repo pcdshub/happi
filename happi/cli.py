@@ -114,11 +114,11 @@ def happi_cli(args):
                     and ',' in value):
                 start = None
                 end = None
-                is_range = True
                 try:
                     start, end = value.split(',')
                     start = float(start)
                     end = float(end)
+                    is_range = True
                 except Exception as ex:
                     logger.error("Invalid numbers for the range %s", ex)
                     sys.exit(1)
