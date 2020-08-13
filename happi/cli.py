@@ -89,9 +89,12 @@ def happi_cli(args):
 
         # Get search criteria into dictionary for use by client
         client_args = {}
-        z_is_range = False
         results = []
+        range_list = []
+        regex_list = []
+        is_range = False
         for user_arg in args.search_criteria:
+            is_range = False
             if '=' in user_arg:
                 criteria, value = user_arg.split('=', 1)
             else:
@@ -107,31 +110,32 @@ def happi_cli(args):
                 logger.debug('Changed %s to float', value)
                 value = str(float(value))
 
-            if criteria == 'z' and ',' in value:
+            if (value.replace('.', '').replace(',', '').isnumeric()
+                    and ',' in value):
                 start = None
                 end = None
-                z_is_range = True
+                is_range = True
                 try:
-                    start, end = value.replace(
-                        '[', '').replace(']', '').split(',')
+                    start, end = value.split(',')
                     start = float(start)
                     end = float(end)
                 except Exception as ex:
-                    logger.error("Invalid numbers for the z range %s", ex)
+                    logger.error("Invalid numbers for the range %s", ex)
                     sys.exit(1)
                 if start < end:
-                    results += client.search_range('z', start, end)
+                    range_list = client.search_range(criteria, start, end)
                 else:
-                    logger.error('Invalid z range')
+                    logger.error('Invalid range')
 
             # skip the criteria for range values
             # it won't be a valid criteria for search_regex()
-            if z_is_range and criteria == 'z':
+            if is_range:
                 pass
             else:
                 client_args[criteria] = fnmatch.translate(value)
 
-        results += client.search_regex(**client_args)
+        regex_list = client.search_regex(**client_args)
+        results = regex_list + range_list
 
         # find the repeated items
         res_size = len(results)
@@ -143,21 +147,21 @@ def happi_cli(args):
                     repeated.append(results[i])
 
         # we only want to return the ones that have been repeated
-        # they have been matched with both serch_regex() & search_range()
+        # they have been matched with both search_regex() & search_range()
         if repeated:
             for res in repeated:
                 res.item.show_info()
             return repeated
-        # only matched with serach_regex()
-        elif results and not z_is_range:
-            for res in results:
+        # only matched with search_regex()
+        elif regex_list and not is_range:
+            for res in regex_list:
                 res.item.show_info()
-            return results
+            return regex_list
         # only matched with search_range()
-        elif results and z_is_range and len(args.search_criteria) == 1:
-            for res in results:
+        elif range_list and is_range:
+            for res in range_list:
                 res.item.show_info()
-            return results
+            return range_list
         else:
             logger.error('No devices found')
     elif args.cmd == 'add':

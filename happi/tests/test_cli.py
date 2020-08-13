@@ -99,5 +99,5 @@ def test_search_z_range(happi_cfg):
     client = happi.client.Client.from_config(cfg=happi_cfg)
     res = client.search_range('z', 3.0, 6.0)
     res_cli = happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'search',
-                                   'z=[3.0,6.0]'])
+                                   'z=3.0,6.0'])
     assert [r.device for r in res] == [r.device for r in res_cli]
