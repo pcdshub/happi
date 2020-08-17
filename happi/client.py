@@ -607,7 +607,6 @@ class Client(collections.abc.Mapping):
         try:
             if the_old_name:
                 _id = the_old_name
-                post['_id'] = _id
             else:
                 _id = post[self._id_key]
         except KeyError:
