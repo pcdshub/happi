@@ -11,6 +11,7 @@ import sys
 
 import coloredlogs
 from IPython import start_ipython
+from .utils import is_a_range
 
 import happi
 
@@ -109,22 +110,15 @@ def happi_cli(args):
                 logger.debug('Changed %s to float', value)
                 value = str(float(value))
 
-            if (value.replace('.', '').replace(',', '').isnumeric()
-                    and ',' in value):
-                start = None
-                end = None
-                try:
-                    start, end = value.split(',')
-                    start = float(start)
-                    end = float(end)
-                    is_range = True
-                except Exception as ex:
-                    logger.error("Invalid numbers for the range %s", ex)
-                    sys.exit(1)
-                if start < end:
-                    range_list = client.search_range(criteria, start, end)
+            if is_a_range(value):
+                start, stop = value.split(',')
+                start = float(start)
+                stop = float(stop)
+                is_range = True
+                if start < stop:
+                    range_list = client.search_range(criteria, start, stop)
                 else:
-                    logger.error('Invalid range')
+                    logger.error('Invalid range, make sure start < stop')
 
             # skip the criteria for range values
             # it won't be a valid criteria for search_regex()
