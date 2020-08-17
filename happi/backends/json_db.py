@@ -278,7 +278,25 @@ class JSONBackend(_Backend):
             else:
                 # Edit information
                 try:
-                    db[_id].update(post)
+                    # In case we want to update the name of an entry
+                    # We want to add new entry, and delete the old one
+                    post_name = post.get('name', None)
+                    if _id != post_name:
+                        if post_name in db.keys():
+                            raise DuplicateError(
+                                f"Device {post_name} already exists")
+                        # Add new _id keyword
+                        post.update({'_id': post_name})
+                        # Add to database
+                        db[post_name] = post
+                        # Remove the old item
+                        removed_item = db.pop(_id, "Key Not Found")
+                        logger.info("Substituting the name for the item: '%s' "
+                                    "with: '%s'.\nRemoved: %s \nNew Entry: %s",
+                                    _id, post_name, str(removed_item),
+                                    str(db[post_name]))
+                    else:
+                        db[_id].update(post)
                 except KeyError:
                     raise SearchError("No device found {}".format(_id))
 

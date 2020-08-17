@@ -584,6 +584,9 @@ class Client(collections.abc.Mapping):
         self._validate_device(device)
         # Grab information from device
         post = device.post()
+        # save the old name in case the user is trying to
+        # change the 'name' of an entry
+        the_old_name = post.get('_id', None)
         # Store creation time
         creation = post.get('creation', ttime.ctime())
         # Clean supplied information
@@ -602,7 +605,11 @@ class Client(collections.abc.Mapping):
                      'last_edit': ttime.ctime()})
         # Find id
         try:
-            _id = post[self._id_key]
+            if the_old_name:
+                _id = the_old_name
+                post['_id'] = _id
+            else:
+                _id = post[self._id_key]
         except KeyError:
             raise EntryError('HappiItem did not supply the proper information '
                              'to interface with the database, missing {}'
