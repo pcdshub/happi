@@ -64,6 +64,10 @@ def happi_cli(args):
     parser = get_parser()
     args = parser.parse_args(args)
 
+    # print how to use happi if no argument provided
+    if len(sys.argv) == 1:
+        parser.print_usage()
+
     # Logging Level handling
     if args.verbose:
         shown_logger = logging.getLogger()
