@@ -228,7 +228,7 @@ class JSONBackend(_Backend):
             Requested information, where the values are regular expressions.
         """
         def comparison(name, doc):
-            return regexes and all(key in doc and regex.match(doc[key])
+            return regexes and all(key in doc and regex.match(str(doc[key]))
                                    for key, regex in regexes.items())
 
         regexes = {

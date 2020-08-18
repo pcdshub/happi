@@ -4,12 +4,14 @@ This module defines the ``happi`` command line utility
 # cli.py
 
 import argparse
+import fnmatch
 import logging
 import os
 import sys
 
 import coloredlogs
 from IPython import start_ipython
+from .utils import is_a_range
 
 import happi
 
@@ -88,7 +90,11 @@ def happi_cli(args):
 
         # Get search criteria into dictionary for use by client
         client_args = {}
+        range_list = []
+        regex_list = []
+        is_range = False
         for user_arg in args.search_criteria:
+            is_range = False
             if '=' in user_arg:
                 criteria, value = user_arg.split('=', 1)
             else:
@@ -102,14 +108,53 @@ def happi_cli(args):
                 return
             if value.replace('.', '').isnumeric():
                 logger.debug('Changed %s to float', value)
-                value = float(value)
-            client_args[criteria] = value
+                value = str(float(value))
 
-        results = client.search(**client_args)
-        if results:
-            for res in results:
-                res.device.show_info()
-            return results
+            if is_a_range(value):
+                start, stop = value.split(',')
+                start = float(start)
+                stop = float(stop)
+                is_range = True
+                if start < stop:
+                    range_list = client.search_range(criteria, start, stop)
+                else:
+                    logger.error('Invalid range, make sure start < stop')
+
+            # skip the criteria for range values
+            # it won't be a valid criteria for search_regex()
+            if is_range:
+                pass
+            else:
+                client_args[criteria] = fnmatch.translate(value)
+
+        regex_list = client.search_regex(**client_args)
+        results = regex_list + range_list
+
+        # find the repeated items
+        res_size = len(results)
+        repeated = []
+        for i in range(res_size):
+            k = i + 1
+            for j in range(k, res_size):
+                if results[i] == results[j] and results[i] not in repeated:
+                    repeated.append(results[i])
+
+        # we only want to return the ones that have been repeated when
+        # they have been matched with both search_regex() & search_range()
+        if repeated:
+            for res in repeated:
+                res.item.show_info()
+            return repeated
+        # only matched with search_regex()
+        elif regex_list and not is_range:
+            for res in regex_list:
+                res.item.show_info()
+            return regex_list
+        # only matched with search_range()
+        elif range_list and is_range:
+            for res in range_list:
+                res.item.show_info()
+            return range_list
         else:
             logger.error('No devices found')
     elif args.cmd == 'add':
