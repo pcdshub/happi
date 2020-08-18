@@ -51,3 +51,4 @@ def is_a_range(str_value):
             return True
         else:
             logger.error("Possibly provided invalid numbers for a range")
+            return False
