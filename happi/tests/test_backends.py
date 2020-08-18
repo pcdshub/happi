@@ -136,18 +136,6 @@ def test_json_save(mockjson, device_info, valve_info):
     mockjson.save(valve_info[Client._id_key], valve_info, insert=True)
     assert valve_info in mockjson.all_devices
 
-    # Change item's name with an existing item name already in the db
-    new_name = {'name': 'alias'}
-    valve_info.update(new_name)
-    with pytest.raises(DuplicateError):
-        mockjson.save(valve_info['_id'], valve_info, insert=False)
-
-    # Change item's name
-    new_name = {'name': 'new_name'}
-    valve_info.update(new_name)
-    mockjson.save(valve_info['_id'], valve_info, insert=False)
-    assert valve_info in mockjson.all_devices
-
 
 def test_json_locking(mockjson):
     # Place lock on file

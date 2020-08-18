@@ -603,19 +603,24 @@ class Client(collections.abc.Mapping):
         post.update({'type': tpe,
                      'creation': creation,
                      'last_edit': ttime.ctime()})
+
         # Find id
         try:
-            if the_old_name:
+            # In case we want to update the name of an entry
+            # We want to add a new entry, and delete the old one
+            if the_old_name != post[self._id_key]:
                 _id = the_old_name
+                self.backend.save(post[self._id_key], post, insert=True)
+                self.backend.delete(the_old_name)
             else:
                 _id = post[self._id_key]
+                self.backend.save(_id, post, insert=insert)
         except KeyError:
             raise EntryError('HappiItem did not supply the proper information '
                              'to interface with the database, missing {}'
                              ''.format(self._id_key))
         # Store information
         logger.info('Adding / Modifying information for %s ...', _id)
-        self.backend.save(_id, post, insert=insert)
         return _id
 
     @classmethod
