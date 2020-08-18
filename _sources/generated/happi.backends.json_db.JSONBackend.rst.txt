@@ -1,4 +1,4 @@
-happi.backends.json\_db.JSONBackend
+﻿happi.backends.json\_db.JSONBackend
 ===================================
 
 .. currentmodule:: happi.backends.json_db

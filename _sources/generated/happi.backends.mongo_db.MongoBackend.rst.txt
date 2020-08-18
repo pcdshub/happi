@@ -1,4 +1,4 @@
-happi.backends.mongo\_db.MongoBackend
+﻿happi.backends.mongo\_db.MongoBackend
 =====================================
 
 .. currentmodule:: happi.backends.mongo_db

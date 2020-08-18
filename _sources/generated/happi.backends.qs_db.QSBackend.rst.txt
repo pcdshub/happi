@@ -1,4 +1,4 @@
-happi.backends.qs\_db.QSBackend
+﻿happi.backends.qs\_db.QSBackend
 ===============================
 
 .. currentmodule:: happi.backends.qs_db
