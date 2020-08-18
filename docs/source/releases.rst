@@ -2,6 +2,24 @@
  Release History
 =================
 
+v1.7.0 (2020-08-18)
+===================
+
+Features
+--------
+- Add cli search globbing, e.g. now the following will work:
+  ``happi search xpp*`` (show all devices whose names start with xpp)
+
+Bugfixes
+--------
+- Fix issue with silent failure when editing a non-existant field.
+
+Maintenance
+-----------
+- Add documentation for the happi cli
+- Update the db.json examples to use OphydItem
+
+
 v1.6.1 (2020-07-01)
 ===================
 
