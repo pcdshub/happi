@@ -107,6 +107,22 @@ def test_find_device(happi_client, device_info):
         happi_client.find_device(**bad)
 
 
+def test_change_item_name(happi_client, device_info):
+    device = happi_client.find_device(**device_info)
+    assert device.name != 'new_name'
+    device.name = 'new_name'
+    device.save()
+    # old entry should not exist anymore
+    with pytest.raises(SearchError):
+        happi_client.find_device(**device_info)
+    # new entry with new name should be there
+    new_device = happi_client.find_device(name=device.name)
+    # prefix or other attributes should be the same
+    assert new_device.prefix == device.prefix
+    # we should only have one deivce now which is the new one
+    assert happi_client.all_items == [new_device]
+
+
 def test_validate(happi_client):
     # No bad devices
     assert happi_client.validate() == list()

@@ -584,6 +584,9 @@ class Client(collections.abc.Mapping):
         self._validate_device(device)
         # Grab information from device
         post = device.post()
+        # save the old name in case the user is trying to
+        # change the 'name' of an entry
+        the_old_name = post.get('_id', None)
         # Store creation time
         creation = post.get('creation', ttime.ctime())
         # Clean supplied information
@@ -600,6 +603,7 @@ class Client(collections.abc.Mapping):
         post.update({'type': tpe,
                      'creation': creation,
                      'last_edit': ttime.ctime()})
+
         # Find id
         try:
             _id = post[self._id_key]
@@ -607,9 +611,19 @@ class Client(collections.abc.Mapping):
             raise EntryError('HappiItem did not supply the proper information '
                              'to interface with the database, missing {}'
                              ''.format(self._id_key))
-        # Store information
-        logger.info('Adding / Modifying information for %s ...', _id)
-        self.backend.save(_id, post, insert=insert)
+        # In case we want to update the name of an entry
+        # We want to add a new entry, and delete the old one
+        if the_old_name and the_old_name != post[self._id_key]:
+            # Store information for the new entry
+            logger.info('Saving new entry %s ...', _id)
+            self.backend.save(_id, post, insert=True)
+            # Remove the information for the old entry
+            logger.info('Removing old entry %s ...', the_old_name)
+            self.backend.delete(the_old_name)
+        else:
+            # Store information
+            logger.info('Adding / Modifying information for %s ...', _id)
+            self.backend.save(_id, post, insert=insert)
         return _id
 
     @classmethod
