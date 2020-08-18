@@ -608,19 +608,22 @@ class Client(collections.abc.Mapping):
         try:
             # In case we want to update the name of an entry
             # We want to add a new entry, and delete the old one
+            _id = post[self._id_key]
             if the_old_name != post[self._id_key]:
-                _id = the_old_name
-                self.backend.save(post[self._id_key], post, insert=True)
+                # Store information for the new entry
+                logger.info('Saving new entry %s ...', _id)
+                self.backend.save(_id, post, insert=True)
+                # Remove the information for the old entry
+                logger.info('Removing old entry %s ...', the_old_name)
                 self.backend.delete(the_old_name)
             else:
-                _id = post[self._id_key]
+                # Store information
+                logger.info('Adding / Modifying information for %s ...', _id)
                 self.backend.save(_id, post, insert=insert)
         except KeyError:
             raise EntryError('HappiItem did not supply the proper information '
                              'to interface with the database, missing {}'
                              ''.format(self._id_key))
-        # Store information
-        logger.info('Adding / Modifying information for %s ...', _id)
         return _id
 
     @classmethod
