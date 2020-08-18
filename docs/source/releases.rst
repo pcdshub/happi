@@ -12,7 +12,7 @@ Features
 
 Bugfixes
 --------
-- Fix issue with silent failure when editing a non-existant field.
+- Fix issue with silent failure when editing a non-existent field.
 
 Maintenance
 -----------
