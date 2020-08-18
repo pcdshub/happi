@@ -12,7 +12,12 @@ Features
 
 Bugfixes
 --------
+<<<<<<< Updated upstream
 - Fix issue with silent failure when editing a non-existent field.
+=======
+- Fix issue with silent failure when editing a non-existant field.
+- Fix issues related to changing an entry's name field.
+>>>>>>> Stashed changes
 
 Maintenance
 -----------
