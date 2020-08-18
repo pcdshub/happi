@@ -609,7 +609,7 @@ class Client(collections.abc.Mapping):
             # In case we want to update the name of an entry
             # We want to add a new entry, and delete the old one
             _id = post[self._id_key]
-            if the_old_name != post[self._id_key]:
+            if the_old_name and the_old_name != post[self._id_key]:
                 # Store information for the new entry
                 logger.info('Saving new entry %s ...', _id)
                 self.backend.save(_id, post, insert=True)
