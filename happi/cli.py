@@ -163,7 +163,7 @@ def happi_cli(args):
         if args.clone:
             clone_source = client.find_device(name=args.clone)
             # Must use the same container if cloning
-            response = registry.entry_from_class(clone_source.__class__)
+            response = registry.entry_for_class(clone_source.__class__)
         else:
             # Keep Device at registry for backwards compatibility but filter
             # it out of new devices options
