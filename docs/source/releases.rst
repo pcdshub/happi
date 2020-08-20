@@ -2,6 +2,16 @@
  Release History
 =================
 
+v1.7.1 (2020-08-20)
+===================
+
+Bugfixes
+--------
+- Fix cli issue where the ``--clone`` argument would fail.
+- Make sure the happi cli returns usage information
+  if the user passes no arguments.
+
+
 v1.7.0 (2020-08-18)
 ===================
 
