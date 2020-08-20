@@ -62,6 +62,10 @@ def get_parser():
 
 def happi_cli(args):
     parser = get_parser()
+    # print happi usage if no arguments are provided
+    if not args:
+        parser.print_usage()
+        return
     args = parser.parse_args(args)
 
     # Logging Level handling
