@@ -237,7 +237,7 @@ def test_add_cli(from_user, expected_output, caplog, happi_cfg):
 
 
 @pytest.mark.parametrize("from_user, expected_output", [(
-    # Test add item - succeeding
+    # Test add --clone item - succeeding
     ['happi_new_name', 'device_class', ['arg1', 'arg2'],
         {'name': 'my_name'}, True, '', 'y'],
     [
@@ -265,7 +265,7 @@ def test_add_clone(from_user, expected_output, caplog, happi_cfg):
                    ['arg1', 'arg2'], {'name': 'my_name'}, True, 'docs', 'y']
     with mock.patch.object(
             builtins, 'input', lambda x=None: device_info.pop(0)):
-        # add device
+        # add device first
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
     caplog.clear()
     with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
@@ -280,3 +280,38 @@ def test_add_clone_device_not_fount(happi_cfg):
     with pytest.raises(SearchError):
         happi.cli.happi_cli(
             ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name'])
+
+
+@pytest.mark.parametrize("from_user, expected_output", [(
+    # Test edit item name
+    ['name=new_name'],
+    [
+        "Setting happi_name.name = new_name",
+        "Saving new entry new_name ...",
+        "Removing old entry happi_name ..."
+    ],
+    )])
+def test_edit(from_user, expected_output, caplog, happi_cfg):
+    device_info = ['HappiItem', 'happi_name', 'device_class',
+                   ['arg1', 'arg2'], {'name': 'my_name'}, True, 'docs', 'y']
+    with mock.patch.object(
+            builtins, 'input', lambda x=None: device_info.pop(0)):
+        # add device first
+        happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
+    caplog.clear()
+    # try edit a previous added device
+    happi.cli.happi_cli(
+        ['--verbose', '--path', happi_cfg, 'edit',
+         'happi_name', from_user.pop(0)])
+    for message in caplog.messages:
+        for message, expected in zip(caplog.messages, expected_output):
+            assert expected in message
+    # Test invalid field, note the name is changed to new_name
+    with pytest.raises(SystemExit):
+        happi.cli.happi_cli(
+            ['--verbose', '--path', happi_cfg, 'edit', 'new_name',
+             'some_invalid_field=sif'])
+    with caplog.at_level(logging.ERROR):
+        assert "Could not edit new_name.some_invalid_field: "\
+               "'HappiItem' object has no attribute "\
+               "'some_invalid_field" in caplog.text
