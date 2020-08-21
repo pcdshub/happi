@@ -6,6 +6,7 @@ import pytest
 import happi
 from happi.cli import happi_cli
 from unittest import mock
+from happi.errors import SearchError
 
 
 @pytest.fixture(scope='function')
@@ -149,6 +150,7 @@ def test_both_range_and_regex_search(happi_cfg):
 
 
 @pytest.mark.parametrize("from_user, expected_output", [(
+    # Test add item - succeeding
     ['HappiItem', 'happi_name', 'device_class', ['arg1', 'arg2'],
         {'name': 'my_name'}, True, 'docs', 'y'],
     [
@@ -168,16 +170,10 @@ def test_both_range_and_regex_search(happi_cfg):
         "HappiItem HappiItem (name=happi_name) has been "
         "succesfully added to the database"
     ],
-    )])
-def test_add_cli(from_user, expected_output, caplog, happi_cfg):
-    with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
-        happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
-        for message, expected in zip(caplog.messages, expected_output):
-            assert expected in message
-
-
-@pytest.mark.parametrize("from_user, expected_output", [(
-    ['HappiItem', 'happi_name', 'device_class', ['arg1', 'arg2'],
+    ),
+    # Test add item - aborting
+    (
+    ['HappiItem', 'happi_name2', 'device_class', ['arg1', 'arg2'],
         {'name': 'my_name'}, True, 'docs', 'N'],
     [
         "Please select a container, or press enter for generic "
@@ -192,8 +188,48 @@ def test_add_cli(from_user, expected_output, caplog, happi_cfg):
         "Please confirm the following info is correct:",
         "Aborting"
     ],
-    )])
-def test_add_cli_aborting(from_user, expected_output, caplog, happi_cfg):
+    ),
+    # Test add item - invalid container
+    (
+    ['HappiInvalidItem'],
+    [
+        "Please select a container, or press enter for generic "
+        "Ophyd Device container",
+        "Invalid device container"
+    ],
+    ),
+    # Test add item - no reponse, not an optional field,
+    # invalid value, add OphydItem
+    (
+    ['', 7, 'ophyd_name', 'device_class', ['arg1', 'arg2'],
+        {'name': 'my_name'}, True, 'docs', '', 'some_prefix', 'y'],
+    [
+        "Please select a container, or press enter for generic "
+        "Ophyd Device container",
+        "Enter value for name, default=None, "
+        "enforce=re.compile('[a-z][a-z\\\\_0-9]{2,78}$')",
+        "Invalid value",
+        "Enter value for name, default=None, "
+        "enforce=re.compile('[a-z][a-z\\\\_0-9]{2,78}$')",
+        "Enter value for device_class, default=None, enforce=<class 'str'>",
+        "Enter value for args, default=['{{prefix}}'], enforce=<class 'list'>",
+        "Enter value for kwargs, default={'name': '{{name}}'}, "
+        "enforce=<class 'dict'>",
+        "Enter value for active, default=True, enforce=<class 'bool'>",
+        "Enter value for documentation, default=None, enforce=<class 'str'>",
+        "Enter value for prefix, default=None, enforce=<class 'str'>",
+        "Not an optional field!",
+        "Enter value for prefix, default=None, enforce=<class 'str'>",
+        "Please confirm the following info is correct:",
+        "Adding device",
+        "Storing device OphydItem (name=ophyd_name) ...",
+        "Adding / Modifying information for ophyd_name ...",
+        "HappiItem OphydItem (name=ophyd_name) has been "
+        "succesfully added to the database"
+    ],
+    ),
+    ])
+def test_add_cli(from_user, expected_output, caplog, happi_cfg):
     with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
         for message, expected in zip(caplog.messages, expected_output):
@@ -201,15 +237,46 @@ def test_add_cli_aborting(from_user, expected_output, caplog, happi_cfg):
 
 
 @pytest.mark.parametrize("from_user, expected_output", [(
-    ['HappiInvalidItem'],
+    # Test add item - succeeding
+    ['happi_new_name', 'device_class', ['arg1', 'arg2'],
+        {'name': 'my_name'}, True, '', 'y'],
     [
-        "Please select a container, or press enter for generic "
-        "Ophyd Device container",
-        "Invalid device container"
+        "Enter value for name, default=happi_name, "
+        "enforce=re.compile('[a-z][a-z\\\\_0-9]{2,78}$')",
+        "Enter value for device_class, default=device_class, "
+        "enforce=<class 'str'>",
+        "Enter value for args, default=['arg1', 'arg2'], "
+        "enforce=<class 'list'>",
+        "Enter value for kwargs, default={'name': 'my_name'}, "
+        "enforce=<class 'dict'>",
+        "Enter value for active, default=True, enforce=<class 'bool'>",
+        "Enter value for documentation, default=docs, enforce=<class 'str'>",
+        "Selecting default value docs",
+        "Please confirm the following info is correct:",
+        "Adding device",
+        "Storing device HappiItem (name=happi_new_name) ...",
+        "Adding / Modifying information for happi_new_name ...",
+        "HappiItem HappiItem (name=happi_new_name) has been "
+        "succesfully added to the database"
     ],
     )])
-def test_add_invalid_container(from_user, expected_output, caplog, happi_cfg):
-    with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
+def test_add_clone(from_user, expected_output, caplog, happi_cfg):
+    device_info = ['HappiItem', 'happi_name', 'device_class',
+                   ['arg1', 'arg2'], {'name': 'my_name'}, True, 'docs', 'y']
+    with mock.patch.object(
+            builtins, 'input', lambda x=None: device_info.pop(0)):
+        # add device
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
+    caplog.clear()
+    with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
+        # try to clone from previously added device
+        happi.cli.happi_cli(
+            ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name'])
         for message, expected in zip(caplog.messages, expected_output):
             assert expected in message
+
+
+def test_add_clone_device_not_fount(happi_cfg):
+    with pytest.raises(SearchError):
+        happi.cli.happi_cli(
+            ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name'])
