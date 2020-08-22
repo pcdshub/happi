@@ -315,3 +315,18 @@ def test_edit(from_user, expected_output, caplog, happi_cfg):
         assert "Could not edit new_name.some_invalid_field: "\
                "'HappiItem' object has no attribute "\
                "'some_invalid_field" in caplog.text
+
+
+def test_load(caplog, happi_cfg, capsys):
+    device_info = ['HappiItem', 'happi_name', 'types.SimpleNamespace',
+                   [], {'name': 'my_name'}, True, 'docs', 'y']
+    with mock.patch.object(
+            builtins, 'input', lambda x=None: device_info.pop(0)):
+        # add device first
+        happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
+    caplog.clear()
+    # try to load the device
+    # TODO - try somewhow to mock the start_ipython or close the shell
+    # with mock.patch('sys.stdout', return_value=quit()):
+    # happi.cli.happi_cli(['--verbose',
+    # '--path', happi_cfg, 'load', 'happi_name'])
