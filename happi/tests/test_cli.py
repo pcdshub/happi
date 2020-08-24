@@ -317,16 +317,21 @@ def test_edit(from_user, expected_output, caplog, happi_cfg):
                "'some_invalid_field" in caplog.text
 
 
-def test_load(caplog, happi_cfg, capsys):
+def test_load(caplog, happi_cfg):
     device_info = ['HappiItem', 'happi_name', 'types.SimpleNamespace',
                    [], {'name': 'my_name'}, True, 'docs', 'y']
     with mock.patch.object(
-            builtins, 'input', lambda x=None: device_info.pop(0)):
+             builtins, 'input', lambda x=None: device_info.pop(0)):
         # add device first
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
     caplog.clear()
     # try to load the device
-    # TODO - try somewhow to mock the start_ipython or close the shell
-    # with mock.patch('sys.stdout', return_value=quit()):
-    # happi.cli.happi_cli(['--verbose',
-    # '--path', happi_cfg, 'load', 'happi_name'])
+    devices = {}
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    devices['happi_name'] = client.load_device(name='happi_name')
+    with mock.patch.object(happi.cli, 'start_ipython') as m:
+        happi.cli.happi_cli(['--verbose', '--path',
+                             happi_cfg, 'load', 'happi_name'])
+        m.assert_called_once_with(argv=['--quick'], user_ns=devices)
+    with caplog.at_level(logging.INFO):
+        assert "Creating shell with devices" in caplog.text
