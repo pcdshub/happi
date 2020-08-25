@@ -86,11 +86,9 @@ def test_cli_version(capsys):
 def test_cli_no_argument(capsys):
     happi.cli.happi_cli([])
     readout = capsys.readouterr()
-    # TODO: figure out a way to get usage: happi
-    # instead of usage: pytest or usage run_test.py..
     assert 'usage:' in readout.out
-    assert '[-h] [--path PATH] [--verbose] [--version]\n'
-    '                    {search,add,edit,load} ...\n' in readout.out
+    assert '[-h] [--path PATH] [--verbose] [--version]' in readout.out
+    assert '{search,add,edit,load}' in readout.out
 
 
 def test_search(happi_cfg):
@@ -149,11 +147,10 @@ def test_both_range_and_regex_search(happi_cfg):
     assert [r.device for r in res] == [r.device for r in res_cli]
 
 
-@pytest.mark.parametrize("from_user, expected_output", [(
+@pytest.mark.parametrize("from_user, expected_output", [
     # Test add item - succeeding
-    ['HappiItem', 'happi_name', 'device_class', ['arg1', 'arg2'],
-        {'name': 'my_name'}, True, 'docs', 'y'],
-    [
+    pytest.param(['HappiItem', 'happi_name', 'device_class', ['arg1', 'arg2'],
+                  {'name': 'my_name'}, True, 'docs', 'y'], [
         "Please select a container, or press enter for generic "
         "Ophyd Device container",
         "Enter value for name, default=None, "
@@ -168,14 +165,11 @@ def test_both_range_and_regex_search(happi_cfg):
         "Storing device HappiItem (name=happi_name) ...",
         "Adding / Modifying information for happi_name ...",
         "HappiItem HappiItem (name=happi_name) has been "
-        "succesfully added to the database"
-    ],
+        "succesfully added to the database"],
     ),
     # Test add item - aborting
-    (
-    ['HappiItem', 'happi_name2', 'device_class', ['arg1', 'arg2'],
-        {'name': 'my_name'}, True, 'docs', 'N'],
-    [
+    pytest.param(['HappiItem', 'happi_name2', 'device_class', ['arg1', 'arg2'],
+                  {'name': 'my_name'}, True, 'docs', 'N'], [
         "Please select a container, or press enter for generic "
         "Ophyd Device container",
         "Enter value for name, default=None, "
@@ -186,24 +180,18 @@ def test_both_range_and_regex_search(happi_cfg):
         "Enter value for active, default=True, enforce=<class 'bool'>",
         "Enter value for documentation, default=None, enforce=<class 'str'>",
         "Please confirm the following info is correct:",
-        "Aborting"
-    ],
+        "Aborting"],
     ),
     # Test add item - invalid container
-    (
-    ['HappiInvalidItem'],
-    [
+    pytest.param(['HappiInvalidItem'], [
         "Please select a container, or press enter for generic "
         "Ophyd Device container",
-        "Invalid device container"
-    ],
+        "Invalid device container"],
     ),
     # Test add item - no reponse, not an optional field,
     # invalid value, add OphydItem
-    (
-    ['', 7, 'ophyd_name', 'device_class', ['arg1', 'arg2'],
-        {'name': 'my_name'}, True, 'docs', '', 'some_prefix', 'y'],
-    [
+    pytest.param(['', 7, 'ophyd_name', 'device_class', ['arg1', 'arg2'],
+                  {'name': 'my_name'}, True, 'docs', '', 'some_prefix', 'y'], [
         "Please select a container, or press enter for generic "
         "Ophyd Device container",
         "Enter value for name, default=None, "
@@ -225,22 +213,21 @@ def test_both_range_and_regex_search(happi_cfg):
         "Storing device OphydItem (name=ophyd_name) ...",
         "Adding / Modifying information for ophyd_name ...",
         "HappiItem OphydItem (name=ophyd_name) has been "
-        "succesfully added to the database"
-    ],
+        "succesfully added to the database"],
     ),
     ])
 def test_add_cli(from_user, expected_output, caplog, happi_cfg):
     with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
+        caplog.clear()
         for message, expected in zip(caplog.messages, expected_output):
             assert expected in message
 
 
-@pytest.mark.parametrize("from_user, expected_output", [(
+@pytest.mark.parametrize("from_user, expected_output", [
     # Test add --clone item - succeeding
-    ['happi_new_name', 'device_class', ['arg1', 'arg2'],
-        {'name': 'my_name'}, True, '', 'y'],
-    [
+    pytest.param(['happi_new_name', 'device_class', ['arg1', 'arg2'],
+                  {'name': 'my_name'}, True, '', 'y'], [
         "Enter value for name, default=happi_name, "
         "enforce=re.compile('[a-z][a-z\\\\_0-9]{2,78}$')",
         "Enter value for device_class, default=device_class, "
@@ -257,8 +244,7 @@ def test_add_cli(from_user, expected_output, caplog, happi_cfg):
         "Storing device HappiItem (name=happi_new_name) ...",
         "Adding / Modifying information for happi_new_name ...",
         "HappiItem HappiItem (name=happi_new_name) has been "
-        "succesfully added to the database"
-    ],
+        "succesfully added to the database"],
     )])
 def test_add_clone(from_user, expected_output, caplog, happi_cfg):
     device_info = ['HappiItem', 'happi_name', 'device_class',
@@ -267,11 +253,11 @@ def test_add_clone(from_user, expected_output, caplog, happi_cfg):
             builtins, 'input', lambda x=None: device_info.pop(0)):
         # add device first
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
-    caplog.clear()
     with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
         # try to clone from previously added device
         happi.cli.happi_cli(
             ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name'])
+        caplog.clear()
         for message, expected in zip(caplog.messages, expected_output):
             assert expected in message
 
@@ -282,14 +268,12 @@ def test_add_clone_device_not_fount(happi_cfg):
             ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name'])
 
 
-@pytest.mark.parametrize("from_user, expected_output", [(
+@pytest.mark.parametrize("from_user, expected_output", [
     # Test edit item name
-    ['name=new_name'],
-    [
+    pytest.param(['name=new_name'], [
         "Setting happi_name.name = new_name",
         "Saving new entry new_name ...",
-        "Removing old entry happi_name ..."
-    ],
+        "Removing old entry happi_name ..."],
     )])
 def test_edit(from_user, expected_output, caplog, happi_cfg):
     device_info = ['HappiItem', 'happi_name', 'device_class',
