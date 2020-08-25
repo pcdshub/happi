@@ -87,8 +87,6 @@ def test_cli_no_argument(capsys):
     happi.cli.happi_cli([])
     readout = capsys.readouterr()
     assert 'usage:' in readout.out
-    assert '[-h] [--path PATH] [--verbose] [--version]' in readout.out
-    assert '{search,add,edit,load}' in readout.out
 
 
 def test_search(happi_cfg):
