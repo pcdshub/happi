@@ -215,7 +215,8 @@ def test_both_range_and_regex_search(happi_cfg):
         "HappiItem OphydItem (name=ophyd_name) has been "
         "succesfully added to the database"],
     ),
-    ])
+    ], ids=["add_succeeding", "add_aborting",
+            "add_invalid_container", "add_not_optional_field"])
 def test_add_cli(from_user, expected_output, caplog, happi_cfg):
     with mock.patch.object(builtins, 'input', lambda x=None: from_user.pop(0)):
         happi.cli.happi_cli(['--verbose', '--path', happi_cfg, 'add'])
@@ -244,7 +245,7 @@ def test_add_cli(from_user, expected_output, caplog, happi_cfg):
         "Storing device HappiItem (name=happi_new_name) ...",
         "Adding / Modifying information for happi_new_name ...",
         "HappiItem HappiItem (name=happi_new_name) has been "
-        "succesfully added to the database"],
+        "succesfully added to the database"], id="clone_succeeding",
     )])
 def test_add_clone(from_user, expected_output, caplog, happi_cfg):
     device_info = ['HappiItem', 'happi_name', 'device_class',
@@ -273,7 +274,7 @@ def test_add_clone_device_not_fount(happi_cfg):
     pytest.param(['name=new_name'], [
         "Setting happi_name.name = new_name",
         "Saving new entry new_name ...",
-        "Removing old entry happi_name ..."],
+        "Removing old entry happi_name ..."], id="edit_name",
     )])
 def test_edit(from_user, expected_output, caplog, happi_cfg):
     device_info = ['HappiItem', 'happi_name', 'device_class',
