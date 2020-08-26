@@ -391,9 +391,9 @@ class Client(collections.abc.Mapping):
             try:
                 result = wrap_cls(client=self, device=self.find_device(**info))
                 results.append(result)
-            except Exception:
-                logger.warning('Entry for %s is malformed. Skipping.',
-                               info['name'])
+            except Exception as exc:
+                logger.warning('Entry for %s is malformed (%s). Skipping.',
+                               info['name'], exc)
         return results
 
     def search_range(self, key, start, end=None, **kwargs):
