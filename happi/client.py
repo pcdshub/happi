@@ -393,7 +393,7 @@ class Client(collections.abc.Mapping):
                 results.append(result)
             except Exception as exc:
                 logger.warning('Entry for %s is malformed (%s). Skipping.',
-                               info['name'], str(exc))
+                               info['name'], exc)
         return results
 
     def search_range(self, key, start, end=None, **kwargs):
