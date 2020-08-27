@@ -43,18 +43,24 @@ class QSBackend(JSONBackend):
         # Create our client and gather the raw information from the client
         self.qs = QuestionnaireClient(**kwargs)
 
-        # Ensure that our user entered a valid expname
+        # Get the proposal number
         exp_dict = self.qs.getExpName2URAWIProposalIDs()
         try:
             proposal = exp_dict[expname]
         except KeyError:
-            err = '{} is not a valid experiment name.'
-            raise ValueError(err.format(expname))
+            # Rare case for debug/daq experiments, roll with it for now
+            proposal = expname
+
         run_no = 'run{}'.format(expname[-2:])
         try:
             logger.debug("Requesting list of proposals in %s", run_no)
             prop_ids = self.qs.getProposalsListForRun(run_no)
-            beamline = prop_ids[proposal]['Instrument']
+            try:
+                beamline = prop_ids[proposal]['Instrument']
+            except KeyError:
+                # Rare care for debug/daq experiments
+                beamline = prop_ids[expname]['Instrument']
+                proposal = expname
         # Invalid proposal id for this run
         except KeyError as exc:
             raise DatabaseError('Unable to find proposal {}'.format(proposal))\
