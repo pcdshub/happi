@@ -97,8 +97,8 @@ def happi_cli(args):
         range_list = []
         regex_list = []
         is_range = False
+        num_args = len(args.search_criteria)
         for user_arg in args.search_criteria:
-            is_range = False
             if '=' in user_arg:
                 criteria, value = user_arg.split('=', 1)
             else:
@@ -126,7 +126,7 @@ def happi_cli(args):
 
             # skip the criteria for range values
             # it won't be a valid criteria for search_regex()
-            if is_range:
+            if is_a_range(str(value)):
                 pass
             else:
                 client_args[criteria] = fnmatch.translate(value)
@@ -143,9 +143,14 @@ def happi_cli(args):
                 if results[i] == results[j] and results[i] not in repeated:
                     repeated.append(results[i])
 
+        # if we search both range and regex but
+        # they don't have a common item just return
+        if num_args > 1 and is_range and not repeated:
+            logger.error('No devices found')
+            return
         # we only want to return the ones that have been repeated when
         # they have been matched with both search_regex() & search_range()
-        if repeated:
+        elif repeated:
             for res in repeated:
                 res.item.show_info()
             return repeated
