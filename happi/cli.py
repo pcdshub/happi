@@ -15,6 +15,9 @@ from .utils import is_a_range
 
 import happi
 
+from happi.audit import Audit
+audit = Audit()
+
 logger = logging.getLogger(__name__)
 
 
@@ -57,6 +60,9 @@ def get_parser():
                                         'device loaded')
     parser_load.add_argument('device_names', nargs='+',
                              help='Devices to load')
+    parser_audit = subparsers.add_parser(audit.name, help=audit.help)
+    audit.add_args(parser_audit)
+
     return parser
 
 
@@ -249,6 +255,8 @@ def happi_cli(args):
         for name in args.device_names:
             devices[name] = client.load_device(name=name)
         start_ipython(argv=['--quick'], user_ns=devices)
+    elif args.cmd == 'audit':
+        audit.run(args)
 
 
 def main():
