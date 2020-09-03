@@ -191,7 +191,7 @@ def happi_cli(args):
             )
             response = input()
             if response and response not in registry:
-                logger.info('Invalid device container f{response}')
+                logger.info('Invalid device container %s', response)
                 return
             elif not response:
                 response = 'OphydItem'
