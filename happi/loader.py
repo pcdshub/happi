@@ -48,7 +48,8 @@ def fill_template(template, device, enforce_type=False):
             attr_name = info.pop()
             typed_attr = getattr(device, attr_name)
         except AttributeError:
-            logger.warning("Can not enforce type to match attribute %s for device %s",
+            logger.warning("Can not enforce type to match attribute %s "
+                           "for device %s",
                            attr_name, device.name)
             return filled
         # If this was a straight substitution with nothing else in the template
