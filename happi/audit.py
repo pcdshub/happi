@@ -158,49 +158,21 @@ class Audit(Command):
                 except ImportError as ex:
                     logger.warning(ex)
 
-    def validate_enforce(self, entry, item):
-        for (key, value), info in zip(item.items(), entry.entry_info):
-            # print(f'item_______ {value}')
-            # print(type(value))
-            # print(info.enforce)
-            pass
+    def validate_extra_attributes(self, item):
+        """
+        Validate items that have extra attributes
+        """
+        attr_list = []
+        extr_list = ['creation', 'last_edit', '_id', 'type']
 
-        for info in entry.entry_info:
-            value = entry.get(info.key)
+        for (key, value), s in zip(item.items(), item.entry_info):
+            attr_list.append(s.key)
 
-            if (value is None and info.default is None) or info.enforce:
-                return
-            elif isinstance(info.enforce, type):
-                if info.enforce == str:
-                    # check the values that are enforced to be strings
-                    # TODO - not working for all items, if i have a number
-                    # inserted into an attribute where it should be string
-                    # this will still consider it as string.... not what i want
-                    if (not isinstance(value, str) and (value is not None) and
-                       info.default is not None):
-                        logger.warning('The %s did not match the enforced type'
-                                       ' %s for the entry: %s. Provided: %s',
-                                       info, info.enforce, item, value)
-                if info.enforce == float:
-                    # check the values that are enforced to be floats
-                    # TODO - this is not going to work here, because
-                    # even if i have something like '343.43' for z value
-                    # where it has quotes and inserted as string basically
-                    # this will still work and not consider it a bad entry
-                    print(f'The ones that are floats: {value}')
-                    if (not isinstance(value, float)):
-                        logger.info('The %s did not match the enforced type '
-                                    '%s for the entry: %s. Current value: %s',
-                                    info, info.enforce, item, value)
-                if info.enforce == list:
-                    # check the values that are enforced to be lists
-                    pass
-                if info.enforce == dict:
-                    pass
-                    # check the values that are enforced to be dictionaries
-                if info.enforce == bool:
-                    pass
-                    # check the values that are enforced to be boolean
+        key_list = [key for key, value in item.items()]
+        diff = set(key_list) - set(attr_list) - set(extr_list)
+        if diff:
+            logger.warning('Device %s has extra attributes %s',
+                           item.name, diff)
 
     def print_report_message(self, message):
         logger.info('')
@@ -227,6 +199,7 @@ class Audit(Command):
         for item in items:
             self.validate_args(item)
             self.validate_kwargs(item)
+            self.validate_extra_attributes(item)
             pass
 
         # TODO: what to do here???....
