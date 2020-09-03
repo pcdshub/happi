@@ -195,7 +195,7 @@ class Audit(Command):
         self.print_report_message('VALIDATING ENTRIES')
         client.validate()
 
-        self.print_report_message('VALIDATING ARGS AND KWARGS')
+        self.print_report_message('VALIDATING ARGS, KWARGS, EXTRA ATTRIBUTES')
         for item in items:
             self.validate_args(item)
             self.validate_kwargs(item)
