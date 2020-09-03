@@ -9,15 +9,9 @@ from configparser import ConfigParser
 import logging
 import os
 import sys
-
 from happi.client import Client
-
-# For back-compat to <py3.7
-try:
-    from re import Pattern
-except ImportError:
-    from re import _pattern_type as Pattern
-
+from happi.loader import import_class, fill_template
+from happi.containers import registry
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +52,11 @@ class Audit(Command):
         Validate the database passed in with --file option
         """
         if args.file is not None:
-            logger.info('Using database file at %s ', args.file)
             if self.validate_file(args.file):
+                logger.info('Using database file at %s ', args.file)
                 self.parse_database(args.file)
+            else:
+                logger.error('Probably provided a wrong path or filename')
         else:
             """
             Validate the database defined in happi.cfg file
@@ -103,46 +99,78 @@ class Audit(Command):
         """
         return os.path.isfile(file_path)
 
-    # TODO this is probably not needed, it assumes only json database...
-    # but keep it here for reference for now
-    # def parse_database(self, database_path):
-    #     """
-    #     Goes through an entire database and parses
-    #     all the entries
+    def validate_container(self, item):
+        """
+        Validates container definition
+        """
+        container = item.get('type')
+        device = item.get('name')
+        if container and container not in registry:
+            logger.warning('Invalid device container: %s for device %s',
+                           container, device)
+        elif not container:
+            logger.warning('No container provided for %s', device)
 
-    #     Parameters
-    #     -----------
-    #     database_path: str
-    #         Path to the database to be validated
-    #     """
-    #     # check for an empty database???
-    #     # check for an invalid file
-    #     # we are assuming
-    #     registry = happi.containers.registry
-    #     with open(database_path) as f:
-    #         data = json.loads(f.read())
-    #         for key, value in data.items():
-    #             # here i have to also check if the type is
-    #             # correct, and if it has a type???
-    #             try:
-    #                 container = registry[value.get('type')]
-    #                 logger.info('Container %s', container)
-    #             except Exception as ex:
-    #                 logger.exception('Something went wrong with '
-    #                                  'getting the type of the item: %s', ex)
-    #             self.validate_item(database_path, container, value)
+    def validate_args(self, item):
+        """
+        Validates the args of an item
+        """
+        [self.create_arg(item, arg) for arg in item.args]
 
-    def validate_mandatory_info(self, item):
-        for info in item.entry_info:
-            # if it is not optional, it should probably never be None
-            if not info.optional and item.get(info.key) is None:
-                logger.info('Entry %s must not have None for '
-                            'a mandatory entry: %s', item, info)
+    def validate_kwargs(self, item):
+        """
+        Validates the kwargs of an item
+        """
+        dict((key, self.create_arg(item, val))
+             for key, val in item.kwargs.items())
 
-    def validate_enforce(self, item):
-        for info in item.entry_info:
-            value = item.get(info.key)
-            if isinstance(info.enforce, type):
+    def create_arg(self, item, arg):
+        """
+        Function borrowed from loader to create
+        correctly typed arguments from happi information
+        """
+        if not isinstance(arg, str):
+            return arg
+        try:
+            return fill_template(arg, item, enforce_type=True)
+        except Exception as e:
+            logger.warning('Probably provided invalid argument: %s for %s, %s',
+                           arg, item.name, e)
+
+    def validate_device_class(self, item):
+        """
+        Validates device_class field
+        """
+        device_class = item.get('device_class')
+        device = item.get('name')
+        if not device_class:
+            logger.warning('Detected a None vlaue for %s. '
+                           'The device_class cannot be None', device)
+        else:
+            try:
+                mod, cls = device_class.rsplit('.', 1)
+            except (Exception, ValueError) as e:
+                logger.warning('Wrong device name format: %s for %s, %s',
+                               device_class, device, e)
+            else:
+                try:
+                    import_class(device_class)
+                except ImportError as ex:
+                    logger.warning(ex)
+
+    def validate_enforce(self, entry, item):
+        for (key, value), info in zip(item.items(), entry.entry_info):
+            # print(f'item_______ {value}')
+            # print(type(value))
+            # print(info.enforce)
+            pass
+
+        for info in entry.entry_info:
+            value = entry.get(info.key)
+
+            if (value is None and info.default is None) or info.enforce:
+                return
+            elif isinstance(info.enforce, type):
                 if info.enforce == str:
                     # check the values that are enforced to be strings
                     # TODO - not working for all items, if i have a number
@@ -150,9 +178,9 @@ class Audit(Command):
                     # this will still consider it as string.... not what i want
                     if (not isinstance(value, str) and (value is not None) and
                        info.default is not None):
-                        logger.info('The %s did not match the enforced type '
-                                    '%s for the entry: %s. Current value: %s',
-                                    info, info.enforce, item, value)
+                        logger.warning('The %s did not match the enforced type'
+                                       ' %s for the entry: %s. Provided: %s',
+                                       info, info.enforce, item, value)
                 if info.enforce == float:
                     # check the values that are enforced to be floats
                     # TODO - this is not going to work here, because
@@ -174,12 +202,10 @@ class Audit(Command):
                     pass
                     # check the values that are enforced to be boolean
 
-            # check the values that are enforced with regex
-            elif isinstance(info.enforce, Pattern):
-                if not info.enforce.match(str(value)):
-                    logger.info('The %s did not match the enforced pattern '
-                                '%s for the entry: %s. Current value: %s',
-                                info, info.enforce, item, value)
+    def print_report_message(self, message):
+        logger.info('')
+        logger.info('--------- %s ---------', message)
+        logger.info('')
 
     def parse_database(self, database_path):
         """
@@ -191,22 +217,29 @@ class Audit(Command):
             Path to the database to be validated
 
         """
-        it = None
         client = Client(path=database_path)
-        for item in client.backend.all_devices:
-            items = client.find_document(**item)
-            try:
-                # try to instantiate so you can have access to entry_info
-                it = client.create_device(items['type'], **items)
-                self.validate_mandatory_info(it)
-                self.validate_enforce(it)
-            except Exception:
-                # TODO handle these guys differently...
-                logger.info('Could not create a device.....')
+        items = client.all_items
 
-        # TODO if using the all_items I run
-        # into exceptions and can't look at all the devices
-        # items = client.all_items
-        # for item in items:
-        #   self.validate_mandatory_info(item)
-        #   self.validate_enforce(item)
+        self.print_report_message('VALIDATING ENTRIES')
+        client.validate()
+
+        self.print_report_message('VALIDATING ARGS AND KWARGS')
+        for item in items:
+            self.validate_args(item)
+            self.validate_kwargs(item)
+            pass
+
+        # TODO: what to do here???....
+        # for entr, item in zip(items, client.backend.all_devices):
+        #     #self.validate_enforce(entr, item)
+        #     pass
+
+        self.print_report_message('VALIDATING DEVICE CLASS')
+        for item in client.backend.all_devices:
+            it = client.find_document(**item)
+            self.validate_device_class(it)
+
+        self.print_report_message('VALIDATING CONTAINER')
+        for item in client.backend.all_devices:
+            it = client.find_document(**item)
+            self.validate_container(it)
