@@ -219,8 +219,8 @@ def happi_cli(args):
                     info.enforce_value(item_value)
                     valid_value = True
                     kwargs[info.key] = item_value
-                except Exception:
-                    logger.info(f'Invalid value {item_value}')
+                except Exception as e:
+                    logger.info('Invalid value %s, %s', item_value, e)
 
         device = client.create_device(container, **kwargs)
         logger.info('Please confirm the following info is correct:')

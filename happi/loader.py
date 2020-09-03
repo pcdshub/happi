@@ -126,8 +126,8 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
 
     # Find the class and module of the container.
     if not device.device_class:
-        raise ValueError("Device %s does not have an associated Python class",
-                         device.name)
+        raise ValueError(f"Device {device.name} does not have "
+                         "an associated Python class")
 
     cls = import_class(device.device_class)
 
@@ -147,8 +147,9 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     if attach_md:
         try:
             setattr(obj, 'md', device)
-        except Exception:
-            logger.warning("Unable to attach metadata dictionary to device")
+        except Exception as exc:
+            logger.warning("Unable to attach metadata "
+                           "dictionary to device: %s ", exc)
 
     # Store the device in the cache
     cache[device.name] = obj
@@ -173,6 +174,7 @@ def import_class(device_class):
     mod, cls = device_class.rsplit('.', 1)
     # Import the module if not already present
     # Otherwise use the stashed version in sys.modules
+
     if mod in sys.modules:
         logger.debug("Using previously imported version of %s", mod)
         mod = sys.modules[mod]
@@ -305,6 +307,6 @@ def load_device(device, pprint=False, threaded=False, post_load=None,
                 print(device_message + failed)
             else:
                 print(failed)
-        logger.exception('Error loading %s', device.name)
+        logger.exception('Error loading %s, %s', device.name, exc)
         loaded = exc
     return loaded
