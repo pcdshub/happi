@@ -44,7 +44,6 @@ class Audit(Command):
         self.name = 'audit'
         self.help = "Inspect a database's entries"
         self._all_devices = set()
-        self._checked_devices = []
         self._all_items = []
 
     def add_args(self, cmd_parser):
@@ -282,8 +281,15 @@ class Audit(Command):
         items = client.all_items
 
         self.print_report_message('VALIDATING ENTRIES')
-        # this will fail to validate because pcdsdevices not imported yet....
-        # client.validate()
+        # this will fail to validate because the missing list will have
+        # the defaults match...... which is not good.....
+        # for example: if Default for class_devices: pcdsdevices.pimm.Vacuum
+        # and the default is used, then this will not work fine....
+        # we might want to do something like this maybe in _validate_device:
+        # missing = [info.key for info in device.entry_info
+        #   if not info.optional and
+        #   info.default == getattr(device, info.key) and info.default == None]
+        client.validate()
 
         if items:
             self.print_report_message('VALIDATING ARGS & KWARGS')
