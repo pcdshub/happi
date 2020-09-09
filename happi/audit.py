@@ -324,8 +324,10 @@ class Audit(Command):
             logger.error('Cannot run a set of tests becase the '
                          'items could not be loaded.')
 
+        self.print_report_message('VALIDATING ENFORCE VALUES')
         for item in client.backend.all_devices:
             it = client.find_document(**item)
+            # validate using enforce_value()
             self.validate_enforce(it)
             self.get_device_class(it)
 
