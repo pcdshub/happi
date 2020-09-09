@@ -5,6 +5,7 @@ If the --file option is not provided, then it will take the path from
 Happpi configuration file using the Client.find_config method,
 otherwiwe it will use the path specified after --file
 """
+from abc import ABCMeta, abstractmethod
 from configparser import ConfigParser
 import logging
 import os
@@ -14,11 +15,12 @@ import re
 from happi.client import Client
 from happi.loader import import_class, fill_template
 from happi.containers import registry
+from happi.item import EntryInfo
 
 logger = logging.getLogger(__name__)
 
 
-class Command(object):
+class Command(object, metaclass=ABCMeta):
     """
     Bluprint for the command class
     This will be useful if all the commands are inheriting from it
@@ -27,10 +29,12 @@ class Command(object):
         self.name = name
         self.summary = summary
 
+    @abstractmethod
     def add_args(self, args):
         raise NotImplementedError
         return
 
+    @abstractmethod
     def run(self, **kwargs):
         raise NotImplementedError
         return
@@ -245,6 +249,26 @@ class Audit(Command):
             if process:
                 process.kill()
 
+    def validate_enforce(self, item):
+        """
+        Validates using enforce_value() from EntryInfo class
+        If the attributes are malformed the entry = contaienr(**item)
+        will fail, thous the enforce_value() will only apply to the
+        ones that were successfully initialized
+        """
+        container = registry[item.get('type')]
+        item_name = item.get('name')
+        try:
+            entry = container(**item)
+        except Exception as e:
+            logger.warning('For device %s, %s', item_name, e)
+        else:
+            for info in entry.entry_info:
+                try:
+                    info.enforce_value(entry.get(info.key))
+                except Exception as e:
+                    logger.warning(e)
+
     def print_report_message(self, message):
         logger.info('')
         logger.info('--------- %s ---------', message)
@@ -302,6 +326,7 @@ class Audit(Command):
 
         for item in client.backend.all_devices:
             it = client.find_document(**item)
+            self.validate_enforce(it)
             self.get_device_class(it)
 
         self.print_report_message('VALIDATE DEVICE MODULE EXISTS IN PYPI')
