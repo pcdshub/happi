@@ -15,7 +15,6 @@ import re
 from happi.client import Client
 from happi.loader import import_class, fill_template
 from happi.containers import registry
-from happi.item import EntryInfo
 
 logger = logging.getLogger(__name__)
 
@@ -253,7 +252,7 @@ class Audit(Command):
         """
         Validates using enforce_value() from EntryInfo class
         If the attributes are malformed the entry = contaienr(**item)
-        will fail, thous the enforce_value() will only apply to the
+        will fail, thus the enforce_value() will only apply to the
         ones that were successfully initialized
         """
         container = registry[item.get('type')]
