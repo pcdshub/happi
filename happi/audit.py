@@ -15,8 +15,19 @@ import re
 from happi.client import Client
 from happi.loader import import_class, fill_template
 from happi.containers import registry
+from enum import Enum
 
 logger = logging.getLogger(__name__)
+
+
+class ReportCode(Enum):
+    """
+    Class to define report codes
+    """
+    SUCCESS = 0
+    INVALID = 1
+    MISSING = 2
+    NO_CODE = 3
 
 
 class Command(object, metaclass=ABCMeta):
@@ -24,19 +35,34 @@ class Command(object, metaclass=ABCMeta):
     Bluprint for the command class
     This will be useful if all the commands are inheriting from it
     """
+
     def __init__(self, name, summary):
         self.name = name
         self.summary = summary
 
     @abstractmethod
-    def add_args(self, args):
+    def add_args(self, parser):
+        """
+        Adds arguments to a parser
+
+        Parameters
+        -----------
+        parser: ArgumentParser
+            Parser to add arguments to
+        """
         raise NotImplementedError
-        return
 
     @abstractmethod
-    def run(self, **kwargs):
+    def run(self, args):
+        """
+        Parses the arguments given to the command.
+        And hanles the logic for this command
+
+        Parameters
+        -----------
+            args: Namespace
+        """
         raise NotImplementedError
-        return
 
 
 class Audit(Command):
@@ -48,6 +74,8 @@ class Audit(Command):
         self.help = "Inspect a database's entries"
         self._all_devices = set()
         self._all_items = []
+
+        self.report_code = ReportCode(0)
 
     def add_args(self, cmd_parser):
         cmd_parser.add_argument(
@@ -71,6 +99,7 @@ class Audit(Command):
                     self.parse_database(args.file)
             else:
                 logger.error('Probably provided a wrong path or filename')
+                return
         else:
             """
             Validate the database defined in happi.cfg file
@@ -123,10 +152,15 @@ class Audit(Command):
         container = item.get('type')
         device = item.get('name')
         if container and container not in registry:
-            logger.warning('Invalid device container: %s for device %s',
-                           container, device)
+            logger.error('Invalid device container: %s for device %s',
+                         container, device)
+            self.report_code = self.report_code.INVALID
         elif not container:
-            logger.warning('No container provided for %s', device)
+            logger.error('No container provided for %s', device)
+            self.report_code = self.report_code.MISSING
+        else:
+            # seems like the container has been validated
+            self.report_code = self.report_code.SUCCESS
 
     def validate_args(self, item):
         """
