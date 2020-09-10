@@ -2,7 +2,8 @@ from abc import ABCMeta
 import argparse
 from unittest.mock import patch
 import happi
-from happi.audit import Audit
+import json
+from happi.audit import Audit, ReportCode
 from unittest import TestCase
 import pytest
 import logging
@@ -10,6 +11,67 @@ from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
 audit = Audit()
+# 3 - NO_CODE
+report_code = ReportCode(3)
+
+ITEMS = json.loads("""{
+    "XRT:M3H": {
+        "_id": "XRT:M3H",
+        "active": true,
+        "args": [
+            "{{prefix}}"
+        ],
+        "beamline": "PBT",
+        "creation": "Tue Feb 27 16:12:10 2018",
+        "device_class": "pcdsdevices.device_types.OffsetMirror",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Feb 27 16:12:10 2018",
+        "macros": null,
+        "name": "xrt_m3h",
+        "parent": null,
+        "prefix": "XRT:M3H",
+        "prefix_xy": null,
+        "screen": null,
+        "stand": null,
+        "system": "beam control",
+        "type": "something_else",
+        "xgantry_prefix": null,
+        "z": 927.919
+    },
+    "XCS:SB2:PIM": {
+        "_id": "XCS:SB2:PIM",
+        "active": true,
+        "args": [
+            "{{prefix}}"
+        ],
+        "beamline": "XCS",
+        "creation": "Tue Feb 27 11:15:19 2018",
+        "detailed_screen": null,
+        "device_class": "pcdsdevices.pim.PIMWithLED",
+        "documentation": null,
+        "embedded_screen": null,
+        "engineering_screen": null,
+        "kwargs": {
+            "name": "{{name}}",
+            "prefix_det": "{{prefix_det}}"
+        },
+        "last_edit": "Fri May 17 11:44:12 2019",
+        "lightpath": false,
+        "macros": null,
+        "name": "xcs_sb2_pim",
+        "parent": null,
+        "prefix": "XCS:SB2:PIM",
+        "prefix_det": "XCS:GIGE:04:",
+        "screen": null,
+        "stand": null,
+        "system": null,
+        "type": "pcdsdevices.happi.containers.LCLSItem",
+        "z": 1005.72
+    }
+    }
+    """)
 
 
 @pytest.fixture(scope='function')
@@ -125,6 +187,7 @@ class CommandClassTests(TestCase):
         assert self.cmd.__dict__ == expected_dict
 
 
+@pytest.mark.usefixtures("happi_cfg")
 class ValidateRunTests(TestCase):
     args = argparse.Namespace(cmd='audit', extras=True, file='db.json',
                               path=None, verbose=False, version=False)
@@ -176,27 +239,30 @@ class ValidateRunTests(TestCase):
                 res = audit.run(self.args3)
                 assert res is None
 
-    def test_validate_file_called_with_true(self):
-        with patch('happi.audit.Audit.validate_file',
-                   return_value=True) as mock:
-            audit.run(self.args3)
-            mock.assert_called_once()
+    @patch('configparser.ConfigParser.get', return_value='db.json')
+    @patch('happi.audit.Audit.validate_file', return_value=True)
+    def test_validate_file_called_with_true(self, mock_validate, mock_parser):
+        audit.run(self.args3)
+        mock_validate.assert_called_once()
 
-    def test_config_with_parse_database(self):
-        with patch('happi.audit.Audit.parse_database') as mock:
-            audit.run(self.args3)
-            mock.assert_called_once()
+    @patch('configparser.ConfigParser.get', return_value='db.json')
+    @patch('happi.audit.Audit.parse_database')
+    def test_config_with_parse_database(self, mock_parse_db, mock_parser):
+        audit.run(self.args3)
+        mock_parser.assert_called_once()
 
-    def test_config_with_extras(self):
-        with patch('happi.audit.Audit.check_extra_attributes') as mock:
-            audit.run(self.args4)
-            mock.assert_called_once()
+    @patch('configparser.ConfigParser.get', return_value='db.json')
+    @patch('happi.audit.Audit.check_extra_attributes')
+    def test_config_with_extras(self, mock_extras, mock_parser):
+        audit.run(self.args4)
+        mock_extras.assert_called_once()
 
-    def test_config_parser_with_return_not_none(self):
+    @patch('configparser.ConfigParser.get', return_value='db.json')
+    def test_config_parser_with_return_not_none(self, mock_parser):
         with patch('happi.audit.Audit.validate_file', return_value=False):
             with pytest.raises(SystemExit) as sys_e:
                 audit.run(self.args3)
-                assert sys_e.e.type == SystemExit
+                assert sys_e.type == SystemExit
                 assert sys_e.value.code == 1
 
 
@@ -219,10 +285,9 @@ class ValidateFileTest(TestCase):
         assert audit.validate_file('sfsdfsf') is False
 
 
-@pytest.mark.usefixtures("db")
+# @pytest.mark.usefixtures("items")
 class TestValidateContaienr(TestCase):
     """
     Test the validate_container
     """
-    def test_something(self):
-        pass
+    pass
