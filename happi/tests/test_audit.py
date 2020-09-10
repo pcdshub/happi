@@ -184,7 +184,7 @@ class CommandClassTests(TestCase):
         assert self.cmd.__dict__ == expected_dict
 
 
-#@pytest.mark.usefixtures("happi_cfg")
+# @pytest.mark.usefixtures("happi_cfg")
 class ValidateRunTests(TestCase):
     args = argparse.Namespace(cmd='audit', extras=True, file='db.json',
                               path=None, verbose=False, version=False)
@@ -239,24 +239,30 @@ class ValidateRunTests(TestCase):
                 res = audit.run(self.args3)
                 assert res is None
 
+    @patch('happi.client.Client.find_config', return_value='happi.cfg')
     @patch('configparser.ConfigParser.get', return_value='db.json')
     @patch('happi.audit.Audit.validate_file', return_value=True)
-    def test_validate_file_called_with_true(self, mock_validate, mock_parser):
+    def test_validate_file_called_with_true(self, mock_validate, mock_parser,
+                                            mock_config):
         audit.run(self.args3)
         mock_validate.assert_called_once()
 
+    @patch('happi.audit.Audit.validate_file', return_value=True)
     @patch('happi.client.Client.find_config', return_value='happi.cfg')
     @patch('configparser.ConfigParser.get', return_value='db.json')
     @patch('happi.audit.Audit.parse_database')
     def test_config_with_parse_database(self, mock_parse_db,
-                                        mock_parser, mock_gfg):
+                                        mock_parser, mock_cfgm,
+                                        mock_valid_file):
         audit.run(self.args3)
         mock_parser.assert_called_once()
 
+    @patch('happi.audit.Audit.validate_file', return_value=True)
     @patch('happi.client.Client.find_config', return_value='happi.cfg')
     @patch('configparser.ConfigParser.get', return_value='db.json')
     @patch('happi.audit.Audit.check_extra_attributes')
-    def test_config_with_extras(self, mock_extras, mock_parser, mock_config):
+    def test_config_with_extras(self, mock_extras, mock_parser,
+                                mock_config, mock_valid_file):
         audit.run(self.args4)
         mock_extras.assert_called_once()
 
@@ -294,9 +300,9 @@ class TestValidateContaienr(TestCase):
     Test the validate_container
     """
     def test_validate_container_invalid(self):
-        with patch('happi.audit.Audit.validate_container') as mock:
+        with patch('happi.audit.Audit.validate_container'):
             first_key = list(ITEMS.keys())[0]
             item = ITEMS.get(first_key)
-            res = audit.validate_container(item)
+            audit.validate_container(item)
             # assert res == report_code.INVALID
             # assert audit.report_code == report_code.INVALID
