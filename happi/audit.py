@@ -27,7 +27,8 @@ class ReportCode(Enum):
     SUCCESS = 0
     INVALID = 1
     MISSING = 2
-    NO_CODE = 3
+    EXTRAS = 3
+    NO_CODE = 9
 
 
 class Command(object, metaclass=ABCMeta):
@@ -74,8 +75,8 @@ class Audit(Command):
         self.help = "Inspect a database's entries"
         self._all_devices = set()
         self._all_items = []
-
-        self.report_code = ReportCode(0)
+        # 9 - NO_CODE
+        self.report_code = ReportCode(9)
 
     def add_args(self, cmd_parser):
         cmd_parser.add_argument(
@@ -105,6 +106,7 @@ class Audit(Command):
             Validate the database defined in happi.cfg file
             """
             path_to_config = Client.find_config()
+
             if path_to_config:
                 logger.info('Using Client cfg path %s ', path_to_config)
                 config = ConfigParser()
@@ -154,13 +156,13 @@ class Audit(Command):
         if container and container not in registry:
             logger.error('Invalid device container: %s for device %s',
                          container, device)
-            self.report_code = self.report_code.INVALID
+            return self.report_code.INVALID
         elif not container:
             logger.error('No container provided for %s', device)
-            self.report_code = self.report_code.MISSING
+            return self.report_code.MISSING
         else:
             # seems like the container has been validated
-            self.report_code = self.report_code.SUCCESS
+            return self.report_code.SUCCESS
 
     def validate_args(self, item):
         """
@@ -187,6 +189,7 @@ class Audit(Command):
         except Exception as e:
             logger.warning('Probably provided invalid argument: %s for %s, %s',
                            arg, item.name, e)
+            return self.report_code.INVALID
 
     def get_device_class(self, item):
         """
@@ -231,22 +234,6 @@ class Audit(Command):
             elif dev_cls and dev_cls not in self._all_devices:
                 logger.warning('Provided wrong device/module name: %s. '
                                'This module does not exist in PyPi', dev_cls)
-
-    def validate_extra_attributes(self, item):
-        """
-        Validate items that have extra attributes
-        """
-        attr_list = []
-        extr_list = ['creation', 'last_edit', '_id', 'type']
-
-        for (key, value), s in zip(item.items(), item.entry_info):
-            attr_list.append(s.key)
-
-        key_list = [key for key, value in item.items()]
-        diff = set(key_list) - set(attr_list) - set(extr_list)
-        if diff:
-            logger.warning('Device %s has extra attributes %s',
-                           item.name, diff)
 
     def search_pip_package(self, package):
         """
@@ -323,6 +310,28 @@ class Audit(Command):
         self.print_report_message('EXTRA ATTRIBUTES')
         for item in items:
             self.validate_extra_attributes(item)
+
+    def validate_extra_attributes(self, item):
+        """
+        Validate items that have extra attributes
+        """
+        print('am i getting called')
+        print(item)
+        attr_list = []
+        extr_list = ['creation', 'last_edit', '_id', 'type']
+
+        for (key, value), s in zip(item.items(), item.entry_info):
+            attr_list.append(s.key)
+
+        key_list = [key for key, value in item.items()]
+        diff = set(key_list) - set(attr_list) - set(extr_list)
+        if diff:
+            logger.warning('Device %s has extra attributes %s',
+                           item.name, diff)
+            return self.report_code.EXTRAS
+        else:
+            # no extra attributes found
+            return self.report_code.SUCCESS
 
     def parse_database(self, database_path):
         """
