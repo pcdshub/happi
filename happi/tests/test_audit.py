@@ -105,7 +105,7 @@ ITEMS = json.loads("""{
             "{{prefix}}"
         ],
         "creation": "Thu Sep 10 11:59:23 2020",
-        "device_class": "types.SimpleNamespace",
+        "device_class": "ophyd.Device",
         "documentation": null,
         "kwargs": {
             "name": "{{name}}"
@@ -121,7 +121,7 @@ ITEMS = json.loads("""{
         "args": [],
         "beamline": "LCLS",
         "creation": "Fri Sep  4 11:31:26 2020",
-        "device_class": "types.SimpleNamespace",
+        "device_class": "ophyd.Device",
         "documentation": null,
         "functional_group": "FUNC",
         "kwargs": {
@@ -129,7 +129,7 @@ ITEMS = json.loads("""{
         },
         "last_edit": "Fri Sep  4 11:31:26 2020",
         "location_group": "LOC",
-        "name": "alias2",
+        "name": "a",
         "prefix": "BASE:PV",
         "type": "OphydItem",
         "z": "400"
@@ -391,7 +391,7 @@ class TestGetDeviceClass:
     """
     def test_all_devices(self, raw_items):
         # should only have nonreapeating devices
-        expected_set = {'pcdsdevices', 'types'}
+        expected_set = {'pcdsdevices', 'ophyd'}
         # the first two do not have a valid device class
         expected_list = [raw_items[2], raw_items[3], raw_items[4]]
         for item in raw_items:
@@ -404,11 +404,11 @@ class TestValidateEnforce:
     """
     Testing validate_enforce
     """
-    expected = [report_code.INVALID,
-                report_code.INVALID,
+    expected = [report_code.MISSING,
+                report_code.MISSING,
                 report_code.SUCCESS,
                 report_code.SUCCESS,
-                report_code.SUCCESS]
+                report_code.INVALID]
 
     def test_enforce_value(self, raw_items):
         res_list = []
