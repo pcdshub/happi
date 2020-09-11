@@ -259,7 +259,8 @@ class Audit(Command):
         process = None
         try:
             process = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, encoding='utf-8')
+                                       stdout=subprocess.PIPE,
+                                       encoding='utf-8')
             arguments = ['pip', 'search', package]
             command = ' '.join(arguments)
 
