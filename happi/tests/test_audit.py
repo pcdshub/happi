@@ -4,7 +4,6 @@ from unittest.mock import patch, call
 import happi
 import json
 from happi.audit import Audit, ReportCode
-from unittest import TestCase
 import pytest
 import logging
 
@@ -24,7 +23,7 @@ ITEMS = json.loads("""{
         ],
         "beamline": "PBT",
         "creation": "Tue Feb 27 16:12:10 2018",
-        "device_class": "pcdsdevices.device_types.OffsetMirror",
+        "device_class": null,
         "kwargs": {
             "name": "{{name}}"
         },
@@ -50,7 +49,7 @@ ITEMS = json.loads("""{
         "beamline": "XCS",
         "creation": "Tue Feb 27 11:15:19 2018",
         "detailed_screen": null,
-        "device_class": "pcdsdevices.pim.PIMWithLED",
+        "device_class": "pcdsdevices",
         "documentation": null,
         "embedded_screen": null,
         "engineering_screen": null,
@@ -157,6 +156,22 @@ def json_db(tmp_path_factory):
     json_path = dir_path / 'db.json'
     json_path.write_text(json.dumps(ITEMS))
     return str(json_path.absolute())
+
+
+@pytest.fixture(scope='class')
+def items(happi_config):
+    client = happi.client.Client.from_config(cfg=happi_config)
+    return client.all_items
+
+
+@pytest.fixture(scope='class')
+def raw_items(happi_config):
+    client = happi.client.Client.from_config(cfg=happi_config)
+    item_list = []
+    for item in client.backend.all_devices:
+        it = client.find_document(**item)
+        item_list.append(it)
+    return item_list
 
 
 class TestCommandClass:
@@ -305,59 +320,38 @@ class TestValidateFileTests:
 @requires_pcdsdevices
 # need this here unless i change the
 # devices to only be OphydItem and HappiItems....
-class TestValidateContaienr(TestCase):
+class TestValidateContaienr:
     """
     Test the validate_container
     """
-    def test_validate_container_invalid(self):
-        with patch('happi.containers.registry', return_value=True):
-            first_key = list(ITEMS.keys())[0]
-            item = ITEMS.get(first_key)
-            res = audit.validate_container(item)
-            print('Testing validate_container with INVALID container, '
-                  f'expected result {report_code.INVALID}, got: {res}')
-            assert res == report_code.INVALID
+    expected = [report_code.INVALID,
+                report_code.MISSING,
+                report_code.SUCCESS,
+                report_code.SUCCESS,
+                report_code.SUCCESS]
 
-    def test_validate_container_missing(self):
-        with patch('happi.containers.registry', return_value=True):
-            second_key = list(ITEMS.keys())[1]
-            item = ITEMS.get(second_key)
-            res = audit.validate_container(item)
-            print('Testing validate_container with MISSING container, '
-                  f'expected result: {report_code.MISSING}, got: {res}')
-            assert res == report_code.MISSING
-
-    def test_validate_container_success(self):
-        with patch('happi.containers.registry', return_value=False):
-            second_key = list(ITEMS.keys())[2]
-            item = ITEMS.get(second_key)
-            res = audit.validate_container(item)
-            print('Testing validate_container with MISSING container, '
-                  f'expected result {report_code.SUCCESS}, got: {res}')
-            assert res == report_code.SUCCESS
+    def test_validate_container_invalid(self, raw_items):
+        res = []
+        for item in raw_items:
+            audit.validate_container(item)
+            res.append(audit.validate_container(item))
+        assert res == self.expected
 
 
-@pytest.mark.usefixtures('happi_config')
-@pytest.mark.usefixtures('json_db')
 class TestExtraAttributes:
     """
     Test the validate_extra_attributes
     """
-    @pytest.fixture(scope='function')
-    def item_list(self, happi_config, request):
-        client = happi.client.Client.from_config(cfg=happi_config)
-        return client.all_items
-
-    def test_check_extra_attributes(self, json_db, item_list):
+    def test_check_extra_attributes(self, json_db, items):
         calls = []
-        for i in item_list:
+        for i in items:
             calls.append(call(i))
         with patch('happi.audit.Audit.validate_extra_attributes') as m:
             audit.check_extra_attributes(json_db)
             m.assert_has_calls(calls, any_order=True)
 
-    def test_validate_extra_attributes(self, item_list):
-        for i in item_list:
+    def test_validate_extra_attributes(self, items):
+        for i in items:
             # this item does not have extra items
             if i.name == 'dummy_item':
                 res = audit.validate_extra_attributes(i)
@@ -366,3 +360,74 @@ class TestExtraAttributes:
             elif i.name == 'alias2':
                 res = audit.validate_extra_attributes(i)
                 assert res == report_code.EXTRAS
+
+
+class TestArgsAndKwargs:
+    """
+    Test validate_args and validate_kwargs
+    """
+    # the next two tests are just to make sure that the create_arg
+    # in test_audit functions the same was as the one in loader
+    # this function is tested in more details in the loader test
+    def test_create_args_not_instance(self, happi_config, items):
+        args = 323
+        for item in items:
+            res = audit.create_arg(item, args)
+            # should jsut return the args back
+            assert res == args
+
+    def test_create_args_fill_template(self, happi_config, items):
+        # should give the name back
+        arg = "{{name}}"
+        for item in items:
+            res = audit.create_arg(item, arg)
+            expect = happi.loader.fill_template(arg, item, enforce_type=True)
+            assert res == expect
+
+
+class TestGetDeviceClass:
+    """
+    Testing get_device_class
+    """
+    def test_all_devices(self, raw_items):
+        # should only have nonreapeating devices
+        expected_set = {'pcdsdevices', 'types'}
+        # the first two do not have a valid device class
+        expected_list = [raw_items[2], raw_items[3], raw_items[4]]
+        for item in raw_items:
+            audit.get_device_class(item)
+        assert audit._all_devices == expected_set
+        assert audit._all_items == expected_list
+
+
+class TestValidateEnforce:
+    """
+    Testing validate_enforce
+    """
+    expected = [report_code.INVALID,
+                report_code.INVALID,
+                report_code.SUCCESS,
+                report_code.SUCCESS,
+                report_code.SUCCESS]
+
+    def test_enforce_value(self, raw_items):
+        res_list = []
+        for item in raw_items:
+            res_list.append(audit.validate_enforce(item))
+        assert res_list == self.expected
+
+
+class TestValidateImportClass:
+    """
+    Testing validate_import_class
+    """
+    def test_device_in_pypi(self, raw_items):
+        # expected = {'pcdsdevices'}
+        for item in raw_items:
+            # the audit._all_devices = {'types', 'pcdsdevices'} after this
+            audit.get_device_class(item)
+            # then after check_device_in_pypi should be {'pcdsdevices'} only
+            with patch('happi.audit.Audit.search_pip_package',
+                       return_value=[True, False]):
+                audit.check_device_in_pypi()
+                # assert audit._all_devices == expected
