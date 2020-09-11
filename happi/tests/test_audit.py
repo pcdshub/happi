@@ -459,6 +459,7 @@ class TestValidateImportClass:
         assert res_list == expected
 
 
+@requires_pcdsdevices
 class TestParseDatabase:
     """
     Simple test to make sure some functions are called
