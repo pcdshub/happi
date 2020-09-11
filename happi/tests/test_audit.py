@@ -121,7 +121,7 @@ ITEMS = json.loads("""{
         "args": [],
         "beamline": "LCLS",
         "creation": "Fri Sep  4 11:31:26 2020",
-        "device_class": "ophyd.Device",
+        "device_class": "pyenvbuilder.types.SimpleNamespace",
         "documentation": null,
         "functional_group": "FUNC",
         "kwargs": {
@@ -391,7 +391,7 @@ class TestGetDeviceClass:
     """
     def test_all_devices(self, raw_items):
         # should only have nonreapeating devices
-        expected_set = {'pcdsdevices', 'ophyd'}
+        expected_set = {'pcdsdevices', 'ophyd', 'pyenvbuilder'}
         # the first two do not have a valid device class
         expected_list = [raw_items[2], raw_items[3], raw_items[4]]
         for item in raw_items:
@@ -418,17 +418,42 @@ class TestValidateEnforce:
         assert res_list == self.expected
 
 
+@requires_pcdsdevices
 class TestValidateImportClass:
     """
     Testing validate_import_class
     """
-    def test_device_in_pypi(self, raw_items):
-        # expected = {'pcdsdevices'}
+    @pytest.fixture(params=[True, False])
+    def BOOLEAN(self, request):
+        return request.param
+
+    def test_device_in_pypi(self, raw_items, BOOLEAN):
+        # call this first to put values in audit._all_devices
         for item in raw_items:
-            # the audit._all_devices = {'types', 'pcdsdevices'} after this
             audit.get_device_class(item)
-            # then after check_device_in_pypi should be {'pcdsdevices'} only
-            with patch('happi.audit.Audit.search_pip_package',
-                       return_value=[True, False]):
-                audit.check_device_in_pypi()
-                # assert audit._all_devices == expected
+        expected = audit._all_devices
+
+        # then after check_device_in_pypi if true, then it found them in pypi
+        with patch('happi.audit.Audit.search_pip_package',
+                   return_value=BOOLEAN) as m:
+            audit.check_device_in_pypi()
+            if m.return_value is True:
+                # found them in pypi
+                assert audit._all_devices == expected
+            if m.return_value is False:
+                # could not find them in pypi
+                assert audit._all_devices == set()
+
+    def test_validate_import_class(self, raw_items):
+        for item in raw_items:
+            audit.get_device_class(item)
+        expected = [report_code.MISSING,
+                    report_code.INVALID,
+                    report_code.SUCCESS,
+                    report_code.SUCCESS,
+                    (report_code.INVALID, report_code.MISSING)
+                    ]
+        res_list = []
+        for item in raw_items:
+            res_list.append(audit.validate_import_class(item))
+        assert res_list == expected
