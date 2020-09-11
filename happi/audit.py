@@ -211,30 +211,36 @@ class Audit(Command):
                 self._all_items.append(item)
                 return self._all_devices
 
-    def validate_import_class(self):
+    def validate_import_class(self, item=None):
         """
         Validate the device_class of an item
         """
-        for item in self._all_items:
-            device_class = item.get('device_class')
-            dev_cls = device_class.rsplit('.')[0]
-            device = item.get('name')
-
-            if dev_cls in self._all_devices:
-                # has been tested agains PyPi and was found there
-                try:
-                    import_class(device_class)
-                    return self.report_code.SUCCESS
-                except ImportError as e:
-                    logger.warning('For device: %s, %s. Either %s is '
-                                   'misspelled or %s is not part of the '
-                                   'python environment', device, e,
-                                   device_class, dev_cls)
-                    return (self.report_code.INVALID, self.report_code.MISSING)
-            elif dev_cls and dev_cls not in self._all_devices:
-                logger.warning('Provided wrong device/module name: %s. '
-                               'This module does not exist in PyPi', dev_cls)
-                return self.report_code.INVALID
+        device_class = item.get('device_class')
+        mod = device_class
+        if not device_class:
+            return self.report_code.MISSING
+        if '.' not in device_class:
+            logger.warning('Device class invalid %s for item %s',
+                           device_class, item)
+            return self.report_code.INVALID
+        else:
+            mod = device_class.rsplit('.')[0]
+        device = item.get('name')
+        if mod in self._all_devices:
+            # has been tested agains PyPi and was found there
+            try:
+                import_class(device_class)
+                return self.report_code.SUCCESS
+            except ImportError as e:
+                logger.warning('For device: %s, %s. Either %s is '
+                               'misspelled or %s is not part of the '
+                               'python environment', device, e,
+                               device_class, device_class)
+                return (self.report_code.INVALID, self.report_code.MISSING)
+        elif mod and mod not in self._all_devices:
+            logger.warning('Provided wrong device/module name: %s. '
+                           'This module does not exist in PyPi', device_class)
+            return self.report_code.INVALID
 
     def search_pip_package(self, package):
         """
@@ -405,7 +411,9 @@ class Audit(Command):
         self.check_device_in_pypi()
         # validate import_class
         self.print_report_message('VALIDATING DEVICE CLASS')
-        self.validate_import_class()
+        if self._all_items:
+            for item in self._all_items:
+                self.validate_import_class(item)
 
         self.print_report_message('VALIDATING CONTAINER')
         for item in client.backend.all_devices:
