@@ -457,3 +457,45 @@ class TestValidateImportClass:
         for item in raw_items:
             res_list.append(audit.validate_import_class(item))
         assert res_list == expected
+
+
+class TestParseDatabase:
+    """
+    Simple test to make sure some functions are called
+    """
+    @patch('happi.client.Client.validate')
+    @patch('happi.audit.Audit.validate_args')
+    @patch('happi.audit.Audit.validate_kwargs')
+    @patch('happi.audit.Audit.validate_enforce')
+    @patch('happi.audit.Audit.get_device_class')
+    @patch('happi.audit.Audit.check_device_in_pypi')
+    @patch('happi.audit.Audit.validate_container')
+    def test_parse_database(self, v_c, pypi, dev_cls, enf, kwargs, args,
+                            validate, json_db, items, raw_items):
+
+        v_c_calls = []
+        for i in items:
+            v_c_calls.append(call(i))
+        # should be called 5 time for the 5 items in json_db
+        audit.parse_database(json_db)
+
+        v_c.assert_called()
+        assert v_c.call_count == 5
+        pypi.assert_called_once()
+        dev_cls.assert_called()
+        assert dev_cls.call_count == 5
+        enf.assert_called()
+        assert enf.call_count == 5
+
+        # the first two items and the last one are malformed
+        # so if using:
+        # client = Client(path=database_path)
+        # items = client.all_items
+        # we shuld not be able to get those malformed items
+        kwargs.assert_called()
+        assert kwargs.call_count == 2
+        args.assert_called()
+        assert args.call_count == 2
+
+        validate.assert_called_once()
+        validate.call_count == 5
