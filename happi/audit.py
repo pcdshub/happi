@@ -330,8 +330,6 @@ class Audit(Command):
         """
         Validate items that have extra attributes
         """
-        print('am i getting called')
-        print(item)
         attr_list = []
         extr_list = ['creation', 'last_edit', '_id', 'type']
 
