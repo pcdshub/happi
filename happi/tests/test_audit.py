@@ -400,6 +400,7 @@ class TestGetDeviceClass:
         assert audit._all_items == expected_list
 
 
+@requires_pcdsdevices
 class TestValidateEnforce:
     """
     Testing validate_enforce
