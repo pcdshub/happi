@@ -168,14 +168,14 @@ class Audit(Command):
         """
         Validates the args of an item
         """
-        [self.create_arg(item, arg) for arg in item.args]
+        return [self.create_arg(item, arg) for arg in item.args]
 
     def validate_kwargs(self, item):
         """
         Validates the kwargs of an item
         """
-        dict((key, self.create_arg(item, val))
-             for key, val in item.kwargs.items())
+        return dict((key, self.create_arg(item, val))
+                    for key, val in item.kwargs.items())
 
     def create_arg(self, item, arg):
         """
@@ -184,12 +184,7 @@ class Audit(Command):
         """
         if not isinstance(arg, str):
             return arg
-        try:
-            return fill_template(arg, item, enforce_type=True)
-        except Exception as e:
-            logger.warning('Probably provided invalid argument: %s for %s, %s',
-                           arg, item.name, e)
-            return self.report_code.INVALID
+        return fill_template(arg, item, enforce_type=True)
 
     def get_device_class(self, item):
         """
@@ -201,17 +196,20 @@ class Audit(Command):
         if not device_class:
             logger.warning('Detected a None vlaue for %s. '
                            'The device_class cannot be None', device)
+            return self.report_code.MISSING
         else:
             try:
                 mod, cls = device_class.rsplit('.', 1)
             except (Exception, ValueError) as e:
                 logger.warning('Wrong device name format: %s for %s, %s',
                                device_class, device, e)
+                return self.report_code.INVALID
             else:
                 packages = device_class.rsplit('.')
                 package = packages[0]
                 self._all_devices.add(package)
                 self._all_items.append(item)
+                return self._all_devices
 
     def validate_import_class(self):
         """
@@ -226,14 +224,17 @@ class Audit(Command):
                 # has been tested agains PyPi and was found there
                 try:
                     import_class(device_class)
+                    return self.report_code.SUCCESS
                 except ImportError as e:
                     logger.warning('For device: %s, %s. Either %s is '
                                    'misspelled or %s is not part of the '
                                    'python environment', device, e,
                                    device_class, dev_cls)
+                    return (self.report_code.INVALID, self.report_code.MISSING)
             elif dev_cls and dev_cls not in self._all_devices:
                 logger.warning('Provided wrong device/module name: %s. '
                                'This module does not exist in PyPi', dev_cls)
+                return self.report_code.INVALID
 
     def search_pip_package(self, package):
         """
@@ -269,6 +270,22 @@ class Audit(Command):
             if process:
                 process.kill()
 
+    def check_device_in_pypi(self):
+        if self._all_devices:
+            temp_set = self._all_devices.copy()
+            for package in self._all_devices:
+                is_package_found = self.search_pip_package(package)
+                if is_package_found:
+                    logger.info('%s was found in PyPi', package)
+                else:
+                    # maybe a wrong device name was provided because
+                    # it does not exit
+                    logger.info('%s does not exit in PyPi', package)
+                    temp_set.remove(package)
+            # remove the missing package from the set
+            self._all_devices = temp_set
+            return self._all_devices
+
     def validate_enforce(self, item):
         """
         Validates using enforce_value() from EntryInfo class
@@ -280,14 +297,12 @@ class Audit(Command):
         item_name = item.get('name')
         try:
             entry = container(**item)
+            for info in entry.entry_info:
+                info.enforce_value(entry.get(info.key))
+            return self.report_code.SUCCESS
         except Exception as e:
             logger.warning('For device %s, %s', item_name, e)
-        else:
-            for info in entry.entry_info:
-                try:
-                    info.enforce_value(entry.get(info.key))
-                except Exception as e:
-                    logger.warning(e)
+            return self.report_code.INVALID
 
     def print_report_message(self, message):
         logger.info('')
@@ -360,8 +375,15 @@ class Audit(Command):
         if items:
             self.print_report_message('VALIDATING ARGS & KWARGS')
             for item in items:
-                self.validate_args(item)
-                self.validate_kwargs(item)
+                args = self.validate_args(item)
+                kwargs = self.validate_kwargs(item)
+                cls = import_class(item.device_class)
+                try:
+                    cls(*args, **kwargs)
+                except Exception as e:
+                    logger.warning('When validating args and kwargs, '
+                                   'the item %s errored with: %s', item, e)
+
         else:
             logger.error('Cannot run a set of tests becase the '
                          'items could not be loaded.')
@@ -373,22 +395,12 @@ class Audit(Command):
             self.validate_enforce(it)
             self.get_device_class(it)
 
+        # make sure to call this function after get_device_class
         self.print_report_message('VALIDATE DEVICE MODULE EXISTS IN PYPI')
-        if self._all_devices:
-            temp_set = self._all_devices.copy()
-            for package in self._all_devices:
-                is_package_found = self.search_pip_package(package)
-                if is_package_found:
-                    logger.info('%s was found in PyPi', package)
-                else:
-                    # maybe a wrong device name was provided because
-                    # it does not exit
-                    logger.info('%s does not exit in PyPi', package)
-                    temp_set.remove(package)
-            self._all_devices = temp_set
-            # validate import_class
-            self.print_report_message('VALIDATING DEVICE CLASS')
-            self.validate_import_class()
+        self.check_device_in_pypi()
+        # validate import_class
+        self.print_report_message('VALIDATING DEVICE CLASS')
+        self.validate_import_class()
 
         self.print_report_message('VALIDATING CONTAINER')
         for item in client.backend.all_devices:
