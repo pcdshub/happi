@@ -256,9 +256,10 @@ class Audit(Command):
             bool
                 To indicate if the package was found or not
         """
-        process = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, encoding='utf-8')
+        process = None
         try:
+            process = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
+                                   stdout=subprocess.PIPE, encoding='utf-8')
             arguments = ['pip', 'search', package]
             command = ' '.join(arguments)
 
@@ -292,7 +293,7 @@ class Audit(Command):
             self._all_devices = temp_set
             return self._all_devices
 
-    def something(self, info, item):
+    def get_value(self, info, item):
         for key, value in item.items():
             if key == info.key:
                 return value
@@ -309,7 +310,7 @@ class Audit(Command):
         if container:
             for info in container.entry_info:
                 try:
-                    info.enforce_value(self.something(info, item))
+                    info.enforce_value(self.get_value(info, item))
                     return self.report_code.SUCCESS
                 except Exception as e:
                     logger.info('Invalid value %s, %s', info, e)
