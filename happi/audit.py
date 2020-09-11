@@ -286,6 +286,11 @@ class Audit(Command):
             self._all_devices = temp_set
             return self._all_devices
 
+    def something(self, info, item):
+        for key, value in item.items():
+            if key == info.key:
+                return value
+
     def validate_enforce(self, item):
         """
         Validates using enforce_value() from EntryInfo class
@@ -294,15 +299,18 @@ class Audit(Command):
         ones that were successfully initialized
         """
         container = registry[item.get('type')]
-        item_name = item.get('name')
-        try:
-            entry = container(**item)
-            for info in entry.entry_info:
-                info.enforce_value(entry.get(info.key))
-            return self.report_code.SUCCESS
-        except Exception as e:
-            logger.warning('For device %s, %s', item_name, e)
-            return self.report_code.INVALID
+        name = item.get('name')
+        if container:
+            for info in container.entry_info:
+                try:
+                    info.enforce_value(self.something(info, item))
+                    return self.report_code.SUCCESS
+                except Exception as e:
+                    logger.info('Invalid value %s, %s', info, e)
+                    return self.report_code.INVALID
+        else:
+            logger.warning('Item %s is missing the container', name)
+            return self.report_code.MISSING
 
     def print_report_message(self, message):
         logger.info('')
@@ -389,12 +397,11 @@ class Audit(Command):
         self.print_report_message('VALIDATING ENFORCE VALUES')
         for item in client.backend.all_devices:
             it = client.find_document(**item)
-            # validate using enforce_value()
             self.validate_enforce(it)
             self.get_device_class(it)
 
         # make sure to call this function after get_device_class
-        self.print_report_message('VALIDATE DEVICE MODULE EXISTS IN PYPI')
+        self.print_report_message('VALIDATING DEVICE MODULE EXISTS IN PYPI')
         self.check_device_in_pypi()
         # validate import_class
         self.print_report_message('VALIDATING DEVICE CLASS')
