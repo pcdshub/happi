@@ -2,6 +2,19 @@
  Release History
 =================
 
+v1.7.2 (2020-09-17)
+===================
+
+Bugfixes
+--------
+- Fix issue with edge cases in lcls questionnaire loader
+- Fix issue with unclear warnings on creating malformed entries
+
+Maintenance
+-----------
+- Improve testing coverage for CLI functions
+
+
 v1.7.1 (2020-08-20)
 ===================
 
