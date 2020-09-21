@@ -392,8 +392,8 @@ class Audit(Command):
             for item in items:
                 args = self.validate_args(item)
                 kwargs = self.validate_kwargs(item)
-                cls = import_class(item.device_class)
                 try:
+                    cls = import_class(item.device_class)
                     cls(*args, **kwargs)
                 except Exception as e:
                     logger.warning('When validating args and kwargs, '

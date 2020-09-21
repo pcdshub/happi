@@ -7,7 +7,6 @@ from happi.audit import Audit, ReportCode
 import pytest
 import logging
 
-from .conftest import requires_pcdsdevices
 
 logger = logging.getLogger(__name__)
 audit = Audit()
@@ -80,7 +79,7 @@ ITEMS = json.loads("""{
         "creation": "Wed Mar 27 09:53:48 2019",
         "data": null,
         "detailed_screen": null,
-        "device_class": "pcdsdevices.device_types.IPM",
+        "device_class": "types.SimpleNamespace",
         "documentation": null,
         "embedded_screen": null,
         "engineering_screen": null,
@@ -95,7 +94,7 @@ ITEMS = json.loads("""{
         "prefix": "MFX:DG2:IPM",
         "stand": "DG2",
         "system": "diagnostic",
-        "type": "pcdsdevices.happi.containers.IPM",
+        "type": "HappiItem",
         "z": -1.0
     },
         "dummy_item": {
@@ -105,7 +104,7 @@ ITEMS = json.loads("""{
             "{{prefix}}"
         ],
         "creation": "Thu Sep 10 11:59:23 2020",
-        "device_class": "ophyd.Device",
+        "device_class": "types.SimpleNamespace",
         "documentation": null,
         "kwargs": {
             "name": "{{name}}"
@@ -288,9 +287,6 @@ class TestValidateFileTests:
         assert audit.validate_file('sfsdfsf') is False
 
 
-@requires_pcdsdevices
-# need this here unless i change the
-# devices to only be OphydItem and HappiItems....
 class TestValidateContaienr:
     """
     Test the validate_container
@@ -323,12 +319,13 @@ class TestExtraAttributes:
 
     def test_validate_extra_attributes(self, items):
         for i in items:
+            print('in the items.....extras....', items)
             # this item does not have extra items
             if i.name == 'dummy_item':
                 res = audit.validate_extra_attributes(i)
                 assert res == report_code.SUCCESS
             # this item has extra items
-            elif i.name == 'alias2':
+            elif i.name == 'mfx_dg2_ipm':
                 res = audit.validate_extra_attributes(i)
                 assert res == report_code.EXTRAS
 
@@ -362,7 +359,7 @@ class TestGetDeviceClass:
     """
     def test_all_devices(self, raw_items):
         # should only have nonreapeating devices
-        expected_set = {'pcdsdevices', 'ophyd', 'pyenvbuilder'}
+        expected_set = {'types', 'pyenvbuilder'}
         # the first two do not have a valid device class
         expected_list = [raw_items[2], raw_items[3], raw_items[4]]
         for item in raw_items:
@@ -371,7 +368,6 @@ class TestGetDeviceClass:
         assert audit._all_items == expected_list
 
 
-@requires_pcdsdevices
 class TestValidateEnforce:
     """
     Testing validate_enforce
@@ -389,7 +385,6 @@ class TestValidateEnforce:
         assert res_list == self.expected
 
 
-@requires_pcdsdevices
 class TestValidateImportClass:
     """
     Testing validate_import_class
@@ -430,7 +425,6 @@ class TestValidateImportClass:
         assert res_list == expected
 
 
-@requires_pcdsdevices
 class TestParseDatabase:
     """
     Simple test to make sure some functions are called
