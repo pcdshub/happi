@@ -2,8 +2,8 @@
 This module defines the ``happi audit`` command line utility
 
 If the --file option is not provided, then it will take the path from
-Happpi configuration file using the Client.find_config method,
-otherwiwe it will use the path specified after --file
+Happi configuration file using the Client.find_config method,
+otherwise it will use the path specified after --file
 """
 from abc import ABCMeta, abstractmethod
 from configparser import ConfigParser
@@ -92,15 +92,7 @@ class Audit(Command):
         Validate the database passed in with --file option
         """
         if args.file is not None:
-            if self.validate_file(args.file):
-                logger.info('Using database file at %s ', args.file)
-                if args.extras:
-                    self.check_extra_attributes(args.file)
-                else:
-                    self.parse_database(args.file)
-            else:
-                logger.error('Probably provided a wrong path or filename')
-                return
+            self.process_args(args.file, args)
         else:
             """
             Validate the database defined in happi.cfg file
@@ -117,19 +109,28 @@ class Audit(Command):
                     logger.error('Error when trying '
                                  'to get database path %s', e)
                     return
-                if self.validate_file(database_path):
-                    logger.info('Using database file at %s ', database_path)
-                    if args.extras:
-                        self.check_extra_attributes(database_path)
-                    else:
-                        self.parse_database(database_path)
                 else:
-                    logger.error('The database %s file path '
-                                 'could not be validated', database_path)
-                    sys.exit(1)
+                    self.process_args(database_path, args)
             else:
                 logger.error('Could not find the Happi Configuration file')
                 sys.exit(1)
+
+    def process_args(self, database_path, args):
+        """
+        Checks to see if a valid path to database was provided.
+        If --extras is provided, will call for check xtra attributes, otherwise
+        it will just proceed with parsing and validating the database call.
+        """
+        if self.validate_file(database_path):
+            logger.info('Using database file at %s ', database_path)
+            if args.extras:
+                self.check_extra_attributes(database_path)
+            else:
+                self.parse_database(database_path)
+        else:
+            logger.error('The database %s file path '
+                         'could not be validated', database_path)
+            sys.exit(1)
 
     def validate_file(self, file_path):
         """

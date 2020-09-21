@@ -207,6 +207,34 @@ class TestCommandClass:
         assert self.cmd.__dict__ == expected_dict
 
 
+class TestProcessArgs:
+    args = argparse.Namespace(cmd='audit', extras=True, file='db.json',
+                              path=None, verbose=False, version=False)
+    args2 = argparse.Namespace(cmd='audit', extras=False, file='db.json',
+                               path=None, verbose=False, version=False)
+    args3 = argparse.Namespace(cmd='audit', extras=False, file=None,
+                               path=None, verbose=False, version=False)
+
+    @patch('happi.audit.Audit.validate_file', return_value=True)
+    def test_check_extra_attributes_called(self, mock_valid_file):
+        with patch('happi.audit.Audit.check_extra_attributes') as mock:
+            audit.process_args(self.args.file, self.args)
+            mock.assert_called_once()
+
+    @patch('happi.audit.Audit.validate_file', return_value=True)
+    def test_check_parse_database_called(self, mock_valid_file):
+        with patch('happi.audit.Audit.parse_database') as mock:
+            audit.process_args(self.args.file, self.args2)
+            mock.assert_called_once()
+
+    def test_process_args_with_invalid_file(self, json_db):
+        with patch('happi.audit.Audit.validate_file', return_value=False):
+            with pytest.raises(SystemExit) as sys_e:
+                audit.process_args(json_db, self.args3)
+                assert sys_e.type == SystemExit
+                assert sys_e.value.code == 1
+
+
 class TestValidateRun:
     args = argparse.Namespace(cmd='audit', extras=True, file='db.json',
                               path=None, verbose=False, version=False)
@@ -217,34 +245,18 @@ class TestValidateRun:
     args4 = argparse.Namespace(cmd='audit', extras=True, file=None,
                                path=None, verbose=False, version=False)
 
-    def test_validate_file_called(self):
-        with patch('happi.audit.Audit.validate_file',
-                   return_value=True) as mock:
+    def test_process_args_with_args_file(self):
+        with patch('happi.audit.Audit.process_args') as mock:
             audit.run(self.args)
             assert mock.called
 
-    def test_validate_file_called_with_false(self):
-        with patch('happi.audit.Audit.validate_file', return_value=False):
-            res = audit.run(self.args)
-            assert res is None
-
-    @patch('happi.audit.Audit.validate_file', return_value=True)
-    def test_check_extra_attributes_called(self, mock_valid_file):
-        with patch('happi.audit.Audit.check_extra_attributes') as mock:
-            audit.run(self.args)
-            mock.assert_called_once()
-
-    @patch('happi.audit.Audit.validate_file', return_value=True)
-    def test_check_extra_attributes_not_called(self, mock_valid_file):
-        with patch('happi.audit.Audit.parse_database') as mock:
-            audit.run(self.args2)
-            mock.assert_called_once()
-
-    def test_find_config_called(self):
-        with patch('happi.client.Client.find_config',
-                   return_value='happi.cfg') as mock:
-            audit.run(self.args3)
-            mock.assert_called_once()
+    @patch('happi.client.Client.find_config', return_value='happi.cfg')
+    @patch('configparser.ConfigParser.get', return_value='db.json')
+    @patch('happi.audit.Audit.check_extra_attributes')
+    def test_config_with_extras(self, mock_extras, mock_parser,
+                                mock_config):
+        audit.run(self.args4)
+        mock_extras.assert_called_once()
 
     def test_find_config_called_exit(self):
         with patch('happi.client.Client.find_config',
@@ -254,48 +266,16 @@ class TestValidateRun:
                 assert sys_e.e.type == SystemExit
                 assert sys_e.value.code == 1
 
-    @patch('happi.client.Client.find_config', return_value='happi.cfg')
-    def test_config_parser_with_return_none(self, mock_find_config):
-        with patch('configparser.ConfigParser.get', return_value=None):
-            with pytest.raises(Exception):
-                res = audit.run(self.args3)
-                assert res is None
+    def test_check_extra_attributes_not_called(self):
+        with patch('happi.audit.Audit.parse_database') as mock:
+            audit.run(self.args2)
+            mock.assert_called_once()
 
-    @patch('happi.client.Client.find_config', return_value='happi.cfg')
-    @patch('configparser.ConfigParser.get', return_value='db.json')
-    @patch('happi.audit.Audit.validate_file', return_value=True)
-    def test_validate_file_called_with_true(self, mock_validate, mock_parser,
-                                            mock_config):
-        audit.run(self.args3)
-        mock_validate.assert_called_once()
-
-    @patch('happi.audit.Audit.validate_file', return_value=True)
-    @patch('happi.client.Client.find_config', return_value='happi.cfg')
-    @patch('configparser.ConfigParser.get', return_value='db.json')
-    @patch('happi.audit.Audit.parse_database')
-    def test_config_with_parse_database(self, mock_parse_db,
-                                        mock_parser, mock_cfgm,
-                                        mock_valid_file):
-        audit.run(self.args3)
-        mock_parser.assert_called_once()
-
-    @patch('happi.audit.Audit.validate_file', return_value=True)
-    @patch('happi.client.Client.find_config', return_value='happi.cfg')
-    @patch('configparser.ConfigParser.get', return_value='db.json')
-    @patch('happi.audit.Audit.check_extra_attributes')
-    def test_config_with_extras(self, mock_extras, mock_parser,
-                                mock_config, mock_valid_file):
-        audit.run(self.args4)
-        mock_extras.assert_called_once()
-
-    @patch('happi.client.Client.find_config', return_value='happi.cfg')
-    @patch('configparser.ConfigParser.get', return_value='db.json')
-    def test_config_parser_with_return_not_none(self, mock_parser, mock_cfg):
-        with patch('happi.audit.Audit.validate_file', return_value=False):
-            with pytest.raises(SystemExit) as sys_e:
-                audit.run(self.args3)
-                assert sys_e.type == SystemExit
-                assert sys_e.value.code == 1
+    def test_find_config_called(self):
+        with patch('happi.client.Client.find_config',
+                   return_value='happi.cfg') as mock:
+            audit.run(self.args3)
+            mock.assert_called_once()
 
 
 class TestValidateFileTests:
