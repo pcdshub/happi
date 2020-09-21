@@ -238,11 +238,7 @@ class TestProcessArgs:
 class TestValidateRun:
     args = argparse.Namespace(cmd='audit', extras=True, file='db.json',
                               path=None, verbose=False, version=False)
-    args2 = argparse.Namespace(cmd='audit', extras=False, file='db.json',
-                               path=None, verbose=False, version=False)
     args3 = argparse.Namespace(cmd='audit', extras=False, file=None,
-                               path=None, verbose=False, version=False)
-    args4 = argparse.Namespace(cmd='audit', extras=True, file=None,
                                path=None, verbose=False, version=False)
 
     def test_process_args_with_args_file(self):
@@ -252,11 +248,11 @@ class TestValidateRun:
 
     @patch('happi.client.Client.find_config', return_value='happi.cfg')
     @patch('configparser.ConfigParser.get', return_value='db.json')
-    @patch('happi.audit.Audit.check_extra_attributes')
-    def test_config_with_extras(self, mock_extras, mock_parser,
-                                mock_config):
-        audit.run(self.args4)
-        mock_extras.assert_called_once()
+    @patch('happi.audit.Audit.process_args')
+    def test_process_args_called_with_config(self, mock_process_args,
+                                             mock_parser, mock_config):
+        audit.run(self.args3)
+        mock_process_args.assert_called_once()
 
     def test_find_config_called_exit(self):
         with patch('happi.client.Client.find_config',
@@ -265,11 +261,6 @@ class TestValidateRun:
                 audit.run(self.args3)
                 assert sys_e.e.type == SystemExit
                 assert sys_e.value.code == 1
-
-    def test_check_extra_attributes_not_called(self):
-        with patch('happi.audit.Audit.parse_database') as mock:
-            audit.run(self.args2)
-            mock.assert_called_once()
 
     def test_find_config_called(self):
         with patch('happi.client.Client.find_config',
