@@ -1,7 +1,6 @@
 """
 This module defines the ``happi`` command line utility
 """
-# cli.py
 
 import argparse
 import fnmatch
@@ -11,7 +10,6 @@ import os
 import sys
 
 import coloredlogs
-from IPython import start_ipython
 from .utils import is_a_range
 
 import happi
@@ -251,6 +249,8 @@ def happi_cli(args):
         devices = {}
         for name in args.device_names:
             devices[name] = client.load_device(name=name)
+
+        from IPython import start_ipython  # noqa
         start_ipython(argv=['--quick'], user_ns=devices)
 
 
