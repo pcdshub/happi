@@ -319,7 +319,6 @@ class TestExtraAttributes:
 
     def test_validate_extra_attributes(self, items):
         for i in items:
-            print('in the items.....extras....', items)
             # this item does not have extra items
             if i.name == 'dummy_item':
                 res = audit.validate_extra_attributes(i)
