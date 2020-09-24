@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Command Line Utilities &mdash; Happi Deck 1.7.2 documentation</title>
+  <title>Command Line Utilities &mdash; Happi Deck 1.7.2+4.gd857d34 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.7.2
+                1.7.2+4.gd857d34
               </div>
             
           
@@ -103,10 +103,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#Sub-commands:">Sub-commands:</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#search">search</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#Positional Arguments_repeat1">Positional Arguments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Named Arguments_repeat1">Named Arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#add">add</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#Named Arguments_repeat1">Named Arguments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Named Arguments_repeat2">Named Arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#edit">edit</a><ul>
@@ -228,7 +229,7 @@
 <div class="section" id="search">
 <h3>search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h3>
 <p>Search the happi database</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">search</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">search_criteria</span> <span class="p">[</span><span class="n">search_criteria</span> <span class="o">...</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">search</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span><span class="p">]</span> <span class="n">search_criteria</span> <span class="p">[</span><span class="n">search_criteria</span> <span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="section" id="Positional Arguments_repeat1">
@@ -239,6 +240,15 @@
 </dd>
 </dl>
 </div>
+<div class="section" id="Named Arguments_repeat1">
+<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat1" title="Permalink to this headline">¶</a></h4>
+<dl class="option-list">
+<dt><kbd>--json</kbd></dt>
+<dd><p>Show results as JSON</p>
+<p>Default: False</p>
+</dd>
+</dl>
+</div>
 </div>
 <div class="section" id="add">
 <h3>add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h3>
@@ -246,8 +256,8 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">add</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">clone</span> <span class="n">CLONE</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="section" id="Named Arguments_repeat1">
-<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="Named Arguments_repeat2">
+<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat2" title="Permalink to this headline">¶</a></h4>
 <dl class="option-list">
 <dt><kbd>--clone</kbd></dt>
 <dd><p>Name of device to use for default parameters</p>
