@@ -1,16 +1,15 @@
 """
 This module defines the ``happi`` command line utility
 """
-# cli.py
 
 import argparse
 import fnmatch
+import json
 import logging
 import os
 import sys
 
 import coloredlogs
-from IPython import start_ipython
 from .utils import is_a_range
 
 import happi
@@ -38,6 +37,8 @@ def get_parser():
                                        dest='cmd')
     parser_search = subparsers.add_parser('search', help='Search the happi '
                                           'database')
+    parser_search.add_argument('--json', action='store_true',
+                               help='Show results as JSON')
     parser_search.add_argument('search_criteria', nargs='+',
                                help='Search criteria: '
                                'field=value. If field= is '
@@ -146,21 +147,26 @@ def happi_cli(args):
         # we only want to return the ones that have been repeated when
         # they have been matched with both search_regex() & search_range()
         if repeated:
-            for res in repeated:
-                res.item.show_info()
-            return repeated
-        # only matched with search_regex()
+            final_results = repeated
         elif regex_list and not is_range:
-            for res in regex_list:
-                res.item.show_info()
-            return regex_list
-        # only matched with search_range()
+            # only matched with search_regex()
+            final_results = regex_list
         elif range_list and is_range:
-            for res in range_list:
-                res.item.show_info()
-            return range_list
+            # only matched with search_range()
+            final_results = range_list
         else:
+            final_results = []
+
+        if args.json:
+            json.dump([dict(res.item) for res in final_results], indent=2,
+                      fp=sys.stdout)
+        else:
+            for res in final_results:
+                res.item.show_info()
+
+        if not final_results:
             logger.error('No devices found')
+        return final_results
     elif args.cmd == 'add':
         logger.debug('Starting interactive add')
         registry = happi.containers.registry
@@ -243,6 +249,8 @@ def happi_cli(args):
         devices = {}
         for name in args.device_names:
             devices[name] = client.load_device(name=name)
+
+        from IPython import start_ipython  # noqa
         start_ipython(argv=['--quick'], user_ns=devices)
 
 

@@ -4,6 +4,7 @@ import builtins
 import logging
 import pytest
 import happi
+import IPython
 from happi.cli import happi_cli
 from unittest import mock
 from happi.errors import SearchError
@@ -312,7 +313,7 @@ def test_load(caplog, happi_cfg):
     devices = {}
     client = happi.client.Client.from_config(cfg=happi_cfg)
     devices['happi_name'] = client.load_device(name='happi_name')
-    with mock.patch.object(happi.cli, 'start_ipython') as m:
+    with mock.patch.object(IPython, 'start_ipython') as m:
         happi.cli.happi_cli(['--verbose', '--path',
                              happi_cfg, 'load', 'happi_name'])
         m.assert_called_once_with(argv=['--quick'], user_ns=devices)
