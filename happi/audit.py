@@ -1,11 +1,7 @@
 """
 This module defines the ``happi audit`` command line utility
-
-If the --file option is not provided, then it will take the path from
-Happi configuration file using the Client.find_config method,
-otherwise it will use the path specified after --file
 """
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from configparser import ConfigParser
 import logging
 import os
@@ -15,32 +11,36 @@ import re
 from happi.client import Client
 from happi.loader import import_class, fill_template
 from happi.containers import registry
-from enum import Enum
+from enum import Enum, auto
 
 logger = logging.getLogger(__name__)
+
+
+def print_report_message(message):
+    logger.info('='*50)
+    logger.info(message.center(50, '-'))
+    logger.info('='*50)
 
 
 class ReportCode(Enum):
     """
     Class to define report codes
     """
-    SUCCESS = 0
-    INVALID = 1
-    MISSING = 2
-    EXTRAS = 3
-    NO_CODE = 9
+    SUCCESS = auto()
+    INVALID = auto()
+    MISSING = auto()
+    EXTRAS = auto()
+    NO_CODE = auto()
+
+    def __repr__(self):
+        return '<%s.%s>' % (self.__class__.__name__, self.name)
 
 
-class Command(object, metaclass=ABCMeta):
+class Command(ABC):
     """
-    Bluprint for the command class
+    Blueprint for the command class
     This will be useful if all the commands are inheriting from it
     """
-
-    def __init__(self, name, summary):
-        self.name = name
-        self.summary = summary
-
     @abstractmethod
     def add_args(self, parser):
         """
@@ -57,7 +57,7 @@ class Command(object, metaclass=ABCMeta):
     def run(self, args):
         """
         Parses the arguments given to the command.
-        And hanles the logic for this command
+        And handles the logic for this command
 
         Parameters
         -----------
@@ -75,12 +75,14 @@ class Audit(Command):
         self.help = "Inspect a database's entries"
         self._all_devices = set()
         self._all_items = []
-        # 9 - NO_CODE
-        self.report_code = ReportCode(9)
+        self.report_code = ReportCode.NO_CODE
 
     def add_args(self, cmd_parser):
         cmd_parser.add_argument(
-            "--file", help='Path to the json file (database) to be audited'
+            "--file",
+            help='Path to the json file (database) to be audited. '
+                 'If this option is not provided it will use the '
+                 'Happi Configuration file instead.'
         )
         cmd_parser.add_argument(
             "--extras", action='store_true', default=False,
@@ -118,7 +120,7 @@ class Audit(Command):
     def process_args(self, database_path, args):
         """
         Checks to see if a valid path to database was provided.
-        If --extras is provided, will call for check xtra attributes, otherwise
+        If --extras is provided, will check extra attributes, otherwise
         it will just proceed with parsing and validating the database call.
         """
         if self.validate_file(database_path):
@@ -151,6 +153,11 @@ class Audit(Command):
     def validate_container(self, item):
         """
         Validates container definition
+
+        Parameters
+        ----------
+        item: dict
+            An entry in the database
         """
         container = item.get('type')
         device = item.get('name')
@@ -190,31 +197,40 @@ class Audit(Command):
     def get_device_class(self, item):
         """
         Validates device_class field
+
+        Parameters
+        ----------
+        item: dict
+            An entry in the database
         """
         device_class = item.get('device_class')
         device = item.get('name')
 
         if not device_class:
-            logger.warning('Detected a None vlaue for %s. '
+            logger.warning('Detected a None value for %s. '
                            'The device_class cannot be None', device)
             return self.report_code.MISSING
+        try:
+            mod, cls = device_class.rsplit('.', 1)
+        except (Exception) as e:
+            logger.warning('Wrong device name format: %s for %s, %s',
+                           device_class, device, e)
+            return self.report_code.INVALID
         else:
-            try:
-                mod, cls = device_class.rsplit('.', 1)
-            except (Exception, ValueError) as e:
-                logger.warning('Wrong device name format: %s for %s, %s',
-                               device_class, device, e)
-                return self.report_code.INVALID
-            else:
-                packages = device_class.rsplit('.')
-                package = packages[0]
-                self._all_devices.add(package)
-                self._all_items.append(item)
-                return self._all_devices
+            packages = device_class.rsplit('.')
+            package = packages[0]
+            self._all_devices.add(package)
+            self._all_items.append(item)
+            return self._all_devices
 
     def validate_import_class(self, item=None):
         """
         Validate the device_class of an item
+
+        Parameters
+        ----------
+        item: dict
+            An entry in the database
         """
         device_class = item.get('device_class')
         mod = device_class
@@ -295,24 +311,24 @@ class Audit(Command):
             self._all_devices = temp_set
             return self._all_devices
 
-    def get_value(self, info, item):
-        for key, value in item.items():
-            if key == info.key:
-                return value
-
     def validate_enforce(self, item):
         """
         Validates using enforce_value() from EntryInfo class
-        If the attributes are malformed the entry = contaienr(**item)
+        If the attributes are malformed the entry = container(**item)
         will fail, thus the enforce_value() will only apply to the
         ones that were successfully initialized
+
+        Parameters
+        ----------
+        item: dict
+            An entry in the database
         """
         container = registry[item.get('type')]
         name = item.get('name')
         if container:
             for info in container.entry_info:
                 try:
-                    info.enforce_value(self.get_value(info, item))
+                    info.enforce_value(dict(item)[info.key])
                     return self.report_code.SUCCESS
                 except Exception as e:
                     logger.info('Invalid value %s, %s', info, e)
@@ -320,11 +336,6 @@ class Audit(Command):
         else:
             logger.warning('Item %s is missing the container', name)
             return self.report_code.MISSING
-
-    def print_report_message(self, message):
-        logger.info('')
-        logger.info('--------- %s ---------', message)
-        logger.info('')
 
     def check_extra_attributes(self, database_path):
         """
@@ -339,13 +350,18 @@ class Audit(Command):
         client = Client(path=database_path)
         items = client.all_items
 
-        self.print_report_message('EXTRA ATTRIBUTES')
+        print_report_message('EXTRA ATTRIBUTES')
         for item in items:
             self.validate_extra_attributes(item)
 
     def validate_extra_attributes(self, item):
         """
         Validate items that have extra attributes
+
+        Parameters
+        ----------
+        item: dict
+            An entry in the database
         """
         attr_list = []
         extr_list = ['creation', 'last_edit', '_id', 'type']
@@ -376,7 +392,7 @@ class Audit(Command):
         client = Client(path=database_path)
         items = client.all_items
 
-        self.print_report_message('VALIDATING ENTRIES')
+        print_report_message('VALIDATING ENTRIES')
         # this will fail to validate because the missing list will have
         # the defaults match...... which is not good.....
         # for example: if Default for class_devices: pcdsdevices.pimm.Vacuum
@@ -388,7 +404,7 @@ class Audit(Command):
         client.validate()
 
         if items:
-            self.print_report_message('VALIDATING ARGS & KWARGS')
+            print_report_message('VALIDATING ARGS & KWARGS')
             for item in items:
                 args = self.validate_args(item)
                 kwargs = self.validate_kwargs(item)
@@ -403,22 +419,22 @@ class Audit(Command):
             logger.error('Cannot run a set of tests becase the '
                          'items could not be loaded.')
 
-        self.print_report_message('VALIDATING ENFORCE VALUES')
+        print_report_message('VALIDATING ENFORCE VALUES')
         for item in client.backend.all_devices:
             it = client.find_document(**item)
             self.validate_enforce(it)
             self.get_device_class(it)
 
         # make sure to call this function after get_device_class
-        self.print_report_message('VALIDATING DEVICE MODULE EXISTS IN PYPI')
+        print_report_message('VALIDATING DEVICE MODULE EXISTS IN PYPI')
         self.check_device_in_pypi()
         # validate import_class
-        self.print_report_message('VALIDATING DEVICE CLASS')
+        print_report_message('VALIDATING DEVICE CLASS')
         if self._all_items:
             for item in self._all_items:
                 self.validate_import_class(item)
 
-        self.print_report_message('VALIDATING CONTAINER')
+        print_report_message('VALIDATING CONTAINER')
         for item in client.backend.all_devices:
             it = client.find_document(**item)
             self.validate_container(it)
