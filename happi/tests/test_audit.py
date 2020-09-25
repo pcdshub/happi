@@ -10,8 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 audit = Audit()
-# 9 - NO_CODE
-report_code = ReportCode(9)
+report_code = ReportCode.NO_CODE
 
 ITEMS = json.loads("""{
     "XRT:M3H": {
@@ -183,7 +182,7 @@ class TestCommandClass:
     class Dummy(happi.audit.Command):
         pass
 
-    d = Dummy('dummy', 'description')
+    d = Dummy()
 
     with pytest.raises(NotImplementedError):
         d.add_args('a_parser')
@@ -191,19 +190,6 @@ class TestCommandClass:
         d.run('some_arg')
 
     assert isinstance(happi.audit.Command, ABCMeta)
-
-    def test_constructor_fail(self):
-        with pytest.raises(TypeError):
-            happi.audit.Command()
-
-    def test_constructor_partial_fail(self):
-        with pytest.raises(TypeError):
-            happi.audit.Command("my_name")
-
-    def test_constructor_success(self):
-        self.cmd = happi.audit.Command('a_name', 'a_description')
-        expected_dict = {'name': 'a_name', 'summary': 'a_description'}
-        assert self.cmd.__dict__ == expected_dict
 
 
 class TestProcessArgs:
