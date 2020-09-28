@@ -203,19 +203,19 @@ class TestProcessArgs:
     @patch('happi.audit.Audit.validate_file', return_value=True)
     def test_check_extra_attributes_called(self, mock_valid_file):
         with patch('happi.audit.Audit.check_extra_attributes') as mock:
-            audit.process_args(self.args.file, self.args)
+            audit.process_database(self.args.file, True)
             mock.assert_called_once()
 
     @patch('happi.audit.Audit.validate_file', return_value=True)
     def test_check_parse_database_called(self, mock_valid_file):
         with patch('happi.audit.Audit.parse_database') as mock:
-            audit.process_args(self.args.file, self.args2)
+            audit.process_database(self.args2.file, False)
             mock.assert_called_once()
 
-    def test_process_args_with_invalid_file(self, json_db):
+    def test_process_database_with_invalid_file(self, json_db):
         with patch('happi.audit.Audit.validate_file', return_value=False):
             with pytest.raises(SystemExit) as sys_e:
-                audit.process_args(json_db, self.args3)
+                audit.process_database(json_db, False)
                 assert sys_e.type == SystemExit
                 assert sys_e.value.code == 1
 
@@ -226,18 +226,18 @@ class TestValidateRun:
     args3 = argparse.Namespace(cmd='audit', extras=False, file=None,
                                path=None, verbose=False, version=False)
 
-    def test_process_args_with_args_file(self):
-        with patch('happi.audit.Audit.process_args') as mock:
+    def test_process_database_with_args_file(self):
+        with patch('happi.audit.Audit.process_database') as mock:
             audit.run(self.args)
             assert mock.called
 
     @patch('happi.client.Client.find_config', return_value='happi.cfg')
     @patch('configparser.ConfigParser.get', return_value='db.json')
-    @patch('happi.audit.Audit.process_args')
-    def test_process_args_called_with_config(self, mock_process_args,
-                                             mock_parser, mock_config):
+    @patch('happi.audit.Audit.process_database')
+    def test_process_database_called_with_config(self, mock_process_database,
+                                                 mock_parser, mock_config):
         audit.run(self.args3)
-        mock_process_args.assert_called_once()
+        mock_process_database.assert_called_once()
 
     def test_find_config_called_exit(self):
         with patch('happi.client.Client.find_config',

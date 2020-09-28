@@ -75,6 +75,8 @@ class Audit(Command):
         self._all_devices = set()
         self._all_items = []
         self.report_code = ReportCode.NO_CODE
+        self._extras = False
+        self._database_path = None
 
     def add_args(self, cmd_parser):
         cmd_parser.add_argument(
@@ -90,10 +92,12 @@ class Audit(Command):
 
     def run(self, args):
         """
-        Validate the database passed in with --file option
+        Parses the cli arguments
         """
+        self._extras = args.extras
+
         if args.file is not None:
-            self.process_args(args.file, args)
+            self.process_database(database_path=args.file, extras=self._extras)
         else:
             """
             Validate the database defined in happi.cfg file
@@ -103,9 +107,10 @@ class Audit(Command):
             if path_to_config:
                 logger.info('Using Client cfg path %s ', path_to_config)
                 db_kwargs = Client.parse_config_file(path_to_config)
-                path = db_kwargs.get('path')
-                if path:
-                    self.process_args(path, args)
+                self._database_path = db_kwargs.get('path')
+                if self._database_path:
+                    self.process_database(database_path=self._database_path,
+                                          extras=self._extras)
                 else:
                     logger.error('Could not get the database path '
                                  'from the configuration file')
@@ -114,15 +119,15 @@ class Audit(Command):
                 logger.error('Could not find the Happi Configuration file')
                 sys.exit(1)
 
-    def process_args(self, database_path, args):
+    def process_database(self, database_path=None, extras=False):
         """
         Checks to see if a valid path to database was provided.
-        If --extras is provided, will check extra attributes, otherwise
+        If extras is True, it will check for extra attributes only, otherwise
         it will just proceed with parsing and validating the database call.
         """
         if self.validate_file(database_path):
             logger.info('Using database file at %s ', database_path)
-            if args.extras:
+            if extras:
                 self.check_extra_attributes(database_path)
             else:
                 self.parse_database(database_path)
@@ -200,7 +205,7 @@ class Audit(Command):
             return self.report_code.MISSING
         try:
             mod, cls = device_class.rsplit('.', 1)
-        except (Exception) as e:
+        except Exception as e:
             logger.warning('Wrong device name format: %s for %s, %s',
                            device_class, device, e)
             return self.report_code.INVALID
