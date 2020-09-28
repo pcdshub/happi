@@ -68,6 +68,13 @@ def fill_template(template, device, enforce_type=False):
     return filled
 
 
+# Create correctly typed arguments from happi information
+def create_arg(device, arg):
+    if not isinstance(arg, str):
+        return arg
+    return fill_template(arg, device, enforce_type=True)
+
+
 def from_container(device, attach_md=True, use_cache=True, threaded=False):
     """
     Load a device from a happi container
@@ -132,15 +139,9 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
 
     cls = import_class(device.device_class)
 
-    # Create correctly typed arguments from happi information
-    def create_arg(arg):
-        if not isinstance(arg, str):
-            return arg
-        return fill_template(arg, device, enforce_type=True)
-
     # Treat all our args and kwargs as templates
-    args = [create_arg(arg) for arg in device.args]
-    kwargs = dict((key, create_arg(val))
+    args = [create_arg(device, arg) for arg in device.args]
+    kwargs = dict((key, create_arg(device, val))
                   for key, val in device.kwargs.items())
     # Return the instantiated device
     obj = cls(*args, **kwargs)

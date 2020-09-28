@@ -9,7 +9,7 @@ import sys
 import subprocess
 import re
 from happi.client import Client
-from happi.loader import import_class, fill_template
+from happi.loader import import_class, create_arg
 from happi.containers import registry
 from enum import Enum, auto
 
@@ -176,23 +176,14 @@ class Audit(Command):
         """
         Validates the args of an item
         """
-        return [self.create_arg(item, arg) for arg in item.args]
+        return [create_arg(item, arg) for arg in item.args]
 
     def validate_kwargs(self, item):
         """
         Validates the kwargs of an item
         """
-        return dict((key, self.create_arg(item, val))
+        return dict((key, create_arg(item, val))
                     for key, val in item.kwargs.items())
-
-    def create_arg(self, item, arg):
-        """
-        Function borrowed from loader to create
-        correctly typed arguments from happi information
-        """
-        if not isinstance(arg, str):
-            return arg
-        return fill_template(arg, item, enforce_type=True)
 
     def get_device_class(self, item):
         """

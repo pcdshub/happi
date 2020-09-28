@@ -315,29 +315,6 @@ class TestExtraAttributes:
                 assert res == report_code.EXTRAS
 
 
-class TestArgsAndKwargs:
-    """
-    Test validate_args and validate_kwargs
-    """
-    # the next two tests are just to make sure that the create_arg
-    # in test_audit functions the same was as the one in loader
-    # this function is tested in more details in the loader test
-    def test_create_args_not_instance(self, happi_config, items):
-        args = 323
-        for item in items:
-            res = audit.create_arg(item, args)
-            # should jsut return the args back
-            assert res == args
-
-    def test_create_args_fill_template(self, happi_config, items):
-        # should give the name back
-        arg = "{{name}}"
-        for item in items:
-            res = audit.create_arg(item, arg)
-            expect = happi.loader.fill_template(arg, item, enforce_type=True)
-            assert res == expect
-
-
 class TestGetDeviceClass:
     """
     Testing get_device_class
