@@ -247,11 +247,23 @@ class TestValidateRun:
                 assert sys_e.e.type == SystemExit
                 assert sys_e.value.code == 1
 
-    def test_find_config_called(self):
-        with patch('happi.client.Client.find_config',
-                   return_value='happi.cfg') as mock:
-            audit.run(self.args3)
-            mock.assert_called_once()
+    @patch('happi.client.Client.parse_config_file',
+           return_value={'path': 'db.json'})
+    @patch('happi.client.Client.find_config',
+           return_value='happi.cfg')
+    def test_find_and_parse_config_called(self, parse_mock, find_mock):
+        audit.run(self.args3)
+        find_mock.assert_called_once()
+        parse_mock.assert_called_once()
+
+    @patch('happi.client.Client.parse_config_file',
+           return_value={'path': ''})
+    @patch('happi.client.Client.find_config',
+           return_value='happi.cfg')
+    def test_parse_config_return(self, parse_mock, find_mock):
+        res = audit.run(self.args3)
+        parse_mock.assert_called_once()
+        assert res is None
 
 
 class TestValidateFileTests:

@@ -2,7 +2,6 @@
 This module defines the ``happi audit`` command line utility
 """
 from abc import ABC, abstractmethod
-from configparser import ConfigParser
 import logging
 import os
 import sys
@@ -103,16 +102,14 @@ class Audit(Command):
 
             if path_to_config:
                 logger.info('Using Client cfg path %s ', path_to_config)
-                config = ConfigParser()
-                config.read(path_to_config)
-                try:
-                    database_path = config.get('DEFAULT', 'path')
-                except Exception as e:
-                    logger.error('Error when trying '
-                                 'to get database path %s', e)
-                    return
+                db_kwargs = Client.parse_config_file(path_to_config)
+                path = db_kwargs.get('path')
+                if path:
+                    self.process_args(path, args)
                 else:
-                    self.process_args(database_path, args)
+                    logger.error('Could not get the database path '
+                                 'from the configuration file')
+                    return
             else:
                 logger.error('Could not find the Happi Configuration file')
                 sys.exit(1)

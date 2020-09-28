@@ -655,12 +655,9 @@ class Client(collections.abc.Mapping):
         if not os.path.exists(cfg):
             raise RuntimeError(f'happi configuration file not found: {cfg!r}')
 
-        # Parse configuration file
-        cfg_parser = configparser.ConfigParser()
-        cfg_file = cfg_parser.read(cfg)
-        logger.debug("Loading configuration file at %r", cfg_file)
-        db_kwargs = cfg_parser['DEFAULT']
-        # If a backend is specified use it, otherwise default
+        # Get database file kwargs
+        db_kwargs = cls.parse_config_file(cfg)
+
         if 'backend' in db_kwargs:
             db_str = db_kwargs.pop('backend')
             try:
@@ -685,6 +682,24 @@ class Client(collections.abc.Mapping):
                 f'the required configuration settings. In {cfg!r}, found '
                 f'settings: {dict(db_kwargs)}.'
             ) from ex
+
+    @staticmethod
+    def parse_config_file(cfg):
+        """
+        Parse configuration file
+
+        Parameters
+        -----------
+        cfg: str
+            Configuration file
+        """
+        cfg_parser = configparser.ConfigParser()
+        cfg_file = cfg_parser.read(cfg)
+        logger.debug("Loading configuration file at %r", cfg_file)
+        try:
+            return cfg_parser['DEFAULT']
+        except KeyError as err:
+            logger.error('When parsing the configuration file: %s', err)
 
     @staticmethod
     def find_config():
