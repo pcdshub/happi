@@ -68,8 +68,16 @@ def fill_template(template, device, enforce_type=False):
     return filled
 
 
-# Create correctly typed arguments from happi information
 def create_arg(device, arg):
+    """
+    Create correctly typed arguments from happi information
+
+    Parameters
+    ----------
+    device : happi.Device
+    arg:
+        Information about device
+    """
     if not isinstance(arg, str):
         return arg
     return fill_template(arg, device, enforce_type=True)
