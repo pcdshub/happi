@@ -5,8 +5,6 @@ from abc import ABC, abstractmethod
 import logging
 import os
 import sys
-import subprocess
-import re
 from happi.client import Client
 from happi.loader import import_class, create_arg
 from happi.containers import registry
@@ -72,8 +70,6 @@ class Audit(Command):
     def __init__(self):
         self.name = 'audit'
         self.help = "Inspect a database's entries"
-        self._all_devices = set()
-        self._all_items = []
         self.report_code = ReportCode.NO_CODE
         self._extras = False
         self._database_path = None
@@ -170,9 +166,9 @@ class Audit(Command):
         elif not container:
             logger.error('No container provided for %s', device)
             return self.report_code.MISSING
-        else:
-            # seems like the container has been validated
-            return self.report_code.SUCCESS
+
+        # seems like the container has been validated
+        return self.report_code.SUCCESS
 
     def validate_args(self, item):
         """
@@ -187,9 +183,9 @@ class Audit(Command):
         return dict((key, create_arg(item, val))
                     for key, val in item.kwargs.items())
 
-    def get_device_class(self, item):
+    def validate_import_class(self, item=None):
         """
-        Validates device_class field
+        Validate the device_class of an item
 
         Parameters
         ----------
@@ -203,106 +199,20 @@ class Audit(Command):
             logger.warning('Detected a None value for %s. '
                            'The device_class cannot be None', device)
             return self.report_code.MISSING
-        try:
-            mod, cls = device_class.rsplit('.', 1)
-        except Exception as e:
-            logger.warning('Wrong device name format: %s for %s, %s',
-                           device_class, device, e)
-            return self.report_code.INVALID
-        else:
-            packages = device_class.rsplit('.')
-            package = packages[0]
-            self._all_devices.add(package)
-            self._all_items.append(item)
-            return self._all_devices
-
-    def validate_import_class(self, item=None):
-        """
-        Validate the device_class of an item
-
-        Parameters
-        ----------
-        item: dict
-            An entry in the database
-        """
-        device_class = item.get('device_class')
-        mod = device_class
-        if not device_class:
-            return self.report_code.MISSING
         if '.' not in device_class:
             logger.warning('Device class invalid %s for item %s',
                            device_class, item)
             return self.report_code.INVALID
-        else:
-            mod = device_class.rsplit('.')[0]
-        device = item.get('name')
-        if mod in self._all_devices:
-            # has been tested agains PyPi and was found there
-            try:
-                import_class(device_class)
-                return self.report_code.SUCCESS
-            except ImportError as e:
-                logger.warning('For device: %s, %s. Either %s is '
-                               'misspelled or %s is not part of the '
-                               'python environment', device, e,
-                               device_class, device_class)
-                return (self.report_code.INVALID, self.report_code.MISSING)
-        elif mod and mod not in self._all_devices:
-            logger.warning('Provided wrong device/module name: %s. '
-                           'This module does not exist in PyPi', device_class)
-            return self.report_code.INVALID
 
-    def search_pip_package(self, package):
-        """
-        Checks to see if the package is on pypi
-
-        Parameters
-        -----------
-        package: str
-            Name of the package to check
-
-        Returns
-        --------
-            bool
-                To indicate if the package was found or not
-        """
-        process = None
         try:
-            process = subprocess.Popen('/bin/bash', stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE,
-                                       encoding='utf-8')
-            arguments = ['pip', 'search', package]
-            command = ' '.join(arguments)
-
-            out, err = process.communicate(command)
-
-            # the output of 'pip search' will give all the fuzzy searches
-            # we only care if the exact package name is there
-            the_match = re.compile(package)
-            if re.match(the_match, out):
-                return True
-            else:
-                return False
+            import_class(device_class)
+            return self.report_code.SUCCESS
         except Exception as e:
-            logger.warning(e)
-            if process:
-                process.kill()
-
-    def check_device_in_pypi(self):
-        if self._all_devices:
-            temp_set = self._all_devices.copy()
-            for package in self._all_devices:
-                is_package_found = self.search_pip_package(package)
-                if is_package_found:
-                    logger.info('%s was found in PyPi', package)
-                else:
-                    # maybe a wrong device name was provided because
-                    # it does not exit
-                    logger.info('%s does not exit in PyPi', package)
-                    temp_set.remove(package)
-            # remove the missing package from the set
-            self._all_devices = temp_set
-            return self._all_devices
+            logger.warning('For device: %s, %s. Either %s is '
+                           'misspelled or %s is not part of the '
+                           'python environment', device, e,
+                           device_class, device_class)
+            return (self.report_code.INVALID)
 
     def validate_enforce(self, item):
         """
@@ -368,9 +278,8 @@ class Audit(Command):
             logger.warning('Device %s has extra attributes %s',
                            item.name, diff)
             return self.report_code.EXTRAS
-        else:
-            # no extra attributes found
-            return self.report_code.SUCCESS
+
+        return self.report_code.SUCCESS
 
     def parse_database(self, database_path):
         """
@@ -416,16 +325,11 @@ class Audit(Command):
         for item in client.backend.all_devices:
             it = client.find_document(**item)
             self.validate_enforce(it)
-            self.get_device_class(it)
 
-        # make sure to call this function after get_device_class
-        print_report_message('VALIDATING DEVICE MODULE EXISTS IN PYPI')
-        self.check_device_in_pypi()
         # validate import_class
         print_report_message('VALIDATING DEVICE CLASS')
-        if self._all_items:
-            for item in self._all_items:
-                self.validate_import_class(item)
+        for item in items:
+            self.validate_import_class(item)
 
         print_report_message('VALIDATING CONTAINER')
         for item in client.backend.all_devices:

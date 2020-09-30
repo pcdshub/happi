@@ -327,21 +327,6 @@ class TestExtraAttributes:
                 assert res == report_code.EXTRAS
 
 
-class TestGetDeviceClass:
-    """
-    Testing get_device_class
-    """
-    def test_all_devices(self, raw_items):
-        # should only have nonreapeating devices
-        expected_set = {'types', 'pyenvbuilder'}
-        # the first two do not have a valid device class
-        expected_list = [raw_items[2], raw_items[3], raw_items[4]]
-        for item in raw_items:
-            audit.get_device_class(item)
-        assert audit._all_devices == expected_set
-        assert audit._all_items == expected_list
-
-
 class TestValidateEnforce:
     """
     Testing validate_enforce
@@ -367,31 +352,12 @@ class TestValidateImportClass:
     def BOOLEAN(self, request):
         return request.param
 
-    def test_device_in_pypi(self, raw_items, BOOLEAN):
-        # call this first to put values in audit._all_devices
-        for item in raw_items:
-            audit.get_device_class(item)
-        expected = audit._all_devices
-
-        # then after check_device_in_pypi if true, then it found them in pypi
-        with patch('happi.audit.Audit.search_pip_package',
-                   return_value=BOOLEAN) as m:
-            audit.check_device_in_pypi()
-            if m.return_value is True:
-                # found them in pypi
-                assert audit._all_devices == expected
-            if m.return_value is False:
-                # could not find them in pypi
-                assert audit._all_devices == set()
-
     def test_validate_import_class(self, raw_items):
-        for item in raw_items:
-            audit.get_device_class(item)
         expected = [report_code.MISSING,
                     report_code.INVALID,
                     report_code.SUCCESS,
                     report_code.SUCCESS,
-                    (report_code.INVALID, report_code.MISSING)
+                    (report_code.INVALID)
                     ]
         res_list = []
         for item in raw_items:
@@ -407,10 +373,8 @@ class TestParseDatabase:
     @patch('happi.audit.Audit.validate_args')
     @patch('happi.audit.Audit.validate_kwargs')
     @patch('happi.audit.Audit.validate_enforce')
-    @patch('happi.audit.Audit.get_device_class')
-    @patch('happi.audit.Audit.check_device_in_pypi')
     @patch('happi.audit.Audit.validate_container')
-    def test_parse_database(self, v_c, pypi, dev_cls, enf, kwargs, args,
+    def test_parse_database(self, v_c, enf, kwargs, args,
                             validate, json_db, items, raw_items):
 
         v_c_calls = []
@@ -421,9 +385,6 @@ class TestParseDatabase:
 
         v_c.assert_called()
         assert v_c.call_count == 5
-        pypi.assert_called_once()
-        dev_cls.assert_called()
-        assert dev_cls.call_count == 5
         enf.assert_called()
         assert enf.call_count == 5
 
