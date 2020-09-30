@@ -93,7 +93,7 @@ class Audit(Command):
         self._extras = args.extras
 
         if args.file is not None:
-            self.process_database(database_path=args.file, extras=self._extras)
+            process_database(database_path=args.file, extras=self._extras)
         else:
             """
             Validate the database defined in happi.cfg file
@@ -105,8 +105,8 @@ class Audit(Command):
                 db_kwargs = Client.parse_config_file(path_to_config)
                 self._database_path = db_kwargs.get('path')
                 if self._database_path:
-                    self.process_database(database_path=self._database_path,
-                                          extras=self._extras)
+                    process_database(database_path=self._database_path,
+                                     extras=self._extras)
                 else:
                     logger.error('Could not get the database path '
                                  'from the configuration file')
@@ -115,223 +115,233 @@ class Audit(Command):
                 logger.error('Could not find the Happi Configuration file')
                 sys.exit(1)
 
-    def process_database(self, database_path=None, extras=False):
-        """
-        Checks to see if a valid path to database was provided.
-        If extras is True, it will check for extra attributes only, otherwise
-        it will just proceed with parsing and validating the database call.
-        """
-        if self.validate_file(database_path):
-            logger.info('Using database file at %s ', database_path)
-            if extras:
-                self.check_extra_attributes(database_path)
-            else:
-                self.parse_database(database_path)
+
+def process_database(database_path=None, extras=False):
+    """
+    Checks to see if a valid path to database was provided.
+    If extras is True, it will check for extra attributes only, otherwise
+    it will just proceed with parsing and validating the database call.
+    """
+    if validate_file(database_path):
+        logger.info('Using database file at %s ', database_path)
+        if extras:
+            check_extra_attributes(database_path)
         else:
-            logger.error('The database %s file path '
-                         'could not be validated', database_path)
-            sys.exit(1)
+            parse_database(database_path)
+    else:
+        logger.error('The database %s file path '
+                     'could not be validated', database_path)
+        sys.exit(1)
 
-    def validate_file(self, file_path):
-        """
-        Tests whether a path is a regular file
 
-        Parameters
-        -----------
-        file_path: str
-            File path to be validate
+def validate_file(file_path):
+    """
+    Tests whether a path is a regular file
 
-        Returns
-        -------
-        bool
-            To indicate whether the file is a valid regular file
-        """
-        return os.path.isfile(file_path)
+    Parameters
+    -----------
+    file_path: str
+        File path to be validate
 
-    def validate_container(self, item):
-        """
-        Validates container definition
+    Returns
+    -------
+    bool
+        To indicate whether the file is a valid regular file
+    """
+    return os.path.isfile(file_path)
 
-        Parameters
-        ----------
-        item: dict
-            An entry in the database
-        """
-        container = item.get('type')
-        device = item.get('name')
-        if container and container not in registry:
-            logger.error('Invalid device container: %s for device %s',
-                         container, device)
-            return self.report_code.INVALID
-        elif not container:
-            logger.error('No container provided for %s', device)
-            return self.report_code.MISSING
 
-        # seems like the container has been validated
-        return self.report_code.SUCCESS
+def validate_container(item):
+    """
+    Validates container definition
 
-    def validate_args(self, item):
-        """
-        Validates the args of an item
-        """
-        return [create_arg(item, arg) for arg in item.args]
+    Parameters
+    ----------
+    item: dict
+        An entry in the database
+    """
+    container = item.get('type')
+    device = item.get('name')
+    if container and container not in registry:
+        logger.error('Invalid device container: %s for device %s',
+                     container, device)
+        return ReportCode.INVALID
+    elif not container:
+        logger.error('No container provided for %s', device)
+        return ReportCode.MISSING
 
-    def validate_kwargs(self, item):
-        """
-        Validates the kwargs of an item
-        """
-        return dict((key, create_arg(item, val))
-                    for key, val in item.kwargs.items())
+    # seems like the container has been validated
+    return ReportCode.SUCCESS
 
-    def validate_import_class(self, item=None):
-        """
-        Validate the device_class of an item
 
-        Parameters
-        ----------
-        item: dict
-            An entry in the database
-        """
-        device_class = item.get('device_class')
-        device = item.get('name')
+def validate_args(item):
+    """
+    Validates the args of an item
+    """
+    return [create_arg(item, arg) for arg in item.args]
 
-        if not device_class:
-            logger.warning('Detected a None value for %s. '
-                           'The device_class cannot be None', device)
-            return self.report_code.MISSING
-        if '.' not in device_class:
-            logger.warning('Device class invalid %s for item %s',
-                           device_class, item)
-            return self.report_code.INVALID
 
-        try:
-            import_class(device_class)
-            return self.report_code.SUCCESS
-        except Exception as e:
-            logger.warning('For device: %s, %s. Either %s is '
-                           'misspelled or %s is not part of the '
-                           'python environment', device, e,
-                           device_class, device_class)
-            return (self.report_code.INVALID)
+def validate_kwargs(item):
+    """
+    Validates the kwargs of an item
+    """
+    return dict((key, create_arg(item, val))
+                for key, val in item.kwargs.items())
 
-    def validate_enforce(self, item):
-        """
-        Validates using enforce_value() from EntryInfo class
-        If the attributes are malformed the entry = container(**item)
-        will fail, thus the enforce_value() will only apply to the
-        ones that were successfully initialized
 
-        Parameters
-        ----------
-        item: dict
-            An entry in the database
-        """
-        container = registry[item.get('type')]
-        name = item.get('name')
-        if container:
-            for info in container.entry_info:
-                try:
-                    info.enforce_value(dict(item)[info.key])
-                    return self.report_code.SUCCESS
-                except Exception as e:
-                    logger.info('Invalid value %s, %s', info, e)
-                    return self.report_code.INVALID
-        else:
-            logger.warning('Item %s is missing the container', name)
-            return self.report_code.MISSING
+def validate_import_class(item=None):
+    """
+    Validate the device_class of an item
 
-    def check_extra_attributes(self, database_path):
-        """
-        Checks the entries that have extra attributes
+    Parameters
+    ----------
+    item: dict
+        An entry in the database
+    """
+    device_class = item.get('device_class')
+    device = item.get('name')
 
-        Parameters
-        ----------
-        database_path: str
-            Path to the database to be validated
+    if not device_class:
+        logger.warning('Detected a None value for %s. '
+                       'The device_class cannot be None', device)
+        return ReportCode.MISSING
+    if '.' not in device_class:
+        logger.warning('Device class invalid %s for item %s',
+                       device_class, item)
+        return ReportCode.INVALID
 
-        """
-        client = Client(path=database_path)
-        items = client.all_items
+    try:
+        import_class(device_class)
+        return ReportCode.SUCCESS
+    except Exception as e:
+        logger.warning('For device: %s, %s. Either %s is '
+                       'misspelled or %s is not part of the '
+                       'python environment', device, e,
+                       device_class, device_class)
+        return (ReportCode.INVALID)
 
-        print_report_message('EXTRA ATTRIBUTES')
+
+def validate_enforce(item):
+    """
+    Validates using enforce_value() from EntryInfo class
+    If the attributes are malformed the entry = container(**item)
+    will fail, thus the enforce_value() will only apply to the
+    ones that were successfully initialized
+
+    Parameters
+    ----------
+    item: dict
+        An entry in the database
+    """
+    container = registry[item.get('type')]
+    name = item.get('name')
+    if container:
+        for info in container.entry_info:
+            try:
+                info.enforce_value(dict(item)[info.key])
+                return ReportCode.SUCCESS
+            except Exception as e:
+                logger.info('Invalid value %s, %s', info, e)
+                return ReportCode.INVALID
+    else:
+        logger.warning('Item %s is missing the container', name)
+        return ReportCode.MISSING
+
+
+def check_extra_attributes(database_path):
+    """
+    Checks the entries that have extra attributes
+
+    Parameters
+    ----------
+    database_path: str
+        Path to the database to be validated
+
+    """
+    client = Client(path=database_path)
+    items = client.all_items
+
+    print_report_message('EXTRA ATTRIBUTES')
+    for item in items:
+        validate_extra_attributes(item)
+
+
+def validate_extra_attributes(item):
+    """
+    Validate items that have extra attributes
+
+    Parameters
+    ----------
+    item: dict
+        An entry in the database
+    """
+    attr_list = []
+    extr_list = ['creation', 'last_edit', '_id', 'type']
+
+    for (key, value), s in zip(item.items(), item.entry_info):
+        attr_list.append(s.key)
+
+    key_list = [key for key, value in item.items()]
+    diff = set(key_list) - set(attr_list) - set(extr_list)
+    if diff:
+        logger.warning('Device %s has extra attributes %s',
+                       item.name, diff)
+        return ReportCode.EXTRAS
+
+    return ReportCode.SUCCESS
+
+
+def parse_database(database_path):
+    """
+    Validates if an entry is a valid entry in the database
+
+    Parameters
+    ----------
+    database_path: str
+        Path to the database to be validated
+
+    """
+    client = Client(path=database_path)
+    items = client.all_items
+
+    print_report_message('VALIDATING ENTRIES')
+    # this will fail to validate because the missing list will have
+    # the defaults match...... which is not good.....
+    # for example: if Default for class_devices: pcdsdevices.pimm.Vacuum
+    # and the default is used, then this will not work fine....
+    # we might want to do something like this maybe in _validate_device:
+    # missing = [info.key for info in device.entry_info
+    #   if not info.optional and
+    #   info.default == getattr(device, info.key) and info.default == None]
+    client.validate()
+
+    if items:
+        print_report_message('VALIDATING ARGS & KWARGS')
         for item in items:
-            self.validate_extra_attributes(item)
+            args = validate_args(item)
+            kwargs = validate_kwargs(item)
+            try:
+                cls = import_class(item.device_class)
+                cls(*args, **kwargs)
+            except Exception as e:
+                logger.warning('When validating args and kwargs, '
+                               'the item %s errored with: %s', item, e)
 
-    def validate_extra_attributes(self, item):
-        """
-        Validate items that have extra attributes
+    else:
+        logger.error('Cannot run a set of tests becase the '
+                     'items could not be loaded.')
 
-        Parameters
-        ----------
-        item: dict
-            An entry in the database
-        """
-        attr_list = []
-        extr_list = ['creation', 'last_edit', '_id', 'type']
+    print_report_message('VALIDATING ENFORCE VALUES')
+    for item in client.backend.all_devices:
+        it = client.find_document(**item)
+        validate_enforce(it)
 
-        for (key, value), s in zip(item.items(), item.entry_info):
-            attr_list.append(s.key)
+    # validate import_class
+    print_report_message('VALIDATING DEVICE CLASS')
+    for item in items:
+        validate_import_class(item)
 
-        key_list = [key for key, value in item.items()]
-        diff = set(key_list) - set(attr_list) - set(extr_list)
-        if diff:
-            logger.warning('Device %s has extra attributes %s',
-                           item.name, diff)
-            return self.report_code.EXTRAS
-
-        return self.report_code.SUCCESS
-
-    def parse_database(self, database_path):
-        """
-        Validates if an entry is a valid entry in the database
-
-        Parameters
-        ----------
-        database_path: str
-            Path to the database to be validated
-
-        """
-        client = Client(path=database_path)
-        items = client.all_items
-
-        print_report_message('VALIDATING ENTRIES')
-        # this will fail to validate because the missing list will have
-        # the defaults match...... which is not good.....
-        # for example: if Default for class_devices: pcdsdevices.pimm.Vacuum
-        # and the default is used, then this will not work fine....
-        # we might want to do something like this maybe in _validate_device:
-        # missing = [info.key for info in device.entry_info
-        #   if not info.optional and
-        #   info.default == getattr(device, info.key) and info.default == None]
-        client.validate()
-
-        if items:
-            print_report_message('VALIDATING ARGS & KWARGS')
-            for item in items:
-                args = self.validate_args(item)
-                kwargs = self.validate_kwargs(item)
-                try:
-                    cls = import_class(item.device_class)
-                    cls(*args, **kwargs)
-                except Exception as e:
-                    logger.warning('When validating args and kwargs, '
-                                   'the item %s errored with: %s', item, e)
-
-        else:
-            logger.error('Cannot run a set of tests becase the '
-                         'items could not be loaded.')
-
-        print_report_message('VALIDATING ENFORCE VALUES')
-        for item in client.backend.all_devices:
-            it = client.find_document(**item)
-            self.validate_enforce(it)
-
-        # validate import_class
-        print_report_message('VALIDATING DEVICE CLASS')
-        for item in items:
-            self.validate_import_class(item)
-
-        print_report_message('VALIDATING CONTAINER')
-        for item in client.backend.all_devices:
-            it = client.find_document(**item)
-            self.validate_container(it)
+    print_report_message('VALIDATING CONTAINER')
+    for item in client.backend.all_devices:
+        it = client.find_document(**item)
+        validate_container(it)

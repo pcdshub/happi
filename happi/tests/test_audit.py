@@ -4,12 +4,13 @@ from unittest.mock import patch, call
 import happi
 import json
 from happi.audit import Audit, ReportCode
+import happi.audit as audit
 import pytest
 import logging
 
 
 logger = logging.getLogger(__name__)
-audit = Audit()
+audit_class = Audit()
 report_code = ReportCode.NO_CODE
 
 ITEMS = json.loads("""{
@@ -200,20 +201,20 @@ class TestProcessArgs:
     args3 = argparse.Namespace(cmd='audit', extras=False, file=None,
                                path=None, verbose=False, version=False)
 
-    @patch('happi.audit.Audit.validate_file', return_value=True)
+    @patch('happi.audit.validate_file', return_value=True)
     def test_check_extra_attributes_called(self, mock_valid_file):
-        with patch('happi.audit.Audit.check_extra_attributes') as mock:
+        with patch('happi.audit.check_extra_attributes') as mock:
             audit.process_database(self.args.file, True)
             mock.assert_called_once()
 
-    @patch('happi.audit.Audit.validate_file', return_value=True)
+    @patch('happi.audit.validate_file', return_value=True)
     def test_check_parse_database_called(self, mock_valid_file):
-        with patch('happi.audit.Audit.parse_database') as mock:
+        with patch('happi.audit.parse_database') as mock:
             audit.process_database(self.args2.file, False)
             mock.assert_called_once()
 
     def test_process_database_with_invalid_file(self, json_db):
-        with patch('happi.audit.Audit.validate_file', return_value=False):
+        with patch('happi.audit.validate_file', return_value=False):
             with pytest.raises(SystemExit) as sys_e:
                 audit.process_database(json_db, False)
                 assert sys_e.type == SystemExit
@@ -227,23 +228,23 @@ class TestValidateRun:
                                path=None, verbose=False, version=False)
 
     def test_process_database_with_args_file(self):
-        with patch('happi.audit.Audit.process_database') as mock:
-            audit.run(self.args)
+        with patch('happi.audit.process_database') as mock:
+            audit_class.run(self.args)
             assert mock.called
 
     @patch('happi.client.Client.find_config', return_value='happi.cfg')
     @patch('configparser.ConfigParser.get', return_value='db.json')
-    @patch('happi.audit.Audit.process_database')
+    @patch('happi.audit.process_database')
     def test_process_database_called_with_config(self, mock_process_database,
                                                  mock_parser, mock_config):
-        audit.run(self.args3)
+        audit_class.run(self.args3)
         mock_process_database.assert_called_once()
 
     def test_find_config_called_exit(self):
         with patch('happi.client.Client.find_config',
                    return_value=None):
             with pytest.raises(SystemExit) as sys_e:
-                audit.run(self.args3)
+                audit_class.run(self.args3)
                 assert sys_e.e.type == SystemExit
                 assert sys_e.value.code == 1
 
@@ -252,7 +253,7 @@ class TestValidateRun:
     @patch('happi.client.Client.find_config',
            return_value='happi.cfg')
     def test_find_and_parse_config_called(self, parse_mock, find_mock):
-        audit.run(self.args3)
+        audit_class.run(self.args3)
         find_mock.assert_called_once()
         parse_mock.assert_called_once()
 
@@ -261,7 +262,7 @@ class TestValidateRun:
     @patch('happi.client.Client.find_config',
            return_value='happi.cfg')
     def test_parse_config_return(self, parse_mock, find_mock):
-        res = audit.run(self.args3)
+        res = audit_class.run(self.args3)
         parse_mock.assert_called_once()
         assert res is None
 
@@ -311,7 +312,7 @@ class TestExtraAttributes:
         calls = []
         for i in items:
             calls.append(call(i))
-        with patch('happi.audit.Audit.validate_extra_attributes') as m:
+        with patch('happi.audit.validate_extra_attributes') as m:
             audit.check_extra_attributes(json_db)
             m.assert_has_calls(calls, any_order=True)
 
@@ -370,10 +371,10 @@ class TestParseDatabase:
     Simple test to make sure some functions are called
     """
     @patch('happi.client.Client.validate')
-    @patch('happi.audit.Audit.validate_args')
-    @patch('happi.audit.Audit.validate_kwargs')
-    @patch('happi.audit.Audit.validate_enforce')
-    @patch('happi.audit.Audit.validate_container')
+    @patch('happi.audit.validate_args')
+    @patch('happi.audit.validate_kwargs')
+    @patch('happi.audit.validate_enforce')
+    @patch('happi.audit.validate_container')
     def test_parse_database(self, v_c, enf, kwargs, args,
                             validate, json_db, items, raw_items):
 
