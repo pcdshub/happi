@@ -201,6 +201,11 @@ class TestProcessArgs:
     args3 = argparse.Namespace(cmd='audit', extras=False, file=None,
                                path=None, verbose=False, version=False)
 
+    @pytest.fixture(scope='class')
+    def client(happi_config):
+        client = happi.client.Client.from_config(cfg=happi_config)
+        return client
+
     @patch('happi.audit.validate_file', return_value=True)
     def test_check_extra_attributes_called(self, mock_valid_file):
         with patch('happi.audit.check_extra_attributes') as mock:
@@ -208,17 +213,10 @@ class TestProcessArgs:
             mock.assert_called_once()
 
     @patch('happi.audit.validate_file', return_value=True)
-    def test_check_parse_database_called(self, mock_valid_file):
-        with patch('happi.audit.parse_database') as mock:
+    def test_check_audit_information_from_client_called(self, mock_valid_file):
+        with patch('happi.audit.audit_information_from_client') as mock:
             audit.process_database(self.args2.file, False)
             mock.assert_called_once()
-
-    def test_process_database_with_invalid_file(self, json_db):
-        with patch('happi.audit.validate_file', return_value=False):
-            with pytest.raises(SystemExit) as sys_e:
-                audit.process_database(json_db, False)
-                assert sys_e.type == SystemExit
-                assert sys_e.value.code == 1
 
 
 class TestValidateRun:
@@ -227,44 +225,20 @@ class TestValidateRun:
     args3 = argparse.Namespace(cmd='audit', extras=False, file=None,
                                path=None, verbose=False, version=False)
 
+    def test_args_with_invalid_file_path(self):
+        with patch('happi.audit.validate_file', return_value=False):
+            res = audit_class.run(self.args)
+        assert res is None
+
     def test_process_database_with_args_file(self):
         with patch('happi.audit.process_database') as mock:
             audit_class.run(self.args)
             assert mock.called
 
-    @patch('happi.client.Client.find_config', return_value='happi.cfg')
-    @patch('configparser.ConfigParser.get', return_value='db.json')
     @patch('happi.audit.process_database')
-    def test_process_database_called_with_config(self, mock_process_database,
-                                                 mock_parser, mock_config):
+    def test_process_database_called_with_config(self, mock_process_database):
         audit_class.run(self.args3)
         mock_process_database.assert_called_once()
-
-    def test_find_config_called_exit(self):
-        with patch('happi.client.Client.find_config',
-                   return_value=None):
-            with pytest.raises(SystemExit) as sys_e:
-                audit_class.run(self.args3)
-                assert sys_e.e.type == SystemExit
-                assert sys_e.value.code == 1
-
-    @patch('happi.client.Client.parse_config_file',
-           return_value={'path': 'db.json'})
-    @patch('happi.client.Client.find_config',
-           return_value='happi.cfg')
-    def test_find_and_parse_config_called(self, parse_mock, find_mock):
-        audit_class.run(self.args3)
-        find_mock.assert_called_once()
-        parse_mock.assert_called_once()
-
-    @patch('happi.client.Client.parse_config_file',
-           return_value={'path': ''})
-    @patch('happi.client.Client.find_config',
-           return_value='happi.cfg')
-    def test_parse_config_return(self, parse_mock, find_mock):
-        res = audit_class.run(self.args3)
-        parse_mock.assert_called_once()
-        assert res is None
 
 
 class TestValidateFileTests:
@@ -366,7 +340,7 @@ class TestValidateImportClass:
         assert res_list == expected
 
 
-class TestParseDatabase:
+class TestAuditInformationFromClient:
     """
     Simple test to make sure some functions are called
     """
@@ -375,14 +349,14 @@ class TestParseDatabase:
     @patch('happi.audit.validate_kwargs')
     @patch('happi.audit.validate_enforce')
     @patch('happi.audit.validate_container')
-    def test_parse_database(self, v_c, enf, kwargs, args,
-                            validate, json_db, items, raw_items):
+    def test_audit_info_from_client(self, v_c, enf, kwargs, args,
+                                    validate, json_db, items, raw_items):
 
         v_c_calls = []
         for i in items:
             v_c_calls.append(call(i))
         # should be called 5 time for the 5 items in json_db
-        audit.parse_database(json_db)
+        audit.audit_information_from_client(json_db)
 
         v_c.assert_called()
         assert v_c.call_count == 5

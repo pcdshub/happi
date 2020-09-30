@@ -4,7 +4,6 @@ This module defines the ``happi audit`` command line utility
 from abc import ABC, abstractmethod
 import logging
 import os
-import sys
 from happi.client import Client
 from happi.loader import import_class, create_arg
 from happi.containers import registry
@@ -93,27 +92,17 @@ class Audit(Command):
         self._extras = args.extras
 
         if args.file is not None:
-            process_database(database_path=args.file, extras=self._extras)
+            if validate_file(args.file):
+                process_database(database_path=args.file, extras=self._extras)
+            else:
+                logger.error('The database %s file path '
+                             'could not be validated', args.file)
+                return
         else:
             """
             Validate the database defined in happi.cfg file
             """
-            path_to_config = Client.find_config()
-
-            if path_to_config:
-                logger.info('Using Client cfg path %s ', path_to_config)
-                db_kwargs = Client.parse_config_file(path_to_config)
-                self._database_path = db_kwargs.get('path')
-                if self._database_path:
-                    process_database(database_path=self._database_path,
-                                     extras=self._extras)
-                else:
-                    logger.error('Could not get the database path '
-                                 'from the configuration file')
-                    return
-            else:
-                logger.error('Could not find the Happi Configuration file')
-                sys.exit(1)
+            process_database(extras=self._extras)
 
 
 def process_database(database_path=None, extras=False):
@@ -122,16 +111,10 @@ def process_database(database_path=None, extras=False):
     If extras is True, it will check for extra attributes only, otherwise
     it will just proceed with parsing and validating the database call.
     """
-    if validate_file(database_path):
-        logger.info('Using database file at %s ', database_path)
-        if extras:
-            check_extra_attributes(database_path)
-        else:
-            parse_database(database_path)
+    if extras:
+        check_extra_attributes(database_path)
     else:
-        logger.error('The database %s file path '
-                     'could not be validated', database_path)
-        sys.exit(1)
+        audit_information_from_client(database_path)
 
 
 def validate_file(file_path):
@@ -248,7 +231,7 @@ def validate_enforce(item):
         return ReportCode.MISSING
 
 
-def check_extra_attributes(database_path):
+def check_extra_attributes(database_path=None):
     """
     Checks the entries that have extra attributes
 
@@ -258,7 +241,10 @@ def check_extra_attributes(database_path):
         Path to the database to be validated
 
     """
-    client = Client(path=database_path)
+    if database_path is not None:
+        client = Client(path=database_path)
+    else:
+        client = Client.from_config()
     items = client.all_items
 
     print_report_message('EXTRA ATTRIBUTES')
@@ -291,7 +277,7 @@ def validate_extra_attributes(item):
     return ReportCode.SUCCESS
 
 
-def parse_database(database_path):
+def audit_information_from_client(database_path=None):
     """
     Validates if an entry is a valid entry in the database
 
@@ -301,7 +287,11 @@ def parse_database(database_path):
         Path to the database to be validated
 
     """
-    client = Client(path=database_path)
+    if database_path is not None:
+        client = Client(path=database_path)
+    else:
+        client = Client.from_config()
+
     items = client.all_items
 
     print_report_message('VALIDATING ENTRIES')
