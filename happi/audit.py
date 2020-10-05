@@ -3,7 +3,6 @@ This module defines the ``happi audit`` command line utility
 """
 from abc import ABC, abstractmethod
 import logging
-import os
 from happi.client import Client
 from happi.loader import import_class, create_arg
 from happi.containers import registry
@@ -69,17 +68,9 @@ class Audit(Command):
     def __init__(self):
         self.name = 'audit'
         self.help = "Inspect a database's entries"
-        self.report_code = ReportCode.NO_CODE
         self._extras = False
-        self._database_path = None
 
     def add_args(self, cmd_parser):
-        cmd_parser.add_argument(
-            "--file",
-            help='Path to the json file (database) to be audited. '
-                 'If this option is not provided it will use the '
-                 'Happi Configuration file instead.'
-        )
         cmd_parser.add_argument(
             "--extras", action='store_true', default=False,
             help='Check specifically for extra attributes'
@@ -90,48 +81,41 @@ class Audit(Command):
         Parses the cli arguments
         """
         self._extras = args.extras
-
-        if args.file is not None:
-            if validate_file(args.file):
-                process_database(database_path=args.file, extras=self._extras)
-            else:
-                logger.error('The database %s file path '
-                             'could not be validated', args.file)
-                return
-        else:
-            """
-            Validate the database defined in happi.cfg file
-            """
-            process_database(extras=self._extras)
+        process_database(extras=self._extras)
 
 
-def process_database(database_path=None, extras=False):
+def process_database(extras=False):
     """
-    Checks to see if a valid path to database was provided.
     If extras is True, it will check for extra attributes only, otherwise
     it will just proceed with parsing and validating the database call.
     """
+    try:
+        client = Client.from_config()
+    except Exception as e:
+        logger.error(e)
+        return
+
     if extras:
-        check_extra_attributes(database_path)
+        check_extra_attributes(client)
     else:
-        audit_information_from_client(database_path)
+        audit_information_from_client(client)
 
 
-def validate_file(file_path):
-    """
-    Tests whether a path is a regular file
+# def validate_file(file_path):
+#     """
+#     Tests whether a path is a regular file
 
-    Parameters
-    -----------
-    file_path: str
-        File path to be validate
+#     Parameters
+#     -----------
+#     file_path: str
+#         File path to be validate
 
-    Returns
-    -------
-    bool
-        To indicate whether the file is a valid regular file
-    """
-    return os.path.isfile(file_path)
+#     Returns
+#     -------
+#     bool
+#         To indicate whether the file is a valid regular file
+#     """
+#     return os.path.isfile(file_path)
 
 
 def validate_container(item):
@@ -231,20 +215,14 @@ def validate_enforce(item):
         return ReportCode.MISSING
 
 
-def check_extra_attributes(database_path=None):
+def check_extra_attributes(client=None):
     """
     Checks the entries that have extra attributes
 
     Parameters
     ----------
-    database_path: str
-        Path to the database to be validated
-
+    client: Client
     """
-    if database_path is not None:
-        client = Client(path=database_path)
-    else:
-        client = Client.from_config()
     items = client.all_items
 
     print_report_message('EXTRA ATTRIBUTES')
@@ -277,7 +255,7 @@ def validate_extra_attributes(item):
     return ReportCode.SUCCESS
 
 
-def audit_information_from_client(database_path=None):
+def audit_information_from_client(client=None):
     """
     Validates if an entry is a valid entry in the database
 
@@ -287,11 +265,6 @@ def audit_information_from_client(database_path=None):
         Path to the database to be validated
 
     """
-    if database_path is not None:
-        client = Client(path=database_path)
-    else:
-        client = Client.from_config()
-
     items = client.all_items
 
     print_report_message('VALIDATING ENTRIES')
