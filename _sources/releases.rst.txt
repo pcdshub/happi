@@ -2,6 +2,21 @@
  Release History
 =================
 
+v1.8.0 (2020-10-07)
+===================
+
+Features
+--------
+- Adds bash/fzf-based fuzzy finding of happi items with corresponding
+  activate/deactivate scripts.
+- Adds ``happi search --json`` option to output JSON instead of a table.
+
+Maintenance
+-----------
+- Move IPython import to where it's needed in ``happi load``, saving
+  approximately half a second on any other ``happi`` CLI invocation.
+
+
 v1.7.2 (2020-09-17)
 ===================
 
