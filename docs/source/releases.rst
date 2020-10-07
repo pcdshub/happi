@@ -2,6 +2,21 @@
  Release History
 =================
 
+v1.8.0 (2020-10-07)
+===================
+
+Features
+--------
+- Adds ``happi search --json`` option to output JSON instead of a table.
+- Adds activate/deactivate scripts which can be used in conjunction with
+  a fuzzy finder called ``fzf``.
+
+Maintenance
+-----------
+- Move IPython import to where it's needed in ``happi load``, saving
+  approximately half a second on any other ``happi`` CLI invocation.
+
+
 v1.7.2 (2020-09-17)
 ===================
 
