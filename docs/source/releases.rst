@@ -7,7 +7,7 @@ v1.8.0 (2020-10-07)
 
 Features
 --------
-- Adds bash/fzf-based fuzzy finding of happi items with cooresponding
+- Adds bash/fzf-based fuzzy finding of happi items with corresponding
   activate/deactivate scripts.
 - Adds ``happi search --json`` option to output JSON instead of a table.
 
