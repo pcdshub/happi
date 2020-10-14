@@ -1,15 +1,234 @@
 """
 Backend implementation for parsing the Questionnaire
 """
-import re
+import functools
 import logging
+import re
+from typing import Optional
 
 from psdm_qs_cli import QuestionnaireClient
 
-from .json_db import JSONBackend
 from ..errors import DatabaseError
+from .json_db import JSONBackend
 
 logger = logging.getLogger(__name__)
+
+
+class RequiredKeyError(KeyError):
+    """Required key not found in questionnaire."""
+    ...
+
+
+class QuestionnaireHelper:
+    device_translations = {
+        'motors': 'Motor',
+        'trig': 'Trigger',
+        'ao': 'Acromag',
+        'ai': 'Acromag'
+    }
+
+    def __init__(self, client: QuestionnaireClient, experiment: str):
+        self._client = client
+        self.experiment = experiment
+        self.experiment_to_proposal = client.getExpName2URAWIProposalIDs()
+
+    @property
+    def experiment(self) -> str:
+        """The experiment name """
+        return self._experiment
+
+    @experiment.setter
+    def experiment(self, experiment: str):
+        self._experiment = experiment
+
+        # Proposals are per-experiment: clear the cache.
+        self.get_proposal_list.cache_clear()
+        self.get_run_details.cache_clear()
+
+    @property
+    def proposal(self):
+        """Get the proposal number for the configured experiment."""
+        try:
+            return self.experiment_to_proposal[self.experiment]
+        except KeyError:
+            # Rare case for debug/daq experiments, roll with it for now
+            return self.experiment
+
+    @property
+    def run_number(self):
+        """Get the run number from the experiment."""
+        if len(self.experiment) <= 2:
+            raise RuntimeError(f'Experiment invalid: {self.experiment}')
+
+        run_number = self.experiment[-2:]
+        return f'run{run_number}'
+
+    @functools.lru_cache()
+    def get_proposal_list(self, run_number: str) -> dict:
+        """
+        Get the proposal list for a given run number.
+
+        Parameters
+        ----------
+        run_number : str
+            The run number.
+
+        Raises
+        ------
+        DatabaseError
+        """
+        try:
+            logger.debug("Requesting list of proposals in %s", run_number)
+            return self._client.getProposalsListForRun(run_number)
+        except KeyError as ex:
+            # Invalid proposal id for this run
+            raise DatabaseError(
+                f'Unable to find proposal {self.proposal}'
+            ) from ex
+        except Exception as ex:
+            # Find if our exception gave an HTTP status code and interpret it
+            status_code = ex.args[1] if len(ex.args) >= 2 else ''
+            if status_code == 500:
+                # No information found from run
+                reason = f'No run id found for {run_number}'
+            elif status_code == 401:
+                # Invalid credentials
+                reason = 'Invalid credentials'
+            else:
+                # Unrecognized error
+                reason = 'Unable to find run information'
+            raise DatabaseError(reason) from ex
+
+    def get_beamline_from_run(self, run_number: str) -> str:
+        """
+        Determine the beamline from a proposal + run_number.
+
+        Parameters
+        ----------
+        run_number : str
+            The run number.
+
+        Returns
+        -------
+        beamline : str
+        """
+        return self.get_proposal_list(run_number)[self.proposal]['Instrument']
+
+    @functools.lru_cache()
+    def get_run_details(self, run_number: str) -> dict:
+        """
+        Get details of the run in a raw dictionary.
+        """
+        return self._client.getProposalDetailsForRun(
+            run_number, self.proposal
+        )
+
+    @staticmethod
+    def translate_devices(run_details: dict, table_name: str, class_name: str):
+        pattern = re.compile(rf'pcdssetup-{table_name}-(\d+)-(\w+)')
+
+        devices = {}
+        for field, value in run_details.items():
+            match = pattern.match(field)
+            if match:
+                device_number, name = match.groups()
+
+                if device_number not in devices:
+                    devices[device_number] = {}
+
+                # Add the key information to the specific device dictionary
+                devices[device_number][name] = value
+
+        return devices
+
+    @staticmethod
+    def create_db_item(info: dict,
+                       beamline: str,
+                       class_name: str
+                       ) -> dict:
+        """
+        Create one database entry given translated questionnaire information.
+
+        Parameters
+        ----------
+        """
+        # Shallow-copy to not modify the original:
+        info = dict(info)
+
+        name = info.pop('name')
+
+        # Create our happi JSON-backend equivalent:
+        entry = {
+            '_id': name,
+            'name': name,
+            'prefix': info['pvbase'],
+            'beamline': beamline,
+            'type': class_name,
+            **info,
+        }
+
+        # Empty strings from the Questionnaire make for invalid entries:
+        for key in {'prefix', 'name'}:
+            if not entry.get(key):
+                raise RequiredKeyError(
+                    f"Unable to create a device without key {key}"
+                )
+
+        return entry
+
+    @staticmethod
+    def to_database(beamline: str,
+                    run_details: dict,
+                    *,
+                    device_translations: Optional[dict] = None
+                    ) -> dict:
+        """
+        Translate a set of run details into a happi-compatible dictionary.
+        """
+
+        happi_db = {}
+        if device_translations is None:
+            device_translations = QuestionnaireHelper.device_translations
+
+        for table_name, class_name in device_translations.items():
+            devices = QuestionnaireHelper.translate_devices(
+                run_details, table_name, class_name)
+
+            if not devices:
+                logger.info(
+                    "No device information found under '%s'", table_name
+                )
+                continue
+
+            for device_number, device_info in devices.items():
+                logger.debug(
+                    '[%s:%s] Found %s', table_name, device_number, device_info
+                )
+                try:
+                    entry = QuestionnaireHelper.create_db_item(
+                        device_number
+                    )
+                except RequiredKeyError:
+                    logger.debug(
+                        'Missing key for %s:%s', table_name, device_number,
+                        exc_info=True
+                    )
+                except Exception as ex:
+                    logger.warning(
+                        'Failed to create a happi database entry from the '
+                        'questionnaire device: %s:%s. %s: %s',
+                        table_name, device_number, ex.__class__.__name__, ex,
+                    )
+                else:
+                    identifier = entry['_id']
+                    if identifier in happi_db:
+                        logger.warning(
+                            'Questionnaire name clash: %s (was: %s now: %s)',
+                            identifier, happi_db[identifier], entry
+                        )
+                    happi_db[identifier] = entry
+
+        return happi_db
 
 
 class QSBackend(JSONBackend):
@@ -35,105 +254,47 @@ class QSBackend(JSONBackend):
     ----------
     expname : str
         The experiment name from the elog, e.g. xcslp1915
+
+    url : str, optional
+        Provide a base URL for the Questionnaire. If left as None the
+        appropriate URL will be chosen based on your authentication method
+
+    use_kerberos : bool, optional
+        Use a Kerberos ticket to login to the Questionnaire. This is the
+        default authentication method
+
+    user : str, optional
+        A username for ws_auth sign-in. If not provided the current login name
+        is used
+
+    pw : str, optional
+        A password for ws_auth sign-in. If not provided a password will be
+        requested
     """
     device_translations = {'motors': 'Motor', 'trig': 'Trigger',
                            'ao': 'Acromag', 'ai': 'Acromag'}
 
-    def __init__(self, expname, **kwargs):
+    def __init__(self, expname, *, url=None, use_kerberos=True, user=None,
+                 pw=None):
         # Create our client and gather the raw information from the client
-        self.qs = QuestionnaireClient(**kwargs)
+        self._client = QuestionnaireClient(
+            url=url, use_kerberos=use_kerberos, user=user, pw=pw
+        )
 
-        # Get the proposal number
-        exp_dict = self.qs.getExpName2URAWIProposalIDs()
+        self.helper = QuestionnaireHelper(self._client)
+
         try:
-            proposal = exp_dict[expname]
-        except KeyError:
-            # Rare case for debug/daq experiments, roll with it for now
-            proposal = expname
-
-        run_no = 'run{}'.format(expname[-2:])
-        try:
-            logger.debug("Requesting list of proposals in %s", run_no)
-            prop_ids = self.qs.getProposalsListForRun(run_no)
-            try:
-                beamline = prop_ids[proposal]['Instrument']
-            except KeyError:
-                # Rare care for debug/daq experiments
-                beamline = prop_ids[expname]['Instrument']
-                proposal = expname
-        # Invalid proposal id for this run
-        except KeyError as exc:
-            raise DatabaseError('Unable to find proposal {}'.format(proposal))\
-                  from exc
-        # Find if our exception gave an HTTP status code and interpret it
-        except Exception as exc:
-            if len(exc.args) > 1:
-                status_code = exc.args[1]
-            else:
-                status_code = ''
-            # No information found from run
-            if status_code == 500:
-                reason = 'No run id found for {}'.format(run_no)
-            # Invalid credentials
-            elif status_code == 401:
-                reason = 'Invalid credentials'
-            # Unrecognized error
-            else:
-                reason = 'Unable to find run information'
-            raise DatabaseError(reason) from exc
-
-        # Interpret the raw information into a happi structured dictionary
-        self.db = dict()
-        logger.debug("Requesting proposal information for %s", proposal)
-        raw = self.qs.getProposalDetailsForRun(run_no, proposal)
-        for table, _class in self.device_translations.items():
-            # Create a regex pattern to find all the appropriate pattern match
-            pattern = re.compile(r'pcdssetup-{}'
-                                 r'-(\d+)-(\w+)'.format(table))
-            # Search for all keys that match the device and store in a
-            # temporary dictionary
-            devices = dict()
-            for field in raw.keys():
-                match = pattern.match(field)
-                if match:
-                    dev_no = match.group(1)
-                    # Create an empty dictionary for the specific device
-                    # information
-                    if dev_no not in devices:
-                        devices[dev_no] = dict()
-                    # Add the key information to the specific device dictionary
-                    devices[dev_no][match.group(2)] = raw[field]
-            # Store the devices as happi items
-            if not devices:
-                logger.info("No device information found under '%s'", table)
-            else:
-                logger.debug("Found %s devices under %s table",
-                             len(devices), table)
-                for num, dev_info in devices.items():
-                    try:
-                        post = {'name': dev_info.pop('name'),
-                                'prefix': dev_info['pvbase'],
-                                'beamline': beamline,
-                                'type': _class,
-                                # TODO: We should not assume that we are using
-                                # the prefix as _id. Other backends do not make
-                                # this assumption. This will require moving the
-                                # _id configuration from Client to Backend
-                                '_id': dev_info.pop('pvbase')}
-                        # Add extraneous metadata
-                        post.update(dev_info)
-                        # Check that the we haven't received empty strings from
-                        # the Questionnaire
-                        for key in ['prefix', 'name']:
-                            if not post.get(key):
-                                raise Exception("Unable to create a device "
-                                                " without %s" % key)
-                    except Exception:
-                        logger.warning("Unable to create an object from "
-                                       "Questionnaire table %s row %s",
-                                       table, num)
-                    else:
-                        self.db[post['_id']] = post
+            run_number = self.helper.run_number
+            beamline = self.helper.get_beamline_from_run(run_number)
+            run_details = self.helper.get_run_details(run_number)
+            self.db = self.helper.to_database(
+                beamline=beamline,
+                run_details=run_details,
+                device_translations=self.device_translations
+            )
+        except Exception:
+            logger.error('Failed to load the questionnaire', exc_info=True)
+            self.db = {}
 
     def initialize(self):
         """
