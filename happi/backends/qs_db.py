@@ -32,6 +32,16 @@ class QuestionnaireHelper:
         self._experiment = None
         self.experiment_to_proposal = client.getExpName2URAWIProposalIDs()
 
+    def __repr__(self):
+        try:
+            return (
+                f'<{self.__class__.__name__} experiment={self.experiment} '
+                f'run_number={self.run_number} proposal={self.proposal} '
+                f'beamline={self.beamline}>'
+            )
+        except Exception:
+            return f'<{self.__class__.__name__} experiment={self.experiment}>'
+
     @property
     def experiment(self) -> str:
         """The experiment name """
@@ -67,19 +77,15 @@ class QuestionnaireHelper:
         return f'run{run_number}'
 
     @functools.lru_cache()
-    def get_proposal_list(self, run_number: str) -> dict:
+    def get_proposal_list(self) -> dict:
         """
         Get the proposal list for a given run number.
-
-        Parameters
-        ----------
-        run_number : str
-            The run number.
 
         Raises
         ------
         DatabaseError
         """
+        run_number = self.run_number
         try:
             logger.debug("Requesting list of proposals in %s", run_number)
             return self._client.getProposalsListForRun(run_number)
@@ -102,28 +108,25 @@ class QuestionnaireHelper:
                 reason = 'Unable to find run information'
             raise DatabaseError(reason) from ex
 
-    def get_beamline_from_run(self, run_number: str) -> str:
+    @property
+    def beamline(self) -> str:
         """
         Determine the beamline from a proposal + run_number.
-
-        Parameters
-        ----------
-        run_number : str
-            The run number.
 
         Returns
         -------
         beamline : str
         """
-        return self.get_proposal_list(run_number)[self.proposal]['Instrument']
+        proposals = self.get_proposal_list()
+        return proposals[self.proposal]['Instrument']
 
     @functools.lru_cache()
-    def get_run_details(self, run_number: str) -> dict:
+    def get_run_details(self) -> dict:
         """
         Get details of the run in a raw dictionary.
         """
         return self._client.getProposalDetailsForRun(
-            run_number, self.proposal
+            self.run_number, self.proposal
         )
 
     @staticmethod
@@ -158,7 +161,9 @@ class QuestionnaireHelper:
         # Shallow-copy to not modify the original:
         info = dict(info)
 
-        name = info.pop('name')
+        name = info.pop('name', None)
+        if not name:
+            raise RequiredKeyError('Unable to create an item without a name')
 
         # Create our happi JSON-backend equivalent:
         entry = {
@@ -174,7 +179,7 @@ class QuestionnaireHelper:
         for key in {'prefix', 'name'}:
             if not entry.get(key):
                 raise RequiredKeyError(
-                    f"Unable to create a device without key {key}"
+                    f"Unable to create an item without key {key}"
                 )
 
         return entry
@@ -203,13 +208,13 @@ class QuestionnaireHelper:
                 )
                 continue
 
-            for device_number, device_info in devices.items():
+            for device_number, item_info in devices.items():
                 logger.debug(
-                    '[%s:%s] Found %s', table_name, device_number, device_info
+                    '[%s:%s] Found %s', table_name, device_number, item_info
                 )
                 try:
                     entry = QuestionnaireHelper.create_db_item(
-                        device_number
+                        info=item_info, beamline=beamline, class_name=class_name,
                     )
                 except RequiredKeyError:
                     logger.debug(
@@ -293,9 +298,8 @@ class QSBackend(JSONBackend):
             self.helper = QuestionnaireHelper(self._client)
 
             self.helper.experiment = experiment
-            run_number = self.helper.run_number
-            beamline = self.helper.get_beamline_from_run(run_number)
-            run_details = self.helper.get_run_details(run_number)
+            beamline = self.helper.beamline
+            run_details = self.helper.get_run_details()
             return self.helper.to_database(
                 beamline=beamline,
                 run_details=run_details,
