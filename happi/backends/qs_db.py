@@ -19,14 +19,36 @@ class RequiredKeyError(KeyError):
     ...
 
 
-class QuestionnaireHelper:
-    _default_translations = {
-        'motors': 'Motor',
-        'trig': 'Trigger',
-        'ao': 'Acromag',
-        'ai': 'Acromag'
-    }
+# Map of (questionnaire type) to:
+#   1. Device class (or factory function) and
+#   2. Happi container
 
+DEFAULT_TRANSLATIONS = {
+    'motors': dict(
+        container='pcdsdevices.happi.containers.Motor',
+        # class_name='pcdsdevices.device_types.Motor',
+        # If unspecified, use the default from the container:
+        class_name=None,
+    ),
+
+    'trig': dict(
+        container='pcdsdevices.happi.containers.Trigger',
+        class_name=None,
+    ),
+
+    'ao': dict(
+        container='pcdsdevices.happi.containers.Acromag',
+        class_name=None,
+    ),
+
+    'ai': dict(
+        container='pcdsdevices.happi.containers.Acromag',
+        class_name=None,
+    ),
+}
+
+
+class QuestionnaireHelper:
     def __init__(self, client: QuestionnaireClient):
         self._client = client
         self._experiment = None
@@ -129,6 +151,26 @@ class QuestionnaireHelper:
             self.run_number, self.proposal
         )
 
+    def as_happi_database(self, translations=None) -> dict:
+        """
+        Based on the current experiment, generate a happi database.
+
+        Parameters
+        ----------
+        translations : dict, optional
+            Translations to use when converting questionnaire items.
+
+        Returns
+        -------
+        db : dict
+            The happi JSON-backend-compatible dictionary.
+        """
+        return self.to_database(
+            beamline=self.beamline,
+            run_details=self.get_run_details(),
+            translations=translations,
+        )
+
     @staticmethod
     def _translate_items(run_details: dict, table_name: str) -> dict:
         """
@@ -165,7 +207,8 @@ class QuestionnaireHelper:
     @staticmethod
     def _create_db_item(info: dict,
                         beamline: str,
-                        class_name: str
+                        class_name: Optional[str],
+                        container: str,
                         ) -> dict:
         """
         Create one database entry given translated questionnaire information.
@@ -181,6 +224,9 @@ class QuestionnaireHelper:
         class_name : str
             The class name to report in the new entry.
 
+        container : str
+            The container name to report in the new entry.
+
         Returns
         -------
         happi_entry : dict
@@ -192,15 +238,28 @@ class QuestionnaireHelper:
         if not name:
             raise RequiredKeyError('Unable to create an item without a name')
 
+        # There are some easy mistakes we can correct for, otherwise
+        # happi validation will fail.
+
+        # 1. A capitalized name:
+        name = name.lower()
+
         # Create our happi JSON-backend equivalent:
         entry = {
             '_id': name,
+            'active': True,
+            'args': ['{{prefix}}'],
+            'beamline': beamline,
+            'kwargs': {'name': '{{name}}'},
+            'lightpath': False,
             'name': name,
             'prefix': info['pvbase'],
-            'beamline': beamline,
-            'type': class_name,
+            'type': container,
             **info,
         }
+
+        if class_name is not None:
+            entry['device_class'] = class_name
 
         # Empty strings from the Questionnaire make for invalid entries:
         for key in {'prefix', 'name'}:
@@ -239,9 +298,9 @@ class QuestionnaireHelper:
 
         happi_db = {}
         if translations is None:
-            translations = QuestionnaireHelper._default_translations
+            translations = DEFAULT_TRANSLATIONS
 
-        for table_name, class_name in translations.items():
+        for table_name, translation in translations.items():
             devices = QuestionnaireHelper._translate_items(
                 run_details, table_name)
 
@@ -257,8 +316,10 @@ class QuestionnaireHelper:
                 )
                 try:
                     entry = QuestionnaireHelper._create_db_item(
-                        info=item_info, beamline=beamline,
-                        class_name=class_name,
+                        info=item_info,
+                        beamline=beamline,
+                        container=translation['container'],
+                        class_name=translation['class_name'],
                     )
                 except RequiredKeyError:
                     logger.debug(
@@ -289,16 +350,16 @@ class QSBackend(JSONBackend):
 
     This backend connects to the LCLS questionnaire and looks at items with the
     key pattern pcds-{}-setup-{}-{}. These fields are then combined and turned
-    into proper happi items. The translation of table name to
-    ``happi.HappiItem`` is determined by the :attr:`.translations` dictionary.
-    The beamline is determined by looking where the proposal was submitted.
+    into proper happi items. The translation of table name to `happi.HappiItem`
+    is determined by the :attr:`.translations` dictionary.  The beamline is
+    determined by looking where the proposal was submitted.
 
     Unlike the other backends, this one is read-only. All changes to the device
     information should be done via the web interface. Finally, in order to
     avoid duplicating any code needed to search the device database, the
-    QSBackend inherits directly from JSONBackend. Many of the functions are
-    unmodified with exception being that this backend merely searchs through an
-    in memory dictionary while the JSONBackend reads from the file before
+    `QSBackend` inherits directly from `JSONBackend`. Many of the methods are
+    unmodified with exception being that this backend merely searches through
+    an in-memory dictionary whereas the `JSONBackend` reads from a file before
     searches.
 
     Parameters
@@ -322,12 +383,7 @@ class QSBackend(JSONBackend):
         A password for ws_auth sign-in. If not provided a password will be
         requested
     """
-    translations = {
-        'motors': 'Motor',
-        'trig': 'Trigger',
-        'ao': 'Acromag',
-        'ai': 'Acromag',
-    }
+    translations = DEFAULT_TRANSLATIONS
 
     def __init__(self, expname, *, url=None, use_kerberos=True, user=None,
                  pw=None):
@@ -343,14 +399,9 @@ class QSBackend(JSONBackend):
         try:
             self.experiment = experiment
             self.helper = QuestionnaireHelper(self._client)
-
             self.helper.experiment = experiment
-            beamline = self.helper.beamline
-            run_details = self.helper.get_run_details()
-            return self.helper.to_database(
-                beamline=beamline,
-                run_details=run_details,
-                translations=self.translations,
+            return self.helper.as_happi_database(
+                translations=self.translations
             )
         except Exception:
             logger.error('Failed to load the questionnaire', exc_info=True)
