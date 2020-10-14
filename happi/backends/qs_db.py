@@ -20,7 +20,7 @@ class RequiredKeyError(KeyError):
 
 
 class QuestionnaireHelper:
-    device_translations = {
+    _default_translations = {
         'motors': 'Motor',
         'trig': 'Trigger',
         'ao': 'Acromag',
@@ -130,7 +130,7 @@ class QuestionnaireHelper:
         )
 
     @staticmethod
-    def _translate_devices(run_details: dict, table_name: str) -> dict:
+    def _translate_items(run_details: dict, table_name: str) -> dict:
         """
         Translate flat questionnaire items into nested dictionaries.
 
@@ -173,7 +173,7 @@ class QuestionnaireHelper:
         Parameters
         ----------
         info : dict
-            Device information from `_translate_devices`.
+            Device information from `_translate_items`.
 
         beamline : str
             The beamline with which to associate the entry.
@@ -215,18 +215,34 @@ class QuestionnaireHelper:
     def to_database(beamline: str,
                     run_details: dict,
                     *,
-                    device_translations: Optional[dict] = None
+                    translations: Optional[dict] = None
                     ) -> dict:
         """
         Translate a set of run details into a happi-compatible dictionary.
+
+        Parameters
+        ----------
+        run_details : dict
+            The run detail dictionary, from `get_run_details`.
+
+        beamline : str
+            The beamline with which to associate the entry.
+
+        translations : dict, optional
+            Translations to use when converting questionnaire items.
+
+        Returns
+        -------
+        db : dict
+            The happi JSON-backend-compatible dictionary.
         """
 
         happi_db = {}
-        if device_translations is None:
-            device_translations = QuestionnaireHelper.device_translations
+        if translations is None:
+            translations = QuestionnaireHelper._default_translations
 
-        for table_name, class_name in device_translations.items():
-            devices = QuestionnaireHelper._translate_devices(
+        for table_name, class_name in translations.items():
+            devices = QuestionnaireHelper._translate_items(
                 run_details, table_name, class_name)
 
             if not devices:
@@ -271,12 +287,11 @@ class QSBackend(JSONBackend):
     """
     Questionniare Backend
 
-    This backend connects to the LCLS questionnaire and looks at devices with
-    the key pattern pcds-{}-setup-{}-{}. These fields are then combined and
-    turned into proper happi devices. The translation of table name to
-    ``happi.HappiItem`` is determined by the :attr:`.device_translations`
-    dictionary. The beamline is determined by looking where the proposal was
-    submitted.
+    This backend connects to the LCLS questionnaire and looks at items with the
+    key pattern pcds-{}-setup-{}-{}. These fields are then combined and turned
+    into proper happi items. The translation of table name to
+    ``happi.HappiItem`` is determined by the :attr:`.translations` dictionary.
+    The beamline is determined by looking where the proposal was submitted.
 
     Unlike the other backends, this one is read-only. All changes to the device
     information should be done via the web interface. Finally, in order to
@@ -307,8 +322,12 @@ class QSBackend(JSONBackend):
         A password for ws_auth sign-in. If not provided a password will be
         requested
     """
-    device_translations = {'motors': 'Motor', 'trig': 'Trigger',
-                           'ao': 'Acromag', 'ai': 'Acromag'}
+    translations = {
+        'motors': 'Motor',
+        'trig': 'Trigger',
+        'ao': 'Acromag',
+        'ai': 'Acromag',
+    }
 
     def __init__(self, expname, *, url=None, use_kerberos=True, user=None,
                  pw=None):
@@ -331,7 +350,7 @@ class QSBackend(JSONBackend):
             return self.helper.to_database(
                 beamline=beamline,
                 run_details=run_details,
-                device_translations=self.device_translations
+                translations=self.translations,
             )
         except Exception:
             logger.error('Failed to load the questionnaire', exc_info=True)
