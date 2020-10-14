@@ -32,7 +32,7 @@ class QuestionnaireHelper:
         self._experiment = None
         self.experiment_to_proposal = client.getExpName2URAWIProposalIDs()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         try:
             return (
                 f'<{self.__class__.__name__} experiment={self.experiment} '
@@ -44,7 +44,7 @@ class QuestionnaireHelper:
 
     @property
     def experiment(self) -> str:
-        """The experiment name """
+        """The experiment name."""
         return self._experiment
 
     @experiment.setter
@@ -79,7 +79,7 @@ class QuestionnaireHelper:
     @functools.lru_cache()
     def get_proposal_list(self) -> dict:
         """
-        Get the proposal list for a given run number.
+        Get the proposal list (a dict, really) for the configured experiment.
 
         Raises
         ------
@@ -130,7 +130,22 @@ class QuestionnaireHelper:
         )
 
     @staticmethod
-    def translate_devices(run_details: dict, table_name: str, class_name: str):
+    def _translate_devices(run_details: dict, table_name: str) -> dict:
+        """
+        Translate flat questionnaire items into nested dictionaries.
+
+        Parameters
+        ----------
+        run_details : dict
+            The run detail dictionary, from `get_run_details`.
+
+        table_name : str
+            The table name (e.g., 'motors' of 'pcdssetup-motors-1-name').
+
+        Returns
+        -------
+        device_info : dict
+        """
         pattern = re.compile(rf'pcdssetup-{table_name}-(\d+)-(\w+)')
 
         devices = {}
@@ -148,15 +163,27 @@ class QuestionnaireHelper:
         return devices
 
     @staticmethod
-    def create_db_item(info: dict,
-                       beamline: str,
-                       class_name: str
-                       ) -> dict:
+    def _create_db_item(info: dict,
+                        beamline: str,
+                        class_name: str
+                        ) -> dict:
         """
         Create one database entry given translated questionnaire information.
 
         Parameters
         ----------
+        info : dict
+            Device information from `_translate_devices`.
+
+        beamline : str
+            The beamline with which to associate the entry.
+
+        class_name : str
+            The class name to report in the new entry.
+
+        Returns
+        -------
+        happi_entry : dict
         """
         # Shallow-copy to not modify the original:
         info = dict(info)
@@ -199,7 +226,7 @@ class QuestionnaireHelper:
             device_translations = QuestionnaireHelper.device_translations
 
         for table_name, class_name in device_translations.items():
-            devices = QuestionnaireHelper.translate_devices(
+            devices = QuestionnaireHelper._translate_devices(
                 run_details, table_name, class_name)
 
             if not devices:
@@ -213,8 +240,9 @@ class QuestionnaireHelper:
                     '[%s:%s] Found %s', table_name, device_number, item_info
                 )
                 try:
-                    entry = QuestionnaireHelper.create_db_item(
-                        info=item_info, beamline=beamline, class_name=class_name,
+                    entry = QuestionnaireHelper._create_db_item(
+                        info=item_info, beamline=beamline,
+                        class_name=class_name,
                     )
                 except RequiredKeyError:
                     logger.debug(
