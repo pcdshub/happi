@@ -11,8 +11,9 @@ logger = logging.getLogger(__name__)
 
 # Conditional import of pymongo, mongomock
 try:
-    from happi.backends.mongo_db import MongoBackend
     from mongomock import MongoClient
+
+    from happi.backends.mongo_db import MongoBackend
     supported_backends = ['json', 'mongo']
 except ImportError as exc:
     logger.warning('Error importing mongomock : -> %s', exc)
@@ -24,6 +25,7 @@ requires_mongo = pytest.mark.skipif('mongo' not in supported_backends,
 # Conditional import of psdm_qs_cli
 try:
     from psdm_qs_cli import QuestionnaireClient
+
     from happi.backends.qs_db import QSBackend
     has_qs_cli = True
 except ImportError as exc:
@@ -134,9 +136,11 @@ def mockqsbackend():
     class MockQuestionnaireClient(QuestionnaireClient):
 
         def getProposalsListForRun(self, run):
-            return {'X534': {'Instrument': 'TST', 'proposal_id': 'X534'},
-                    'LR32': {'Instrument': 'TST', 'proposal_id': 'LR32'},
-                    'LU34': {'Instrument': 'MFX', 'proposal_id': 'LU34'}}
+            return {
+                'X534': {'Instrument': 'TST', 'proposal_id': 'X534'},
+                'LR32': {'Instrument': 'TST', 'proposal_id': 'LR32'},
+                'LU34': {'Instrument': 'MFX', 'proposal_id': 'LU34'},
+            }
 
         def getProposalDetailsForRun(self, run_no, proposal):
             return {
@@ -211,13 +215,15 @@ def mockqsbackend():
                 'pcdssetup-ai-1-device': 'Acromag IP231 16-bit',
                 'pcdssetup-ai-1-name': 'irLed',
                 'pcdssetup-ai-1-purpose': 'IR LED',
-                'pcdssetup-ai-1-pvbase': 'MFX:USR:ai1:0'}
+                'pcdssetup-ai-1-pvbase': 'MFX:USR:ai1:0',
+            }
 
         def getExpName2URAWIProposalIDs(self):
             return {
                 'tstx53416': 'X534',
                 'tstlr3216': 'LR32',
-                'mfxlu3417': 'LU34'}
+                'mfxlu3417': 'LU34',
+            }
 
     with patch('happi.backends.qs_db.QuestionnaireClient') as qs_cli:
         # Replace QuestionnaireClient with our test version
@@ -273,7 +279,7 @@ def three_valves(happi_client):
               'kwargs': {'hi': 'oh hello'},
               }
 
-    for dev in happi_client.all_devices:
+    for dev in happi_client.all_items:
         happi_client.backend.delete(dev['_id'])
 
     valves = dict(

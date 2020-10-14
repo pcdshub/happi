@@ -1,15 +1,16 @@
-import os
 import fcntl
+import os
 import os.path
 
 import pytest
 import simplejson
 
-from .conftest import (requires_questionnaire, requires_mongo,
-                       requires_pcdsdevices)
+from happi import Client
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
-from happi import Client
+
+from .conftest import (requires_mongo, requires_pcdsdevices,
+                       requires_questionnaire)
 
 
 @pytest.fixture(scope='function')
@@ -159,24 +160,24 @@ def test_json_initialize():
     os.remove("testing.json")
 
 
-@pytest.mark.xfail
 @requires_questionnaire
 def test_qs_find(mockqsbackend):
-    assert len(mockqsbackend.find(dict(beamline='TST', multiples=True))) == 14
-    assert len(mockqsbackend.find(dict(name='sam_r', multiples=True))) == 1
+    assert len(list(mockqsbackend.find(dict(beamline='TST')))) == 13
+    assert len(list(mockqsbackend.find(dict(name='sam_r')))) == 1
 
 
-@pytest.mark.xfail
 @requires_questionnaire
 @requires_pcdsdevices
 def test_qsbackend_with_client(mockqsbackend):
-    from pcdsdevices.device_types import Motor, Trigger, Acromag
-
     c = Client(database=mockqsbackend)
-    assert len(c.all_devices) == 14
-    assert all([isinstance(d, Motor) or isinstance(d, Trigger)
-                or isinstance(d, Acromag) for d in c.all_devices])
-    device_types = [device.__class__ for device in c.all_devices]
-    assert device_types.count(Motor) == 6
-    assert device_types.count(Trigger) == 2
-    assert device_types.count(Acromag) == 6
+    assert len(c.all_items) == 13
+    assert all(
+        d.__class__.__name__ in {'Trigger', 'Motor', 'Acromag'}
+        for d in c.all_items
+    )
+    device_types = [device.__class__.__name__ for device in c.all_items]
+    assert device_types.count('Motor') == 6
+    assert device_types.count('Trigger') == 2
+
+    # Acromag: six entries, but one erroneously has the same name
+    assert device_types.count('Acromag') == 5
