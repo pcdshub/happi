@@ -27,9 +27,9 @@ class QuestionnaireHelper:
         'ai': 'Acromag'
     }
 
-    def __init__(self, client: QuestionnaireClient, experiment: str):
+    def __init__(self, client: QuestionnaireClient):
         self._client = client
-        self.experiment = experiment
+        self._experiment = None
         self.experiment_to_proposal = client.getExpName2URAWIProposalIDs()
 
     @property
@@ -48,6 +48,9 @@ class QuestionnaireHelper:
     @property
     def proposal(self):
         """Get the proposal number for the configured experiment."""
+        if self.experiment is None:
+            raise RuntimeError('Experiment unset')
+
         try:
             return self.experiment_to_proposal[self.experiment]
         except KeyError:
@@ -57,7 +60,7 @@ class QuestionnaireHelper:
     @property
     def run_number(self):
         """Get the run number from the experiment."""
-        if len(self.experiment) <= 2:
+        if self.experiment is None or len(self.experiment) <= 2:
             raise RuntimeError(f'Experiment invalid: {self.experiment}')
 
         run_number = self.experiment[-2:]
@@ -281,20 +284,26 @@ class QSBackend(JSONBackend):
             url=url, use_kerberos=use_kerberos, user=user, pw=pw
         )
 
-        self.helper = QuestionnaireHelper(self._client)
+        self.db = self._initialize_database(expname)
 
+    def _initialize_database(self, experiment):
+        """Initialize and convert the questionnaire."""
         try:
+            self.experiment = experiment
+            self.helper = QuestionnaireHelper(self._client)
+
+            self.helper.experiment = experiment
             run_number = self.helper.run_number
             beamline = self.helper.get_beamline_from_run(run_number)
             run_details = self.helper.get_run_details(run_number)
-            self.db = self.helper.to_database(
+            return self.helper.to_database(
                 beamline=beamline,
                 run_details=run_details,
                 device_translations=self.device_translations
             )
         except Exception:
             logger.error('Failed to load the questionnaire', exc_info=True)
-            self.db = {}
+            return {}
 
     def initialize(self):
         """
