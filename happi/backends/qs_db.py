@@ -243,7 +243,7 @@ class QuestionnaireHelper:
 
         for table_name, class_name in translations.items():
             devices = QuestionnaireHelper._translate_items(
-                run_details, table_name, class_name)
+                run_details, table_name)
 
             if not devices:
                 logger.info(
