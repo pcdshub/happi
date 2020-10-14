@@ -33,6 +33,6 @@
    .. autosummary::
    
       ~QSBackend.all_devices
-      ~QSBackend.device_translations
+      ~QSBackend.translations
    
    
