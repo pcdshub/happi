@@ -2,6 +2,22 @@
  Release History
 =================
 
+
+v1.8.1 (2020-10-21)
+===================
+
+Bugfixes
+--------
+- Fix various issues causing questionnaire loads to fail.
+- Fix clarity issues for failed questionnaire loads.
+
+Maintenance
+-----------
+- Break up the questionnaire loading routines into more maintainable
+  chunks, reorganizing and cleaning up the code.
+- Allow introspection of questionnaire state for debugging.
+
+
 v1.8.0 (2020-10-07)
 ===================
 
