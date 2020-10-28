@@ -181,3 +181,25 @@ def test_qsbackend_with_client(mockqsbackend):
 
     # Acromag: six entries, but one erroneously has the same name
     assert device_types.count('Acromag') == 5
+
+
+@requires_questionnaire
+def test_create_epics_archive_file(mockqsbackend):
+    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/'
+    mockqsbackend.helper.create_epics_archive_file(path=dir_path)
+    expected_file = ''.join((dir_path, 'epicsArch_tstlr3216.txt'))
+    expected_list = [
+        '* sam_x', 'TST:USR:MMS:01', '* sam_z', 'TST:USR:MMS:02',
+        '* sam_y', 'TST:USR:MMS:03', '* sam_r', 'TST:USR:MMS:04',
+        '* sam_az', 'TST:USR:MMS:05', '* sam_flip', 'TST:USR:MMS:06',
+        '* overview_trig', 'MFX:REC:EVR:02:TRIG1', '* meniscus_trig',
+        'MFX:REC:EVR:02:TRIG3', '* irled', 'MFX:USR:ai1:0',
+        '* laser_shutter_opo', 'MFX:USR:ao1:6', '* laser_shutter_evo1',
+        'MFX:USR:ao1:7', '* laser_shutter_evo2', 'MFX:USR:ao1:2',
+        '* laser_shutter_evo3', 'MFX:USR:ao1:3']
+    temp_list = [line.rstrip('\n') for line in open(expected_file)]
+    # Check that the file was made
+    assert os.path.exists(expected_file)
+    assert temp_list == expected_list
+    # Cleanup
+    os.remove(expected_file)
