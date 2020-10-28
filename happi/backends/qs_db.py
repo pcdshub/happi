@@ -5,6 +5,7 @@ import functools
 import logging
 import re
 from typing import Optional
+import os
 
 from psdm_qs_cli import QuestionnaireClient
 
@@ -150,6 +151,31 @@ class QuestionnaireHelper:
         return self._client.getProposalDetailsForRun(
             self.run_number, self.proposal
         )
+
+    def create_epics_archive_file(self, path=None):
+        """
+        Create a file with aliases and pvs from the questionnaire.
+        """
+        database = self.as_happi_database()
+        data_list = []
+        for key in database.keys():
+            try:
+                pv = database[key]['prefix']
+            except KeyError:
+                logger.error('Key %s does not have a prefix value', key)
+                continue
+            k = ''.join(('* ', key))
+            data_list.append(k)
+            data_list.append(pv)
+        # path = path or '/cds/group/pcds/dist/pds/xcs/misc/'
+        path = path or '/home/cristina/workspace/happi/'
+        if not os.path.exists(path):
+            raise IOError('Invalid path: %s' % path)
+        exp_name = str(self.experiment)
+        file_path = ''.join((path, 'epicsArch_', exp_name, '.txt'))
+        with open(file_path, 'w') as f:
+            for data in data_list:
+                f.write(f'{data}\n')
 
     def as_happi_database(self, translations=None) -> dict:
         """
