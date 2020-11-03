@@ -10,6 +10,7 @@ from psdm_qs_cli import QuestionnaireClient
 
 from ..errors import DatabaseError
 from .json_db import JSONBackend
+from pcdsdevices.device_types import AcromagChannelOutput, AcromagChannelInput
 
 logger = logging.getLogger(__name__)
 
@@ -38,12 +39,12 @@ DEFAULT_TRANSLATIONS = {
 
     'ao': dict(
         container='pcdsdevices.happi.containers.Acromag',
-        class_name=None,
+        class_name=AcromagChannelOutput,
     ),
 
     'ai': dict(
         container='pcdsdevices.happi.containers.Acromag',
-        class_name=None,
+        class_name=AcromagChannelInput,
     ),
 }
 
@@ -244,6 +245,13 @@ class QuestionnaireHelper:
         # 1. A capitalized name:
         name = name.lower()
 
+        pv = str(info['pvbase'])
+        if info.get('channel'):
+            pv_prefix = ''.join([info['pvbase'], ':', info['channel']])
+            name = ''.join([pv[len(pv)-3:], '_', info['channel']])
+        else:
+            pv_prefix = info['pvbase']
+
         # Create our happi JSON-backend equivalent:
         entry = {
             '_id': name,
@@ -253,7 +261,7 @@ class QuestionnaireHelper:
             'kwargs': {'name': '{{name}}'},
             'lightpath': False,
             'name': name,
-            'prefix': info['pvbase'],
+            'prefix': pv_prefix,
             'type': container,
             **info,
         }
