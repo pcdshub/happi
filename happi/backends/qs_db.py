@@ -10,7 +10,6 @@ from psdm_qs_cli import QuestionnaireClient
 
 from ..errors import DatabaseError
 from .json_db import JSONBackend
-from pcdsdevices.device_types import AcromagChannelOutput, AcromagChannelInput
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +38,12 @@ DEFAULT_TRANSLATIONS = {
 
     'ao': dict(
         container='pcdsdevices.happi.containers.Acromag',
-        class_name=AcromagChannelOutput,
+        class_name='pcdsdevices.device_types.AcromagChannelOutput',
     ),
 
     'ai': dict(
         container='pcdsdevices.happi.containers.Acromag',
-        class_name=AcromagChannelInput,
+        class_name='pcdsdevices.device_types.AcromagChannelInput',
     ),
 }
 
@@ -247,10 +246,12 @@ class QuestionnaireHelper:
 
         pv = str(info['pvbase'])
         if info.get('channel'):
-            pv_prefix = ''.join([info['pvbase'], ':', info['channel']])
-            name = ''.join([pv[len(pv)-3:], '_', info['channel']])
+            # TODO: i don't know if this is fine... or necessary
+            name = ''.join([pv[len(pv) - 3:], '_', info['channel']])
+            ch = info['channel']
+            kwargs = {'name': '{{name}}', 'channel': ch}
         else:
-            pv_prefix = info['pvbase']
+            kwargs = {'name': '{{name}}'}
 
         # Create our happi JSON-backend equivalent:
         entry = {
@@ -258,10 +259,10 @@ class QuestionnaireHelper:
             'active': True,
             'args': ['{{prefix}}'],
             'beamline': beamline,
-            'kwargs': {'name': '{{name}}'},
+            'kwargs': kwargs,
             'lightpath': False,
             'name': name,
-            'prefix': pv_prefix,
+            'prefix': info['pvbase'],
             'type': container,
             **info,
         }
