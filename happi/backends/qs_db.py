@@ -260,6 +260,9 @@ class QuestionnaireHelper:
 
         if class_name is not None:
             entry['device_class'] = class_name
+        else:
+            if info.get('stageidentity') == 'Beckhoff':
+                entry['device_class'] = 'pcdsdevices.device_types.BeckhoffAxis'
 
         # Empty strings from the Questionnaire make for invalid entries:
         for key in {'prefix', 'name'}:
