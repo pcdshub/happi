@@ -244,10 +244,14 @@ class QuestionnaireHelper:
         # 1. A capitalized name:
         name = name.lower()
 
-        pv = str(info['pvbase'])
-        if info.get('channel'):
+        pv_prefix = info['pvbase']
+
+        if class_name and class_name in (
+                'pcdsdevices.device_types.AcromagChannelOutput',
+                'pcdsdevices.device_types.AcromagChannelInput'):
             # TODO: i don't know if this is fine... or necessary
-            name = ''.join([pv[len(pv) - 3:], '_', info['channel']])
+            name = ''.join([pv_prefix[len(pv_prefix) - 3:], '_',
+                           info['channel']])
             ch = info['channel']
             kwargs = {'name': '{{name}}', 'channel': ch}
         else:
@@ -262,7 +266,7 @@ class QuestionnaireHelper:
             'kwargs': kwargs,
             'lightpath': False,
             'name': name,
-            'prefix': info['pvbase'],
+            'prefix': pv_prefix,
             'type': container,
             **info,
         }
@@ -276,7 +280,6 @@ class QuestionnaireHelper:
                 raise RequiredKeyError(
                     f"Unable to create an item without key {key}"
                 )
-
         return entry
 
     @staticmethod

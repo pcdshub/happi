@@ -215,7 +215,8 @@ def mockqsbackend():
                 'pcdssetup-ai-1-device': 'Acromag IP231 16-bit',
                 'pcdssetup-ai-1-name': 'irLed',
                 'pcdssetup-ai-1-purpose': 'IR LED',
-                'pcdssetup-ai-1-pvbase': 'MFX:USR:ai1:0',
+                'pcdssetup-ai-1-pvbase': 'MFX:USR:ai1',
+                'pcdssetup-ai-1-channel': '7',
             }
 
         def getExpName2URAWIProposalIDs(self):

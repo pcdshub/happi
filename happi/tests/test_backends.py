@@ -8,6 +8,7 @@ import simplejson
 from happi import Client
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
+from happi.loader import load_devices
 
 from .conftest import (requires_mongo, requires_pcdsdevices,
                        requires_questionnaire)
@@ -181,3 +182,14 @@ def test_qsbackend_with_client(mockqsbackend):
 
     # Acromag: six entries, but one erroneously has the same name
     assert device_types.count('Acromag') == 5
+
+
+@requires_questionnaire
+@requires_pcdsdevices
+def test_qsbackend_with_acromag(mockqsbackend):
+    c = Client(database=mockqsbackend)
+    d = load_devices(*c.all_devices, pprint=False).__dict__
+    ai1 = d.get('ai1_7')
+    ao1 = d.get('ao1_6')
+    assert ai1.__class__.__name__ == 'AcromagChannelInput'
+    assert ao1.__class__.__name__ == 'AcromagChannelOutput'
