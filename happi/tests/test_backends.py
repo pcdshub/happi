@@ -189,7 +189,7 @@ def test_qsbackend_with_client(mockqsbackend):
 def test_beckoff_axis_device_class(mockqsbackend):
     c = Client(database=mockqsbackend)
     d = load_devices(*c.all_items).__dict__
-    do_not_use = d.get('vh_y_donotuse')
+    do_not_use = d.get('vh_y')
     sam_x = d.get('sam_x')
     assert do_not_use.__class__.__name__ == 'BeckhoffAxis'
     assert sam_x.__class__.__name__ == 'IMS'

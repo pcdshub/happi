@@ -220,7 +220,7 @@ def mockqsbackend():
                 'pcdssetup-motors-11-stageidentity': 'Beckhoff',
                 'pcdssetup-motors-11-location': 'XPP goniometer',
                 'pcdssetup-motors-11-pvbase': 'HXX:VON_HAMOS:MMS:01',
-                'pcdssetup-motors-11-name': 'vh_y_DONOTUSE',
+                'pcdssetup-motors-11-name': 'vh_y',
             }
 
         def getExpName2URAWIProposalIDs(self):
