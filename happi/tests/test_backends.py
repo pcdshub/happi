@@ -8,6 +8,7 @@ import simplejson
 from happi import Client
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
+from happi.loader import load_devices
 
 from .conftest import (requires_mongo, requires_pcdsdevices,
                        requires_questionnaire)
@@ -187,5 +188,8 @@ def test_qsbackend_with_client(mockqsbackend):
 @requires_pcdsdevices
 def test_beckoff_axis_device_class(mockqsbackend):
     c = Client(database=mockqsbackend)
-    do_not_use = c.find_device(name='vh_y_donotuse')
-    do_not_use.device_class == 'pcdsdevices.device_types.BeckhoffAxis'
+    d = load_devices(*c.all_items).__dict__
+    do_not_use = d.get('vh_y_donotuse')
+    sam_x = d.get('sam_x')
+    assert do_not_use.__class__.__name__ == 'BeckhoffAxis'
+    assert sam_x.__class__.__name__ == 'IMS'
