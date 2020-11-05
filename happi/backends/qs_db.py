@@ -43,7 +43,7 @@ def create_ao_ai(name, beamline, class_name, container, info):
     name = ''.join([prefix[len(prefix) - 3:], '_',
                     info['channel']])
     ch = info.get('channel')
-    if ch is None:
+    if not ch:
         raise RequiredKeyError('Unable to create an acromag without a channel')
     kwargs = {'name': '{{name}}', 'channel': ch}
     return create_entry(name, beamline, prefix, kwargs, class_name, container,
@@ -52,11 +52,36 @@ def create_ao_ai(name, beamline, class_name, container, info):
 
 def create_mpod(name, beamline, class_name, container, info):
     """Create the MPOD entry"""
-    pass
+    prefix = info['pvname']
+    # TODO: might need to send the card_prefix in the kwargs, but for now
+    # i am making it up in the MPOD class - don't know if I can take it from
+    # the questionnaire
+    kwargs = {'name': '{{name}}'}
+    return create_entry(name, beamline, prefix, kwargs, class_name, container,
+                        info)
 
 
 def create_entry(name, beamline, prefix, kwargs, class_name, container, info):
-    """Create a happi_entry"""
+    """
+    Create a happi_entry.
+
+    Parameters
+    ----------
+    name : str
+        Item name.
+    beamline : str
+        The beamline with which to associate the entry.
+    prefix : str
+        Epics base PV.
+    kwargs : dict
+        Information to pass through to the device, upon initialization
+    class_name : str
+        The class name to report in the new entry.
+    container : str
+        The container name to report in the new entry.
+    info : dict
+        Device information from `_translate_items`.
+    """
     entry = {
             '_id': name,
             'active': True,
