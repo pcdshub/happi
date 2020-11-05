@@ -19,9 +19,66 @@ class RequiredKeyError(KeyError):
     ...
 
 
+def create_motor(name, beamline, class_name, container, info):
+    """Create a motor entry"""
+    kwargs = {'name': '{{name}}'}
+    prefix = info['pvbase']
+    if info.get('stageidentity') == 'Beckhoff':
+        class_name = 'pcdsdevices.device_types.BeckhoffAxis'
+    return create_entry(name, beamline, prefix, kwargs, class_name, container,
+                        info)
+
+
+def create_trig(name, beamline, class_name, container, info):
+    """Create a trig entry"""
+    kwargs = {'name': '{{name}}'}
+    prefix = info['pvbase']
+    return create_entry(name, beamline, prefix, kwargs, class_name, container,
+                        info)
+
+
+def create_ao_ai(name, beamline, class_name, container, info):
+    """Create an acrommag channel entry"""
+    prefix = info['pvbase']
+    name = ''.join([prefix[len(prefix) - 3:], '_',
+                    info['channel']])
+    ch = info.get('channel')
+    if ch is None:
+        raise RequiredKeyError('Unable to create an acromag without a channel')
+    kwargs = {'name': '{{name}}', 'channel': ch}
+    return create_entry(name, beamline, prefix, kwargs, class_name, container,
+                        info)
+
+
+def create_mpod(name, beamline, class_name, container, info):
+    """Create the MPOD entry"""
+    pass
+
+
+def create_entry(name, beamline, prefix, kwargs, class_name, container, info):
+    """Create a happi_entry"""
+    entry = {
+            '_id': name,
+            'active': True,
+            'args': ['{{prefix}}'],
+            'beamline': beamline,
+            'kwargs': kwargs,
+            'lightpath': False,
+            'name': name,
+            'prefix': prefix,
+            'type': container,
+            **info,
+    }
+    if class_name is not None:
+        entry['device_class'] = class_name
+
+    return entry
+
+
 # Map of (questionnaire type) to:
 #   1. Device class (or factory function) and
 #   2. Happi container
+
 
 DEFAULT_TRANSLATIONS = {
     'motors': dict(
@@ -29,22 +86,34 @@ DEFAULT_TRANSLATIONS = {
         # class_name='pcdsdevices.device_types.Motor',
         # If unspecified, use the default from the container:
         class_name=None,
+        method_call=create_motor,
     ),
 
     'trig': dict(
         container='pcdsdevices.happi.containers.Trigger',
         class_name=None,
+        method_call=create_trig,
+
     ),
 
     'ao': dict(
         container='pcdsdevices.happi.containers.Acromag',
         class_name='pcdsdevices.device_types.AcromagChannelOutput',
+        method_call=create_ao_ai,
     ),
 
     'ai': dict(
         container='pcdsdevices.happi.containers.Acromag',
         class_name='pcdsdevices.device_types.AcromagChannelInput',
+        method_call=create_ao_ai,
     ),
+
+    'ps-mpod': dict(
+        container=None,
+        class_name='pcdsdevices.device_types.MPOD',
+        method_call=create_mpod,
+
+    )
 }
 
 
@@ -209,6 +278,7 @@ class QuestionnaireHelper:
                         beamline: str,
                         class_name: Optional[str],
                         container: str,
+                        method_call,
                         ) -> dict:
         """
         Create one database entry given translated questionnaire information.
@@ -243,36 +313,7 @@ class QuestionnaireHelper:
 
         # 1. A capitalized name:
         name = name.lower()
-
-        pv_prefix = info['pvbase']
-
-        if class_name and class_name in (
-                'pcdsdevices.device_types.AcromagChannelOutput',
-                'pcdsdevices.device_types.AcromagChannelInput'):
-            # TODO: i don't know if this is fine... or necessary
-            name = ''.join([pv_prefix[len(pv_prefix) - 3:], '_',
-                           info['channel']])
-            ch = info['channel']
-            kwargs = {'name': '{{name}}', 'channel': ch}
-        else:
-            kwargs = {'name': '{{name}}'}
-
-        # Create our happi JSON-backend equivalent:
-        entry = {
-            '_id': name,
-            'active': True,
-            'args': ['{{prefix}}'],
-            'beamline': beamline,
-            'kwargs': kwargs,
-            'lightpath': False,
-            'name': name,
-            'prefix': pv_prefix,
-            'type': container,
-            **info,
-        }
-
-        if class_name is not None:
-            entry['device_class'] = class_name
+        entry = method_call(name, beamline, class_name, container, info)
 
         # Empty strings from the Questionnaire make for invalid entries:
         for key in {'prefix', 'name'}:
@@ -332,6 +373,7 @@ class QuestionnaireHelper:
                         beamline=beamline,
                         container=translation['container'],
                         class_name=translation['class_name'],
+                        method_call=translation['method_call']
                     )
                 except RequiredKeyError:
                     logger.debug(
