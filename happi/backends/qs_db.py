@@ -134,7 +134,7 @@ DEFAULT_TRANSLATIONS = {
     ),
 
     'ps-mpod': dict(
-        container=None,
+        container='pcdsdevices.happi.containers.MPOD',
         class_name='pcdsdevices.device_types.MPOD',
         method_call=create_mpod,
 
