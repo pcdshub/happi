@@ -217,6 +217,11 @@ def mockqsbackend():
                 'pcdssetup-ai-1-purpose': 'IR LED',
                 'pcdssetup-ai-1-pvbase': 'MFX:USR:ai1',
                 'pcdssetup-ai-1-channel': '7',
+                'pcdssetup-motors-11-purpose': 'Von Hamos vertical',
+                'pcdssetup-motors-11-stageidentity': 'Beckhoff',
+                'pcdssetup-motors-11-location': 'XPP goniometer',
+                'pcdssetup-motors-11-pvbase': 'HXX:VON_HAMOS:MMS:01',
+                'pcdssetup-motors-11-name': 'vh_y',
             }
 
         def getExpName2URAWIProposalIDs(self):

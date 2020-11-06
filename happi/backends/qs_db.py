@@ -19,49 +19,68 @@ class RequiredKeyError(KeyError):
     ...
 
 
-def create_motor(name, beamline, class_name, container, info):
+def _create_motor_callable(name, beamline, info):
     """Create a motor entry"""
+    container = 'pcdsdevices.happi.containers.Motor'
+    class_name = None
     kwargs = {'name': '{{name}}'}
     prefix = info['pvbase']
     if info.get('stageidentity') == 'Beckhoff':
         class_name = 'pcdsdevices.device_types.BeckhoffAxis'
-    return create_entry(name, beamline, prefix, kwargs, class_name, container,
-                        info)
+    return create_entry(name, beamline, prefix, kwargs, container,
+                        info, class_name)
 
 
-def create_trig(name, beamline, class_name, container, info):
+def _create_trig_callable(name, beamline, info):
     """Create a trig entry"""
+    container = 'pcdsdevices.happi.containers.Trigger'
     kwargs = {'name': '{{name}}'}
     prefix = info['pvbase']
-    return create_entry(name, beamline, prefix, kwargs, class_name, container,
-                        info)
+    return create_entry(name, beamline, prefix, kwargs, container, info)
 
 
-def create_ao_ai(name, beamline, class_name, container, info):
+def _create_ai_callable(name, beamline, info):
     """Create an acrommag channel entry"""
+    container = 'pcdsdevices.happi.containers.Acromag'
+    class_name = 'pcdsdevices.device_types.AcromagChannelInput'
     prefix = info['pvbase']
-    name = ''.join([prefix[len(prefix) - 3:], '_',
-                    info['channel']])
     ch = info.get('channel')
     if not ch:
-        raise RequiredKeyError('Unable to create an acromag without a channel')
+        raise RequiredKeyError('Unable to create an acromag input channel '
+                               'entry without a channel')
+    name = ''.join(['ai_', ch])
     kwargs = {'name': '{{name}}', 'channel': ch}
-    return create_entry(name, beamline, prefix, kwargs, class_name, container,
-                        info)
+    return create_entry(name, beamline, prefix, kwargs, container,
+                        info, class_name)
 
 
-def create_mpod(name, beamline, class_name, container, info):
+def _create_ao_callable(name, beamline, info):
+    """Create an acrommag channel entry"""
+    container = 'pcdsdevices.happi.containers.Acromag'
+    class_name = 'pcdsdevices.device_types.AcromagChannelOutput'
+    prefix = info['pvbase']
+    ch = info.get('channel')
+    if not ch:
+        raise RequiredKeyError('Unable to create an acromag output channel '
+                               'entry without a channel')
+    name = ''.join(['ao_', ch])
+    kwargs = {'name': '{{name}}', 'channel': ch}
+    return create_entry(name, beamline, prefix, kwargs, container,
+                        info, class_name)
+
+
+def _create_mpod_callable(name, beamline, info):
     """Create the MPOD entry"""
+    container = 'pcdsdevices.happi.containers.LCLSItem'
+    class_name = 'pcdsdevices.device_types.MPOD'
     prefix = info['pvname']
-    # TODO: might need to send the card_prefix in the kwargs, but for now
-    # i am making it up in the MPOD class - don't know if I can take it from
-    # the questionnaire
     kwargs = {'name': '{{name}}'}
-    return create_entry(name, beamline, prefix, kwargs, class_name, container,
-                        info)
+    return create_entry(name, beamline, prefix, kwargs, container,
+                        info, class_name)
 
 
-def create_entry(name, beamline, prefix, kwargs, class_name, container, info):
+def create_entry(name, beamline, prefix, kwargs, container,
+                 info, class_name=None):
     """
     Create a happi_entry.
 
@@ -106,39 +125,11 @@ def create_entry(name, beamline, prefix, kwargs, class_name, container, info):
 
 
 DEFAULT_TRANSLATIONS = {
-    'motors': dict(
-        container='pcdsdevices.happi.containers.Motor',
-        # class_name='pcdsdevices.device_types.Motor',
-        # If unspecified, use the default from the container:
-        class_name=None,
-        method_call=create_motor,
-    ),
-
-    'trig': dict(
-        container='pcdsdevices.happi.containers.Trigger',
-        class_name=None,
-        method_call=create_trig,
-
-    ),
-
-    'ao': dict(
-        container='pcdsdevices.happi.containers.Acromag',
-        class_name='pcdsdevices.device_types.AcromagChannelOutput',
-        method_call=create_ao_ai,
-    ),
-
-    'ai': dict(
-        container='pcdsdevices.happi.containers.Acromag',
-        class_name='pcdsdevices.device_types.AcromagChannelInput',
-        method_call=create_ao_ai,
-    ),
-
-    'ps-mpod': dict(
-        container='pcdsdevices.happi.containers.MPOD',
-        class_name='pcdsdevices.device_types.MPOD',
-        method_call=create_mpod,
-
-    )
+    'motors': _create_motor_callable,
+    'trig': _create_trig_callable,
+    'ao': _create_ao_callable,
+    'ai': _create_ai_callable,
+    'ps-mpod': _create_mpod_callable,
 }
 
 
@@ -301,8 +292,6 @@ class QuestionnaireHelper:
     @staticmethod
     def _create_db_item(info: dict,
                         beamline: str,
-                        class_name: Optional[str],
-                        container: str,
                         method_call,
                         ) -> dict:
         """
@@ -338,7 +327,7 @@ class QuestionnaireHelper:
 
         # 1. A capitalized name:
         name = name.lower()
-        entry = method_call(name, beamline, class_name, container, info)
+        entry = method_call(name, beamline, info)
 
         # Empty strings from the Questionnaire make for invalid entries:
         for key in {'prefix', 'name'}:
@@ -396,9 +385,7 @@ class QuestionnaireHelper:
                     entry = QuestionnaireHelper._create_db_item(
                         info=item_info,
                         beamline=beamline,
-                        container=translation['container'],
-                        class_name=translation['class_name'],
-                        method_call=translation['method_call']
+                        method_call=translation
                     )
                 except RequiredKeyError:
                     logger.debug(
