@@ -39,31 +39,17 @@ def _create_trig_callable(name, beamline, info):
     return create_entry(name, beamline, prefix, kwargs, container, info)
 
 
-def _create_ai_callable(name, beamline, info):
+def _create_ai_ao_callable(name, beamline, info):
     """Create an acrommag channel entry"""
     container = 'pcdsdevices.happi.containers.Acromag'
-    class_name = 'pcdsdevices.device_types.AcromagChannelInput'
+    class_name = 'pcdsdevices.analog_signals.acromag_factory_func'
     prefix = info['pvbase']
     ch = info.get('channel')
     if not ch:
         raise RequiredKeyError('Unable to create an acromag input channel '
                                'entry without a channel')
-    name = ''.join(['ai_', ch])
-    kwargs = {'name': '{{name}}', 'channel': ch}
-    return create_entry(name, beamline, prefix, kwargs, container,
-                        info, class_name)
-
-
-def _create_ao_callable(name, beamline, info):
-    """Create an acrommag channel entry"""
-    container = 'pcdsdevices.happi.containers.Acromag'
-    class_name = 'pcdsdevices.device_types.AcromagChannelOutput'
-    prefix = info['pvbase']
-    ch = info.get('channel')
-    if not ch:
-        raise RequiredKeyError('Unable to create an acromag output channel '
-                               'entry without a channel')
-    name = ''.join(['ao_', ch])
+    name_prefix = 'ai_' if ':ai' in prefix else 'ao_'
+    name = f'{name_prefix}{ch}'
     kwargs = {'name': '{{name}}', 'channel': ch}
     return create_entry(name, beamline, prefix, kwargs, container,
                         info, class_name)
@@ -127,8 +113,8 @@ def create_entry(name, beamline, prefix, kwargs, container,
 DEFAULT_TRANSLATIONS = {
     'motors': _create_motor_callable,
     'trig': _create_trig_callable,
-    'ao': _create_ao_callable,
-    'ai': _create_ai_callable,
+    'ao': _create_ai_ao_callable,
+    'ai': _create_ai_ao_callable,
     'ps-mpod': _create_mpod_callable,
 }
 

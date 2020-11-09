@@ -191,8 +191,8 @@ def test_qsbackend_with_acromag(mockqsbackend):
     d = load_devices(*c.all_devices, pprint=False).__dict__
     ai1 = d.get('ai_7')
     ao1 = d.get('ao_6')
-    assert ai1.__class__.__name__ == 'AcromagChannelInput'
-    assert ao1.__class__.__name__ == 'AcromagChannelOutput'
+    assert ai1.__class__.__name__ == 'EpicsSignalRO'
+    assert ao1.__class__.__name__ == 'EpicsSignal'
 
 
 @requires_questionnaire
@@ -200,9 +200,9 @@ def test_qsbackend_with_acromag(mockqsbackend):
 def test_beckoff_axis_device_class(mockqsbackend):
     c = Client(database=mockqsbackend)
     d = load_devices(*c.all_items).__dict__
-    do_not_use = d.get('vh_y')
+    vh_y = d.get('vh_y')
     sam_x = d.get('sam_x')
-    assert do_not_use.__class__.__name__ == 'BeckhoffAxis'
+    assert vh_y.__class__.__name__ == 'BeckhoffAxis'
     assert sam_x.__class__.__name__ == 'IMS'
 
 
