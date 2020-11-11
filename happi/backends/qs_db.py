@@ -42,7 +42,7 @@ def _create_trig_callable(name, beamline, info):
 def _create_ai_ao_callable(name, beamline, info):
     """Create an acrommag channel entry"""
     container = 'pcdsdevices.happi.containers.Acromag'
-    class_name = 'pcdsdevices.analog_signals.acromag_factory_func'
+    class_name = 'pcdsdevices.device_types.AcromagChannel'
     prefix = info['pvbase']
     ch = info.get('channel')
     if not ch:
