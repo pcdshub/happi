@@ -19,32 +19,92 @@ class RequiredKeyError(KeyError):
     ...
 
 
+def _create_motor_callable(name, beamline, info):
+    """Create a motor entry"""
+    container = 'pcdsdevices.happi.containers.Motor'
+    class_name = None
+    kwargs = {'name': '{{name}}'}
+    prefix = info['pvbase']
+    if info.get('stageidentity') == 'Beckhoff':
+        class_name = 'pcdsdevices.device_types.BeckhoffAxis'
+    return create_entry(name, beamline, prefix, kwargs, container,
+                        info, class_name)
+
+
+def _create_trig_callable(name, beamline, info):
+    """Create a trig entry"""
+    container = 'pcdsdevices.happi.containers.Trigger'
+    kwargs = {'name': '{{name}}'}
+    prefix = info['pvbase']
+    return create_entry(name, beamline, prefix, kwargs, container, info)
+
+
+def _create_ai_ao_callable(name, beamline, info):
+    """Create an acrommag channel entry"""
+    container = 'pcdsdevices.happi.containers.Acromag'
+    class_name = 'pcdsdevices.device_types.AcromagChannel'
+    prefix = info['pvbase']
+    ch = info.get('channel')
+    if not ch:
+        raise RequiredKeyError('Unable to create an acromag input channel '
+                               'entry without a channel')
+    name_prefix = 'ai_' if ':ai' in prefix else 'ao_'
+    name = f'{name_prefix}{ch}'
+    kwargs = {'name': '{{name}}', 'channel': ch}
+    return create_entry(name, beamline, prefix, kwargs, container,
+                        info, class_name)
+
+
+def create_entry(name, beamline, prefix, kwargs, container,
+                 info, class_name=None):
+    """
+    Create a happi_entry.
+
+    Parameters
+    ----------
+    name : str
+        Item name.
+    beamline : str
+        The beamline with which to associate the entry.
+    prefix : str
+        Epics base PV.
+    kwargs : dict
+        Information to pass through to the device, upon initialization
+    class_name : str
+        The class name to report in the new entry.
+    container : str
+        The container name to report in the new entry.
+    info : dict
+        Device information from `_translate_items`.
+    """
+    entry = {
+            '_id': name,
+            'active': True,
+            'args': ['{{prefix}}'],
+            'beamline': beamline,
+            'kwargs': kwargs,
+            'lightpath': False,
+            'name': name,
+            'prefix': prefix,
+            'type': container,
+            **info,
+    }
+    if class_name is not None:
+        entry['device_class'] = class_name
+
+    return entry
+
+
 # Map of (questionnaire type) to:
 #   1. Device class (or factory function) and
 #   2. Happi container
 
+
 DEFAULT_TRANSLATIONS = {
-    'motors': dict(
-        container='pcdsdevices.happi.containers.Motor',
-        # class_name='pcdsdevices.device_types.Motor',
-        # If unspecified, use the default from the container:
-        class_name=None,
-    ),
-
-    'trig': dict(
-        container='pcdsdevices.happi.containers.Trigger',
-        class_name=None,
-    ),
-
-    'ao': dict(
-        container='pcdsdevices.happi.containers.Acromag',
-        class_name=None,
-    ),
-
-    'ai': dict(
-        container='pcdsdevices.happi.containers.Acromag',
-        class_name=None,
-    ),
+    'motors': _create_motor_callable,
+    'trig': _create_trig_callable,
+    'ao': _create_ai_ao_callable,
+    'ai': _create_ai_ao_callable,
 }
 
 
@@ -207,8 +267,7 @@ class QuestionnaireHelper:
     @staticmethod
     def _create_db_item(info: dict,
                         beamline: str,
-                        class_name: Optional[str],
-                        container: str,
+                        method_call,
                         ) -> dict:
         """
         Create one database entry given translated questionnaire information.
@@ -243,23 +302,7 @@ class QuestionnaireHelper:
 
         # 1. A capitalized name:
         name = name.lower()
-
-        # Create our happi JSON-backend equivalent:
-        entry = {
-            '_id': name,
-            'active': True,
-            'args': ['{{prefix}}'],
-            'beamline': beamline,
-            'kwargs': {'name': '{{name}}'},
-            'lightpath': False,
-            'name': name,
-            'prefix': info['pvbase'],
-            'type': container,
-            **info,
-        }
-
-        if class_name is not None:
-            entry['device_class'] = class_name
+        entry = method_call(name, beamline, info)
 
         # Empty strings from the Questionnaire make for invalid entries:
         for key in {'prefix', 'name'}:
@@ -267,7 +310,6 @@ class QuestionnaireHelper:
                 raise RequiredKeyError(
                     f"Unable to create an item without key {key}"
                 )
-
         return entry
 
     @staticmethod
@@ -318,8 +360,7 @@ class QuestionnaireHelper:
                     entry = QuestionnaireHelper._create_db_item(
                         info=item_info,
                         beamline=beamline,
-                        container=translation['container'],
-                        class_name=translation['class_name'],
+                        method_call=translation
                     )
                 except RequiredKeyError:
                     logger.debug(
