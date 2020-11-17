@@ -2,6 +2,33 @@
  Release History
 =================
 
+v1.8.3 (2020-11-17)
+===================
+
+Bugfixes
+--------
+- Fix loading of acromag io channels from the lcls questionnaire.
+  Previously, these were loading full acromag devices instead of
+  individual channels and were using the incorrect PVs.
+- Fix loading of Beckhoff axis motors from the lcls questionnaire.
+  Previously, these were misidentified as IMS motors.
+
+Maintenance
+-----------
+- Refactor questionnaire entry creation to accomplish the above.
+
+Contributors
+------------
+- cristinasewell
+
+
+v1.8.2 (2020-10-20)
+===================
+
+Bugfixes
+--------
+- Removed hanging raise command from qs loader (hotfix)
+
 
 v1.8.1 (2020-10-21)
 ===================
