@@ -104,12 +104,12 @@ list      list.index(value)
 regex     regex.match(value) != None
 =======   ===========================
 
-Fields that are important to the device can be marked as mandatory
+Fields that are important to the item can be marked as mandatory
 (``optional=False``); these should have no default value.
 
 When entering information you will not neccesarily see a difference between
 optional and mandatory :class:`.EntryInfo`, however the database client will
-reject the device if these fields do not have the requisite values set.
+reject the item if these fields do not have the requisite values set.
 
 Loading your Object
 ^^^^^^^^^^^^^^^^^^^
@@ -117,11 +117,11 @@ Loading your Object
 A container's primary role is containing the information necessary to load the
 Python representation of an object.
 
-Internally, happi keeps track of all device containers by way of its registry,
-the :class:`~happi.containers.HappiRegistry`.
+Internally, happi keeps track of all containers by way of its registry, the
+:class:`~happi.containers.HappiRegistry`.
 
 This information is stored as a ``device_class``, ``args`` and ``kwargs``. The
-former stores a string that indicates the Python class of the device, the other
+former stores a string that indicates the Python class of the item, the other
 two indicate the information that is needed to instantiate it. With this
 information both :func:`.from_container` and :func:`.load_device` will handle
 importing modules and instantiating your object.
@@ -140,9 +140,9 @@ other parts of the container. For instance most ``ophyd`` objects will want a
 ``name`` and ``prefix`` on initialization. Instead of repeating that
 information you can just use a template and have the information automatically
 populated for you by the container itself. For instance, in the aforementioned
-example ``device.args = ["{{prefix}}"]`` would substitute the attribute listed as
-``Device.prefix`` in as an argument. If the template contains the substituted
-attribute alone the type will also be converted.
+example ``container.args = ["{{name}}"]`` would substitute the attribute
+listed as ``container.name`` in as an argument. If the template contains the
+substituted attribute alone the type will also be converted.
 
 .. ipython:: python
 
