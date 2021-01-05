@@ -13,15 +13,15 @@ Happi will help you index your objects, search through them, create them, and
 provide relevant metadata based on the object type.
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Using happi
+   :maxdepth: 3
+   :caption: Usage
 
    containers.rst
    client.rst
    cli.rst
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :caption: API Documentation
 
    api.rst

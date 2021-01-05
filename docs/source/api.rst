@@ -27,10 +27,10 @@ Backends
 
 
 Containers
-**********
+^^^^^^^^^^^
 
-Built-in Containers
-^^^^^^^^^^^^^^^^^^^
+Built-ins
++++++++++
 
 .. autoclass:: happi.HappiItem
     :members:
@@ -38,14 +38,14 @@ Built-in Containers
 .. autoclass:: happi.OphydItem
     :members:
 
-Loading Containers
-^^^^^^^^^^^^^^^^^^
+Loading
++++++++
 
 .. autofunction:: happi.from_container
 
 .. autofunction:: happi.load_devices
 
-The Registry
-^^^^^^^^^^^^
+Registry
+++++++++
 
 .. autoclass:: happi.containers.HappiRegistry
