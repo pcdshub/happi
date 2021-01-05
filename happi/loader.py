@@ -69,7 +69,7 @@ def fill_template(template, device, enforce_type=False):
 
 def from_container(device, attach_md=True, use_cache=True, threaded=False):
     """
-    Load a device from a happi container
+    Load an object (or "device") from a happi container.
 
     The container is queried for the device_class, args and kwargs. Then if the
     associated package is not already loaded it is imported. The specified
