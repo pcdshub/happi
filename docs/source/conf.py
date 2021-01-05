@@ -76,7 +76,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Happi'
-copyright = '2020, SLAC National Accelerator Laboratory'
+copyright = '2021, SLAC National Accelerator Laboratory'
 author = 'SLAC National Accelerator Laboratory'
 
 # The version info for the project you're documenting, acts as replacement for
