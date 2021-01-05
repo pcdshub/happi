@@ -68,23 +68,23 @@ class attributes as EntryInfo objects:
     import re
     from happi import HappiItem, EntryInfo
 
-    class MyDevice(HappiItem):
-        """My new device, with a known model number."""
-        model_no      = EntryInfo('Model Number of Device', optional=False)
-        count         = EntryInfo('Count of Device', enforce=int, default=0)
+    class MyItem(HappiItem):
+        """My new item, with a known model number."""
+        model_no      = EntryInfo('Model Number of Item', optional=False)
+        count         = EntryInfo('Count of Item', enforce=int, default=0)
         choices       = EntryInfo('Choice Info', enforce=['a','b','c'])
         no_whitespace = EntryInfo('Enforce no whitespace',
                                    enforce = re.compile(r'[\S]*$'))
 
-By default, `.EntryInfo` will create an optional init keyword argument with a
+By default, :class:`.EntryInfo` will create an optional init keyword argument with a
 default of ``None`` with the same name as the class attribute. A quick way
 to see how this information will be put into the the database is taking a look
-at ``dict(device)``:
+at ``dict(item)``:
 
 .. ipython:: python
 
-    device = MyDevice(name="my_device", model_no="QABC1234")
-    dict(device)
+    item = MyItem(name="my_item", model_no="QABC1234")
+    dict(item)
 
 As shown in the example above, using the EntryInfo keywords, you can put a
 short doc string to give a better explanation of the
@@ -107,7 +107,7 @@ regex     regex.match(value) != None
 Fields that are important to the device can be marked as mandatory
 (``optional=False``); these should have no default value.
 
-When entering information you will not neccesarily see a difference in between
+When entering information you will not neccesarily see a difference between
 optional and mandatory :class:`.EntryInfo`, however the database client will
 reject the device if these fields do not have the requisite values set.
 
