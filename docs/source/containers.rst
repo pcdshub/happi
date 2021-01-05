@@ -133,7 +133,7 @@ importing modules and instantiating your object.
     used to instantiate your object.
 
     This can be disabled by setting ``attach_md`` to ``False`` in
-    `from_container`.
+    :func:`.from_container`.
 
 Often information contained in the ``args`` or ``kwargs`` will be duplicated in
 other parts of the container. For instance most ``ophyd`` objects will want a
@@ -148,9 +148,9 @@ attribute alone the type will also be converted.
 
     from happi import from_container
 
-    container = MyDevice(name="my_device", model_no="QABC1234",
-                         device_class='ophyd.sim.SynSignal',
-                         kwargs={'name': '{{name}}'})
+    container = MyItem(name="my_item", model_no="QABC1234",
+                       device_class='ophyd.sim.SynSignal',
+                       kwargs={'name': '{{name}}'})
     obj = from_container(container, attach_md=True)
     obj
 
@@ -193,13 +193,16 @@ These are fields that are common to all Happi items.
 
 **name**
 
-This is simply a short name we can use to refer to the device.
+This is simply a short name we can use to refer to the item.
 
 
 **device_class**
 
 This is the full class name, which lets happi know how to instantiate your
-device.
+item.
+
+The ``device_class`` name remains for backward-compatibility reasons.  Thinking
+of it as ``class_name`` or ``creator_callable`` would be more apt.
 
 .. note::
 
