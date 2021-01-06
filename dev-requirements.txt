@@ -2,10 +2,15 @@ pytest
 codecov
 doctr
 ipython
-matplotlib
+matplotlib >=3.2.0
+ophyd >=1.5.0
 pymongo
-mongomock
+mongomock >=3.22.0
 sphinx
 sphinx_rtd_theme
 psdm_qs_cli
 sphinx-argparse
+
+# PyPI's 2020 resolver can be problematic with these
+# dependencies-of-dependencies.  Constrain them here:
+six >=1.10.0
