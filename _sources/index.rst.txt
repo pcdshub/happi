@@ -1,36 +1,33 @@
 HAPPI - Heuristic Access to Positions of Photon Instruments
 ===========================================================
-Happi is a database to hold generic information for devices
-along the LCLS photon beamline.
 
-This is general purpose database for PCDS to organize information on any device
-along the beamline. The general structure of the Python API allows users to use
-:ref:`device_label` to enter structured information into the database, while
-still proivding the flexibility needed for abitrary metadata.
+Background
+^^^^^^^^^^
 
-Before entering any information, please consult the :ref:`convention_label`
-page. While the client is intelligent enough to catch certain errors
-there are still standards within the group we need to uphold.
+Happi is a database-backed library that was originally created to hold
+information about devices along SLAC's Linac Coherent Light Source beamline.
+Though initially purpose-built, happi provides a framework for general indexing
+of devices or *things* that correspond to Python objects.
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Tutorial
-
-   conventions.rst
-   client.rst
-   develop.rst
+Happi will help you index your objects, search through them, create them, and
+provide relevant metadata based on the object type.
 
 .. toctree::
-   :maxdepth: 1
-   :caption: API Documentation
+   :maxdepth: 3
+   :caption: Usage
 
-   client_api.rst
-   backends.rst
    containers.rst
+   client.rst
    cli.rst
 
 .. toctree::
+   :maxdepth: 3
+   :caption: API Documentation
+
+   api.rst
+
+.. toctree::
    :maxdepth: 0
-   :caption: Developer Documentation
+   :caption: Information
 
    releases.rst

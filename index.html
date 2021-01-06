@@ -1,18 +1,15 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi Deck 1.8.3 documentation</title>
+  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi 1.8.3+9.g4803893 documentation</title>
   
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
@@ -20,9 +17,7 @@
   
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -34,9 +29,13 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Conventions" href="conventions.html" /> 
+    <link rel="next" title="Containers" href="containers.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,7 +49,7 @@
           
 
           
-            <a href="#" class="icon icon-home" alt="Documentation Home"> Happi Deck
+            <a href="#" class="icon icon-home"> Happi
           
 
           
@@ -60,7 +59,7 @@
             
             
               <div class="version">
-                1.8.3
+                1.8.3+9.g4803893
               </div>
             
           
@@ -77,7 +76,6 @@
           
         </div>
 
-        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -85,20 +83,17 @@
               
             
             
-              <p class="caption"><span class="caption-text">Tutorial</span></p>
+              <p class="caption"><span class="caption-text">Usage</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
-<li class="toctree-l1"><a class="reference internal" href="develop.html">Creating New Device Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Utilities</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<p class="caption"><span class="caption-text">Information</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
 </ul>
@@ -106,7 +101,6 @@
             
           
         </div>
-        
       </div>
     </nav>
 
@@ -116,7 +110,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Happi Deck</a>
+          <a href="#">Happi</a>
         
       </nav>
 
@@ -145,7 +139,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="#">Docs</a> &raquo;</li>
         
       <li>HAPPI - Heuristic Access to Positions of Photon Instruments</li>
     
@@ -168,34 +162,81 @@
             
   <div class="section" id="happi-heuristic-access-to-positions-of-photon-instruments">
 <h1>HAPPI - Heuristic Access to Positions of Photon Instruments<a class="headerlink" href="#happi-heuristic-access-to-positions-of-photon-instruments" title="Permalink to this headline">¶</a></h1>
-<p>Happi is a database to hold generic information for devices
-along the LCLS photon beamline.</p>
-<p>This is general purpose database for PCDS to organize information on any device
-along the beamline. The general structure of the Python API allows users to use
-<a class="reference internal" href="containers.html#device-label"><span class="std std-ref">Containers</span></a> to enter structured information into the database, while
-still proivding the flexibility needed for abitrary metadata.</p>
-<p>Before entering any information, please consult the <a class="reference internal" href="conventions.html#convention-label"><span class="std std-ref">Conventions</span></a>
-page. While the client is intelligent enough to catch certain errors
-there are still standards within the group we need to uphold.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>Happi is a database-backed library that was originally created to hold
+information about devices along SLAC’s Linac Coherent Light Source beamline.
+Though initially purpose-built, happi provides a framework for general indexing
+of devices or <em>things</em> that correspond to Python objects.</p>
+<p>Happi will help you index your objects, search through them, create them, and
+provide relevant metadata based on the object type.</p>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Tutorial</span></p>
+<p class="caption"><span class="caption-text">Usage</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="conventions.html">Conventions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
-<li class="toctree-l1"><a class="reference internal" href="develop.html">Creating New Device Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#entryinfo">EntryInfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#happiitem">HappiItem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#example-container">Example Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#loading-your-object">Loading your Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#integrating-with-your-package">Integrating with your package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#built-in-container-conventions">Built-in Container Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#happiitem-entries">HappiItem Entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#ophyditem-entries">OphydItem entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#lclsitem-entries">LCLSItem entries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="client.html#creating-a-new-entry">Creating a New Entry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#searching-the-database">Searching the Database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="client.html#working-with-the-searchresult">Working with the SearchResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client.html#searching-for-items-on-a-beamline">Searching for items on a beamline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client.html#searching-a-range">Searching a range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client.html#searching-with-regular-expressions">Searching with regular expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#editing-device-information">Editing Device Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#selecting-a-backend">Selecting a Backend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#Positional Arguments">Positional Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#Named Arguments">Named Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#Sub-commands:">Sub-commands:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#search">search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#add">add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#edit">edit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#load">load</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">API Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="client_api.html">Client API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="backends.html">Supported Backends</a></li>
-<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#client">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#backends">Backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.mongo_db.MongoBackend.html">happi.backends.mongo_db.MongoBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.json_db.JSONBackend.html">happi.backends.json_db.JSONBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.qs_db.QSBackend.html">happi.backends.qs_db.QSBackend</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#containers">Containers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#built-ins">Built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#loading">Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#registry">Registry</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<p class="caption"><span class="caption-text">Information</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="releases.html#v1-8-3-2020-11-17">v1.8.3 (2020-11-17)</a><ul>
@@ -301,6 +342,7 @@ there are still standards within the group we need to uphold.</p>
 </ul>
 </div>
 </div>
+</div>
 
 
            </div>
@@ -310,7 +352,7 @@ there are still standards within the group we need to uphold.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="conventions.html" class="btn btn-neutral float-right" title="Conventions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="containers.html" class="btn btn-neutral float-right" title="Containers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -320,19 +362,11 @@ there are still standards within the group we need to uphold.</p>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2017, SLAC National Accelerator Laboratory
+        &copy; Copyright 2021, SLAC National Accelerator Laboratory
 
     </p>
   </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -343,6 +377,7 @@ there are still standards within the group we need to uphold.</p>
 
   </div>
   
+
 
   <script type="text/javascript">
       jQuery(function () {
