@@ -10,10 +10,8 @@ Happi is incredibly flexible, allowing us to put arbitrary key-value pair
 information into the databse. While this will make adding functionality easy in
 the future, it also means that any rules on the structure of the data we allow
 will need to be performed by the :class:`.happi.Client` itself. To make this
-intuitive, the client deals primarily with objects we will call Device
-Containers, see :ref:`device_label` in order to see more about how the devices
-are created. However the basic use cases for the client can be demonstrated
-without much knowledge of how the :class:`.Device` container works.
+intuitive, the client deals primarily with objects we will call Containers, see
+:ref:`containers` in order to see more about how they are created.
 
 .. _entry_code:
 
@@ -59,8 +57,7 @@ The main advantage of the first method is that all of the container classes are
 already stored in the :attr:`.Client.device_types` dictionary so they can be
 easily accessed with a string. Keep in mind, that either way, all of the
 mandatory information needs to be given to the device before it can be loaded
-into the database. For more information on device creation see
-:ref:`device_label`.
+into the database.
 
 Searching the Database
 ^^^^^^^^^^^^^^^^^^^^^^

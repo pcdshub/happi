@@ -10,10 +10,11 @@ logger = logging.getLogger(__name__)
 
 class Device(HappiItem):
     """
-    Deprecated due to confusing naming
+    A Generic Device container.
 
-    Original docstring:
-    A Generic Device container
+    .. note::
+
+        **Deprecated** due to ambiguous name, overlapping with ophyd.Device.
 
     Meant for any object will be loaded to represent a physical object in the
     controls system. Contains information on the physical location of the

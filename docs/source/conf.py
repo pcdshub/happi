@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Happi Deck documentation build configuration file, created by
-# sphinx-quickstart on Thu Jan 26 10:44:17 2017.
+# Happi documentation build configuration file, created by sphinx-quickstart on
+# Thu Jan 26 10:44:17 2017.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -13,15 +13,17 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import os
+import pathlib
+import sys
+
+import sphinx_rtd_theme  # noqa
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import happi
-import os
-import pathlib
-import sys
-import sphinx_rtd_theme  # noqa
 
 module_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '../../')
@@ -42,14 +44,17 @@ except FileNotFoundError:
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.todo',
-              'sphinx.ext.napoleon',
-              'sphinx.ext.autosummary',
-              'sphinxarg.ext',
-              'IPython.sphinxext.ipython_directive',
-              'IPython.sphinxext.ipython_console_highlighting'
-              ]
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autosummary',
+    # sphinxarg: this is for the 'argparse' directive (dep sphinx-argparse)
+    'sphinxarg.ext',
+    'IPython.sphinxext.ipython_directive',
+    'IPython.sphinxext.ipython_console_highlighting',
+]
 
 # In case we don't have the backend libraries installed
 # we can still build the docs
@@ -70,8 +75,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Happi Deck'
-copyright = '2017, SLAC National Accelerator Laboratory'
+project = 'Happi'
+copyright = '2021, SLAC National Accelerator Laboratory'
 author = 'SLAC National Accelerator Laboratory'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -118,13 +123,13 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'HappiDeckdoc'
+htmlhelp_basename = 'Happidoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -151,7 +156,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'HappiDeck.tex', 'Happi Deck Documentation',
+    (master_doc, 'Happi.tex', 'Happi Documentation',
      'SLAC National Accelerator Laboratory', 'manual'),
 ]
 
@@ -161,7 +166,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'happideck', 'Happi Deck Documentation',
+    (master_doc, 'happideck', 'Happi Documentation',
      [author], 1)
 ]
 
@@ -172,7 +177,12 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'HappiDeck', 'Happi Deck Documentation',
-     author, 'HappiDeck', 'One line description of project.',
+    (master_doc, 'Happi', 'Happi Documentation',
+     author, 'Happi', 'Happi documentation',
      'Miscellaneous'),
 ]
+
+intersphinx_mapping = {
+    'ophyd': ('https://blueskyproject.io/ophyd', None),
+    'python': ('https://docs.python.org/3', None),
+}
