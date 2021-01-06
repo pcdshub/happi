@@ -253,11 +253,15 @@ repurpose the ``LCLSItem`` class.
 Beamline is required.  While it is expected to be one of the following, it
 is not enforced::
 
+    CXI
+    HXD
+    ICL
     KFE
     LFE
     MEC
     MFX
     PBT
+    RIX
     TMO
     TXI
     XCS
