@@ -14,7 +14,6 @@
 # serve to show the default.
 
 import os
-import pathlib
 import sys
 
 import sphinx_rtd_theme  # noqa
@@ -29,11 +28,6 @@ module_path = os.path.join(os.path.dirname(
 sys.path.insert(0, module_path)
 
 import happi  # isort: skip
-
-try:
-    os.unlink(pathlib.Path(module_path) / 'docs' / 'doc_test.json')
-except FileNotFoundError:
-    ...
 
 
 # -- General configuration ------------------------------------------------

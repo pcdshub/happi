@@ -203,3 +203,11 @@ chosen backend directly, but in order to save time you can create an
 environment variable ``HAPPI_BACKEND`` and set this to ``"mongodb"``. This well
 tell the library to assume you want to use the :class:`.MongoBackend`.
 Otherwise, the library uses the :class:`.JSONBackend`.
+
+..
+   Remove test file created by initializing a JSONBackend above
+
+.. ipython:: python
+   :suppress:
+
+   rm doc_test.json
