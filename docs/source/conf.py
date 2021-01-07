@@ -23,11 +23,12 @@ import sphinx_rtd_theme  # noqa
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import happi
 
 module_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '../../')
 sys.path.insert(0, module_path)
+
+import happi  # isort: skip
 
 try:
     os.unlink(pathlib.Path(module_path) / 'docs' / 'doc_test.json')
