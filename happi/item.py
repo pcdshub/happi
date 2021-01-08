@@ -20,25 +20,22 @@ except ImportError:
 
 class EntryInfo:
     """
-    A piece of information related to a specific device
+    A piece of information related to a specific device.
 
     These are entered as class attributes for a given device container. They
-    help control the information entered into a device
+    help control the information entered into a device.
 
     Parameters
     ----------
     doc : str
-        A short string to document the device
-
+        A short string to document the device.
     optional : bool, optional
         By default all EntryInfo is optional, but in certain cases you may want
-        to demand a particular piece of information upon initialization
-
-    enforce : type, list, compiled regex, optional
+        to demand a particular piece of information upon initialization.
+    enforce : type or list or compiled regex, optional
         Specify that all entered information is entered in a specific format.
         This can either by a Python type i.e. int, float e.t.c., a list of
         acceptable values, or a compiled regex pattern i.e ``re.compile(...)``
-
     default : optional
         A default value for the trait to have if the user does not specify.
         Keep in mind that this should be the same type as ``enforce`` if you
@@ -46,10 +43,10 @@ class EntryInfo:
 
     Raises
     ------
-    ContainerError:
+    ContainerError
         If there is an error with the way the enforced value interacts with its
         default value, or if the piece of information entered is unenforcable
-        based on the the settings
+        based on the the settings.
 
     Example
     ------
@@ -60,6 +57,7 @@ class EntryInfo:
             my_field = EntryInfo('My generated field')
             number   = EntryInfo('Device number', enforce=int, default=0)
     """
+
     def __init__(self, doc=None, optional=True, enforce=None, default=None):
         self.key = None  # Set later by parent class
         self.doc = doc
@@ -81,23 +79,19 @@ class EntryInfo:
 
     def enforce_value(self, value):
         """
-        Enforce the rules of the EntryInfo
+        Enforce the rules of the EntryInfo.
 
-        Parameters
-        ----------
-        value
-
-        Returns
-        -------
-        value :
-            Identical to the provided value except it may have been converted
-            to the correct type
+        Accepts a ``value``, verifies that it meets the criteria specified in
+        the `enforce` attribute, and returns the same value, except that it
+        will be converted to the correct type if `enforce` is a type.
 
         Raises
         ------
-        ValueError:
-            If the value is not the correct type, or does not match the pattern
+        ValueError
+            If the value is not the correct type, or does not match the
+            pattern.
         """
+
         if not self.enforce or value is None:
             return value
 
@@ -211,7 +205,7 @@ class _HappiItemBase:
 
 class HappiItem(_HappiItemBase, collections.abc.Mapping):
     """
-    The smallest description of an object that can be entered in ``happi``
+    The smallest description of an object that can be entered in ``happi``.
 
     The class does not need to be intialized with any specific piece of
     information except a name, but all of the attributes listed by
@@ -230,20 +224,18 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
     Attributes
     ----------
     entry_info : list
-        A list of all the :class:`.EntryInfo` associated with the device
-
+        A list of all the :class:`.EntryInfo` associated with the device.
     extraneous : dict
         Storage for information supplied during initialization that does not
-        correspond to a specific EntryInfo
+        correspond to a specific EntryInfo.
 
     Raises
     ------
-    EntryError:
-        If a piece of information supplied at startup is of the incorrect type
-
-    ContainerError:
+    EntryError
+        If a piece of information supplied at startup is of the incorrect type.
+    ContainerError
         If one of the pieces of :class:`.EntryInfo` has a default value of the
-        incorrect type
+        incorrect type.
 
     Example
     -------
@@ -253,7 +245,8 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
                       note  = 'Example',          # Piece of arbitrary metadata
                      )
     """
-    name = EntryInfo('Shorthand Python-valid name for the Python instance',
+
+    name = EntryInfo("Shorthand Python-valid name for the Python instance",
                      optional=False,
                      enforce=re.compile(r'[a-z][a-z\_0-9]{2,78}$'))
     device_class = EntryInfo("Python class that represents the instance",
@@ -277,18 +270,19 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         # Handle additional information
         self.extraneous = kwargs
         if kwargs:
-            logger.debug('Additional information for %s was defined %s',
+            logger.debug("Additional information for %s was defined %s",
                          self.name, ', '.join(self.extraneous))
 
     def show_info(self, handle=sys.stdout):
         """
-        Show the device instance information in a PrettyTable
+        Show the device instance information in a PrettyTable.
 
         Parameters
         ----------
         handle : file-like, optional
-            Option to write to a file-like object
+            Option to write to a file-like object.
         """
+
         pt = PrettyTable(['EntryInfo', 'Value'])
         pt.align = 'r'
         pt.align['EntryInfo'] = 'l'
@@ -307,13 +301,14 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
 
     def post(self):
         """
-        Create a document to be loaded into the happi database
+        Create a document to be loaded into the happi database.
 
         Returns
         -------
         post : dict
-            Dictionary of all contained information
+            Dictionary of all contained information.
         """
+
         # Grab all the specified information
         post = dict([(key, getattr(self, key)) for key in self.info_names])
 
@@ -342,9 +337,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         return type(self)(**device_info)
 
     def save(self):
-        """
-        Overwritten when the device instance is loaded from the client
-        """
+        """Overwritten when the device instance is loaded from the client."""
         raise NotImplementedError
 
     def __repr__(self):
@@ -356,7 +349,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
 
 
 class OphydItem(HappiItem):
-    prefix = EntryInfo('A base PV for all related records',
+    prefix = EntryInfo("A base PV for all related records",
                        optional=False, enforce=str)
 
     args = copy.copy(HappiItem.args)

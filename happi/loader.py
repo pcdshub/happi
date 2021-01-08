@@ -71,8 +71,8 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     """
     Load an object (or "device") from a happi container.
 
-    The container is queried for the device_class, args and kwargs. Then if the
-    associated package is not already loaded it is imported. The specified
+    The container is queried for the device_class, args, and kwargs. Then if
+    the associated package is not already loaded it is imported. The specified
     class is then instantiated with the given args and kwargs provided.
 
     This function does not attempt to catch exceptions either during module
@@ -88,12 +88,11 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
 
     Parameters
     ----------
-    device : happi.Device
-
-    attach_md: bool, optional
-        Attach the container to the instantiated object as `md`
-
-    use_cache: bool, optional
+    device : .happi.Device
+        The device to load.
+    attach_md : bool, optional
+        Attach the container to the instantiated object as `md`.
+    use_cache : bool, optional
         When devices are loaded they are stored in the ``happi.cache``
         dictionary. This means that repeated attempts to load the device will
         return the same object. This prevents unnecessary EPICS connections
@@ -102,14 +101,14 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
         overriding the current cached object. An object with matching name
         and differing metadata will always return a new instantiation of the
         device.
-
-    threaded: bool, optional
+    threaded : bool, optional
         Set this to True when calling inside a thread.
 
     Returns
     -------
     obj : happi.Device.device_class
     """
+
     # Return a cached version of the device if present and not forced
     if use_cache and device.name in cache:
         cached_device = cache[device.name]
@@ -163,13 +162,14 @@ def import_class(device_class):
     ----------
     device_class : str
         The module path to find the class e.g.
-        ``"pcdsdevices.device_types.IPM"``
+        ``"pcdsdevices.device_types.IPM"``.
 
     Returns
     -------
     cls : type
         The class referred to by the input string.
     """
+
     mod, cls = device_class.rsplit('.', 1)
     # Import the module if not already present
     # Otherwise use the stashed version in sys.modules
@@ -190,38 +190,33 @@ def import_class(device_class):
 def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
                  threaded=False, post_load=None, **kwargs):
     """
-    Load a series of devices into a namespace
+    Load a series of devices into a namespace.
 
     Parameters
     ----------
-    *devices :
-        List of happi containers to load
-
+    *devices
+        List of happi containers to load.
     pprint: bool, optional
-        Print results of device loads
-
+        Print results of device loads.
     namespace : object, optional
         Namespace to collect loaded devices in. By default this will be a
-        ``types.SimpleNamespace``
-
+        `types.SimpleNamespace`.
     use_cache : bool, optional
-        If set to ``False``, we'll ignore the cache and always make new
+        If set to `False`, we'll ignore the cache and always make new
         devices.
-
     threaded : bool, optional
         Set to True to create each device in a background thread.  Note that
         this assumes that no two devices provided are the same. You are not
         guaranteed to load from the cache correctly if you ask for the same
         device to be loaded twice in the same threaded load.
-
     post_load : function, optional
         Function of one argument to run on each device after instantiation.
         This is your opportunity to check for good device health during the
         threaded load.
-
-    kwargs:
-        Are passed to :func:`.from_container`
+    kwargs
+        Additional keyword arguments passed to :func:`.from_container`.
     """
+
     # Create our namespace if we were not given one
     namespace = namespace or types.SimpleNamespace()
     name_list = [container.name for container in devices]
@@ -255,26 +250,24 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
 def load_device(device, pprint=False, threaded=False, post_load=None,
                 **kwargs):
     """
-    Call :func:`.from_container ` and show success/fail
+    Call :func:`.from_container ` and show success/fail.
 
     Parameters
     ----------
     device : happi.Device
-
+        Device to be loaded.
     pprint: bool, optional
-        Print results of device loads
-
+        Print results of device loads.
     threaded: bool, optional
         Set this to True when calling inside a thread.
-
     post_load : function, optional
         Function of one argument to run on each device after instantiation.
         This is your opportunity to check for good device health during the
         threaded load.
-
     kwargs:
-        Are passed to :func:`.from_container`
+        Additional keyword arguments passed to :func:`.from_container`.
     """
+
     logger.debug("Loading device %s ...", device.name)
 
     # We sync with the main thread's loop so that they work as expected later
