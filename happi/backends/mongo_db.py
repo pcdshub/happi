@@ -5,12 +5,11 @@ import logging
 import re
 
 import bson.regex
-
 from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
+from pymongo.errors import OperationFailure, ServerSelectionTimeoutError
 
+from ..errors import DatabaseError, DuplicateError, SearchError
 from .core import _Backend
-from ..errors import DatabaseError, SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
 

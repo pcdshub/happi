@@ -1,5 +1,6 @@
-import logging
 import collections
+import logging
+
 from qtpy import QtCore, QtGui, QtWidgets
 
 from ..utils import get_happi_entry_value

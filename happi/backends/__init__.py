@@ -1,7 +1,6 @@
 __all__ = ['backend', 'BACKENDS', 'DEFAULT_BACKEND']
-import os
 import logging
-
+import os
 
 logger = logging.getLogger(__name__)
 

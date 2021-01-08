@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 import re
 import tempfile
 import types
@@ -8,7 +8,7 @@ import pytest
 
 from happi import Client, OphydItem
 from happi.backends.json_db import JSONBackend
-from happi.errors import SearchError, DuplicateError, EntryError
+from happi.errors import DuplicateError, EntryError, SearchError
 
 logger = logging.getLogger(__name__)
 

@@ -5,8 +5,8 @@ import re
 import pytest
 
 from happi import Device
-from happi.errors import ContainerError
 from happi.device import EntryInfo
+from happi.errors import ContainerError
 
 
 def test_get(device, device_info):

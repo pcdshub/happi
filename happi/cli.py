@@ -9,9 +9,10 @@ import os
 import sys
 
 import coloredlogs
-from .utils import is_a_range
 
 import happi
+
+from .utils import is_a_range
 
 logger = logging.getLogger(__name__)
 

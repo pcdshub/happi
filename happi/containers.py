@@ -1,9 +1,10 @@
-import logging
 import inspect
+import logging
+
 import entrypoints
 
-from .item import HappiItem, OphydItem
 from .device import Device
+from .item import HappiItem, OphydItem
 
 logger = logging.getLogger(__name__)
 

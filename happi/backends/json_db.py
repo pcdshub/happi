@@ -2,16 +2,16 @@
 Backend implemenation using simplejson
 """
 import contextlib
-import os
-import os.path
 import logging
 import math
+import os
+import os.path
 import re
 
 import simplejson as json
 
+from ..errors import DuplicateError, SearchError
 from .core import _Backend
-from ..errors import SearchError, DuplicateError
 
 logger = logging.getLogger(__name__)
 
