@@ -1,5 +1,5 @@
-API
-***
+Happi API
+*********
 
 Client
 ^^^^^^
