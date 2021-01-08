@@ -1,9 +1,10 @@
-import logging
 import inspect
+import logging
+
 import entrypoints
 
-from .item import HappiItem, OphydItem
 from .device import Device
+from .item import HappiItem, OphydItem
 
 logger = logging.getLogger(__name__)
 
@@ -33,15 +34,21 @@ class HappiRegistry:
         return cls.__instance
 
     def __getitem__(self, item):
+        if item not in self._registry:
+            self.load()
         return self._registry.get(item)
 
     def __contains__(self, item):
+        if item not in self._registry:
+            self.load()
         return item in self._registry
 
     def items(self):
         yield from self._registry.items()
 
     def entry_for_class(self, klass):
+        if klass not in self._reverse_registry:
+            self.load()
         return self._reverse_registry.get(klass)
 
     def _safe_add(self, entry_name, klass):
