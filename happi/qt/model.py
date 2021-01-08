@@ -9,9 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class HappiViewMixin(object):
-    """
-    Base class to be used for View widgets
-    """
+    """Base class to be used for View widgets."""
     def __init__(self, client=None, **kwargs):
         super().__init__(**kwargs)
         self._client = client
@@ -19,13 +17,7 @@ class HappiViewMixin(object):
 
     @property
     def client(self):
-        """
-        The client to use for search.
-
-        Returns
-        -------
-        happi.Client
-        """
+        """The client to use for search."""
         return self._client
 
     @client.setter
@@ -33,22 +25,17 @@ class HappiViewMixin(object):
         self._client = client
 
     def entries(self):
-        """
-        List of search results.
-
-        Returns
-        -------
-        list
-        """
+        """List of search results."""
         return self._entries
 
     def search(self, *args, **kwargs):
         """
-        Performs a search into the Happi database and populate the model
+        Perform a search into the Happi database and populate the model
         with the new data.
 
-        args and kwargs are sent directly to happi.Client.search method.
+        args and kwargs are sent directly to the `happi.Client.search` method.
         """
+
         self._entries = self._client.search(*args, **kwargs)
 
     @staticmethod
@@ -66,14 +53,13 @@ class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
     Parameters
     ----------
     parent : QWidget
-        The parent widget
-
+        The parent widget.
     client : Client
-        A happi.Client instance
-
+        A happi.Client instance.
     kwargs : dict
         Additional arguments to be passed to the QListView constructor.
     """
+
     def __init__(self, parent=None, client=None, **kwargs):
         super().__init__(parent=parent, client=client, **kwargs)
         self.model = QtGui.QStandardItemModel()
@@ -87,18 +73,17 @@ class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
 
     def search(self, *args, **kwargs):
         """
-        Performs a search into the Happi database and populate the model
+        Perform a search into the Happi database and populate the model
         with the new data.
 
-        args and kwargs are sent directly to happi.Client.search method.
+        args and kwargs are sent directly to the `happi.Client.search` method.
         """
+
         super().search(*args, **kwargs)
         self._update_data()
 
     def _update_data(self):
-        """
-        Update the model with new data from the search.
-        """
+        """Update the model with new data from the search."""
         if not self.entries():
             return
         items = [self.create_item(entry.item) for entry in self.entries()]
@@ -118,14 +103,13 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
     Parameters
     ----------
     parent : QWidget
-        The parent widget
-
+        The parent widget.
     client : Client
-        A happi.Client instance
-
+        A happi.Client instance.
     kwargs : dict
         Additional arguments to be passed to the QListView constructor.
     """
+
     def __init__(self, parent=None, client=None, **kwargs):
         super().__init__(parent=parent, client=client, **kwargs)
         self.setSortingEnabled(True)
@@ -141,11 +125,12 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
 
     def search(self, *args, **kwargs):
         """
-        Performs a search into the Happi database and populate the model
+        Perform a search into the Happi database and populate the model
         with the new data.
 
-        args and kwargs are sent directly to happi.Client.search method.
+        args and kwargs are sent directly to the `happi.Client.search` method.
         """
+
         super().search(*args, **kwargs)
         self._update_data()
 
@@ -160,13 +145,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
 
     @property
     def groups(self):
-        """
-        List of fields to be used when grouping Happi entries.
-
-        Returns
-        -------
-        list
-        """
+        """List of fields to be used when grouping Happi entries."""
         return self._groups
 
     @groups.setter
@@ -215,9 +194,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
         return model
 
     def _update_data(self):
-        """
-        Update the model with new data from the search.
-        """
+        """Update the model with new data from the search."""
         for field in self._groups:
             if not field:
                 return

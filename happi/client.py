@@ -20,10 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 def _looks_like_database(obj):
-    """
-    Does the given object look like a backend we can use or does it inherit
-    from _Backend
-    """
+    """Returns True if obj is a `Backend` or has certain Backend attributes."""
     return (isinstance(obj, _Backend) or
             all(
                 hasattr(obj, attr) for attr in (
@@ -33,25 +30,27 @@ def _looks_like_database(obj):
 
 
 class SearchResult(collections.abc.Mapping):
-    '''
-    A single search result from ``Client.search``
+    """
+    A single search result from `Client.search`.
 
-    This result can be keyed for metadata as in::
-        result['name']
+    Examples
+    --------
+    This result can be keyed for metadata as in:
+    >>> result['name']
 
-    The HappiItem can be readily retrieved::
-        result.item
+    The HappiItem can be readily retrieved:
+    >>> result.item
 
-    Or the object may be instantiated::
-        result.get()
+    Or the object may be instantiated:
+    >>> result.get()
 
     Attributes
     ----------
     item : happi.HappiItem
-        The container
+        The resulting container.
     metadata : dict
-        The HappiItem metadata
-    '''
+        The resulting HappiItem metadata.
+    """
 
     def __init__(self, client, device):
         self._device = device
@@ -97,21 +96,21 @@ class SearchResult(collections.abc.Mapping):
 
 class Client(collections.abc.Mapping):
     """
-    The client to control the contents of the Happi Database
+    The client to control the contents of the Happi Database.
 
     Parameters
     ----------
     database : happi.backends.Backend
-        A already instantiated backend
-
-    kwargs:
-        Passed to the ``db_type`` backend
+        A already-instantiated backend.
+    kwargs
+        Keyword arguments passed to the ``database`` backend.
 
     Raises
     -----
-    DatabaseError:
-        Raised if the Client fails to instantiate the Database
+    DatabaseError
+        Raised if the Client fails to instantiate the Database.
     """
+
     # HappiItem information
     _client_attrs = ['_id', 'type', 'creation', 'last_edit']
     _id_key = 'name'
@@ -136,7 +135,7 @@ class Client(collections.abc.Mapping):
 
     def find_document(self, **kwargs):
         """
-        Load a device document from the database
+        Load a device document from the database.
 
         If multiple matches are found, a single document will be returned to
         the user. How the database will choose to select this device is based
@@ -144,8 +143,8 @@ class Client(collections.abc.Mapping):
 
         Parameters
         ----------
-        kwargs :
-            Add information to locate the device in keyword pairs
+        kwargs
+            Keyword pairs of information used to locate the device
 
         Returns
         -------
@@ -154,13 +153,14 @@ class Client(collections.abc.Mapping):
 
         Raises
         ------
-        SearchError:
-            If no document with the given information is found
+        SearchError
+            If no document with the given information is found.
 
         See Also
         --------
         :meth:`.find_device`, :meth:`.search`
         """
+
         if len(kwargs) == 0:
             raise SearchError('No information pertinent to device given')
 
@@ -172,25 +172,24 @@ class Client(collections.abc.Mapping):
 
     def create_device(self, device_cls, **kwargs):
         """
-        Create a new device
+        Instantiate a HappiItem from its container class and keyword arguments.
 
         Parameters
         ----------
-        device_cls : :class:`.HappiItem` or name of class
-            The Device HappiItem to instantiate
-
-        kwargs :
-            Information to pass through to the device, upon initialization
+        device_cls : class
+            The HappiItem container class to instantiate.
+        kwargs
+            Information to pass through to the device, upon initialization.
 
         Returns
         -------
-        device :
-            An instantiated version of the device
+        device : object
+            An instantiated version of the device.
 
         Raises
         ------
-        TypeError:
-            If the provided class is not a subclass of :class:`.HappiItem`
+        TypeError
+            If the provided class is not a subclass of :class:`.HappiItem`.
 
 
         Example
@@ -201,6 +200,7 @@ class Client(collections.abc.Mapping):
             device = client.create_device('Device', name='my_device',...)
 
         """
+
         # If specified by a string
         if device_cls in containers.registry:
             device_cls = containers.registry[device_cls]
@@ -226,20 +226,26 @@ class Client(collections.abc.Mapping):
 
     def add_device(self, device):
         """
-        Add a new device into the database
+        Add a device into the database.
 
         Parameters
         ----------
         device : :class:`.HappiItem`
-            The device to store in the database
+            The device to store in the database.
+
+        Returns
+        -------
+        _id : str
+            The id of the device added.
 
         Raises
         ------
-        EntryError:
+        EntryError
             If all of the mandatory information for the device has not been
             specified or there is already a device with that ``id`` in the
-            database
+            database.
         """
+
         logger.info("Storing device %r ...", device)
         _id = self._store(device, insert=True)
         logger.info('HappiItem %r has been succesfully added to the '
@@ -253,25 +259,26 @@ class Client(collections.abc.Mapping):
 
     def find_device(self, **post):
         """
-        Used to query the database for an individual HappiItem
+        Query the database for an individual HappiItem.
 
-        If multiple devices are found, only the first is returned
+        If multiple devices are found, only the first is returned.
 
         Parameters
         ----------
-        post :
-            Information to pertinent to the device
+        post
+            Key-value pairs of search criteria used to find the device.
 
         Raises
         ------
         SearchError
-            If no match for the given information is found
+            If no match for the given information is found.
 
         Returns
         -------
         device : :class:`.HappiItem`
-            A device that matches the characteristics given
+            A device that matches the characteristics given.
         """
+
         logger.debug("Gathering information about the device ...")
         doc = self.find_document(**post)
         # Instantiate HappiItem
@@ -290,7 +297,7 @@ class Client(collections.abc.Mapping):
 
     def load_device(self, use_cache=True, **post):
         """
-        Find a device in the database and instantiate it
+        Find a device in the database and instantiate it.
 
         Essentially a shortcut for:
 
@@ -301,32 +308,37 @@ class Client(collections.abc.Mapping):
 
         Parameters
         ----------
-        post:
-            Passed to :meth:`.Client.find_device`
+        post
+            Key-value pairs of search criteria passed to
+            :meth:`.Client.find_device`.
 
-        use_cache: bool, optional
+        use_cache : bool, optional
             Choice to use a cached device. See :meth:`.from_container` for more
-            information
+            information.
 
         Returns
         -------
-        obj:
-            Instantiated object
+        object
+            Instantiated object.
         """
+
         cntr = self.find_device(**post)
         return from_container(cntr, use_cache=use_cache)
 
     def validate(self):
         """
-        Validate all of the devices in the database by attempting to initialize
-        them and asserting their mandatory information is present. Information
-        is written to the logger
+        Validate all of the devices in the database.
+
+        This is done by attempting to initialize each device and asserting
+        their mandatory information is present. Information is written to the
+        logger.
 
         Returns
         -------
-        ids : list
-            List of device ids that have failed verification
+        ids : list of str
+            List of device ids that have failed verification.
         """
+
         bad = list()
         logger.debug('Loading database to validate contained devices ...')
         for post in self.backend.all_devices:
@@ -352,21 +364,17 @@ class Client(collections.abc.Mapping):
 
     @property
     def all_devices(self):
-        """
-        A list of all contained devices
-        """
-        warnings.warn('Client.all_devices deprecated, use all_items')
+        """A list of all contained devices."""
+        warnings.warn('Client.all_devices deprecated, use all_items instead')
         return self.all_items
 
     @property
     def all_items(self):
-        """
-        A list of all contained devices
-        """
+        """A list of all contained items."""
         return [res.item for res in self.search()]
 
     def __getitem__(self, key):
-        'Get a device ID'
+        """Get a device ID."""
         try:
             device = self.find_device(**self.backend.get_by_id(key))
         except Exception as ex:
@@ -382,9 +390,9 @@ class Client(collections.abc.Mapping):
         return len(self.all_items)
 
     def _get_search_results(self, items, *, wrap_cls=None):
-        '''
-        Return search results to the user, optionally wrapping with a class
-        '''
+        """
+        Return search results to the user, optionally wrapping with a class.
+        """
         wrap_cls = wrap_cls or self._results_wrap_class
         results = []
         for info in items:
@@ -398,26 +406,23 @@ class Client(collections.abc.Mapping):
 
     def search_range(self, key, start, end=None, **kwargs):
         """
-        Search the database for a device or devices
+        Search the database for a device or devices using a numerical range.
 
         Parameters
         -----------
         key : str
-            Database key to search
-
+            Database key to search.
         start : float, optional
-            Minimum beamline position to include devices
-
+            Minimum beamline position to include devices.
         end : float, optional
-            Maximum beamline position to include devices
-
-        **kwargs
-            Information to filter through the database structured as key, value
-            pairs for the desired pieces of EntryInfo
+            Maximum beamline position to include devices.
+        **kwargs : optional
+            Additional information used to filter through the database
+            structured as key-value pairs for the desired pieces of EntryInfo.
 
         Returns
         -------
-        Either a list of devices or dictionaries
+        list of devices or dictionaries
 
         Example
         -------
@@ -427,24 +432,25 @@ class Client(collections.abc.Mapping):
             hxr_valves  = client.search_range('z', 0, 100, type='Valve',
                                               beamline='HXR')
         """
+
         items = self.backend.find_range(key, start=start, stop=end,
                                         to_match=kwargs)
         return self._get_search_results(items)
 
     def search(self, **kwargs):
         """
-        Search the database for a device or devices
+        Search the database for a device or devices.
 
         Parameters
         -----------
         **kwargs
             Information to filter through the database structured as key, value
-            pairs for the desired pieces of EntryInfo
+            pairs for the desired pieces of EntryInfo.
 
         Returns
         -------
         res : list of SearchResult
-            The search results
+            The search results.
 
         Example
         -------
@@ -453,19 +459,19 @@ class Client(collections.abc.Mapping):
             gate_valves = client.search(type='Valve')
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
+
         items = self.backend.find(kwargs)
         return self._get_search_results(items)
 
     def search_regex(self, flags=re.IGNORECASE, **kwargs):
         """
-        Search the database for a device or devices
+        Search the database for a device or devices.
 
         Parameters
         -----------
         flags : int, optional
             Defaulting to ``re.IGNORECASE``, these flags are used for the
             regular expressions passed in.
-
         **kwargs
             Information to filter through the database structured as key, value
             pairs for the desired pieces of EntryInfo.  Every value is allowed
@@ -473,7 +479,7 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        Either a list of devices or dictionaries
+        list of devices or dictionaries
 
         Example
         -------
@@ -482,24 +488,24 @@ class Client(collections.abc.Mapping):
             gate_valves = client.search_regex(beamline='Valve.*')
             three_valves = client.search_regex(_id='VALVE[123]')
         """
+
         items = self.backend.find_regex(kwargs, flags=flags)
         return self._get_search_results(items)
 
     def export(self, path=sys.stdout, sep='\t', attrs=None):
         """
-        Export the contents of the database into a text file
+        Export the contents of the database into a text file.
 
         Parameters
         ----------
         path : File Handle
-            File-like object to save text file
-
+            File-like object to save text file. Defaults to stdout.
         sep : str
-            Separator to place inbetween columns of information
-
+            Separator to place inbetween columns of information.
         attrs : iterable
-            Attributes to include, these will be a list of values
+            Attributes to include, these will be a list of values.
         """
+
         # Load documents
         devs = self.all_items
         logger.info('Creating file at %s ...', path)
@@ -516,13 +522,14 @@ class Client(collections.abc.Mapping):
 
     def remove_device(self, device):
         """
-        Remove a device from the database
+        Remove a device from the database.
 
         Parameters
         ----------
         device : :class:`.HappiItem`
-            HappiItem to be removed from the database
+            HappiItem to be removed from the database.
         """
+
         # HappiItem Check
         if not isinstance(device, HappiItem):
             raise ValueError("Must supply an object of type `HappiItem`")
@@ -533,9 +540,7 @@ class Client(collections.abc.Mapping):
         self.backend.delete(_id)
 
     def _validate_device(self, device):
-        """
-        Validate that a device has all of the mandatory information
-        """
+        """Validate that a device has all of the mandatory information."""
         logger.debug('Validating device %r ...', device)
 
         # Check type
@@ -556,28 +561,27 @@ class Client(collections.abc.Mapping):
 
     def _store(self, device, insert=False):
         """
-        Store a document in the database
+        Store a document in the database.
 
         Parameters
         ----------
         post : :class:`.HappiItem`
-            HappiItem to save
-
+            HappiItem to save.
         insert : bool, optional
-            Set to `True` if this is a new entry
+            Set to `True` if this is a new entry.
 
         Raises
         ------
-        DuplicateError:
-            When ``_id`` already exists
-
-        EntryError:
-            If the device doesn't the correct information
+        DuplicateError
+            When ``_id`` already exists.
+        EntryError
+            If the device doesn't the correct information.
 
         Todo
         ----
         Enforce parent is an already entered name
         """
+
         logger.debug('Loading a device into the collection ...')
 
         # Validate device is ready for storage
@@ -629,7 +633,7 @@ class Client(collections.abc.Mapping):
     @classmethod
     def from_config(cls, cfg=None):
         """
-        Create a client from a configuration file specification
+        Create a client from a configuration file specification.
 
         Configuration files looking something along the lines of:
 
@@ -644,10 +648,11 @@ class Client(collections.abc.Mapping):
 
         Parameters
         ----------
-        cfg: str, optional
+        cfg : str, optional
             Path to a configuration file. If not entered, :meth:`.find_config`
             will be use.
         """
+
         # Find a configuration file
         if not cfg:
             cfg = cls.find_config()
@@ -688,7 +693,7 @@ class Client(collections.abc.Mapping):
     @staticmethod
     def find_config():
         """
-        Search for a ``happi`` configuration file
+        Search for a ``happi`` configuration file.
 
         We first query the environment variable ``$HAPPI_CFG`` to see if this
         points to a specific configuration file. If this is not present, the
@@ -697,15 +702,16 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        path: str
-            Absolute path to configuration file
+        path : str
+            Absolute path to configuration file.
 
         Raises
         ------
-        EnvironmentError:
+        EnvironmentError
             If no configuration file can be found by the methodology detailed
-            above
+            above.
         """
+
         # Point to with an environment variable
         if os.environ.get('HAPPI_CFG', False):
             happi_cfg = os.environ.get('HAPPI_CFG')
@@ -728,24 +734,25 @@ class Client(collections.abc.Mapping):
 
     def choices_for_field(self, field):
         """
-        List all choices for a given field
+        List all choices for a given field.
 
         Parameters
         ----------
         field : string
-            search field to list all possible choices for
+            Field name to list all possible choices for
             i.e 'beamline', 'name', 'z', 'prefix', etc.
 
         Raises
         ------
         SearchError
-            If no devices in the database have an entry for the given field
+            If no devices in the database have an entry for the given field.
 
         Returns
         -------
         field_choices : list
-            list of choices for a given field that are in the database
+            List of choices for a given field that are in the database.
         """
+
         field_choices = set()
         for dev in self.all_items:
             try:  # Want to ignore error if 'dev' doesn't have 'field'
