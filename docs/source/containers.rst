@@ -52,7 +52,8 @@ Editing the information for a container is a simple as:
 .. note::
 
     :class:`happi.Device` class is **deprecated** due to ambiguous name,
-    conflicting with :class:`ophyd.Device`. HappiItem should be used instead.
+    conflicting with :class:`ophyd.Device`.
+    :class:`happi.HappiItem` should be used instead.
 
 
 Example Container
