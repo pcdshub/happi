@@ -210,4 +210,4 @@ Otherwise, the library uses the :class:`.JSONBackend`.
 .. ipython:: python
    :suppress:
 
-   rm doc_test.json
+   rm -f doc_test.json
