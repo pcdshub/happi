@@ -14,7 +14,6 @@
 # serve to show the default.
 
 import os
-import pathlib
 import sys
 
 import sphinx_rtd_theme  # noqa
@@ -23,16 +22,12 @@ import sphinx_rtd_theme  # noqa
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import happi
 
 module_path = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), '../../')
 sys.path.insert(0, module_path)
 
-try:
-    os.unlink(pathlib.Path(module_path) / 'docs' / 'doc_test.json')
-except FileNotFoundError:
-    ...
+import happi  # isort: skip
 
 
 # -- General configuration ------------------------------------------------
@@ -100,6 +95,9 @@ language = None
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = []
 
+# The reST default role (used for this markup: `text`)
+default_role = 'any'
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
@@ -166,7 +164,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'happideck', 'Happi Documentation',
+    (master_doc, 'happi', 'Happi Documentation',
      [author], 1)
 ]
 

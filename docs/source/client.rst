@@ -7,18 +7,18 @@ will handle the authentication, and methods for adding, editing and removing
 devices.
 
 Happi is incredibly flexible, allowing us to put arbitrary key-value pair
-information into the databse. While this will make adding functionality easy in
+information into the database. While this will make adding functionality easy in
 the future, it also means that any rules on the structure of the data we allow
-will need to be performed by the :class:`.happi.Client` itself. To make this
-intuitive, the client deals primarily with objects we will call Containers, see
-:ref:`containers` in order to see more about how they are created.
+will need to be performed by the :class:`.Client` itself. To make this
+intuitive, the Client deals primarily with :ref:`containers`, which are objects
+that hold and specify these rules.
 
 .. _entry_code:
 
 Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
 A new device must be a subclass of the basic container :class:`.Device`.
-While you are free to use the initialized object whereever you see fit, the client
+While you are free to use the initialized object wherever you see fit, the client
 has a hook to create new devices.
 
 Before we can create our first client, we need to create a backend for our device
@@ -31,8 +31,8 @@ information to be stored.
     db = JSONBackend(path='doc_test.json', initialize=True)
 
 If you are connecting to an existing database you can pass the information
-directly into the ``Client`` itself at `__init__``. See :ref:`db_choice`
-about how to configure your default backend choice
+directly into the `Client` itself at ``__init__``. See :ref:`db_choice`
+about how to configure your default backend choice.
 
 .. ipython:: python
 
@@ -125,7 +125,7 @@ upcoming sections.
 Searching for items on a beamline
 """""""""""""""""""""""""""""""""
 
-To search for items on a beamline such as `MFX`, one would use the following:
+To search for items on a beamline such as 'MFX', one would use the following:
 
 
 .. ipython:: python
@@ -145,8 +145,8 @@ easy by way of :meth:`.Client.search_range`. For example:
 
 This would return all devices between Z=314.4 and Z=348.6.
 
-Any numeric key can be filtered in the same way, replacing `'z'` with the key
-name.
+Any numeric key can be filtered in the same way, replacing ``'z'`` with the
+key name.
 
 Searching with regular expressions
 """"""""""""""""""""""""""""""""""
@@ -163,7 +163,7 @@ Editing Device Information
 The workflow for editing a device looks very similar to the code within
 :ref:`entry_code`, but instead of instantiating the device you use either
 :meth:`.Client.find_device` or :meth:`.Client.search` to grab an existing device from
-the dataprefix. When the device is retreived this way the class method
+the data prefix. When the device is retrieved this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
 
@@ -203,3 +203,11 @@ chosen backend directly, but in order to save time you can create an
 environment variable ``HAPPI_BACKEND`` and set this to ``"mongodb"``. This well
 tell the library to assume you want to use the :class:`.MongoBackend`.
 Otherwise, the library uses the :class:`.JSONBackend`.
+
+..
+   Remove test file created by initializing a JSONBackend above
+
+.. ipython:: python
+   :suppress:
+
+   rm -f doc_test.json

@@ -1,5 +1,5 @@
 """
-Backend implementation for parsing the Questionnaire
+Backend implementation for parsing the LCLS Questionnaire.
 """
 import functools
 import logging
@@ -20,7 +20,7 @@ class RequiredKeyError(KeyError):
 
 
 def _create_motor_callable(name, beamline, info):
-    """Create a motor entry"""
+    """Create a motor entry."""
     container = 'pcdsdevices.happi.containers.Motor'
     class_name = None
     kwargs = {'name': '{{name}}'}
@@ -32,7 +32,7 @@ def _create_motor_callable(name, beamline, info):
 
 
 def _create_trig_callable(name, beamline, info):
-    """Create a trig entry"""
+    """Create a trigger entry."""
     container = 'pcdsdevices.happi.containers.Trigger'
     kwargs = {'name': '{{name}}'}
     prefix = info['pvbase']
@@ -40,7 +40,7 @@ def _create_trig_callable(name, beamline, info):
 
 
 def _create_ai_ao_callable(name, beamline, info):
-    """Create an acrommag channel entry"""
+    """Create an acrommag channel entry."""
     container = 'pcdsdevices.happi.containers.Acromag'
     class_name = 'pcdsdevices.device_types.AcromagChannel'
     prefix = info['pvbase']
@@ -77,6 +77,7 @@ def create_entry(name, beamline, prefix, kwargs, container,
     info : dict
         Device information from `_translate_items`.
     """
+
     entry = {
             '_id': name,
             'active': True,
@@ -167,6 +168,7 @@ class QuestionnaireHelper:
         ------
         DatabaseError
         """
+
         run_number = self.run_number
         try:
             logger.debug("Requesting list of proposals in %s", run_number)
@@ -199,14 +201,13 @@ class QuestionnaireHelper:
         -------
         beamline : str
         """
+
         proposals = self.get_proposal_list()
         return proposals[self.proposal]['Instrument']
 
     @functools.lru_cache()
     def get_run_details(self) -> dict:
-        """
-        Get details of the run in a raw dictionary.
-        """
+        """Get details of the run in a raw dictionary."""
         return self._client.getProposalDetailsForRun(
             self.run_number, self.proposal
         )
@@ -225,6 +226,7 @@ class QuestionnaireHelper:
         db : dict
             The happi JSON-backend-compatible dictionary.
         """
+
         return self.to_database(
             beamline=self.beamline,
             run_details=self.get_run_details(),
@@ -248,6 +250,7 @@ class QuestionnaireHelper:
         -------
         device_info : dict
         """
+
         pattern = re.compile(rf'pcdssetup-{table_name}-(\d+)-(\w+)')
 
         devices = {}
@@ -276,13 +279,10 @@ class QuestionnaireHelper:
         ----------
         info : dict
             Device information from `_translate_items`.
-
         beamline : str
             The beamline with which to associate the entry.
-
         class_name : str
             The class name to report in the new entry.
-
         container : str
             The container name to report in the new entry.
 
@@ -290,6 +290,7 @@ class QuestionnaireHelper:
         -------
         happi_entry : dict
         """
+
         # Shallow-copy to not modify the original:
         info = dict(info)
 
@@ -325,10 +326,8 @@ class QuestionnaireHelper:
         ----------
         run_details : dict
             The run detail dictionary, from `get_run_details`.
-
         beamline : str
             The beamline with which to associate the entry.
-
         translations : dict, optional
             Translations to use when converting questionnaire items.
 
@@ -387,7 +386,7 @@ class QuestionnaireHelper:
 
 class QSBackend(JSONBackend):
     """
-    Questionniare Backend
+    Questionniare Backend.
 
     This backend connects to the LCLS questionnaire and looks at items with the
     key pattern pcds-{}-setup-{}-{}. These fields are then combined and turned
@@ -406,24 +405,21 @@ class QSBackend(JSONBackend):
     Parameters
     ----------
     expname : str
-        The experiment name from the elog, e.g. xcslp1915
-
+        The experiment name from the elog, e.g. xcslp1915.
     url : str, optional
         Provide a base URL for the Questionnaire. If left as None the
-        appropriate URL will be chosen based on your authentication method
-
+        appropriate URL will be chosen based on your authentication method.
     use_kerberos : bool, optional
         Use a Kerberos ticket to login to the Questionnaire. This is the
-        default authentication method
-
+        default authentication method.
     user : str, optional
         A username for ws_auth sign-in. If not provided the current login name
-        is used
-
+        is used.
     pw : str, optional
         A password for ws_auth sign-in. If not provided a password will be
-        requested
+        requested.
     """
+
     translations = DEFAULT_TRANSLATIONS
 
     def __init__(self, expname, *, url=None, use_kerberos=True, user=None,
@@ -449,31 +445,21 @@ class QSBackend(JSONBackend):
             return {}
 
     def initialize(self):
-        """
-        Can not initialize a new Questionnaire entry from API
-        """
+        """Can not initialize a new Questionnaire entry from API."""
         raise NotImplementedError("The Questionnaire backend is read-only")
 
     def load(self):
-        """
-        Return the structured dictionary of information
-        """
+        """Return the structured dictionary of information."""
         return self.db
 
     def store(self, *args, **kwargs):
-        """
-        The current implementation of this backend is read-only
-        """
+        """The current implementation of this backend is read-only."""
         raise NotImplementedError("The Questionnaire backend is read-only")
 
     def save(self, *args, **kwargs):
-        """
-        The current implementation of this backend is read-only
-        """
+        """The current implementation of this backend is read-only."""
         raise NotImplementedError("The Questionnaire backend is read-only")
 
     def delete(self, _id):
-        """
-        The current implementation of this backend is read-only
-        """
+        """The current implementation of this backend is read-only."""
         raise NotImplementedError("The Questionnaire backend is read-only")

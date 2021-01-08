@@ -1,7 +1,6 @@
 """
-This module defines the ``happi`` command line utility
+This module defines the ``happi`` command line interface.
 """
-
 import argparse
 import fnmatch
 import json
@@ -10,54 +9,55 @@ import os
 import sys
 
 import coloredlogs
-from .utils import is_a_range
 
 import happi
+
+from .utils import is_a_range
 
 logger = logging.getLogger(__name__)
 
 
 def get_parser():
-    """
-    Defines HAPPI shell commands
-    """
+    """Defines HAPPI shell commands."""
     # Argument Parser Setup
-    parser = argparse.ArgumentParser(description='happi command line tool')
+    parser = argparse.ArgumentParser(description='Happi command line tool')
 
     # Optional args general to all happi operations
     parser.add_argument('--path', type=str,
-                        help='path to happi configuration file')
+                        help='Provide the path to happi configuration file.')
     parser.add_argument('--verbose', '-v', action='store_true',
-                        help='Show the degub logging stream')
+                        help='Show the debug logging stream.')
     parser.add_argument('--version', '-V', action='store_true',
-                        help='Current version and location '
-                        'of Happi installation.')
+                        help='Show the current version and location of Happi '
+                             'installation.')
     # Subparser to trigger search arguments
-    subparsers = parser.add_subparsers(help='Subparsers to search, add, edit',
-                                       dest='cmd')
+    subparsers = parser.add_subparsers(help='Subcommands used to search, add, '
+                                       'edit, or load entries', dest='cmd')
     parser_search = subparsers.add_parser('search', help='Search the happi '
-                                          'database')
+                                          'database.')
     parser_search.add_argument('--json', action='store_true',
-                               help='Show results as JSON')
+                               help='Show results in JSON format.')
     parser_search.add_argument('search_criteria', nargs='+',
-                               help='Search criteria: '
-                               'field=value. If field= is '
-                               'omitted, it will be assumed to be "name". '
-                               'You may include as many search criteria as '
-                               'you like.')
-    parser_add = subparsers.add_parser('add', help='Add new entries')
+                               help='Search criteria of the form: '
+                               'field=value. If "field=" is omitted, it will '
+                               'be assumed to be "name". You may include as '
+                               'many search criteria as you like; these will '
+                               'be combined swith ANDs.')
+    parser_add = subparsers.add_parser('add',
+                                       help='Add new entries interactively.')
     parser_add.add_argument('--clone', default='',
-                            help='Name of device to use for default parameters'
-                            )
-    parser_edit = subparsers.add_parser('edit', help='Change existing entry')
-    parser_edit.add_argument('name', help='Device to edit')
+                            help='Copy the fields from an existing container. '
+                                 'Provide the name of the item to clone.')
+    parser_edit = subparsers.add_parser('edit',
+                                        help='Change an existing entry.')
+    parser_edit.add_argument('name', help='Name of the item to edit')
     parser_edit.add_argument('edits', nargs='+',
-                             help='Edits of the form field=value')
+                             help='Edits of the form: field=value')
     parser_load = subparsers.add_parser('load',
-                                        help='Open IPython terminal with '
-                                        'device loaded')
+                                        help='Open IPython terminal with a '
+                                        'given device loaded.')
     parser_load.add_argument('device_names', nargs='+',
-                             help='Devices to load')
+                             help='The names of one or more devices to load')
     return parser
 
 

@@ -2,11 +2,13 @@
 
 import builtins
 import logging
-import pytest
-import happi
-import IPython
-from happi.cli import happi_cli
 from unittest import mock
+
+import IPython
+import pytest
+
+import happi
+from happi.cli import happi_cli
 from happi.errors import SearchError
 
 
