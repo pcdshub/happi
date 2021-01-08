@@ -7,18 +7,18 @@ will handle the authentication, and methods for adding, editing and removing
 devices.
 
 Happi is incredibly flexible, allowing us to put arbitrary key-value pair
-information into the databse. While this will make adding functionality easy in
+information into the database. While this will make adding functionality easy in
 the future, it also means that any rules on the structure of the data we allow
-will need to be performed by the :class:`.happi.Client` itself. To make this
-intuitive, the client deals primarily with objects we will call Containers, see
-:ref:`containers` in order to see more about how they are created.
+will need to be performed by the :class:`.Client` itself. To make this
+intuitive, the Client deals primarily with :ref:`containers`, which are objects
+that hold and specify these rules.
 
 .. _entry_code:
 
 Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
 A new device must be a subclass of the basic container :class:`.Device`.
-While you are free to use the initialized object whereever you see fit, the client
+While you are free to use the initialized object wherever you see fit, the client
 has a hook to create new devices.
 
 Before we can create our first client, we need to create a backend for our device
@@ -163,7 +163,7 @@ Editing Device Information
 The workflow for editing a device looks very similar to the code within
 :ref:`entry_code`, but instead of instantiating the device you use either
 :meth:`.Client.find_device` or :meth:`.Client.search` to grab an existing device from
-the dataprefix. When the device is retreived this way the class method
+the data prefix. When the device is retrieved this way the class method
 :meth:`.Device.save` is overwritten, simply call this when you are done editing
 the Device information.
 

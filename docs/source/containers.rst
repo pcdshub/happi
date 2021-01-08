@@ -107,7 +107,7 @@ regex     regex.match(value) != None
 Fields that are important to the item can be marked as mandatory with
 ``optional=False`` and should have no default value.
 
-When entering information you will not neccesarily see a difference between
+When entering information you will not necessarily see a difference between
 optional and mandatory :class:`.EntryInfo`, however the database client will
 reject the item if these fields do not have the requisite values set.
 
@@ -269,8 +269,7 @@ repurpose the ``LCLSItem`` class.
 
     **z**
 
-    Position of the device on the z-axis in the lcls coordinates.
-
+    Position of the device on the z-axis in the LCLS coordinates.
 
     **location_group**
 
@@ -291,7 +290,6 @@ repurpose the ``LCLSItem`` class.
 
     If the device should be included in the LCLS `Lightpath
     <https://github.com/pcdshub/lightpath>`_.
-
 
     **embedded_screen**
 
