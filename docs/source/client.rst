@@ -31,7 +31,7 @@ information to be stored.
     db = JSONBackend(path='doc_test.json', initialize=True)
 
 If you are connecting to an existing database you can pass the information
-directly into the ``Client`` itself at `__init__``. See :ref:`db_choice`
+directly into the `Client` itself at ``__init__``. See :ref:`db_choice`
 about how to configure your default backend choice
 
 .. ipython:: python
@@ -125,7 +125,7 @@ upcoming sections.
 Searching for items on a beamline
 """""""""""""""""""""""""""""""""
 
-To search for items on a beamline such as `MFX`, one would use the following:
+To search for items on a beamline such as 'MFX', one would use the following:
 
 
 .. ipython:: python
@@ -145,8 +145,8 @@ easy by way of :meth:`.Client.search_range`. For example:
 
 This would return all devices between Z=314.4 and Z=348.6.
 
-Any numeric key can be filtered in the same way, replacing `'z'` with the key
-name.
+Any numeric key can be filtered in the same way, replacing ``'z'`` with the
+key name.
 
 Searching with regular expressions
 """"""""""""""""""""""""""""""""""

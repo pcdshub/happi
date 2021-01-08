@@ -167,11 +167,12 @@ class MongoBackend(_Backend):
         Raises
         ------
         DuplicateError:
-            If insert is True, but there is already a device with the provided
-            _id
+            If ``insert`` is `True`, but there is already a device with the
+            provided ``_id``
 
         SearchError:
-            If insert is False, but there is no device with the provided _id
+            If ``insert`` is `False`, but there is no device with the provided
+            ``_id``
 
         PermissionError:
             If the write operation fails due to issues with permissions

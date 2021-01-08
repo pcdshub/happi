@@ -105,7 +105,7 @@ class Client(collections.abc.Mapping):
         A already instantiated backend
 
     kwargs:
-        Passed to the `db_type` backend
+        Passed to the ``db_type`` backend
 
     Raises
     -----
@@ -564,12 +564,12 @@ class Client(collections.abc.Mapping):
             HappiItem to save
 
         insert : bool, optional
-            Set to True if this is a new entry
+            Set to `True` if this is a new entry
 
         Raises
         ------
         DuplicateError:
-            When _id already exists
+            When ``_id`` already exists
 
         EntryError:
             If the device doesn't the correct information

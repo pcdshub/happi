@@ -82,8 +82,8 @@ class EntryInfo:
         Enforce the rules of the EntryInfo.
 
         Accepts a ``value``, verifies that it meets the criteria specified in
-        the `enforce` attribute, and returns the same value, except that it
-        will be converted to the correct type if `enforce` is a type.
+        the ``enforce`` attribute, and returns the same value, except that it
+        will be converted to the correct type if ``enforce`` is a type.
 
         Raises
         ------

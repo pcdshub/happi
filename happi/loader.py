@@ -91,18 +91,18 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     device : .happi.Device
         The device to load.
     attach_md : bool, optional
-        Attach the container to the instantiated object as `md`.
+        Attach the container to the instantiated object as ``md``.
     use_cache : bool, optional
         When devices are loaded they are stored in the ``happi.cache``
         dictionary. This means that repeated attempts to load the device will
         return the same object. This prevents unnecessary EPICS connections
         from being initialized in the same process. If a new object is
-        needed, set `use_cache` to False and a new object will be created,
+        needed, set ``use_cache`` to `False` and a new object will be created,
         overriding the current cached object. An object with matching name
         and differing metadata will always return a new instantiation of the
         device.
     threaded : bool, optional
-        Set this to True when calling inside a thread.
+        Set this to `True` when calling inside a thread.
 
     Returns
     -------
@@ -205,7 +205,7 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
         If set to `False`, we'll ignore the cache and always make new
         devices.
     threaded : bool, optional
-        Set to True to create each device in a background thread.  Note that
+        Set to `True` to create each device in a background thread.  Note that
         this assumes that no two devices provided are the same. You are not
         guaranteed to load from the cache correctly if you ask for the same
         device to be loaded twice in the same threaded load.
@@ -259,7 +259,7 @@ def load_device(device, pprint=False, threaded=False, post_load=None,
     pprint: bool, optional
         Print results of device loads.
     threaded: bool, optional
-        Set this to True when calling inside a thread.
+        Set this to `True` when calling inside a thread.
     post_load : function, optional
         Function of one argument to run on each device after instantiation.
         This is your opportunity to check for good device health during the

@@ -39,7 +39,7 @@ class JSONBackend(_Backend):
     JSON database
 
     The happi information is kept in a single dictionary large dictionary that
-    is stored using `simplejson`
+    is stored using ``simplejson``
 
     Parameters
     ----------
@@ -136,7 +136,7 @@ class JSONBackend(_Backend):
 
     def _iterative_compare(self, comparison):
         """
-        Yields documents in which ``comparison(name, doc)`` returns True.
+        Yields documents in which ``comparison(name, doc)`` returns `True`.
 
         Parameters
         ----------
@@ -256,11 +256,12 @@ class JSONBackend(_Backend):
         Raises
         ------
         DuplicateError:
-            If insert is True, but there is already a device with the provided
-            _id
+            If ``insert`` is `True`, but there is already a device with the
+            provided ``_id``
 
         SearchError:
-            If insert is False, but there is no device with the provided _id
+            If ``insert`` is `False`, but there is no device with the provided
+            ``_id``
 
         PermissionError:
             If the write operation fails due to issues with permissions
