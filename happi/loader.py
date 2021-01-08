@@ -88,7 +88,7 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
 
     Parameters
     ----------
-    device : .happi.Device
+    device : happi.HappiItem
         The device to load.
     attach_md : bool, optional
         Attach the container to the instantiated object as ``md``.
