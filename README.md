@@ -9,6 +9,7 @@
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
   <a href="#basic-usage">Basic Usage</a> •
+  <a href="https://pcdshub.github.io/happi/">Documentation</a>
 </p>
 
 <div align="center">
