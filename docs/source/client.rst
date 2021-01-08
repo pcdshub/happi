@@ -32,7 +32,7 @@ information to be stored.
 
 If you are connecting to an existing database you can pass the information
 directly into the `Client` itself at ``__init__``. See :ref:`db_choice`
-about how to configure your default backend choice
+about how to configure your default backend choice.
 
 .. ipython:: python
 
