@@ -13,11 +13,13 @@ Bugfixes
 Maintenance
 -----------
 - Revisions, clarifications, and additions to the documentation.
+- Docstring style fixes.
 
 Contributors
 ------------
 - klauer
 - untzag
+- zrylettc
 
 
 v1.8.3 (2020-11-17)
