@@ -1,4 +1,5 @@
 import pathlib
+
 from qtpy import QtCore, QtWidgets
 
 import happi

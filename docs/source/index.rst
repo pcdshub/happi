@@ -9,7 +9,7 @@ information about devices along SLAC's Linac Coherent Light Source beamline.
 Though initially purpose-built, happi provides a framework for general indexing
 of devices or *things* that correspond to Python objects.
 
-Happi will help you index your objects, search through them, create them, and
+Happi will help you create and index your objects, search through them, and
 provide relevant metadata based on the object type.
 
 .. toctree::
@@ -27,7 +27,7 @@ provide relevant metadata based on the object type.
    api.rst
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 2
    :caption: Information
 
    releases.rst
