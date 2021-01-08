@@ -2,6 +2,26 @@
  Release History
 =================
 
+v1.8.4 (2021-01-08)
+===================
+
+Bugfixes
+--------
+- Fix an issue where a package implementing a happi containers entrypoint
+  could fail to be picked up by the happi registry based on the import order.
+
+Maintenance
+-----------
+- Revisions, clarifications, and additions to the documentation.
+- Docstring style fixes.
+
+Contributors
+------------
+- klauer
+- untzag
+- zrylettc
+
+
 v1.8.3 (2020-11-17)
 ===================
 
