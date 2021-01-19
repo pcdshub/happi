@@ -1,83 +1,39 @@
-language: python
-sudo: false
+version: ~> 1.0
+
 env:
   global:
-    - OFFICIAL_REPO="pcdshub/happi"
     # Doctr deploy key for pcdshub/happi
     - secure: "jb05cM6VjmcA+L1pwBUzKN9++tf8neLrxpUxTlFKEHBS2XNXRYbqJgdJMZ6xyf6e8AkjTMxDYo12oKhJPs0vPk34G49dEjQI/9+4+RcaQvzauGDJHJNPfu5VIZhyjxysn+y3T3mj9ttE9w1oh2+8EJPuhWNRDJxQPuZHKNiD6Uf/LtSO09HwK8ZBDbVebzOvQb0PJigqWlPED6JLaw1z67+v1sfznQ8gMAJadmOhxs974G72hF5hrD3N/3lhhR1stFXW1Uib9vQaYQDglD06SzXS4SE0JWBaNwVZSKOoSb1Bn3Vvh6rsRZMjvBZVNx6GPYgSe7cSpXA5TF4/qr5zqh6xQW+PqR9imHupWVFoojm1uA6Hn1TfawTSscsh1LOrb1q09CcCQz3KZ28QUXccf9Y49/C8NPNUjkt3Srne+Ky44O5XQhvALkQkUtuC4/hvW5jGeBJigR8HlGtNWeylOKldF7+KcwrWfA9pKMB4ok8a+Api6vi7f83Fv41WraQMql+uONlcZPLGXstcGobvLzbHQc+bxT72OrM29HBaMlchZWJwoiFaMvao7y1Gczg6diL7zz8Ho+SgOZ6drngxsSj169O7+fY1TzAfKbhvg7N4iOsiJBW/BzvSZhE/B2hw0fdi2s9v6U7oRjVQFi+nIZcdB+PXp2d58WgSTTLeF6w="
+    # enable the usage of versions menu which allow versioning of the docs
+    # pages and not only the master branch
+    - DOCTR_VERSIONS_MENU="1"
+    # Dependency files used to build the documentation (space separated)
+    - DOCS_REQUIREMENTS="dev-requirements.txt requirements.txt"
+    # Options to be passed to flake8 for package linting. Usually this is just
+    # the package name but you can enable other flake8 options via this config
+    - PYTHON_LINT_OPTIONS="happi"
 
-matrix:
-  include:
-      - name: flake8 linting
-        python: 3.6
-        env: LINT_PYTHON=happi
-      - python: 3.6
-        env:
-           - CONDA_UPLOAD=0
-           - PCDS_CHANNEL=pcds-dev
-      - python: 3.6
-        env:
-           - BUILD_DOCS=1
-           - PCDS_CHANNEL=pcds-tag
-      - python: 3.7
-        env:
-           - PCDS_CHANNEL=pcds-tag
-      - python: 3.7
-        env:
-           - PCDS_CHANNEL=pcds-dev
-      - python: 3.8
+    # The name of the conda package
+    - CONDA_PACKAGE="happi"
+    # The folder containing the conda recipe (meta.yaml)
+    - CONDA_RECIPE_FOLDER="conda-recipe"
+
+    # Requirements file with contents for tests dependencies
+    - CONDA_REQUIREMENTS="dev-requirements.txt"
+
+    # Extra dependencies needed to run the tests which are not included
+    # at the recipe and dev-requirements.txt. E.g. PyQt
+    - CONDA_EXTRAS=""
+
+    # Extra dependencies needed to run the test with Pip (similar to
+    # CONDA_EXTRAS) but for pip
+    - PIP_EXTRAS=""
+
+jobs:
   allow_failures:
-    - python: 3.8
+    # This makes the PIP-based Python 3.6 optional.
+    - name: "Python 3.6 - PIP"
 
-install:
-  - git clone --depth 1 git://github.com/pcdshub/pcds-ci-helpers.git
-  - source pcds-ci-helpers/travis/init.sh
-
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda install conda-build anaconda-client
-  - conda update -q conda conda-build
-  - conda config --remove channels defaults
-  - |
-    if [[ ! -z "${PCDS_CHANNEL}" ]]; then
-      conda config --append channels $PCDS_CHANNEL
-    fi
-  - conda config --append channels conda-forge
-  # Useful for debugging any issues with conda
-  - conda info -a
-  # Test conda build
-  - conda build -q conda-recipe --python=$TRAVIS_PYTHON_VERSION --output-folder bld-dir
-  - conda config --add channels "file://`pwd`/bld-dir"
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION happi --file dev-requirements.txt
-  - source activate test-environment
-
-script:
-  - coverage run run_tests.py
-  - coverage report -m
-  - set -e
-  # Build docs.
-  - |
-    if [[ -n "$DOCTR_DEPLOY_ENCRYPTION_KEY_PCDSHUB_HAPPI" && "${BUILD_DOCS:=0}" == '1' ]]; then
-      pushd docs
-      make html
-      popd
-      # Publish docs.
-      doctr deploy . --built-docs docs/build/html --deploy-branch-name gh-pages
-    fi
-
-after_success:
-  - codecov
-  - |
-    if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_REPO_SLUG == $OFFICIAL_REPO && "${CONDA_UPLOAD:=1}" == '1' ]]; then
-      if [[ $TRAVIS_BRANCH == $TRAVIS_TAG  && $TRAVIS_TAG != '' && $PCDS_CHANNEL == 'pcds-tag' ]]; then
-        export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_TAG
-        anaconda upload bld-dir/linux-64/*.tar.bz2
-      fi
-      if [[ $TRAVIS_BRANCH == 'master' && $TRAVIS_TAG == '' && $PCDS_CHANNEL == 'pcds-dev' ]]; then
-        export ANACONDA_API_TOKEN=$CONDA_UPLOAD_TOKEN_DEV
-        anaconda upload bld-dir/linux-64/*.tar.bz2
-      fi
-    fi
+import:
+  - pcdshub/pcds-ci-helpers:travis/shared_configs/setup-env-ui.yml
+  - pcdshub/pcds-ci-helpers:travis/shared_configs/standard-python-conda.yml

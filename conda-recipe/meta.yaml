@@ -1,26 +1,30 @@
 {% set data = load_setup_py_data() %}
+{% set name = "happi" %}
 
 package:
-    name    : happi
-    version : {{ data.get('version') }}
+    name: {{ name }}
+    version: {{ data.get('version') }}
+
+build:
+  noarch: python
+  number: 0
 
 source:
     path: ..
 
 requirements:
     build:
-      - python
-      - setuptools
-
+      - python >=3.6
+      - pip
     run:
-      - jinja2
-      - prettytable
-      - psdm_qs_cli  >=0.2.3
-      - simplejson
-      - pymongo
-      - python
+      - python >=3.6
       - coloredlogs
       - entrypoints
+      - jinja2
+      - prettytable
+      - psdm_qs_cli
+      - pymongo
+      - simplejson
 
 test:
     imports:
@@ -33,6 +37,10 @@ test:
       - ipython
 
 about:
-  home: https://github.com/pcdshub/happi
-  license: SLAC Open License
+  home: https://github.com/pcdshub/happi/
+  doc_url: https://pcdshub.github.io/happi/
+  dev_url: https://github.com/pcdshub/happi/
+  license: LicenseRef-BSD-3-Clause-SLAC
+  license_family: BSD
+  license_file: LICENSE.md
   summary: Heuristic Access to Positions of Photon Instruments
