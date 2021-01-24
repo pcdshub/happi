@@ -58,6 +58,11 @@ def get_parser():
                                         'given device loaded.')
     parser_load.add_argument('device_names', nargs='+',
                              help='The names of one or more devices to load')
+    parser_update = subparsers.add_parser("update",
+                                          help="Update happi db "
+                                          "with JSON payload.")
+    parser_update.add_argument("json", help="JSON payload.",
+                               default="-", nargs="*")
     return parser
 
 
@@ -252,6 +257,19 @@ def happi_cli(args):
 
         from IPython import start_ipython  # noqa
         start_ipython(argv=['--quick'], user_ns=devices)
+    elif args.cmd == "update":
+        # parse input
+        input_ = " ".join(args.json).strip()
+        if input_ == "-":
+            items_input = json.load(sys.stdin)
+        else:
+            items_input = json.loads(input_)
+        # insert
+        registry = happi.containers.registry
+        for item in items_input:
+            item = client.create_device(device_cls=item["type"], **item)
+            exists = item["_id"] in [c["_id"] for c in client.all_items]
+            client._store(item, insert=not exists)
 
 
 def main():
