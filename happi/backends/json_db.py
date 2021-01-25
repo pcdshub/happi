@@ -47,7 +47,7 @@ class JSONBackend(_Backend):
     """
 
     def __init__(self, path, initialize=False):
-        self.path = path
+        self.path = os.path.expanduser(path)
         # Create a new JSON file if requested
         if initialize:
             self.initialize()
