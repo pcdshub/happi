@@ -265,7 +265,6 @@ def happi_cli(args):
         else:
             items_input = json.loads(input_)
         # insert
-        registry = happi.containers.registry
         for item in items_input:
             item = client.create_device(device_cls=item["type"], **item)
             exists = item["_id"] in [c["_id"] for c in client.all_items]
