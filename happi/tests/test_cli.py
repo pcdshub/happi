@@ -321,3 +321,35 @@ def test_load(caplog, happi_cfg):
         m.assert_called_once_with(argv=['--quick'], user_ns=devices)
     with caplog.at_level(logging.INFO):
         assert "Creating shell with devices" in caplog.text
+
+
+def test_update(happi_cfg):
+    new = """[ {
+        "_id": "TST_BASE_PIM2",
+        "active": true,
+        "args": [
+            "{{prefix}}"
+        ],
+        "beamline": "TST",
+        "creation": "Wed Jan 30 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Fri Apr 13 14:40:08 2018",
+        "macros": null,
+        "name": "tst_base_pim2",
+        "parent": null,
+        "prefix": "TST:BASE:PIM2",
+        "screen": null,
+        "stand": "BAS",
+        "system": "diagnostic",
+        "type": "OphydItem",
+        "z": 6.0,
+        "from_update": true
+    } ] """
+    happi.cli.happi_cli(["--verbose", "--path", happi_cfg, "update", new])
+    #
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    item = client.find_device(name="tst_base_pim2")
+    assert item["from_update"]
