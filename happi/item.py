@@ -95,6 +95,19 @@ class EntryInfo:
         if not self.enforce or value is None:
             return value
 
+        elif self.enforce is bool and isinstance(value, str):
+            # Special case for booleans, since the value may come in as a
+            # string, and bool('False') evaluates to True
+            true_values = ['true', 't', 'yes', 'y']
+            false_values = ['false', 'f', 'no', 'n']
+            if value.lower() in true_values:
+                return True
+            elif value.lower() in false_values:
+                return False
+            else:
+                raise ValueError(f'{value} as a string is not interpretable '
+                                 'as a boolean.')
+
         elif isinstance(self.enforce, type):
             # Try and convert to type, otherwise raise ValueError
             return self.enforce(value)
