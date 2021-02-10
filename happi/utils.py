@@ -1,6 +1,7 @@
 """
 Basic module utilities
 """
+import keyword
 import logging
 
 logger = logging.getLogger(__name__)
@@ -54,3 +55,13 @@ def is_a_range(str_value):
             return False
     else:
         return False
+
+
+def is_valid_identifier_not_keyword(str_value):
+    try:
+        if str.isidentifier(str_value) and not keyword.iskeyword(str_value):
+            return str_value
+    except Exception:
+        pass
+    raise ValueError(f'{str_value} is either not a valid Python identifier, '
+                     'or is a reserved keyword.')

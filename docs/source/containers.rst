@@ -96,14 +96,15 @@ real value is given it will be checked against the specified ``enforce``
 keyword, raising ``ValueError`` if invalid. Here is a table for how the
 :class:`.EntryInfo` check the type
 
-=======   ===========================
-Enforce   Method of enforcement
-=======   ===========================
-None      Any value will work
-type      type(value)
-list      list.index(value)
-regex     regex.match(value) != None
-=======   ===========================
+========   ===========================
+Enforce    Method of enforcement
+========   ===========================
+None       Any value will work
+type       type(value)
+list       list.index(value)
+regex      regex.match(value) != None
+function   function(value)
+========   ===========================
 
 Fields that are important to the item can be marked as mandatory with
 ``optional=False`` and should have no default value.
