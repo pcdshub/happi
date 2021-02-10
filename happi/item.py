@@ -1,7 +1,6 @@
 import collections
 import copy
 import logging
-import re
 import sys
 from collections import OrderedDict
 
