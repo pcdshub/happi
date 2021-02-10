@@ -32,10 +32,14 @@ class EntryInfo:
     optional : bool, optional
         By default all EntryInfo is optional, but in certain cases you may want
         to demand a particular piece of information upon initialization.
-    enforce : type or list or compiled regex, optional
+    enforce : type, list, compiled regex, or function, optional
         Specify that all entered information is entered in a specific format.
         This can either by a Python type i.e. int, float e.t.c., a list of
-        acceptable values, or a compiled regex pattern i.e ``re.compile(...)``
+        acceptable values, a compiled regex pattern i.e ``re.compile(...)``,
+        or custom handling by passing a function that takes in one argument,
+        the value. This function must do one of: return the value back as-is,
+        return the value back converted to a corrected form, or raise a
+        ValueError.
     default : optional
         A default value for the trait to have if the user does not specify.
         Keep in mind that this should be the same type as ``enforce`` if you
@@ -108,8 +112,9 @@ class EntryInfo:
                 raise ValueError(f'{value} as a string is not interpretable '
                                  'as a boolean.')
 
-        elif isinstance(self.enforce, type):
-            # Try and convert to type, otherwise raise ValueError
+        elif callable(self.enforce):
+            # Try and convert to type or custom handling
+            # Otherwise raise ValueError for types, custom handling otherwise
             return self.enforce(value)
 
         elif isinstance(self.enforce, (list, tuple, set)):
