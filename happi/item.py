@@ -248,7 +248,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
 
     name = EntryInfo("Shorthand Python-valid name for the Python instance",
                      optional=False,
-                     enforce=re.compile(r'[a-z][a-z\_0-9]{2,78}$'))
+                     enforce=re.compile(r'[_A-Za-z][_a-zA-Z0-9]*$'))
     device_class = EntryInfo("Python class that represents the instance",
                              enforce=str)
     args = EntryInfo("Arguments to pass to device_class",
