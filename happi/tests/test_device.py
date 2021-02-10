@@ -45,6 +45,25 @@ def test_regex_enforce():
         d.re_attr = 'ABC'
 
 
+@pytest.mark.parametrize('type_spec, value, expected',
+                         [(int, 0, 0), (int, 1, 1), (int, 2.0, 2),
+                          (str, 'hat', 'hat'), (str, 5, '5'),
+                          (bool, True, True), (bool, 0, False),
+                          (bool, 'true', True), (bool, 'NO', False)])
+def test_type_enforce_ok(type_spec, value, expected):
+    entry = EntryInfo(enforce=type_spec)
+    assert entry.enforce_value(value) == expected
+
+
+@pytest.mark.parametrize('type_spec, value',
+                         [(int, 'cats'),
+                          (bool, '24'), (bool, 'catastrophe')])
+def test_type_enforce_exceptions(type_spec, value):
+    entry = EntryInfo(enforce=type_spec)
+    with pytest.raises(ValueError):
+        entry.enforce_value(value)
+
+
 def test_set(device):
     device.name = 'new_name'
     assert device.name == 'new_name'
