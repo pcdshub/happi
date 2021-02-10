@@ -2,6 +2,40 @@
  Release History
 =================
 
+v1.9.0 (2021-02-10)
+===================
+
+Features
+--------
+- Add ``happi update <json>`` command-line utility. This allows the user to
+  pipe in a json blob to the happi CLI to update their database. This enables
+  bulk updates in a convenient way.
+- Allow short (under 3) and long (over 80) character names. Users who want
+  further restrictions on names for their projects are encouraged to create
+  a custom container.
+- Allow arbitrary user functions to be passed in to the EntryInfo ``enforce``
+  field, for custom validation of data. These functions should mimic the
+  signature and behavior of the built-in types: take one argument, return the
+  value back as-is or cast to the type, raise ValueError if there is an issue.
+
+Bugfixes
+--------
+- Properly expand home directory (~) in the JSON backend database path.
+- Require that the name field does not conflict with reserved Python keywords.
+- Fix an issue where boolean fields edited from the command-line were always
+  interpreted as True.
+
+Maintenance
+-----------
+- Update CI to PCDS standards.
+
+Contributors
+------------
+- klauer
+- unztag
+- zllentz
+
+
 v1.8.4 (2021-01-08)
 ===================
 
