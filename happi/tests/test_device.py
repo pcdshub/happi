@@ -52,7 +52,7 @@ def test_regex_enforce():
                           (bool, 'true', True), (bool, 'NO', False)])
 def test_type_enforce_ok(type_spec, value, expected):
     entry = EntryInfo(enforce=type_spec)
-    assert entry.enforce(value) == expected
+    assert entry.enforce_value(value) == expected
 
 
 @pytest.mark.parametrize('type_spec, value',
@@ -61,7 +61,7 @@ def test_type_enforce_ok(type_spec, value, expected):
 def test_type_enforce_exceptions(type_spec, value):
     entry = EntryInfo(enforce=type_spec)
     with pytest.raises(ValueError):
-        entry.enforce(value)
+        entry.enforce_value(value)
 
 
 def test_set(device):
