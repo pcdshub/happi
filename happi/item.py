@@ -98,8 +98,8 @@ class EntryInfo:
         elif self.enforce is bool and isinstance(value, str):
             # Special case for booleans, since the value may come in as a
             # string, and bool('False') evaluates to True
-            true_values = ['true', 'yes']
-            false_values = ['false', 'no']
+            true_values = ['true', 't', 'yes', 'y']
+            false_values = ['false', 'f', 'no', 'n']
             if value.lower() in true_values:
                 return True
             elif value.lower() in false_values:
