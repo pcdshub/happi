@@ -8,6 +8,7 @@ from collections import OrderedDict
 from prettytable import PrettyTable
 
 from .errors import ContainerError
+from .utils import is_valid_identifier_not_keyword
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +267,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
 
     name = EntryInfo("Shorthand Python-valid name for the Python instance",
                      optional=False,
-                     enforce=re.compile(r'[_A-Za-z][_a-zA-Z0-9]*$'))
+                     enforce=is_valid_identifier_not_keyword)
     device_class = EntryInfo("Python class that represents the instance",
                              enforce=str)
     args = EntryInfo("Arguments to pass to device_class",
