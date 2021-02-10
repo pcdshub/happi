@@ -56,7 +56,7 @@ def test_type_enforce_ok(type_spec, value, expected):
 
 
 @pytest.mark.parametrize('type_spec, value',
-                         [(int, 'cats'), (int, 0.3),
+                         [(int, 'cats'),
                           (bool, '24'), (bool, 'catastrophe')])
 def test_type_enforce_exceptions(type_spec, value):
     entry = EntryInfo(enforce=type_spec)
