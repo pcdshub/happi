@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Containers &mdash; Happi 1.8.4+14.g5017c04 documentation</title>
+  <title>Containers &mdash; Happi 1.8.4+21.g78c0c62 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.8.4+14.g5017c04
+                1.8.4+21.g78c0c62
               </div>
             
           
@@ -217,9 +217,13 @@ help control the information entered into a device.</p>
 <li><p><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A short string to document the device.</p></li>
 <li><p><strong>optional</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><em>optional</em>) – By default all EntryInfo is optional, but in certain cases you may want
 to demand a particular piece of information upon initialization.</p></li>
-<li><p><strong>enforce</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)"><em>type</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em> or </em><em>compiled regex</em><em>, </em><em>optional</em>) – Specify that all entered information is entered in a specific format.
+<li><p><strong>enforce</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.9)"><em>type</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a><em>, </em><em>compiled regex</em><em>, or </em><em>function</em><em>, </em><em>optional</em>) – Specify that all entered information is entered in a specific format.
 This can either by a Python type i.e. int, float e.t.c., a list of
-acceptable values, or a compiled regex pattern i.e <code class="docutils literal notranslate"><span class="pre">re.compile(...)</span></code></p></li>
+acceptable values, a compiled regex pattern i.e <code class="docutils literal notranslate"><span class="pre">re.compile(...)</span></code>,
+or custom handling by passing a function that takes in one argument,
+the value. This function must do one of: return the value back as-is,
+return the value back converted to a corrected form, or raise a
+ValueError.</p></li>
 <li><p><strong>default</strong> (<em>optional</em>) – A default value for the trait to have if the user does not specify.
 Keep in mind that this should be the same type as <code class="docutils literal notranslate"><span class="pre">enforce</span></code> if you
 are demanding a certain type.</p></li>
@@ -326,8 +330,8 @@ keyword, raising <code class="docutils literal notranslate"><span class="pre">Va
 <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> check the type</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 21%" />
-<col style="width: 79%" />
+<col style="width: 23%" />
+<col style="width: 77%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Enforce</p></th>
@@ -346,6 +350,9 @@ keyword, raising <code class="docutils literal notranslate"><span class="pre">Va
 </tr>
 <tr class="row-odd"><td><p>regex</p></td>
 <td><p>regex.match(value) != None</p></td>
+</tr>
+<tr class="row-even"><td><p>function</p></td>
+<td><p>function(value)</p></td>
 </tr>
 </tbody>
 </table>
@@ -392,7 +399,7 @@ attribute alone, the type will also be converted.</p>
 <span class="gp">In [11]: </span><span class="n">obj</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">attach_md</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="gp">In [12]: </span><span class="n">obj</span>
-<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1612994397.361799)</span>
+<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1612998768.1024704)</span>
 </pre></div>
 </div>
 </div>
