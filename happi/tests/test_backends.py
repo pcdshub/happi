@@ -208,19 +208,21 @@ def test_beckoff_axis_device_class(mockqsbackend):
 
 @requires_questionnaire
 @requires_pcdsdevices
-def test_qsbackend_with_mpod_lv(mockqsbackend):
+def test_qsbackend_with_mpod(mockqsbackend):
     c = Client(database=mockqsbackend)
     # patch the get_max_voltage to be able to determine if LV or HV
     # if voltage < 50 => LV Channel
     with patch('pcdsdevices.mpod.MPODChannel.get_max_voltage',
                return_value=49):
-        d = load_devices(*c.all_devices, pprint=False).__dict__
+        d = load_devices(*c.all_devices, pprint=False,
+                         use_cache=False).__dict__
         led = d.get('led')
         assert led.__class__.__name__ == 'MPODChannelLV'
 
     # if voltage > 50 => HV Channel
-    # with patch('pcdsdevices.mpod.MPODChannel.get_max_voltage',
-    #            return_value=50):
-    #     d = load_devices(*c.all_devices, pprint=False).__dict__
-    #     blower = d.get('blower')
-    #     assert blower.__class__.__name__ == 'MPODChannelHV'
+    with patch('pcdsdevices.mpod.MPODChannel.get_max_voltage',
+               return_value=50):
+        d = load_devices(*c.all_devices, pprint=False,
+                         use_cache=False).__dict__
+        blower = d.get('blower')
+        assert blower.__class__.__name__ == 'MPODChannelHV'
