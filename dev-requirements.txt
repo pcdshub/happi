@@ -1,5 +1,4 @@
 pytest
-codecov
 doctr
 ipython
 matplotlib >=3.2.0
