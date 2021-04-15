@@ -19,12 +19,6 @@
 src="https://img.shields.io/travis/pcdshub/happi/master.svg?style=flat-square"
       alt="Build Status" />
   </a>
-  <!-- Test Coverage -->
-  <a href="https://codecov.io/github/pcdshub/happi">
-    <img
-src="https://img.shields.io/codecov/c/github/pcdshub/happi/master.svg?style=flat-square"
-      alt="Test Coverage" />
-  </a>
 </div>
 
 ## Motivation
