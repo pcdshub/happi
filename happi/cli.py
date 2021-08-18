@@ -274,7 +274,7 @@ def happi_cli(args):
             client._store(item, insert=not exists)
     elif args.cmd == "container-registry":
         pt = prettytable.PrettyTable()
-        pt.field_names = ["Type", "Item Class", "Device Class"]
+        pt.field_names = ["Container Name", "Container Class", "Object Class"]
         pt.align = "l"
         for type_, class_, in happi.containers.registry._registry.items():
             pt.add_row([type_,
