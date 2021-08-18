@@ -9,6 +9,7 @@ import os
 import sys
 
 import coloredlogs
+import prettytable
 
 import happi
 
@@ -63,6 +64,8 @@ def get_parser():
                                           "with JSON payload.")
     parser_update.add_argument("json", help="JSON payload.",
                                default="-", nargs="*")
+    parser_update = subparsers.add_parser("container-registry",
+                                          help="Print container registry.")
     return parser
 
 
@@ -269,6 +272,13 @@ def happi_cli(args):
             item = client.create_device(device_cls=item["type"], **item)
             exists = item["_id"] in [c["_id"] for c in client.all_items]
             client._store(item, insert=not exists)
+    elif args.cmd == "container-registry":
+        pt = prettytable.PrettyTable()
+        pt.field_names = ["Type", "Device Class"]
+        pt.align = "l"
+        for item in happi.containers.registry._registry.items():
+            pt.add_row(item)
+        print(pt)
 
 
 def main():
