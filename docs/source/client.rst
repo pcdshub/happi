@@ -31,7 +31,7 @@ information to be stored.
     db = JSONBackend(path='doc_test.json', initialize=True)
 
 If you are connecting to an existing database you can pass the information
-directly into the `Client` itself at ``__init__``. See :ref:`db_choice`
+directly into the :class:`.Client` itself at ``__init__``. See :ref:`db_choice`
 about how to configure your default backend choice.
 
 .. ipython:: python
