@@ -31,8 +31,8 @@ env:
 
 jobs:
   allow_failures:
-    # This makes the PIP-based Python 3.6 optional.
-    - name: "Python 3.6 - PIP"
+    # This makes the PIP-based Python build optional.
+    - name: "Python - PIP"
 
 import:
   - pcdshub/pcds-ci-helpers:travis/shared_configs/setup-env-ui.yml
