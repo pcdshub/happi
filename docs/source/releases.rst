@@ -2,6 +2,27 @@
  Release History
 =================
 
+v1.10.0 (2021-09-27)
+====================
+
+Features
+--------
+- Add ``happi container-registry`` command-line utility. This shows the user
+  which ``happi`` containers are registered and availble in their session.
+  This is very useful for debugging purposes and more generally to
+  understand which containers are available.
+
+Maintenance
+-----------
+- Fix error in the docs build.
+- Misc updates to the CI.
+
+Contributors
+------------
+- unztag
+- zrylettc
+
+
 v1.9.0 (2021-02-10)
 ===================
 
