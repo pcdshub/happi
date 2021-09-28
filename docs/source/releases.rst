@@ -8,7 +8,7 @@ v1.10.0 (2021-09-27)
 Features
 --------
 - Add ``happi container-registry`` command-line utility. This shows the user
-  which ``happi`` containers are registered and availble in their session.
+  which ``happi`` containers are registered and available in their session.
   This is very useful for debugging purposes and more generally to
   understand which containers are available.
 
