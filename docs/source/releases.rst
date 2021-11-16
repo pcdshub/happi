@@ -2,6 +2,18 @@
  Release History
 =================
 
+v1.10.1 (2021-11-15)
+====================
+
+Bugfixes
+--------
+- Fix a logging format error in ``Client.from_config``
+
+Contributors
+------------
+- klauer
+
+
 v1.10.0 (2021-09-27)
 ====================
 
