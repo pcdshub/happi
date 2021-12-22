@@ -39,7 +39,8 @@ def get_parser():
     parser_search.add_argument('--json', action='store_true',
                                help='Show results in JSON format.')
     parser_search.add_argument('--names', action='store_true',
-                               help='Return results as whitespace-separated names.')
+                               help='Return results as '
+                               'whitespace-separated names.')
     parser_search.add_argument('search_criteria', nargs='+',
                                help='Search criteria of the form: '
                                'field=value. If "field=" is omitted, it will '
