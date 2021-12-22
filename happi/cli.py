@@ -38,6 +38,8 @@ def get_parser():
                                           'database.')
     parser_search.add_argument('--json', action='store_true',
                                help='Show results in JSON format.')
+    parser_search.add_argument('--names', action='store_true',
+                               help='Return results as whitespace-separated names.')
     parser_search.add_argument('search_criteria', nargs='+',
                                help='Search criteria of the form: '
                                'field=value. If "field=" is omitted, it will '
@@ -168,6 +170,9 @@ def happi_cli(args):
         if args.json:
             json.dump([dict(res.item) for res in final_results], indent=2,
                       fp=sys.stdout)
+        elif args.names:
+            out = " ".join([res.item.name for res in final_results])
+            print(out)
         else:
             for res in final_results:
                 res.item.show_info()
@@ -255,7 +260,9 @@ def happi_cli(args):
         logger.debug('Starting load block')
         logger.info(f'Creating shell with devices {args.device_names}')
         devices = {}
-        for name in args.device_names:
+        names = " ".join(args.device_names)
+        names = names.split()
+        for name in names:
             devices[name] = client.load_device(name=name)
 
         from IPython import start_ipython  # noqa
