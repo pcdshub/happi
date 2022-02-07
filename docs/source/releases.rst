@@ -2,6 +2,21 @@
  Release History
 =================
 
+v1.11.0 (2021-02-07)
+====================
+
+Features
+--------
+- Add ``--names`` flag to the ``happi search`` command. This causes the
+  search to output only the names of the matching devices. This is useful
+  for using the output of ``happi search`` inside another ``happi`` command,
+  for example: ``happi load $(happi search "*" --names)``.
+
+Contributors
+------------
+- unztag
+
+
 v1.10.1 (2021-11-15)
 ====================
 
