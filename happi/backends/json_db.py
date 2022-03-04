@@ -23,6 +23,10 @@ except ImportError:
     fcntl = None
 
 
+# A sentinel for keys that are missing for comparisons below.
+_MISSING = object()
+
+
 @contextlib.contextmanager
 def _load_and_store_context(backend):
     """Context manager used to load, and optionally store the JSON database."""
@@ -164,8 +168,10 @@ class JSONBackend(_Backend):
         """
 
         def comparison(name, doc):
-            return all(value == doc[key]
-                       for key, value in to_match.items())
+            return all(
+                value == doc.get(key, _MISSING)
+                for key, value in to_match.items()
+            )
 
         yield from self._iterative_compare(comparison)
 
@@ -187,12 +193,13 @@ class JSONBackend(_Backend):
         """
 
         def comparison(name, doc):
-            if all(value == doc[k] for k, value in to_match.items()):
-                value = doc.get(key)
+            if all(value == doc.get(k, _MISSING)
+                   for k, value in to_match.items()):
                 try:
-                    return start <= value < stop
+                    return start <= doc[key] < stop
                 except Exception:
                     ...
+            return False
 
         if key in to_match:
             raise ValueError('Cannot specify the same key in `to_match` as '
