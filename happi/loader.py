@@ -5,6 +5,7 @@ import asyncio
 import importlib
 import logging
 import sys
+import time
 import types
 from functools import partial
 from multiprocessing.pool import ThreadPool
@@ -294,8 +295,10 @@ def load_device(
     pprint: bool = False,
     threaded: bool = False,
     post_load: Optional[PostLoad] = None,
+    include_load_time: bool = False,
+    load_time_threshold: float = 0.5,
     **kwargs
-):
+) -> Any:
     """
     Call :func:`.from_container ` and show success/fail.
 
@@ -311,8 +314,19 @@ def load_device(
         Function of one argument to run on each device after instantiation.
         This is your opportunity to check for good device health during the
         threaded load.
+    include_load_time : bool, optional
+        Include load time in each message.
+    load_time_threshold : float, optional
+        Load time above this value, in seconds, will be shown if
+        ``include_load_time`` is set.
     kwargs:
         Additional keyword arguments passed to :func:`.from_container`.
+
+    Returns
+    -------
+    obj : Any
+        Returns either the loaded object or the resulting exception from
+        trying to load the object.
     """
 
     logger.debug("Loading device %s ...", device.name)
@@ -321,30 +335,40 @@ def load_device(
     if threaded and main_event_loop is not None:
         asyncio.set_event_loop(main_event_loop)
 
-    load_message = "Loading %s [%s] ... "
+    load_message = f"Loading {device.name} [{device.device_class}] ... "
     success = "\033[32mSUCCESS\033[0m!"
     failed = "\033[31mFAILED\033[0m"
-    if pprint:
-        device_message = load_message % (device.name, device.device_class)
-        if not threaded:
-            print(device_message, end='')
+
+    start_time = time.monotonic()
+    if pprint and not threaded:
+        print(load_message, end='')
+
+    def get_load_time() -> str:
+        """Get the load time information for display."""
+        elapsed_time = time.monotonic() - start_time
+        if include_load_time and elapsed_time >= load_time_threshold:
+            return f" ({elapsed_time:.1f} s)"
+        return ""
+
     try:
         loaded = from_container(device, **kwargs)
         if post_load is not None:
             post_load(loaded)
-        logger.info(load_message + success,
-                    device.name, device.device_class)
-        if pprint:
-            if threaded:
-                print(device_message + success)
-            else:
-                print(success)
     except Exception as exc:
+        elapsed = get_load_time()
         if pprint:
             if threaded:
-                print(device_message + failed)
+                print(f"{load_message} {failed}{elapsed}")
             else:
-                print(failed)
-        logger.exception('Error loading %s', device.name)
+                print(f"{failed}{elapsed}")
+        logger.exception("Error loading %s%s", device.name, elapsed)
         loaded = exc
+    else:
+        elapsed = get_load_time()
+        logger.info("%s %s%s", load_message, success, elapsed)
+        if pprint:
+            if threaded:
+                print(f"{load_message} {success}{elapsed}")
+            else:
+                print("{success}{elapsed}")
     return loaded
