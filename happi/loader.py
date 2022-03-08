@@ -8,9 +8,11 @@ import sys
 import types
 from functools import partial
 from multiprocessing.pool import ThreadPool
+from typing import Any
 
 from jinja2 import Environment, meta
 
+from .item import HappiItem
 from .utils import create_alias
 
 logger = logging.getLogger(__name__)
@@ -19,51 +21,69 @@ cache = dict()
 main_event_loop = None
 
 
-def fill_template(template, device, enforce_type=False):
+def fill_template(
+    template: str,
+    device: HappiItem,
+    enforce_type: bool = False
+) -> Any:
     """
-    Fill a Jinja2 template using information from a device
+    Fill a Jinja2 template using information from a device.
 
     Parameters
     ----------
     template : str
-        Jinja2 template
+        Jinja2 template source.
 
-    device : happi.Device
-        Any device container
+    device : HappItem
+        Any happi item container.
 
     enforce_type : bool, optional
         Force the output of the rendered template to match the enforced type of
         the happi information that was used to fill it.
+
+    Returns
+    -------
+    rendered : Any
+        string-rendered template if ``enforce_type`` is False, or if happi is
+        unable to cast the rendered value to the given type.
     """
     # Create a template and render our happi information inside it
     env = Environment().from_string(template)
     filled = env.render(**device.post())
-    # Find which variable we used in the template, get the type and convert
-    # our rendered template to agree with this
+    # Find which variable we used in the template, get the type and convert our
+    # rendered template to agree with this
     info = meta.find_undeclared_variables(env.environment.parse(template))
-    if len(info) == 1 and enforce_type:
-        # Get the original attribute back from the device. If this does not
-        # exist there is a possibility it is a piece of metadata e.t.c
-        try:
-            attr_name = info.pop()
-            typed_attr = getattr(device, attr_name)
-        except AttributeError:
-            logger.warning("Can not enforce type to match attribute %s",
-                           attr_name)
-            return filled
-        # If this was a straight substitution with nothing else in the template
-        # we can just return the attribute itself thus preserving type
-        if str(typed_attr) == filled:
-            filled = typed_attr
-        # If there is something more complex going on we can attempt to convert
-        # it to match the type of the original
-        else:
-            attr_type = type(typed_attr)
-            try:
-                filled = attr_type(filled)
-            except ValueError:
-                logger.exception("Unable to convert %s to %s",
-                                 filled, attr_type)
+    if len(info) != 1 or not enforce_type:
+        # Enforcing types only works with 1 attribute name in the template
+        return filled
+
+    # Get the original attribute back from the device. If this does not exist
+    # there is a possibility it is a piece of metadata e.t.c
+    attr_name = info.pop()
+    try:
+        typed_attr = getattr(device, attr_name)
+    except AttributeError:
+        logger.warning(
+            "Can not enforce type to match attribute %s as it does not "
+            "exist on the container.", attr_name
+        )
+        return filled
+
+    # If this was a straight substitution with nothing else in the template we
+    # can just return the attribute itself thus preserving type
+    if str(typed_attr) == filled:
+        return typed_attr
+
+    # If there is something more complex going on we can attempt to convert
+    # it to match the type of the original
+    attr_type = type(typed_attr)
+    try:
+        return attr_type(filled)
+    except ValueError:
+        logger.exception(
+            "Unable to convert attribute %s from %r to %s",
+            attr_name, filled, attr_type
+        )
     return filled
 
 
