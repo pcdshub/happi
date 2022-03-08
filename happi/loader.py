@@ -8,7 +8,7 @@ import sys
 import types
 from functools import partial
 from multiprocessing.pool import ThreadPool
-from typing import Any
+from typing import Any, Callable, Optional
 
 from jinja2 import Environment, meta
 
@@ -87,9 +87,14 @@ def fill_template(
     return filled
 
 
-def from_container(device, attach_md=True, use_cache=True, threaded=False):
+def from_container(
+    device: HappiItem,
+    attach_md: bool = True,
+    use_cache: bool = True,
+    threaded: bool = False,
+) -> Any:
     """
-    Load an object (or "device") from a happi container.
+    Load an object (or "device") from a compatible HappiItem.
 
     The container is queried for the device_class, args, and kwargs. Then if
     the associated package is not already loaded it is imported. The specified
@@ -122,11 +127,15 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
         and differing metadata will always return a new instantiation of the
         device.
     threaded : bool, optional
-        Set this to `True` when calling inside a thread.
+        Set this to `True` when calling inside a thread.  This is currently
+        unused.
 
     Returns
     -------
-    obj : happi.Device.device_class
+    obj : Any
+        This will be of the same type as the return value of the provided
+        item's ``device_class``.  As that may be a factory function or a
+        class, the exact return type is not guaranteed.
     """
 
     # Return a cached version of the device if present and not forced
@@ -135,13 +144,15 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
         # If the metadata has not been modified or we can't review it.
         # Return the cached object
         if hasattr(cached_device, 'md') and cached_device.md == device:
-            logger.debug("Loading %s from cache ...", device.name)
+            logger.debug("Loading %s from cache...", device.name)
             return cached_device
+
         # Otherwise reload
-        else:
-            logger.warning("Device %s has already been loaded, but the "
-                           "database information has been modified. "
-                           "Reloading ...", device.name)
+        logger.warning(
+            "Device %s has already been loaded, but the database information "
+            "has been modified. Reloading...",
+            device.name
+        )
 
     # Find the class and module of the container.
     if not device.device_class:
@@ -175,7 +186,7 @@ def from_container(device, attach_md=True, use_cache=True, threaded=False):
     return obj
 
 
-def import_class(device_class):
+def import_class(device_class: str):
     """
     Interpret a device class import string and extract the class object.
 
@@ -187,8 +198,8 @@ def import_class(device_class):
 
     Returns
     -------
-    cls : type
-        The class referred to by the input string.
+    cls : type or callable
+        The class or factory function referred to by the input string.
     """
 
     mod, cls = device_class.rsplit('.', 1)
@@ -208,8 +219,18 @@ def import_class(device_class):
                           (cls, mod.__name__)) from exc
 
 
-def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
-                 threaded=False, post_load=None, **kwargs):
+PostLoad = Callable[[Any], None]
+
+
+def load_devices(
+    *devices: HappiItem,
+    pprint: bool = False,
+    namespace: Optional[object] = None,
+    use_cache: bool = True,
+    threaded: bool = False,
+    post_load: Optional[PostLoad] = None,
+    **kwargs
+):
     """
     Load a series of devices into a namespace.
 
@@ -268,15 +289,20 @@ def load_devices(*devices, pprint=False, namespace=None, use_cache=True,
     return namespace
 
 
-def load_device(device, pprint=False, threaded=False, post_load=None,
-                **kwargs):
+def load_device(
+    device: HappiItem,
+    pprint: bool = False,
+    threaded: bool = False,
+    post_load: Optional[PostLoad] = None,
+    **kwargs
+):
     """
     Call :func:`.from_container ` and show success/fail.
 
     Parameters
     ----------
-    device : happi.Device
-        Device to be loaded.
+    device : happi.HappiItem
+        HappiItem to be loaded.
     pprint: bool, optional
         Print results of device loads.
     threaded: bool, optional
