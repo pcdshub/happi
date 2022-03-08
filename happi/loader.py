@@ -230,6 +230,8 @@ def load_devices(
     use_cache: bool = True,
     threaded: bool = False,
     post_load: Optional[PostLoad] = None,
+    include_load_time: bool = False,
+    load_time_threshold: float = 0.5,
     **kwargs
 ):
     """
@@ -256,6 +258,11 @@ def load_devices(
         Function of one argument to run on each device after instantiation.
         This is your opportunity to check for good device health during the
         threaded load.
+    include_load_time : bool, optional
+        Include load time in each message.
+    load_time_threshold : float, optional
+        Load time above this value, in seconds, will be shown if
+        ``include_load_time`` is set.
     kwargs
         Additional keyword arguments passed to :func:`.from_container`.
     """
@@ -275,14 +282,30 @@ def load_devices(
         if main_event_loop is None:
             main_event_loop = asyncio.get_event_loop()
         pool = ThreadPool(len(devices))
-        opt_load = partial(load_device, pprint=pprint, use_cache=use_cache,
-                           threaded=True, post_load=post_load, **kwargs)
+        opt_load = partial(
+            load_device,
+            pprint=pprint,
+            use_cache=use_cache,
+            threaded=True,
+            post_load=post_load,
+            include_load_time=include_load_time,
+            load_time_threshold=load_time_threshold,
+            **kwargs
+        )
         loaded_list = pool.map(opt_load, devices)
     else:
         loaded_list = []
         for device in devices:
-            loaded = load_device(device, pprint=pprint, use_cache=use_cache,
-                                 threaded=False, post_load=post_load, **kwargs)
+            loaded = load_device(
+                device,
+                pprint=pprint,
+                use_cache=use_cache,
+                threaded=False,
+                post_load=post_load,
+                include_load_time=include_load_time,
+                load_time_threshold=load_time_threshold,
+                **kwargs
+            )
             loaded_list.append(loaded)
     for dev, name in zip(loaded_list, name_list):
         attr = create_alias(name)

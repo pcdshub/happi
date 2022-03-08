@@ -70,9 +70,28 @@ def test_add_md():
     assert obj.md.name == 'test'
 
 
-@pytest.mark.parametrize('threaded', [False, True])
-@pytest.mark.parametrize('post_load', [None, lambda x: None])
-def test_load_devices(threaded, post_load):
+@pytest.mark.parametrize(
+    "threaded",
+    [
+        pytest.param(False, id="unthreaded"),
+        pytest.param(True, id="threaded")
+    ],
+)
+@pytest.mark.parametrize(
+    "post_load",
+    [
+        pytest.param(None, id="no_post_load"),
+        pytest.param(lambda x: None, id="post_load"),
+    ],
+)
+@pytest.mark.parametrize(
+    "include_load_time",
+    [
+        pytest.param(False, id="no_load_times"),
+        pytest.param(True, id="load_times")
+    ],
+)
+def test_load_devices(threaded: bool, post_load, include_load_time: bool):
     # Create a bunch of devices to load
     devs = [TimeDevice(name='test_1', prefix='Tst1:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
@@ -86,8 +105,14 @@ def test_load_devices(threaded, post_load):
             Device(name='bad', prefix='Not:Here', beamline='BAD',
                    device_class='non.existant')]
     # Load our devices
-    space = load_devices(*devs, pprint=True, use_cache=False,
-                         threaded=threaded, post_load=post_load)
+    space = load_devices(
+        *devs,
+        pprint=True,
+        use_cache=False,
+        threaded=threaded,
+        post_load=post_load,
+        include_load_time=include_load_time,
+    )
     # Check all our devices are there
     assert all([create_alias(dev.name) in space.__dict__ for dev in devs])
     # Devices were loading properly or exceptions were stored
