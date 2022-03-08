@@ -373,25 +373,26 @@ def load_device(
             return f" ({elapsed_time:.1f} s)"
         return ""
 
+    def print_load_message(message: str, elapsed: str) -> None:
+        if not pprint:
+            return
+
+        if threaded:
+            print(f"{load_message} {message}{elapsed}")
+        else:
+            print(f"{message}{elapsed}")
+
     try:
         loaded = from_container(device, **kwargs)
         if post_load is not None:
             post_load(loaded)
     except Exception as exc:
         elapsed = get_load_time()
-        if pprint:
-            if threaded:
-                print(f"{load_message} {failed}{elapsed}")
-            else:
-                print(f"{failed}{elapsed}")
+        print_load_message(failed, elapsed)
         logger.exception("Error loading %s%s", device.name, elapsed)
-        loaded = exc
-    else:
-        elapsed = get_load_time()
-        logger.info("%s %s%s", load_message, success, elapsed)
-        if pprint:
-            if threaded:
-                print(f"{load_message} {success}{elapsed}")
-            else:
-                print("{success}{elapsed}")
+        return exc
+
+    elapsed = get_load_time()
+    logger.info("%s %s%s", load_message, success, elapsed)
+    print_load_message(success, elapsed)
     return loaded
