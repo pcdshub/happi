@@ -35,7 +35,7 @@ def fill_template(
     template : str
         Jinja2 template source.
 
-    device : HappItem
+    device : HappiItem
         Any happi item container.
 
     enforce_type : bool, optional
