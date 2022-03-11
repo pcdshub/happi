@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 try:
     import fcntl
 except ImportError:
-    logger.warning("Unable to import 'fcntl'. Will be unable to lock files")
+    logger.debug("Unable to import 'fcntl'. Will be unable to lock files")
     fcntl = None
 
 
