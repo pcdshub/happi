@@ -2,6 +2,23 @@
  Release History
 =================
 
+v1.12.0 (2022-03-31)
+====================
+
+Features
+--------
+- Add optional per-device load timers to help identify slow-loading devices.
+
+Fixes
+-----
+- Fixed an issue where missing keys could cause a find match to fail.
+- Switch on-import fcntl warning to debug to reduce spam.
+
+Contributors
+------------
+- klauer
+
+
 v1.11.0 (2022-02-07)
 ====================
 
