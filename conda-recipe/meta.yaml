@@ -22,9 +22,10 @@ requirements:
       - entrypoints
       - jinja2
       - prettytable
+      - simplejson
+    run-constrained:
       - psdm_qs_cli
       - pymongo
-      - simplejson
 
 test:
     imports:
