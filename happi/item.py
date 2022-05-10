@@ -44,6 +44,9 @@ class EntryInfo:
         A default value for the trait to have if the user does not specify.
         Keep in mind that this should be the same type as ``enforce`` if you
         are demanding a certain type.
+    enforce_doc : str, optional
+        A human-readable explanation of the enforce field.  Will be printed
+        if the entered information does not follow the ``enforce`` type
 
     Raises
     ------
@@ -59,14 +62,17 @@ class EntryInfo:
         class MyDevice(Device):
 
             my_field = EntryInfo('My generated field')
-            number   = EntryInfo('Device number', enforce=int, default=0)
+            number   = EntryInfo('Device number', enforce=int, default=0,
+                                 enforce_doc='This must be a number')
     """
 
-    def __init__(self, doc=None, optional=True, enforce=None, default=None):
+    def __init__(self, doc=None, optional=True, enforce=None,
+                 default=None, enforce_doc=None):
         self.key = None  # Set later by parent class
         self.doc = doc
         self.enforce = enforce
         self.optional = optional
+        self.enforce_doc = str(enforce_doc or '')
 
         # Explicitly set default to None b/c this is how we ensure mandatory
         # information was set
@@ -95,7 +101,6 @@ class EntryInfo:
             If the value is not the correct type, or does not match the
             pattern.
         """
-
         if not self.enforce or value is None:
             return value
 
@@ -110,7 +115,8 @@ class EntryInfo:
                 return False
             else:
                 raise ValueError(f'{value} as a string is not interpretable '
-                                 'as a boolean.')
+                                 'as a boolean. '
+                                 f'{self.enforce_doc}')
 
         elif callable(self.enforce):
             # Try and convert to type or custom handling
@@ -120,8 +126,9 @@ class EntryInfo:
         elif isinstance(self.enforce, (list, tuple, set)):
             # Check that value is in list, otherwise raise ValueError
             if value not in self.enforce:
-                raise ValueError('{} was not found in the enforce list {}'
-                                 ''.format(self.key, self.enforce))
+                raise ValueError('{} was not found in the enforce list {}. '
+                                 ''.format(self.key, self.enforce) +
+                                 f'{self.enforce_doc}')
             return value
 
         elif isinstance(self.enforce, Pattern):
@@ -129,7 +136,7 @@ class EntryInfo:
             if not self.enforce.match(value):
                 raise ValueError(
                     f'{self.key}={value!r} did not match the enforced pattern'
-                    f'{self.enforce.pattern}'
+                    f': ({self.enforce.pattern}). {self.enforce_doc}'
                 )
             return value
 
@@ -167,7 +174,8 @@ class EntryInfo:
 
     def __copy__(self):
         return EntryInfo(doc=self.doc, optional=self.optional,
-                         enforce=self.enforce, default=self.default)
+                         enforce=self.enforce, default=self.default,
+                         enforce_doc=self.enforce_doc)
 
 
 class _HappiItemBase:
