@@ -21,7 +21,8 @@ def test_init(device, device_info):
 def test_list_enforce():
     # Generic device with a list enforce
     class MyDevice(Device):
-        list_attr = EntryInfo(enforce=['a', 'b', 'c'])
+        list_attr = EntryInfo(enforce=['a', 'b', 'c'],
+                              enforce_doc='list only')
 
     # Make sure we can set without error
     d = MyDevice()
@@ -29,20 +30,25 @@ def test_list_enforce():
     assert d.list_attr == 'b'
     # Mase sure we can not set outside the list
     d = MyDevice()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         d.list_attr = 'd'
+
+    assert 'list only' in str(excinfo)
 
 
 def test_regex_enforce():
     class MyDevice(Device):
-        re_attr = EntryInfo(enforce=re.compile(r'[A-Z]{2}$'))
+        re_attr = EntryInfo(enforce=re.compile(r'[A-Z]{2}$'),
+                            enforce_doc='only 2 chars')
 
     d = MyDevice()
     d.re_attr = 'AB'
 
     d = MyDevice()
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         d.re_attr = 'ABC'
+
+    assert 'only 2 chars' in str(excinfo)
 
 
 @pytest.mark.parametrize('type_spec, value, expected',
@@ -59,9 +65,11 @@ def test_type_enforce_ok(type_spec, value, expected):
                          [(int, 'cats'),
                           (bool, '24'), (bool, 'catastrophe')])
 def test_type_enforce_exceptions(type_spec, value):
-    entry = EntryInfo(enforce=type_spec)
-    with pytest.raises(ValueError):
+    entry = EntryInfo(enforce=type_spec, enforce_doc='bad type')
+    with pytest.raises(ValueError) as excinfo:
         entry.enforce_value(value)
+
+    assert 'bad type' in str(excinfo)
 
 
 def test_set(device):
