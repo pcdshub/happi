@@ -29,11 +29,6 @@ env:
     # CONDA_EXTRAS) but for pip
     - PIP_EXTRAS=""
 
-jobs:
-  allow_failures:
-    # This makes the PIP-based Python build optional.
-    - name: "Python - PIP"
-
 import:
   - pcdshub/pcds-ci-helpers:travis/shared_configs/setup-env-ui.yml
   - pcdshub/pcds-ci-helpers:travis/shared_configs/standard-python-conda.yml
