@@ -75,7 +75,8 @@ class attributes as EntryInfo objects:
         count         = EntryInfo('Count of Item', enforce=int, default=0)
         choices       = EntryInfo('Choice Info', enforce=['a','b','c'])
         no_whitespace = EntryInfo('Enforce no whitespace',
-                                   enforce = re.compile(r'[\S]*$'))
+                                   enforce = re.compile(r'[\S]*$'),
+                                   enforce_doc = 'This item cannot have whitespace')
 
 By default, :class:`.EntryInfo` will create an optional init keyword argument with a
 default of ``None`` with the same name as the class attribute. A quick way
@@ -105,6 +106,11 @@ list       list.index(value)
 regex      regex.match(value) != None
 function   function(value)
 ========   ===========================
+
+If your enforce condition is complicated or obfuscated, you can add a
+docstring using the ``enforce_doc`` keyword that explains the rule.
+(This may be helpful for regex matches which are difficult for humans
+to read)
 
 Fields that are important to the item can be marked as mandatory with
 ``optional=False`` and should have no default value.
