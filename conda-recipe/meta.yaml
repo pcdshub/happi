@@ -22,9 +22,10 @@ requirements:
       - entrypoints
       - jinja2
       - prettytable
-      - psdm_qs_cli
-      - pymongo
       - simplejson
+    run-constrained:
+      - psdm_qs_cli >=0.3.1
+      - pymongo >=4.0.2
 
 test:
     imports:
