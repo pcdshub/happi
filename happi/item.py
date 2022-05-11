@@ -121,7 +121,10 @@ class EntryInfo:
         elif callable(self.enforce):
             # Try and convert to type or custom handling
             # Otherwise raise ValueError for types, custom handling otherwise
-            return self.enforce(value)
+            try:
+                return self.enforce(value)
+            except ValueError as e:
+                raise ValueError(self.enforce_doc) from e
 
         elif isinstance(self.enforce, (list, tuple, set)):
             # Check that value is in list, otherwise raise ValueError
