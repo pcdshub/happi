@@ -1,4 +1,5 @@
 import logging
+import tempfile
 from unittest.mock import patch
 
 import pytest
@@ -93,12 +94,14 @@ def valve(valve_info):
 @pytest.fixture(scope='function')
 def mockjsonclient(device_info):
     # Write underlying database
-    with open('testing.json', 'w+') as handle:
+    with tempfile.NamedTemporaryFile(mode='w') as handle:
         simplejson.dump({device_info['name']: device_info},
                         handle)
-    # Return handle name
-    db = JSONBackend('testing.json')
-    return Client(database=db)
+        handle.flush()  # flush buffer to write file
+        # Return handle name
+        db = JSONBackend(handle.name)
+        yield Client(database=db)
+        # tempfile will be deleted once context manager is resolved
 
 
 @pytest.fixture(scope='function')
