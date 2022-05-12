@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>825</width>
+    <height>643</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Happi search</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="layout_by_name">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+     <item>
+      <widget class="QRadioButton" name="radio_by_name">
+       <property name="text">
+        <string>By &amp;name</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="device_selection_spacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radio_by_category">
+       <property name="text">
+        <string>&amp;By</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="combo_by_category">
+       <item>
+        <property name="text">
+         <string>beamline</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>device_class</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>functional_group</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>location_group</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>stand</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>prefix</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_filter">
+       <property name="text">
+        <string>&amp;Filter</string>
+       </property>
+       <property name="buddy">
+        <cstring>edit_filter</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="edit_filter"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="list_or_tree_frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="HappiDeviceListView" name="happi_list_view" native="true"/>
+      </item>
+      <item>
+       <widget class="HappiDeviceTreeView" name="happi_tree_view" native="true"/>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="button_refresh">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>&amp;Refresh</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_choose">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>&amp;Choose</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HappiDeviceListView</class>
+   <extends>QWidget</extends>
+   <header>happi.qt.model</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HappiDeviceTreeView</class>
+   <extends>QWidget</extends>
+   <header>happi.qt.model</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>radio_by_name</tabstop>
+  <tabstop>radio_by_category</tabstop>
+  <tabstop>combo_by_category</tabstop>
+  <tabstop>edit_filter</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

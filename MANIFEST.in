@@ -2,3 +2,5 @@ include versioneer.py
 include happi/_version.py
 include LICENSE.md
 include requirements.txt
+
+recursive-include happi *.ui
