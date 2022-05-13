@@ -18,6 +18,7 @@ requirements:
       - pip
     run:
       - python >=3.6
+      - click
       - coloredlogs
       - entrypoints
       - jinja2
