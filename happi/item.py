@@ -124,13 +124,16 @@ class EntryInfo:
             try:
                 return self.enforce(value)
             except ValueError as e:
-                raise ValueError(self.enforce_doc) from e
+                if self.enforce_doc:
+                    raise ValueError(self.enforce_doc) from e
+                else:
+                    raise e
 
         elif isinstance(self.enforce, (list, tuple, set)):
             # Check that value is in list, otherwise raise ValueError
             if value not in self.enforce:
                 raise ValueError('{} was not found in the enforce list {}. '
-                                 ''.format(self.key, self.enforce) +
+                                 ''.format(value, self.enforce) +
                                  f'{self.enforce_doc}')
             return value
 
