@@ -1,6 +1,7 @@
 import fcntl
 import os
 import os.path
+import tempfile
 
 import pytest
 import simplejson
@@ -22,14 +23,12 @@ def mockmongo(mockmongoclient):
 @pytest.fixture(scope='function')
 def mockjson(device_info, valve_info):
     # Write underlying database
-    with open('testing.json', 'w+') as handle:
+    with tempfile.NamedTemporaryFile(mode='w') as handle:
         simplejson.dump({device_info['_id']: device_info},
                         handle)
-    # Return handle name
-    yield JSONBackend('testing.json')
-
-    # Delete file
-    os.remove('testing.json')
+        handle.flush()
+        # Return handle name
+        yield JSONBackend(handle.name)
 
 
 @requires_mongo
