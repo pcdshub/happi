@@ -8,7 +8,7 @@ import pytest
 
 from happi import Client, OphydItem
 from happi.backends.json_db import JSONBackend
-from happi.errors import DuplicateError, EntryError, SearchError
+from happi.errors import DuplicateError, EntryError, SearchError, TransferError
 
 logger = logging.getLogger(__name__)
 
@@ -224,6 +224,38 @@ def test_load_device(happi_client, device):
     device = happi_client.load_device(name=device.name)
     assert isinstance(device, types.SimpleNamespace)
     assert device.hi == 'oh hello'
+
+
+@pytest.mark.parametrize(
+    'item, target',
+    [
+        ('item2_dev', 'Item1'),
+        ('item1_dev', 'Item2'),
+        ('valve', 'Item1')
+    ],
+)
+def test_change_container_fail(happi_client, item, target, request):
+    i = request.getfixturevalue(item)
+    t = request.getfixturevalue(target)
+    with pytest.raises(TransferError):
+        happi_client.change_container(i, t)
+
+
+def test_change_fail_mandatory(happi_client, item2_dev):
+    with pytest.raises(TransferError):
+        happi_client.change_container(item2_dev, OphydItem)
+
+
+@pytest.mark.parametrize(
+    'item, target', [('item1_dev', 'Item1'), ('item2_dev', 'Item2')],
+)
+def test_change_container_pass(happi_client, item, target, request):
+    i = request.getfixturevalue(item)
+    t = request.getfixturevalue(target)
+    kw = happi_client.change_container(i, t)
+
+    for k in kw:
+        assert i.post()[k] == kw[k]
 
 
 def test_find_cfg(happi_cfg):
