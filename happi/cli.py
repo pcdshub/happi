@@ -8,7 +8,6 @@ import logging
 import os
 import sys
 
-import click
 import coloredlogs
 import prettytable
 
@@ -310,20 +309,8 @@ def happi_cli(args):
                   'not specific enough')
             sys.exit(1)
         target = happi.containers.registry._registry[target_match[0]]
-        # actually transfer the item
-        new_kwargs = transfer_container(item, target)
-
-        if not new_kwargs:
-            logger.debug('transfer_container failed, no kwargs returned')
-            return
-
-        device = client.create_device(target, **new_kwargs)
-        device.show_info()
-
-        if click.confirm('Save final device?'):
-            logger.debug('deleting original object and replacing')
-            client.remove_device(item)
-            device.save()
+        # transfer item and prompt for fixes
+        transfer_container(client, item, target)
 
 
 def main():

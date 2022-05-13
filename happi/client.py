@@ -8,11 +8,12 @@ import re
 import sys
 import time as ttime
 import warnings
+from typing import Any, Optional, Type
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
 from .backends.core import _Backend
-from .errors import DatabaseError, EntryError, SearchError
+from .errors import DatabaseError, EntryError, SearchError, TransferError
 from .item import HappiItem
 from .loader import from_container
 
@@ -324,6 +325,78 @@ class Client(collections.abc.Mapping):
 
         cntr = self.find_device(**post)
         return from_container(cntr, use_cache=use_cache)
+
+    def change_container(
+        self,
+        item: HappiItem,
+        target: Type[HappiItem],
+        edits: dict[str, Any] = {},
+        how: Optional[str] = 'right'
+    ) -> Any:
+        """
+        Takes an instance of one item (device) and transfers its contents
+        into a new ``target`` container.  Checks are performed to ensure
+        the contents are compatible (follwing enforce requirements in the
+        target container)
+
+        This function is built to be a helper function for an interactive
+        cli tool, and passes information up accordingly.  If keys are not
+        significantly mismatched, this function can be used as is.
+
+        Parameters
+        ----------
+        item : happi.HappiItem
+            HappiItem instance to be transferred to a new container
+        target : Type[happi.HappiItem]
+            Container to contain new item
+        edits : dict[str, Any], optional
+            Dictionary of edits to supercede values in original item
+        how : str, optional
+            Method of resolving the entries between the original item
+            and target container.  Can be:
+            - right : Expect a value for every entry in target container
+            - inner : Expect values for only entries in BOTH original
+                    item and target container
+        Raises
+        ------
+        TransferError
+            If there is a problem tranferring item into container
+
+        Returns
+        -------
+        new_kwargs : dict
+            If successful, return kwargs necessary to load a device
+        """
+        if how == 'right':
+            # Try to fill every value in target
+            base_names = target.info_names
+        elif how == 'inner':
+            # only keys in both original and target
+            base_names = [n for n in target.info_names
+                          if n in item.info_names]
+
+        target_entries = {e.key: e for e in target.entry_info}
+        new_kwargs = {}
+        new_kwargs.update(edits)  # can contain extraneous data
+        for name in base_names:
+            try:
+                # validate every value being placed into target
+                # provided edits supercede existing values
+                old_val = new_kwargs.get(name, getattr(item, name, None))
+                val = target_entries[name].enforce_value(old_val)
+
+                new_kwargs.update({name: val})
+            except ValueError as e:
+                # Repackage exception with key information
+                raise TransferError(e, name)
+
+        # ensure all mandatory info filled
+        for req_name in target.mandatory_info:
+            if req_name not in new_kwargs:
+                msg = f'mandatory field {req_name} missing a value'
+                raise TransferError(msg, req_name)
+
+        return new_kwargs
 
     def validate(self):
         """

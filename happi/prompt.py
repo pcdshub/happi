@@ -1,36 +1,37 @@
+import logging
+
 import click
 import prettytable
 
-from .loader import change_container
+from happi.errors import TransferError
+
+logger = logging.getLogger(__name__)
 
 
-def transfer_container(item, target):
+def transfer_container(client, item, target):
     """
     Interactively step through transferring an item into a new container
-    Works by catching exceptions and prompting for updates
+    Works by catching exceptions raised by client.change_container
+    and prompting for updates.
 
-    Control flow:
-    - print keys of both (show_info)
-        - prompt for how to join
-        - prompt entry for any missing key
-            - check enforce, prompt to fix
-        - prompt for how to handle extra keys
-        -
-    - attempt to convert
-        - while errors still exist (what errors will be here?)
-            - prompt to fix enforce errors?
-            - prompt to fix
-    - show final result for verification
+    Steps:
+    - Display information for item and its target container
+    - Prepare Entries: prompt to include extra entries and fill missin
+                       entries
+    - Amend Entries: Attempt to coerce ``item`` into ``target``.  If
+                     there is an error, prompt for a fix.
+    - Create new device and prompt for confirmation to save.
 
-    Must:
-    - deal with enforcement failures
-        - replace (and suggest default)
-        - change enforcement?
-    - deal with missing keys?
-    - set up input loop
-    - show finalized container for
-    - prompt for any patch fixes?
-    - deal with types of fields (mandatory, extraneous, etc)
+    Parameters
+    ----------
+    client : happi.client.Client
+        Happi client connected to database and container registry
+
+    item : happi.HappiItem
+        Loaded device to transfer
+
+    target : Type[happi.HappiItem]
+        Target container for ``item``.  Container constructor
     """
     target_name = target.__name__
     print(f'Attempting to transfer {item.name} to {target_name}...')
@@ -75,10 +76,23 @@ def transfer_container(item, target):
     click.echo('\n----------Amend Entries-----------')
     success = False
     while not success:
-        success, res = change_container(item, target, edits=edits)
-        if not success:
-            fix_prompt = f'New value for "{res}"'
+        try:
+            new_kwargs = client.change_container(item, target, edits=edits)
+            success = True
+        except TransferError as e:
+            print(e)
+            fix_prompt = f'New value for "{e.key}"'
             new_val = click.prompt(fix_prompt)
-            edits.update({res: new_val})
+            edits.update({e.key: new_val})
 
-    return res
+    if not new_kwargs:
+        logger.debug('transfer_container failed, no kwargs returned')
+        return
+
+    device = client.create_device(target, **new_kwargs)
+    device.show_info()
+
+    if click.confirm('Save final device?'):
+        logger.debug('deleting original object and replacing')
+        client.remove_device(item)
+        device.save()
