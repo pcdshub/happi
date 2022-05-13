@@ -347,16 +347,20 @@ class Client(collections.abc.Mapping):
         ----------
         item : happi.HappiItem
             HappiItem instance to be transferred to a new container
+
         target : Type[happi.HappiItem]
             Container to contain new item
+
         edits : dict[str, Any], optional
             Dictionary of edits to supercede values in original item
+
         how : str, optional
             Method of resolving the entries between the original item
             and target container.  Can be:
             - right : Expect a value for every entry in target container
             - inner : Expect values for only entries in BOTH original
                     item and target container
+
         Raises
         ------
         TransferError
@@ -367,13 +371,15 @@ class Client(collections.abc.Mapping):
         new_kwargs : dict
             If successful, return kwargs necessary to load a device
         """
+        # grab all keys, extraneous and otherwise
+        item_post = item.post()
         if how == 'right':
             # Try to fill every value in target
             base_names = target.info_names
         elif how == 'inner':
             # only keys in both original and target
             base_names = [n for n in target.info_names
-                          if n in item.info_names]
+                          if n in item_post.keys()]
 
         target_entries = {e.key: e for e in target.entry_info}
         new_kwargs = {}
@@ -381,8 +387,8 @@ class Client(collections.abc.Mapping):
         for name in base_names:
             try:
                 # validate every value being placed into target
-                # provided edits supercede existing values
-                old_val = new_kwargs.get(name, getattr(item, name, None))
+                # grab edit value, defaulting to item value
+                old_val = new_kwargs.get(name, item_post.get(name))
                 val = target_entries[name].enforce_value(old_val)
 
                 new_kwargs.update({name: val})

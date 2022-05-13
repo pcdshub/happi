@@ -36,12 +36,16 @@ def transfer_container(client, item, target):
     target_name = target.__name__
     print(f'Attempting to transfer {item.name} to {target_name}...')
     # compare keys in item to target
-    matching_keys = [n for n in item.info_names
+    item_info = item.post()
+    ignore_names = ['type', 'creation', 'last_edit']
+    item_public_keys = sorted([key for key in item_info.keys()
+                               if not key.startswith('_')])
+    matching_keys = [n for n in item_public_keys
                      if n in target.info_names]
-    item_exclusive = [n for n in item.info_names
-                      if n not in target.info_names]
+    item_exclusive = [n for n in item_public_keys
+                      if n not in target.info_names + ignore_names]
     target_exclusive = [n for n in target.info_names
-                        if n not in item.info_names]
+                        if n not in item_public_keys]
 
     pt = prettytable.PrettyTable()
     pt.field_names = [f'{item.name}', f'{target_name}']
@@ -59,9 +63,9 @@ def transfer_container(client, item, target):
     # Deal with extra keys in item
     for n in item_exclusive:
         extra_prompt = (f'Include entry from {item.name}: '
-                        f'{n} = "{getattr(item, n)}"?')
+                        f'{n} = "{item_info.get(n)}"?')
         if click.confirm(extra_prompt, default=True):
-            edits.update({n: getattr(item, n)})
+            edits.update({n: item_info.get(n)})
 
     # Deal with missing keys in target, deal with validation later
     for nt in target_exclusive:
