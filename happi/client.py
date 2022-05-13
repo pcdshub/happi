@@ -386,6 +386,9 @@ class Client(collections.abc.Mapping):
                 # validate every value being placed into target
                 # grab edit value, defaulting to item value
                 old_val = new_kwargs.get(name, item_post.get(name))
+                # no value found in either, continue and handle later
+                if old_val is None:
+                    continue
                 val = target_entries[name].enforce_value(old_val)
 
                 new_kwargs.update({name: val})
