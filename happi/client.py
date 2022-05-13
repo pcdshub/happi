@@ -8,7 +8,7 @@ import re
 import sys
 import time as ttime
 import warnings
-from typing import Any, Optional, Type
+from typing import Any, Dict, Type
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -330,9 +330,9 @@ class Client(collections.abc.Mapping):
         self,
         item: HappiItem,
         target: Type[HappiItem],
-        edits: dict[str, Any] = {},
-        how: Optional[str] = 'right'
-    ) -> Any:
+        edits: Dict[str, Any] = {},
+        how: str = 'right'
+    ) -> Dict[str, Any]:
         """
         Takes an instance of one item (device) and transfers its contents
         into a new ``target`` container.  Checks are performed to ensure
@@ -368,8 +368,8 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        new_kwargs : dict
-            If successful, return kwargs necessary to load a device
+        new_kwargs : Dict[str, Any]
+            kwargs necessary to load a device
         """
         # grab all keys, extraneous and otherwise
         item_post = item.post()
