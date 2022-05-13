@@ -8,11 +8,13 @@ import logging
 import os
 import sys
 
+import click
 import coloredlogs
 import prettytable
 
 import happi
 
+from .prompt import transfer_container
 from .utils import is_a_range
 
 logger = logging.getLogger(__name__)
@@ -69,6 +71,12 @@ def get_parser():
                                default="-", nargs="*")
     parser_update = subparsers.add_parser("container-registry",
                                           help="Print container registry.")
+    parser_transfer = subparsers.add_parser("transfer",
+                                            help="change the container "
+                                            "of an item.")
+    parser_transfer.add_argument("name", help="Name of the item to edit")
+    parser_transfer.add_argument("target",
+                                 help="Contaner to transfer item into")
     return parser
 
 
@@ -289,6 +297,33 @@ def happi_cli(args):
                         f'{class_.__module__}.{class_.__name__}',
                         class_.device_class.default])
         print(pt)
+    elif args.cmd == "transfer":
+        logger.debug('Starting transfer block')
+        # verify name and target both exist and are valid
+        item = client.find_device(name=args.name)
+        registry = happi.containers.registry
+        # This is slow if dictionary is large
+        target_match = [k for k, _ in registry.items() if
+                        args.target in k]
+        if len(target_match) != 1:
+            print(f'Target container name ({args.target}) '
+                  'not specific enough')
+            sys.exit(1)
+        target = happi.containers.registry._registry[target_match[0]]
+        # actually transfer the item
+        new_kwargs = transfer_container(item, target)
+
+        if not new_kwargs:
+            logger.debug('transfer_container failed, no kwargs returned')
+            return
+
+        device = client.create_device(target, **new_kwargs)
+        device.show_info()
+
+        if click.confirm('Save final device?'):
+            logger.debug('deleting original object and replacing')
+            client.remove_device(item)
+            device.save()
 
 
 def main():

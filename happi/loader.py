@@ -9,7 +9,7 @@ import time
 import types
 from functools import partial
 from multiprocessing.pool import ThreadPool
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Type
 
 from jinja2 import Environment, meta
 
@@ -396,3 +396,75 @@ def load_device(
     logger.info("%s %s%s", load_message, success, elapsed)
     print_load_message(success, elapsed)
     return loaded
+
+
+def change_container(
+    item: HappiItem,
+    target: Type[HappiItem],
+    edits: dict[str, Any] = {},
+    how: str = 'inner'
+) -> Any:
+    """
+    Takes an instance of one item (device) and transfers its contents
+    into a new ``target`` container.  Checks are performed to ensure
+    the contents are compatible (follwing enforce requirements in the
+    target container)
+
+    This function is built to be a helper function for an interactive
+    cli tool, and passes information up accordingly.  If keys are not
+    significantly mismatched, this function can be used as is.
+
+    Parameters
+    ----------
+    item : happi.HappiItem
+        HappiItem instance to be transferred to a new container
+    target : Type[happi.HappiItem]
+        Container to contain new item
+    edits : dict[str, Any], optional
+        Dictionary of edits to supercede values in original item
+    how : str, optional
+        Method of resolving the entries between the original item
+        and target container.  Can be:
+        - right : Expect a value for every entry in target container
+        - inner : Expect values for only entries in BOTH original
+                  item and target container
+
+    Returns
+    -------
+    success : bool
+        Has the container been changed successfully?
+    result : dict or str
+        If successful, return kwargs necessary to load a device
+        If failed, return the key that failure happened on
+    """
+    if how == 'right':
+        # Try to fill every value in target
+        base_names = target.info_names
+    elif how == 'inner':
+        # only keys in both original and target
+        base_names = [n for n in target.info_names
+                      if n in item.info_names]
+
+    target_entries = {e.key: e for e in target.entry_info}
+    new_kwargs = {}
+    new_kwargs.update(edits)  # can contain extraneous data
+    for name in base_names:
+        try:
+            # validate every value being placed into target
+            # provided edits supercede existing values
+            old_val = new_kwargs.get(name, getattr(item, name, None))
+            val = target_entries[name].enforce_value(old_val)
+
+            new_kwargs.update({name: val})
+        except ValueError as e:
+            # return point of failure for interactive use
+            print(e)
+            return False, name
+
+    # ensure all mandatory info filled
+    for req_name in target.mandatory_info:
+        if req_name not in new_kwargs:
+            print(f'mandatory field {req_name} is missing a value')
+            return False, req_name
+
+    return True, new_kwargs
