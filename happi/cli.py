@@ -70,12 +70,11 @@ def get_parser():
                                default="-", nargs="*")
     parser_update = subparsers.add_parser("container-registry",
                                           help="Print container registry.")
-    parser_transfer = subparsers.add_parser("transfer",
-                                            help="change the container "
-                                            "of an item.")
+    parser_transfer = subparsers.add_parser(
+                        "transfer", help="change the container of an item.")
     parser_transfer.add_argument("name", help="Name of the item to edit")
     parser_transfer.add_argument("target",
-                                 help="Contaner to transfer item into")
+                                 help="Container to transfer item into")
     return parser
 
 

@@ -8,7 +8,7 @@ import re
 import sys
 import time as ttime
 import warnings
-from typing import Any, Dict, Type
+from typing import Any, Dict, Optional, Type
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -330,13 +330,13 @@ class Client(collections.abc.Mapping):
         self,
         item: HappiItem,
         target: Type[HappiItem],
-        edits: Dict[str, Any] = {},
+        edits: Optional[Dict[str, Any]] = None,
         how: str = 'right'
     ) -> Dict[str, Any]:
         """
-        Takes an instance of one item (device) and transfers its contents
-        into a new ``target`` container.  Checks are performed to ensure
-        the contents are compatible (follwing enforce requirements in the
+        Return the kwargs necessary to transfer the information from
+        ``item`` into a container ``target``.  Checks are performed to ensure
+        the contents are compatible (following enforce requirements in the
         target container)
 
         This function is built to be a helper function for an interactive
@@ -350,12 +350,12 @@ class Client(collections.abc.Mapping):
         target : Type[happi.HappiItem]
             Container to contain new item
         edits : dict[str, Any], optional
-            Dictionary of edits to supercede values in original item
+            Dictionary of edits to supersede values in original item
         how : str, optional
             Method of resolving the entries between the original item
             and target container.  Can be:
-            - right : Expect a value for every entry in target container
-            - inner : Expect values for only entries in BOTH original
+            - "right" : Expect a value for every entry in target container
+            - "inner" : Expect values for only entries in BOTH original
             item and target container
 
         Raises
@@ -366,7 +366,7 @@ class Client(collections.abc.Mapping):
         Returns
         -------
         new_kwargs : Dict[str, Any]
-            kwargs necessary to load a device
+            kwargs to pass into a new HappiItem
         """
         # grab all keys, extraneous and otherwise
         item_post = item.post()
@@ -377,6 +377,8 @@ class Client(collections.abc.Mapping):
             # only keys in both original and target
             base_names = [n for n in target.info_names
                           if n in item_post.keys()]
+        else:
+            raise ValueError(f'Improper merge method: {how}')
 
         target_entries = {e.key: e for e in target.entry_info}
         new_kwargs = {}

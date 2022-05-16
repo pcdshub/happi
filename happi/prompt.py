@@ -20,7 +20,7 @@ def transfer_container(client, item, target):
                        entries
     - Amend Entries: Attempt to coerce ``item`` into ``target``.  If
                      there is an error, prompt for a fix.
-    - Create new device and prompt for confirmation to save.
+    - Create new item and prompt for confirmation to save.
 
     Parameters
     ----------
