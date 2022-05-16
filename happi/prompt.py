@@ -71,7 +71,8 @@ def transfer_container(client, item, target):
     for nt in target_exclusive:
         missing_prompt = (f'{target_name} expects information for '
                           f'entry "{nt}"')
-        val = click.prompt(missing_prompt, default='take default')
+        d = getattr(getattr(target, nt), 'default')
+        val = click.prompt(missing_prompt, default=f'take default: {d}')
         if val != 'take default':
             edits.update({nt: val})
 

@@ -303,7 +303,9 @@ def happi_cli(args):
         # This is slow if dictionary is large
         target_match = [k for k, _ in registry.items() if
                         args.target in k]
-        if len(target_match) != 1:
+        if len(target_match) > 1 and args.name in target_match:
+            target_match = [args.name]
+        elif len(target_match) != 1:
             print(f'Target container name ({args.target}) '
                   'not specific enough')
             sys.exit(1)

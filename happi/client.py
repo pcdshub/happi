@@ -368,6 +368,8 @@ class Client(collections.abc.Mapping):
         new_kwargs : Dict[str, Any]
             kwargs to pass into a new HappiItem
         """
+        edits = edits or {}
+
         # grab all keys, extraneous and otherwise
         item_post = item.post()
         if how == 'right':
