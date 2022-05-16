@@ -23,7 +23,12 @@ class SearchError(Exception):
     pass
 
 
-class TransferError(Exception):
+class EnforceError(ValueError):
+    """Raised when value fails a value fails enforcement checks."""
+    pass
+
+
+class TransferError(ValueError):
     """Raised when on error transferring item to new contianer."""
     def __init__(self, message, key):
         self.key = key
