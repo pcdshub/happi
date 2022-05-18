@@ -24,12 +24,12 @@ class SearchError(Exception):
 
 
 class EnforceError(ValueError):
-    """Raised when value fails a value fails enforcement checks."""
+    """Raised when a value fails enforcement checks."""
     pass
 
 
 class TransferError(ValueError):
-    """Raised when on error transferring item to new contianer."""
+    """Raised on error transferring item to new container."""
     def __init__(self, message, key):
         self.key = key
         self.message = str(message)
