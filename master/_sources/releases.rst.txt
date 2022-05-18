@@ -2,6 +2,71 @@
  Release History
 =================
 
+v1.12.0 (2022-03-31)
+====================
+
+Features
+--------
+- Add optional per-device load timers to help identify slow-loading devices.
+
+Fixes
+-----
+- Fixed an issue where missing keys could cause a find match to fail.
+- Switch on-import fcntl warning to debug to reduce spam.
+
+Contributors
+------------
+- klauer
+
+
+v1.11.0 (2022-02-07)
+====================
+
+Features
+--------
+- Add ``--names`` flag to the ``happi search`` command. This causes the
+  search to output only the names of the matching devices. This is useful
+  for using the output of ``happi search`` inside another ``happi`` command,
+  for example: ``happi load $(happi search "*" --names)``.
+
+Contributors
+------------
+- unztag
+
+
+v1.10.1 (2021-11-15)
+====================
+
+Bugfixes
+--------
+- Fix a logging format error in ``Client.from_config``
+
+Contributors
+------------
+- klauer
+
+
+v1.10.0 (2021-09-27)
+====================
+
+Features
+--------
+- Add ``happi container-registry`` command-line utility. This shows the user
+  which ``happi`` containers are registered and available in their session.
+  This is very useful for debugging purposes and more generally to
+  understand which containers are available.
+
+Maintenance
+-----------
+- Fix error in the docs build.
+- Misc updates to the CI.
+
+Contributors
+------------
+- unztag
+- zrylettc
+
+
 v1.9.0 (2021-02-10)
 ===================
 

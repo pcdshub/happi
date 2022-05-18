@@ -1,74 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>Command Line Interface &mdash; Happi 1.9.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>Command Line Interface &mdash; Happi 1.12.0+30.g099fd38 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Happi API" href="api.html" />
     <link rel="prev" title="Using the Client" href="client.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> Happi
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.0
+                1.12.0+30.g099fd38
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -76,19 +39,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Usage</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
@@ -117,102 +69,66 @@
 <li class="toctree-l4"><a class="reference internal" href="#Positional Arguments_repeat4">Positional Arguments</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#container-registry">container-registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transfer">transfer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Positional Arguments_repeat5">Positional Arguments</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">API Documentation</span></p>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Happi API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Information</span></p>
+<p class="caption" role="heading"><span class="caption-text">Information</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">Happi</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>Command Line Interface</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="command-line-interface">
-<h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="command-line-interface">
+<h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline"></a></h1>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">happi</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">path</span> <span class="n">PATH</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">verbose</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span>
-             <span class="p">{</span><span class="n">search</span><span class="p">,</span><span class="n">add</span><span class="p">,</span><span class="n">edit</span><span class="p">,</span><span class="n">load</span><span class="p">,</span><span class="n">update</span><span class="p">}</span> <span class="o">...</span>
+             <span class="p">{</span><span class="n">search</span><span class="p">,</span><span class="n">add</span><span class="p">,</span><span class="n">edit</span><span class="p">,</span><span class="n">load</span><span class="p">,</span><span class="n">update</span><span class="p">,</span><span class="n">container</span><span class="o">-</span><span class="n">registry</span><span class="p">,</span><span class="n">transfer</span><span class="p">}</span> <span class="o">...</span>
 </pre></div>
 </div>
-<div class="section" id="Positional Arguments">
-<h2>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h2>
+<section id="Positional Arguments">
+<h2>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline"></a></h2>
 <dl class="option-list">
 <dt><kbd>cmd</kbd></dt>
-<dd><p>Possible choices: search, add, edit, load, update</p>
+<dd><p>Possible choices: search, add, edit, load, update, container-registry, transfer</p>
 <p>Subcommands used to search, add, edit, or load entries</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="Named Arguments">
-<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="Named Arguments">
+<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline"></a></h2>
 <dl class="option-list">
 <dt><kbd>--path</kbd></dt>
 <dd><p>Provide the path to happi configuration file.</p>
@@ -224,55 +140,58 @@
 <dd><p>Show the current version and location of Happi installation.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="Sub-commands:">
-<h2>Sub-commands:<a class="headerlink" href="#Sub-commands:" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="search">
-<h3>search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="Sub-commands:">
+<h2>Sub-commands:<a class="headerlink" href="#Sub-commands:" title="Permalink to this headline"></a></h2>
+<section id="search">
+<h3>search<a class="headerlink" href="#search" title="Permalink to this headline"></a></h3>
 <p>Search the happi database.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">search</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span><span class="p">]</span> <span class="n">search_criteria</span> <span class="p">[</span><span class="n">search_criteria</span> <span class="o">...</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">search</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">json</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">names</span><span class="p">]</span> <span class="n">search_criteria</span> <span class="p">[</span><span class="n">search_criteria</span> <span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="section" id="Positional Arguments_repeat1">
-<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat1" title="Permalink to this headline">¶</a></h4>
+<section id="Positional Arguments_repeat1">
+<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat1" title="Permalink to this headline"></a></h4>
 <dl class="option-list">
 <dt><kbd>search_criteria</kbd></dt>
 <dd><p>Search criteria of the form: field=value. If “field=” is omitted, it will be assumed to be “name”. You may include as many search criteria as you like; these will be combined swith ANDs.</p>
 </dd>
 </dl>
-</div>
-<div class="section" id="Named Arguments_repeat1">
-<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat1" title="Permalink to this headline">¶</a></h4>
+</section>
+<section id="Named Arguments_repeat1">
+<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat1" title="Permalink to this headline"></a></h4>
 <dl class="option-list">
 <dt><kbd>--json</kbd></dt>
 <dd><p>Show results in JSON format.</p>
 </dd>
+<dt><kbd>--names</kbd></dt>
+<dd><p>Return results as whitespace-separated names.</p>
+</dd>
 </dl>
-</div>
-</div>
-<div class="section" id="add">
-<h3>add<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="add">
+<h3>add<a class="headerlink" href="#add" title="Permalink to this headline"></a></h3>
 <p>Add new entries interactively.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">add</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">clone</span> <span class="n">CLONE</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="section" id="Named Arguments_repeat2">
-<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat2" title="Permalink to this headline">¶</a></h4>
+<section id="Named Arguments_repeat2">
+<h4>Named Arguments<a class="headerlink" href="#Named Arguments_repeat2" title="Permalink to this headline"></a></h4>
 <dl class="option-list">
 <dt><kbd>--clone</kbd></dt>
 <dd><p>Copy the fields from an existing container. Provide the name of the item to clone.</p>
 </dd>
 </dl>
-</div>
-</div>
-<div class="section" id="edit">
-<h3>edit<a class="headerlink" href="#edit" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="edit">
+<h3>edit<a class="headerlink" href="#edit" title="Permalink to this headline"></a></h3>
 <p>Change an existing entry.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">edit</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">name</span> <span class="n">edits</span> <span class="p">[</span><span class="n">edits</span> <span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="section" id="Positional Arguments_repeat2">
-<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat2" title="Permalink to this headline">¶</a></h4>
+<section id="Positional Arguments_repeat2">
+<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat2" title="Permalink to this headline"></a></h4>
 <dl class="option-list">
 <dt><kbd>name</kbd></dt>
 <dd><p>Name of the item to edit</p>
@@ -281,87 +200,95 @@
 <dd><p>Edits of the form: field=value</p>
 </dd>
 </dl>
-</div>
-</div>
-<div class="section" id="load">
-<h3>load<a class="headerlink" href="#load" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="load">
+<h3>load<a class="headerlink" href="#load" title="Permalink to this headline"></a></h3>
 <p>Open IPython terminal with a given device loaded.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">load</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">device_names</span> <span class="p">[</span><span class="n">device_names</span> <span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="section" id="Positional Arguments_repeat3">
-<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat3" title="Permalink to this headline">¶</a></h4>
+<section id="Positional Arguments_repeat3">
+<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat3" title="Permalink to this headline"></a></h4>
 <dl class="option-list">
 <dt><kbd>device_names</kbd></dt>
 <dd><p>The names of one or more devices to load</p>
 </dd>
 </dl>
-</div>
-</div>
-<div class="section" id="update">
-<h3>update<a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="update">
+<h3>update<a class="headerlink" href="#update" title="Permalink to this headline"></a></h3>
 <p>Update happi db with JSON payload.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">update</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="n">json</span> <span class="p">[</span><span class="n">json</span> <span class="o">...</span><span class="p">]]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">update</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="n">json</span> <span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
-<div class="section" id="Positional Arguments_repeat4">
-<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat4" title="Permalink to this headline">¶</a></h4>
+<section id="Positional Arguments_repeat4">
+<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat4" title="Permalink to this headline"></a></h4>
 <dl class="option-list">
 <dt><kbd>json</kbd></dt>
 <dd><p>JSON payload.</p>
 </dd>
 </dl>
+</section>
+</section>
+<section id="container-registry">
+<h3>container-registry<a class="headerlink" href="#container-registry" title="Permalink to this headline"></a></h3>
+<p>Print container registry.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">container</span><span class="o">-</span><span class="n">registry</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
+</pre></div>
 </div>
+</section>
+<section id="transfer">
+<h3>transfer<a class="headerlink" href="#transfer" title="Permalink to this headline"></a></h3>
+<p>change the container of an item.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">happi</span> <span class="n">transfer</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="n">name</span> <span class="n">target</span>
+</pre></div>
 </div>
-</div>
-</div>
+<section id="Positional Arguments_repeat5">
+<h4>Positional Arguments<a class="headerlink" href="#Positional Arguments_repeat5" title="Permalink to this headline"></a></h4>
+<dl class="option-list">
+<dt><kbd>name</kbd></dt>
+<dd><p>Name of the item to edit</p>
+</dd>
+<dt><kbd>target</kbd></dt>
+<dd><p>Container to transfer item into</p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="api.html" class="btn btn-neutral float-right" title="Happi API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="client.html" class="btn btn-neutral float-left" title="Using the Client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Happi API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, SLAC National Accelerator Laboratory.
-
-    </p>
+    <p>&#169; Copyright 2021, SLAC National Accelerator Laboratory.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
