@@ -21,3 +21,16 @@ class ContainerError(Exception):
 class SearchError(Exception):
     """Raised when no device is found while searching."""
     pass
+
+
+class EnforceError(ValueError):
+    """Raised when a value fails enforcement checks."""
+    pass
+
+
+class TransferError(ValueError):
+    """Raised on error transferring item to new container."""
+    def __init__(self, message, key):
+        self.key = key
+        self.message = str(message)
+        super().__init__(self.message)

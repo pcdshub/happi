@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 import simplejson
 
-from happi import Client, OphydItem
+from happi import Client, EntryInfo, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
 
 logger = logging.getLogger(__name__)
@@ -89,6 +89,48 @@ def valve_info():
 def valve(valve_info):
     t = OphydItem(**valve_info)
     return t
+
+
+@pytest.fixture(scope='function')
+def Item1():
+    class Item1(HappiItem):
+        dupe = EntryInfo('duplicate', enforce=int, default=1)
+        one = EntryInfo('two', enforce=['one', 'zero'])
+        prefix = EntryInfo('z', enforce=bool)
+        # cannot be cast into Item2.bad_dupe1
+        bad_dupe1 = EntryInfo('bad enforce', enforce=str)
+        bad_dupe2 = EntryInfo('bad enforce', enforce=int)
+        excl1_1 = EntryInfo('exclusive to Item1 #1', default='e1_1',
+                            enforce=str)
+        excl1_2 = EntryInfo('exclusive to Item1 #2', enforce=str)
+
+    return Item1
+
+
+@pytest.fixture(scope='function')
+def item1_dev(Item1):
+    return Item1(name='i1', documentation='Created as Item1',
+                 one='one', bad_dupe1='hello', bad_dupe2=33)
+
+
+@pytest.fixture(scope='function')
+def Item2():
+    class Item2(HappiItem):
+        dupe = EntryInfo('duplicate', enforce=int, default=1)
+        two = EntryInfo('two', enforce=['zero', 'two'], optional=False)
+        bad_dupe1 = EntryInfo('bad enforce', enforce=bool)
+        # cannot be cast into Item1.bad_dupe2
+        bad_dupe2 = EntryInfo('bad enforce', enforce=str)
+        excl2_1 = EntryInfo('exclusive to Item2 #1', default=21, enforce=int)
+        excl2_2 = EntryInfo('exclusive to Item2 #2', enforce=int)
+
+    return Item2
+
+
+@pytest.fixture(scope='function')
+def item2_dev(Item2):
+    return Item2(name='i2', documentaiton='Created as Item2',
+                 two='two', bad_dupe1=False, bad_dupe2='hallo')
 
 
 @pytest.fixture(scope='function')

@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 from prettytable import PrettyTable
 
-from .errors import ContainerError
+from .errors import ContainerError, EnforceError
 from .utils import is_valid_identifier_not_keyword
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class EntryInfo:
         or custom handling by passing a function that takes in one argument,
         the value. This function must do one of: return the value back as-is,
         return the value back converted to a corrected form, or raise a
-        ValueError.
+        EnforceError.
     default : optional
         A default value for the trait to have if the user does not specify.
         Keep in mind that this should be the same type as ``enforce`` if you
@@ -97,7 +97,7 @@ class EntryInfo:
 
         Raises
         ------
-        ValueError
+        EnforceError
             If the value is not the correct type, or does not match the
             pattern.
         """
@@ -114,30 +114,31 @@ class EntryInfo:
             elif value.lower() in false_values:
                 return False
             else:
-                raise ValueError(f'{value} as a string is not interpretable '
-                                 'as a boolean. '
-                                 f'{self.enforce_doc}')
+                raise EnforceError(f'{value} as a string is not interpretable '
+                                   f'as a boolean.  {self.enforce_doc}')
 
         elif callable(self.enforce):
             # Try and convert to type or custom handling
-            # Otherwise raise ValueError for types, custom handling otherwise
+            # Otherwise raise EnforceError for types, custom handling otherwise
             try:
                 return self.enforce(value)
             except ValueError as e:
-                raise ValueError(self.enforce_doc) from e
+                if self.enforce_doc:
+                    raise EnforceError(self.enforce_doc) from e
+                else:
+                    raise e
 
         elif isinstance(self.enforce, (list, tuple, set)):
-            # Check that value is in list, otherwise raise ValueError
+            # Check that value is in list, otherwise raise EnforceError
             if value not in self.enforce:
-                raise ValueError('{} was not found in the enforce list {}. '
-                                 ''.format(self.key, self.enforce) +
-                                 f'{self.enforce_doc}')
+                raise EnforceError(f'{value} was not found in the enforce '
+                                   f'list {self.enforce}. {self.enforce_doc}')
             return value
 
         elif isinstance(self.enforce, Pattern):
-            # Try and match regex patttern, otherwise raise ValueError
+            # Try and match regex patttern, otherwise raise EnforceError
             if not self.enforce.match(value):
-                raise ValueError(
+                raise EnforceError(
                     f'{self.key}={value!r} did not match the enforced pattern'
                     f': ({self.enforce.pattern}). {self.enforce_doc}'
                 )
