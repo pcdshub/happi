@@ -1,3 +1,6 @@
+from click import UsageError
+
+
 class DatabaseError(Exception):
     """Raised when an database intitializes improperly."""
     pass
@@ -23,9 +26,10 @@ class SearchError(Exception):
     pass
 
 
-class EnforceError(ValueError):
+class EnforceError(ValueError, UsageError):
     """Raised when a value fails enforcement checks."""
-    pass
+    def __init__(self, message):
+        self.message = str(message)
 
 
 class TransferError(ValueError):

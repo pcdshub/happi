@@ -1,93 +1,37 @@
 """
 This module defines the ``happi`` command line interface.
 """
-import argparse
 import fnmatch
 import json
 import logging
 import os
 import sys
 
+import click
 import coloredlogs
 import prettytable
 
 import happi
 
 from .prompt import transfer_container
-from .utils import is_a_range
+from .utils import OptionalDefault, is_a_range
 
 logger = logging.getLogger(__name__)
 
-
-def get_parser():
-    """Defines HAPPI shell commands."""
-    # Argument Parser Setup
-    parser = argparse.ArgumentParser(description='Happi command line tool')
-
-    # Optional args general to all happi operations
-    parser.add_argument('--path', type=str,
-                        help='Provide the path to happi configuration file.')
-    parser.add_argument('--verbose', '-v', action='store_true',
-                        help='Show the debug logging stream.')
-    parser.add_argument('--version', '-V', action='store_true',
-                        help='Show the current version and location of Happi '
-                             'installation.')
-    # Subparser to trigger search arguments
-    subparsers = parser.add_subparsers(help='Subcommands used to search, add, '
-                                       'edit, or load entries', dest='cmd')
-    parser_search = subparsers.add_parser('search', help='Search the happi '
-                                          'database.')
-    parser_search.add_argument('--json', action='store_true',
-                               help='Show results in JSON format.')
-    parser_search.add_argument('--names', action='store_true',
-                               help='Return results as '
-                               'whitespace-separated names.')
-    parser_search.add_argument('search_criteria', nargs='+',
-                               help='Search criteria of the form: '
-                               'field=value. If "field=" is omitted, it will '
-                               'be assumed to be "name". You may include as '
-                               'many search criteria as you like; these will '
-                               'be combined swith ANDs.')
-    parser_add = subparsers.add_parser('add',
-                                       help='Add new entries interactively.')
-    parser_add.add_argument('--clone', default='',
-                            help='Copy the fields from an existing container. '
-                                 'Provide the name of the item to clone.')
-    parser_edit = subparsers.add_parser('edit',
-                                        help='Change an existing entry.')
-    parser_edit.add_argument('name', help='Name of the item to edit')
-    parser_edit.add_argument('edits', nargs='+',
-                             help='Edits of the form: field=value')
-    parser_load = subparsers.add_parser('load',
-                                        help='Open IPython terminal with a '
-                                        'given device loaded.')
-    parser_load.add_argument('device_names', nargs='+',
-                             help='The names of one or more devices to load')
-    parser_update = subparsers.add_parser("update",
-                                          help="Update happi db "
-                                          "with JSON payload.")
-    parser_update.add_argument("json", help="JSON payload.",
-                               default="-", nargs="*")
-    parser_update = subparsers.add_parser("container-registry",
-                                          help="Print container registry.")
-    parser_transfer = subparsers.add_parser(
-                        "transfer", help="change the container of an item.")
-    parser_transfer.add_argument("name", help="Name of the item to edit")
-    parser_transfer.add_argument("target",
-                                 help="Container to transfer item into")
-    return parser
+version_msg = f'Happi: Version {happi.__version__} from {happi.__file__}'
 
 
-def happi_cli(args):
-    parser = get_parser()
-    # print happi usage if no arguments are provided
-    if not args:
-        parser.print_usage()
-        return
-    args = parser.parse_args(args)
-
+@click.group()
+@click.option('--path', type=click.Path(exists=True),
+              help='Provide the path to happi configuration file.')
+@click.option('--verbose', '-v', is_flag=True,
+              help='Show the debug logging stream.')
+@click.version_option(None, '--version', '-V', message=version_msg)
+@click.pass_context
+def happi_cli(ctx, path, verbose):
+    """Happi command line tool"""
     # Logging Level handling
-    if args.verbose:
+    if verbose:
         shown_logger = logging.getLogger()
         level = "DEBUG"
     else:
@@ -97,223 +41,309 @@ def happi_cli(args):
                         fmt='[%(asctime)s] - %(levelname)s -  %(message)s')
     logger.debug("Set logging level of %r to %r", shown_logger.name, level)
 
-    # Version endpoint
-    if args.version:
-        print(f'Happi: Version {happi.__version__} from {happi.__file__}')
-        return
-    logger.debug('Command line arguments: %r' % args)
-
-    client = happi.client.Client.from_config(cfg=args.path)
+    # gather client
+    client = happi.client.Client.from_config(cfg=path)
     logger.debug("Happi client: %r" % client)
-    logger.debug('Happi command: %r' % args.cmd)
 
-    if args.cmd == 'search':
-        logger.debug("We're in the search block")
+    # insert items into context to be passed to subcommands
+    ctx.obj = client
 
-        # Get search criteria into dictionary for use by client
-        client_args = {}
-        range_list = []
-        regex_list = []
+
+@happi_cli.command()
+@click.option('--json', is_flag=True, help='Show results in JSON format.')
+@click.option('--names', is_flag=True,
+              help='Return results as whitespace-separated names.')
+@click.argument('search_criteria', nargs=-1)
+@click.pass_context
+def search(ctx, json, names, search_criteria):
+    """
+    Search the happi database.  Search criteria of the form: field=value.
+    If 'field=' is omitted, it will assumed to be 'name'.
+    You may include as many search criteria as you like; these will
+    be combined with ANDs.
+    """
+    logger.debug("We're in the search block")
+
+    # Retrieve client
+    client = ctx.obj
+
+    # Get search criteria into dictionary for use by client
+    client_args = {}
+    range_list = []
+    regex_list = []
+    is_range = False
+    for user_arg in search_criteria:
         is_range = False
-        for user_arg in args.search_criteria:
-            is_range = False
-            if '=' in user_arg:
-                criteria, value = user_arg.split('=', 1)
-            else:
-                criteria = 'name'
-                value = user_arg
-            if criteria in client_args:
-                logger.error(
-                    'Received duplicate search criteria %s=%r (was %r)',
-                    criteria, value, client_args[criteria]
-                )
-                return
-            if value.replace('.', '').isnumeric():
-                logger.debug('Changed %s to float', value)
-                value = str(float(value))
-
-            if is_a_range(value):
-                start, stop = value.split(',')
-                start = float(start)
-                stop = float(stop)
-                is_range = True
-                if start < stop:
-                    range_list = client.search_range(criteria, start, stop)
-                else:
-                    logger.error('Invalid range, make sure start < stop')
-
-            # skip the criteria for range values
-            # it won't be a valid criteria for search_regex()
-            if is_range:
-                pass
-            else:
-                client_args[criteria] = fnmatch.translate(value)
-
-        regex_list = client.search_regex(**client_args)
-        results = regex_list + range_list
-
-        # find the repeated items
-        res_size = len(results)
-        repeated = []
-        for i in range(res_size):
-            k = i + 1
-            for j in range(k, res_size):
-                if results[i] == results[j] and results[i] not in repeated:
-                    repeated.append(results[i])
-
-        # we only want to return the ones that have been repeated when
-        # they have been matched with both search_regex() & search_range()
-        if repeated:
-            final_results = repeated
-        elif regex_list and not is_range:
-            # only matched with search_regex()
-            final_results = regex_list
-        elif range_list and is_range:
-            # only matched with search_range()
-            final_results = range_list
+        if '=' in user_arg:
+            criteria, value = user_arg.split('=', 1)
         else:
-            final_results = []
-
-        if args.json:
-            json.dump([dict(res.item) for res in final_results], indent=2,
-                      fp=sys.stdout)
-        elif args.names:
-            out = " ".join([res.item.name for res in final_results])
-            print(out)
-        else:
-            for res in final_results:
-                res.item.show_info()
-
-        if not final_results:
-            logger.error('No devices found')
-        return final_results
-    elif args.cmd == 'add':
-        logger.debug('Starting interactive add')
-        registry = happi.containers.registry
-        if args.clone:
-            clone_source = client.find_device(name=args.clone)
-            # Must use the same container if cloning
-            response = registry.entry_for_class(clone_source.__class__)
-        else:
-            # Keep Device at registry for backwards compatibility but filter
-            # it out of new devices options
-            options = os.linesep.join(
-                [k for k, _ in registry.items() if k != "Device"]
+            criteria = 'name'
+            value = user_arg
+        if criteria in client_args:
+            logger.error(
+                'Received duplicate search criteria %s=%r (was %r)',
+                criteria, value, client_args[criteria]
             )
-            logger.info(
-                'Please select a container, or press enter for generic '
-                'Ophyd Device container: %s%s', os.linesep, options
-            )
-            response = input()
-            if response and response not in registry:
-                logger.info('Invalid device container f{response}')
-                return
-            elif not response:
-                response = 'OphydItem'
+            return
+        if value.replace('.', '').isnumeric():
+            logger.debug('Changed %s to float', value)
+            value = str(float(value))
 
-        container = registry[response]
-        kwargs = {}
-        for info in container.entry_info:
-            valid_value = False
-            while not valid_value:
-                if args.clone:
-                    default = getattr(clone_source, info.key)
-                else:
-                    default = info.default
-                logger.info(f'Enter value for {info.key}, default={default}, '
-                            f'enforce={info.enforce}')
-                item_value = input()
-                if not item_value:
-                    if info.optional or args.clone:
-                        logger.info(f'Selecting default value {default}')
-                        item_value = default
-                    else:
-                        logger.info('Not an optional field!')
-                        continue
-                try:
-                    info.enforce_value(item_value)
-                    valid_value = True
-                    kwargs[info.key] = item_value
-                except Exception:
-                    logger.info(f'Invalid value {item_value}')
+        if is_a_range(value):
+            start, stop = value.split(',')
+            start = float(start)
+            stop = float(stop)
+            is_range = True
+            if start < stop:
+                range_list = client.search_range(criteria, start, stop)
+            else:
+                logger.error('Invalid range, make sure start < stop')
 
-        device = client.create_device(container, **kwargs)
-        logger.info('Please confirm the following info is correct:')
-        device.show_info()
-        ok = input('y/N\n')
-        if 'y' in ok:
-            logger.info('Adding device')
-            device.save()
+        # skip the criteria for range values
+        # it won't be a valid criteria for search_regex()
+        if is_range:
+            pass
         else:
-            logger.info('Aborting')
-    elif args.cmd == 'edit':
-        logger.debug('Starting edit block')
-        device = client.find_device(name=args.name)
-        is_invalid_field = False
-        for edit in args.edits:
-            field, value = edit.split('=', 1)
-            try:
-                getattr(device, field)
-                logger.info('Setting %s.%s = %s', args.name, field, value)
-                setattr(device, field, value)
-            except Exception as e:
-                is_invalid_field = True
-                logger.error('Could not edit %s.%s: %s', args.name, field, e)
-        if is_invalid_field:
-            sys.exit(1)
+            client_args[criteria] = fnmatch.translate(value)
+
+    regex_list = client.search_regex(**client_args)
+    results = regex_list + range_list
+
+    # find the repeated items
+    res_size = len(results)
+    repeated = []
+    for i in range(res_size):
+        k = i + 1
+        for j in range(k, res_size):
+            if results[i] == results[j] and results[i] not in repeated:
+                repeated.append(results[i])
+
+    # we only want to return the ones that have been repeated when
+    # they have been matched with both search_regex() & search_range()
+    if repeated:
+        final_results = repeated
+    elif regex_list and not is_range:
+        # only matched with search_regex()
+        final_results = regex_list
+    elif range_list and is_range:
+        # only matched with search_range()
+        final_results = range_list
+    else:
+        final_results = []
+
+    if json:
+        json.dump([dict(res.item) for res in final_results], indent=2,
+                  fp=sys.stdout)
+    elif names:
+        out = " ".join([res.item.name for res in final_results])
+        click.echo(out)
+    else:
+        for res in final_results:
+            res.item.show_info()
+
+    if not final_results:
+        logger.error('No devices found')
+    return final_results
+
+
+@happi_cli.command()
+@click.option('--clone', default='',
+              help='Copy the fields from an existing container. '
+              'Provide the name of the item to clone.')
+@click.pass_context
+def add(ctx, clone):
+    """Add new entries interactively."""
+
+    logger.debug('Starting interactive add')
+    # retrieve client
+    client = ctx.obj
+
+    registry = happi.containers.registry
+    if clone:
+        clone_source = client.find_device(name=clone)
+        # Must use the same container if cloning
+        response = registry.entry_for_class(clone_source.__class__)
+    else:
+        # Keep Device at registry for backwards compatibility but filter
+        # it out of new devices options
+        options = os.linesep.join(
+            [k for k, _ in registry.items() if k != "Device"]
+        )
+        ctnr_prompt = (
+            'Please select a container, or press enter for generic '
+            f'Ophyd Device container: {os.linesep}{options}'
+            '{}{}Selection'.format(os.linesep, os.linesep)
+        )
+        logger.debug(ctnr_prompt)
+        response = click.prompt(ctnr_prompt, default='OphydItem')
+        if response and response not in registry:
+            logger.info('Invalid device container f{response}')
+            return
+
+    container = registry[response]
+    logger.debug(f'Contaner selected: {container.__name__}')
+
+    # TODO, see if we can find a good way of showing default, enforcing
+    # type, while also providing a concept of optional or not
+    # Currently click continues to prompt if default is None, colliding with
+    # a concept of mandatory
+
+    # Collect values for each field
+    kwargs = {}
+    for info in container.entry_info:
+        if clone:
+            default = getattr(clone_source, info.key)
+        else:
+            default = info.default
+
+        if info.optional and (default is None):
+            # Prompt will continue to prompt if default is None
+            # Provide a dummy value to allow prompt to exit
+            default = OptionalDefault()
+
+        val_prompt = (f'Enter value for {info.key}, enforce={info.enforce}')
+
+        logger.debug(val_prompt)
+        item_value = click.prompt(val_prompt, default=default,
+                                  value_proc=info.enforce)
+        click.echo(f'Selecting value: {item_value}')
+
+        try:
+            info.enforce_value(item_value)
+            kwargs[info.key] = item_value
+        except Exception:
+            logger.info(f'Invalid value {item_value}')
+
+    device = client.create_device(container, **kwargs)
+    device.show_info()
+    if click.confirm('Please confirm the device info is correct'):
+        logger.info('Adding device')
         device.save()
-        device.show_info()
-    elif args.cmd == 'load':
-        logger.debug('Starting load block')
-        logger.info(f'Creating shell with devices {args.device_names}')
-        devices = {}
-        names = " ".join(args.device_names)
-        names = names.split()
-        for name in names:
-            devices[name] = client.load_device(name=name)
+    else:
+        logger.info('Aborting')
 
-        from IPython import start_ipython  # noqa
-        start_ipython(argv=['--quick'], user_ns=devices)
-    elif args.cmd == "update":
-        # parse input
-        input_ = " ".join(args.json).strip()
-        if input_ == "-":
-            items_input = json.load(sys.stdin)
-        else:
-            items_input = json.loads(input_)
-        # insert
-        for item in items_input:
-            item = client.create_device(device_cls=item["type"], **item)
-            exists = item["_id"] in [c["_id"] for c in client.all_items]
-            client._store(item, insert=not exists)
-    elif args.cmd == "container-registry":
-        pt = prettytable.PrettyTable()
-        pt.field_names = ["Container Name", "Container Class", "Object Class"]
-        pt.align = "l"
-        for type_, class_, in happi.containers.registry._registry.items():
-            pt.add_row([type_,
-                        f'{class_.__module__}.{class_.__name__}',
-                        class_.device_class.default])
-        print(pt)
-    elif args.cmd == "transfer":
-        logger.debug('Starting transfer block')
-        # verify name and target both exist and are valid
-        item = client.find_device(name=args.name)
-        registry = happi.containers.registry
-        # This is slow if dictionary is large
-        target_match = [k for k, _ in registry.items() if
-                        args.target in k]
-        if len(target_match) > 1 and args.name in target_match:
-            target_match = [args.name]
-        elif len(target_match) != 1:
-            print(f'Target container name ({args.target}) '
-                  'not specific enough')
-            sys.exit(1)
-        target = happi.containers.registry._registry[target_match[0]]
-        # transfer item and prompt for fixes
-        transfer_container(client, item, target)
+
+@happi_cli.command()
+@click.argument('name')
+@click.argument('edits', nargs=-1)
+@click.pass_context
+def edit(ctx, name, edits):
+    """
+    Change an existing entry by applying edits of the form: field=value
+    to the item of name NAME.
+    """
+
+    # retrieve client
+    client = ctx.obj
+
+    logger.debug('Starting edit block')
+    device = client.find_device(name=name)
+    is_invalid_field = False
+    for edit in edits:
+        field, value = edit.split('=', 1)
+        try:
+            getattr(device, field)
+            logger.info('Setting %s.%s = %s', name, field, value)
+            setattr(device, field, value)
+        except Exception as e:
+            is_invalid_field = True
+            logger.error('Could not edit %s.%s: %s', name, field, e)
+    if is_invalid_field:
+        click.echo('field is invalid')
+        raise click.Abort()
+    device.save()
+    device.show_info()
+
+
+@happi_cli.command()
+@click.argument('device_names', nargs=-1)
+@click.pass_context
+def load(ctx, device_names):
+    """Open IPython terminal with DEVICE_NAMES loaded"""
+
+    logger.debug('Starting load block')
+    # retrieve client
+    client = ctx.obj
+
+    logger.info(f'Creating shell with devices {device_names}')
+    devices = {}
+    names = " ".join(device_names)
+    names = names.split()
+    if len(names) < 1:
+        raise click.Abort()
+
+    for name in names:
+        devices[name] = client.load_device(name=name)
+
+    from IPython import start_ipython  # noqa
+    start_ipython(argv=['--quick'], user_ns=devices)
+
+
+# TODO: FIgure out how to deal with json and click.  list of args doesn't
+# translate exactly
+@happi_cli.command()
+@click.argument("json_data", nargs=-1)
+@click.pass_context
+def update(ctx, json_data):
+    """Update happi db with JSON_DATA payload"""
+    # retrieve client
+    print(json_data)
+    client = ctx.obj
+    if len(json_data) < 1:
+        raise click.Abort()
+
+    # parse input
+    input_ = " ".join(json_data).strip()
+    print(json_data)
+    if input_ == "-":
+        items_input = json.load(sys.stdin)
+    else:
+        items_input = json.loads(input_)
+    # insert
+    for item in items_input:
+        item = client.create_device(device_cls=item["type"], **item)
+        exists = item["_id"] in [c["_id"] for c in client.all_items]
+        client._store(item, insert=not exists)
+
+
+@happi_cli.command(name='container-registry')
+def container_registry():
+    """Print container registry"""
+    pt = prettytable.PrettyTable()
+    pt.field_names = ["Container Name", "Container Class", "Object Class"]
+    pt.align = "l"
+    for type_, class_, in happi.containers.registry._registry.items():
+        pt.add_row([type_,
+                    f'{class_.__module__}.{class_.__name__}',
+                    class_.device_class.default])
+    click.echo(pt)
+
+
+@happi_cli.command()
+@click.pass_context
+@click.argument("name", type=str, nargs=1)
+@click.argument("target", type=str, nargs=1)
+def transfer(ctx, name, target):
+    """Change the container of an item (NAME) to a new container (TARGET)"""
+    logger.debug('Starting transfer block')
+    # retrive client
+    client = ctx.obj
+    # verify name and target both exist and are valid
+    item = client.find_device(name=name)
+    registry = happi.containers.registry
+    # This is slow if dictionary is large
+    target_match = [k for k, _ in registry.items() if target in k]
+    if len(target_match) > 1 and name in target_match:
+        target_match = [name]
+    elif len(target_match) != 1:
+        print(f'Target container name ({target}) not specific enough')
+        raise click.Abort()
+
+    target = happi.containers.registry._registry[target_match[0]]
+    # transfer item and prompt for fixes
+    transfer_container(client, item, target)
 
 
 def main():
     """Execute the ``happi_cli`` with command line arguments"""
-    happi_cli(sys.argv[1:])
+    happi_cli()
