@@ -97,9 +97,7 @@ def trim_split_output(strings, delim='\n'):
     """
     date_pattern = r"\[(\d{4})[-](0[1-9]|1[012])[-].*\]"
 
-    bad_substrs = [
-        r"^pcdsdevices"
-    ]
+    bad_substrs = [r"^pcdsdevices"]
 
     # remove registry items
     new_out = [
@@ -120,14 +118,6 @@ def assert_match_expected(result, expected_output):
     trimmed_output = trim_split_output(result.output)
     for message, expected in zip(trimmed_output, expected_output):
         assert message == expected
-
-
-def test_cli_version(runner):
-    result = runner.invoke(happi_cli, ['--version'])
-    assert result.exit_code == 0
-    assert result.exception is None
-    assert happi.__version__ in result.output
-    assert happi.__file__ in result.output
 
 
 def test_cli_no_argument(runner):
