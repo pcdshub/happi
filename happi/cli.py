@@ -5,6 +5,8 @@ import fnmatch
 import json
 import logging
 import os
+# allows arrow key navigation in prompt
+import readline  # noqa
 import sys
 
 import click
@@ -13,8 +15,8 @@ import prettytable
 
 import happi
 
-from .prompt import transfer_container
-from .utils import OptionalDefault, is_a_range
+from .prompt import prompt_for_entry, transfer_container
+from .utils import is_a_range
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +65,6 @@ def search(ctx, json, names, search_criteria):
     be combined with ANDs.
     """
     logger.debug("We're in the search block")
-
     # Retrieve client
     client = ctx.obj
 
@@ -153,8 +154,7 @@ def search(ctx, json, names, search_criteria):
 @click.pass_context
 def add(ctx, clone):
     """Add new entries interactively."""
-
-    logger.debug('Starting interactive add')
+    logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
     client = ctx.obj
 
@@ -164,6 +164,7 @@ def add(ctx, clone):
         # Must use the same container if cloning
         response = registry.entry_for_class(clone_source.__class__)
     else:
+        clone_source = None
         # Keep Device at registry for backwards compatibility but filter
         # it out of new devices options
         options = os.linesep.join(
@@ -177,35 +178,16 @@ def add(ctx, clone):
         logger.debug(ctnr_prompt)
         response = click.prompt(ctnr_prompt, default='OphydItem')
         if response and response not in registry:
-            logger.info('Invalid device container f{response}')
+            logger.info(f'Invalid device container {response}')
             return
 
     container = registry[response]
     logger.debug(f'Contaner selected: {container.__name__}')
 
-    # TODO, see if we can find a good way of showing default, enforcing
-    # type, while also providing a concept of optional or not
-    # Currently click continues to prompt if default is None, colliding with
-    # a concept of mandatory
-
     # Collect values for each field
     kwargs = {}
     for info in container.entry_info:
-        if clone:
-            default = getattr(clone_source, info.key)
-        else:
-            default = info.default
-
-        if info.optional and (default is None):
-            # Prompt will continue to prompt if default is None
-            # Provide a dummy value to allow prompt to exit
-            default = OptionalDefault()
-
-        val_prompt = (f'Enter value for {info.key}, enforce={info.enforce}')
-
-        logger.debug(val_prompt)
-        item_value = click.prompt(val_prompt, default=default,
-                                  value_proc=info.enforce)
+        item_value = prompt_for_entry(info, clone_source=clone_source)
         click.echo(f'Selecting value: {item_value}')
 
         try:
@@ -232,7 +214,6 @@ def edit(ctx, name, edits):
     Change an existing entry by applying edits of the form: field=value
     to the item of name NAME.
     """
-
     # retrieve client
     client = ctx.obj
 
