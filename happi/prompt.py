@@ -14,7 +14,9 @@ hopefully_unique_keyword = 'verylonghopefullyuniquekeywordthatdoesnotconflict'
 
 
 def read_user_dict(prompt, default: Optional[dict] = None):
-
+    """
+    Prompt for a dictionary, prompting for keys and values separately
+    """
     user_dict = {}
     click.echo(prompt + '\nKey must be a string.  ' +
                'Enter a blank key to complete dict entry.')
@@ -25,7 +27,12 @@ def read_user_dict(prompt, default: Optional[dict] = None):
                            value_proc=is_valid_identifier_not_keyword)
         if key is hopefully_unique_keyword:
             break
+
         value = click.prompt('  value')
+        try:
+            value = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            logger.debug(f'Taking {value} as a string')
 
         user_dict.update({key: value})
 
