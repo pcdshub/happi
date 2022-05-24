@@ -70,6 +70,10 @@ def is_valid_identifier_not_keyword(str_value):
 
 
 class OptionalDefault():
-    """Dummy object to pass to click.prompt if there is no default"""
+    """
+    Dummy object to pass to click.prompt if there is no default
+
+    Simply meant to be unique, to avoid collisions with real defaults
+    """
     def __str__(self):
         return 'optional'
