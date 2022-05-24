@@ -23,7 +23,10 @@ logger = logging.getLogger(__name__)
 version_msg = f'Happi: Version {happi.__version__} from {happi.__file__}'
 
 
-@click.group()
+@click.group(
+    help=('commands available: search, add, edit, load, update, '
+          'container-registry, transfer')
+)
 @click.option('--path', type=click.Path(exists=True),
               help='Provide the path to happi configuration file.')
 @click.option('--verbose', '-v', is_flag=True,
@@ -59,7 +62,7 @@ def happi_cli(ctx, path, verbose):
 @click.pass_context
 def search(ctx, json, names, search_criteria):
     """
-    Search the happi database.  Search criteria of the form: field=value.
+    Search the happi database.  SEARCH_CRITERIA take the form: field=value.
     If 'field=' is omitted, it will assumed to be 'name'.
     You may include as many search criteria as you like; these will
     be combined with ANDs.
@@ -211,7 +214,7 @@ def add(ctx, clone):
 @click.pass_context
 def edit(ctx, name, edits):
     """
-    Change an existing entry by applying edits of the form: field=value
+    Change an existing entry by applying EDITS of the form: field=value
     to the item of name NAME.
     """
     # retrieve client

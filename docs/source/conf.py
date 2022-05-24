@@ -45,6 +45,8 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
+    # sphinx_click: for 'click' directive (dep sphinx-click)
+    'sphinx_click',
     # sphinxarg: this is for the 'argparse' directive (dep sphinx-argparse)
     'sphinxarg.ext',
     'IPython.sphinxext.ipython_directive',
