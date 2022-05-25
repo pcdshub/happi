@@ -135,7 +135,7 @@ def test_search(client):
     with search.make_context('search', ['beamline=TST'], obj=client) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.device for r in res] == [r.device for r in res_cli]
+    assert [r.item for r in res] == [r.item for r in res_cli]
 
 
 def test_search_with_name(client, caplog):
@@ -144,7 +144,7 @@ def test_search_with_name(client, caplog):
     with search.make_context('search', ['TST_BASE_PIM2'], obj=client) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.device for r in res] == [r.device for r in res_cli]
+    assert [r.item for r in res] == [r.item for r in res_cli]
     # test duplicate search parameters
     with caplog.at_level(logging.ERROR):
         with search.make_context('search', ['TST_BASE_PIM2',
@@ -160,7 +160,7 @@ def test_search_z(client):
     with search.make_context('search', ['z=6.0'], obj=client) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.device for r in res] == [r.device for r in res_cli]
+    assert [r.item for r in res] == [r.item for r in res_cli]
 
 
 def test_search_z_range(client, caplog):
@@ -169,7 +169,7 @@ def test_search_z_range(client, caplog):
     with search.make_context('search', ['z=3.0,6.0'], obj=client) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.device for r in res] == [r.device for r in res_cli]
+    assert [r.item for r in res] == [r.item for r in res_cli]
     # test invalid range
     with caplog.at_level(logging.ERROR):
         with search.make_context('search', ['z=6.0,3.0'], obj=client) as ctx:
@@ -188,7 +188,7 @@ def test_both_range_and_regex_search(client):
                              obj=client) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.device for r in res] == [r.device for r in res_cli]
+    assert [r.item for r in res] == [r.item for r in res_cli]
 
 
 @pytest.mark.parametrize("from_user, expected_output", [
