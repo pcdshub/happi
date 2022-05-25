@@ -1,6 +1,7 @@
 """
 This module defines the ``happi`` command line interface.
 """
+import ast
 import fnmatch
 import json
 import logging
@@ -16,7 +17,7 @@ import prettytable
 import happi
 
 from .prompt import prompt_for_entry, transfer_container
-from .utils import is_a_range
+from .utils import is_a_range, is_valid_identifier_not_keyword
 
 logger = logging.getLogger(__name__)
 
@@ -210,7 +211,7 @@ def add(ctx, clone):
 
 @happi_cli.command()
 @click.argument('name')
-@click.argument('edits', nargs=-1)
+@click.argument('edits', nargs=-1, type=str)
 @click.pass_context
 def edit(ctx, name, edits):
     """
@@ -222,21 +223,47 @@ def edit(ctx, name, edits):
 
     logger.debug('Starting edit block')
     device = client.find_device(name=name)
-    is_invalid_field = False
     for edit in edits:
         field, value = edit.split('=', 1)
+        # validate field
+        try:
+            field = is_valid_identifier_not_keyword(field)
+        except ValueError:
+            logger.error(f'field ({field}) is not a valid keyword')
+            raise click.Abort()
+
+        # validate field depending on enforce type
+        if device._info_attrs[field].enforce in (dict, list):
+            # try interpreting with ast
+            try:
+                value = ast.literal_eval(value)
+            except (ValueError, SyntaxError) as e:
+                logger.error(f'Could not interpret edit ({edit}), {e}\n'
+                             'Remember to escape your quotes '
+                             '(e.g. {\\"key\\":\\"value\\"})')
+                raise click.Abort()
+        else:
+            try:
+                value = device._info_attrs[field].enforce_value(value)
+            except ValueError:
+                logger.error(f'Error enforcing type for value: {value}')
+                raise click.Abort()
+
+        # set field
         try:
             getattr(device, field)
-            logger.info('Setting %s.%s = %s', name, field, value)
+            logger.info(f'Setting {name}.{field}: {value}')
             setattr(device, field, value)
         except Exception as e:
-            is_invalid_field = True
-            logger.error('Could not edit %s.%s: %s', name, field, e)
-    if is_invalid_field:
-        click.echo('field is invalid')
-        raise click.Abort()
-    device.save()
+            logger.error(f'Could not edit {name}.{field}: {e}')
+            raise click.Abort()
+
     device.show_info()
+    if click.confirm('Please confirm the device info is correct'):
+        logger.info('Editing device')
+        device.save()
+    else:
+        logger.info('Aborting')
 
 
 @happi_cli.command()
