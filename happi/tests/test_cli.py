@@ -338,7 +338,7 @@ def test_add_clone(from_user, expected_output, happi_cfg, runner):
     assert_match_expected(clone_result, expected_output)
 
 
-def test_add_clone_device_not_fount(happi_cfg, runner):
+def test_add_clone_device_not_found(happi_cfg, runner):
     result = runner.invoke(
         happi_cli,
         ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name']
@@ -346,15 +346,19 @@ def test_add_clone_device_not_fount(happi_cfg, runner):
     assert isinstance(result.exception, SearchError)
 
 
-@pytest.mark.parametrize("from_user, expected_output", [
-    # Test edit item name
-    pytest.param(['name=new_name'], [
-        ' - INFO -  Setting happi_name.name = new_name',
-        ' - INFO -  Saving new entry new_name ...',
-        ' - INFO -  Removing old entry happi_name ...', ''],
-        id="edit_name",
-    )])
-def test_edit(from_user, expected_output, happi_cfg, runner, client):
+@pytest.mark.parametrize("from_user, fields, values", [
+    # simple edit
+    (["documentation=new_docs"], ['documentation'], ['new_docs']),
+    # edit kwargs with dictionary
+    (["kwargs={\'name\':\'fart\'}"], ['kwargs'], [{'name': 'fart'}]),
+    # edit argument list
+    (['args=[1,2,3,4]'], ['args'], [[1, 2, 3, 4]]),
+    # change multiple entries
+    (["active=False", "documentation=yes"], ['active', 'documentation'],
+     [False, 'yes'])
+    ]
+)
+def test_edit(from_user, fields, values, happi_cfg, runner, client):
     device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
                              "['arg1', 'arg2']", 'name', 'my_name', '',
                              'Y', 'docs', 'y'])
@@ -366,27 +370,34 @@ def test_edit(from_user, expected_output, happi_cfg, runner, client):
     )
     assert add_result.exit_code == 0
 
-    # try edit a previous added device
-    _ = runner.invoke(
+    # try edit the previous added device
+    edit_result = runner.invoke(
         happi_cli,
-        ['--path', happi_cfg, 'edit', 'happi_name', from_user.pop(0)]
+        ['--path', happi_cfg, 'edit', 'happi_name', *from_user],
+        input='y'  # to confirm edit
     )
+    assert edit_result.exit_code == 0
 
-    # check new name exists
-    res = client.search_regex(name='new_name')
+    res = client.search_regex(name='happi_name')
     assert len(res) > 0
+    # check fields and values have been modifiedj
+    # verify fields match expected python types
+    for new_field, new_value in zip(fields, values):
+        assert getattr(res[0].item, new_field) == new_value
 
-    # # expected output works in isolated test, but fails in bulk.
-    # # sidestep for now, but the below invocation could work
-    # assert_match_expected(edit_result, expected_output)
 
+@pytest.mark.parametrize("edit_args", [
+    ["some_invalid_field=sif"],  # invalid field
+    ["name=2"],  # bad value for name
+    ["kwargs={\'str\':\'beh\'}"],  # bad key in kwarg
+])
+def test_bad_edit(edit_args, runner, happi_cfg):
     # Test invalid field, note the name is changed to new_name
     bad_edit_result = runner.invoke(
         happi_cli,
-        ['--path', happi_cfg, 'edit', 'new_name', 'some_invalid_field=sif']
+        ['--path', happi_cfg, 'edit', 'TST_BASE_PIM', *edit_args]
     )
     assert bad_edit_result.exit_code == 1
-    assert isinstance(bad_edit_result.exception, SystemExit)
 
 
 def test_load(caplog, client, happi_cfg, runner):
