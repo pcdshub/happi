@@ -23,7 +23,7 @@ env:
 
     # Extra dependencies needed to run the tests which are not included
     # at the recipe and dev-requirements.txt. E.g. PyQt
-    - CONDA_EXTRAS="pip"
+    - CONDA_EXTRAS=""
 
     # Extra dependencies needed to run the test with Pip (similar to
     # CONDA_EXTRAS) but for pip
