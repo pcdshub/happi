@@ -54,6 +54,8 @@ def happi_cli(ctx, path, verbose):
     logger.debug("Happi client: %r" % client)
 
     # insert items into context to be passed to subcommands
+    # User objects must be assigned to ctx.obj, which will be passed
+    # through to new context objects
     ctx.obj = client
 
 
