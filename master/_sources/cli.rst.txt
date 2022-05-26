@@ -2,9 +2,6 @@
 Command Line Interface
 ===================================
 
-.. argparse::
-   :module: happi.cli
-   :func: get_parser
+.. click:: happi.cli:happi_cli
    :prog: happi
-   :nodescription:
-   :nodefault:
+   :nested: full
