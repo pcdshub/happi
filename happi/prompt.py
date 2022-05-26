@@ -5,8 +5,9 @@ from typing import Optional
 import click
 import prettytable
 
-from happi.errors import TransferError
-from happi.utils import OptionalDefault, is_valid_identifier_not_keyword
+from happi.errors import EnforceError, TransferError
+from happi.utils import (OptionalDefault, is_valid_identifier_not_keyword,
+                         optional_enforce)
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,30 @@ def read_user_dict(prompt, default: Optional[dict] = None):
     return user_dict
 
 
+def enforce_list(value):
+    """
+    Special handling for list inputs.
+    Accept python lists, and attempts to intepret any strings as lists
+
+    Raises
+    ------
+    EnforceError
+        if value cannot be interpreted as a list
+    """
+    if isinstance(value, list):
+        return value
+
+    # if not a list, try to interpret as a list
+    try:
+        value = ast.literal_eval(value)
+    except (ValueError, SyntaxError) as e:
+        raise EnforceError(e)
+
+    if not isinstance(value, list):
+        raise EnforceError(f'Provided value ({value}) is not a list')
+    return value
+
+
 def prompt_for_entry(entry_info, clone_source=None):
     """Prompt for an entry based on the entry_info provided"""
     if clone_source:
@@ -53,18 +78,27 @@ def prompt_for_entry(entry_info, clone_source=None):
         # Prompt will continue to prompt if default is None
         # Provide a dummy value to allow prompt to exit
         default = OptionalDefault()
+        enforce_fn = optional_enforce(entry_info.enforce_value)
+    else:
+        enforce_fn = entry_info.enforce_value
+
     enforce_str = getattr(entry_info.enforce, '__name__',
                           str(entry_info.enforce))
     val_prompt = (f'Enter value for {entry_info.key}, '
                   f'enforce={enforce_str}')
 
+    # prompt differently depending on the enforce type
     if entry_info.enforce is list:
         logger.debug('prompting for list')
-        value = click.prompt(val_prompt, default=str(default),
-                             value_proc=ast.literal_eval)
+        # special handling for an optional list
+        if isinstance(default, OptionalDefault):
+            list_enforce = optional_enforce(enforce_list)
+        else:
+            list_enforce = enforce_list
+
+        value = click.prompt(val_prompt, default=default,
+                             value_proc=list_enforce)
     elif entry_info.enforce is dict:
-        # TODO: deal with dict parsing.  Could work in similar way but
-        # likely requires a separate methodology...
         logger.debug('prompting for dict')
         value = read_user_dict(val_prompt, default=default)
     elif entry_info.enforce is bool:
@@ -73,8 +107,9 @@ def prompt_for_entry(entry_info, clone_source=None):
         # evaluating as True
         value = click.confirm(val_prompt, default=default)
     else:
+        # everything else is a callable
         value = click.prompt(val_prompt, default=default,
-                             value_proc=entry_info.enforce)
+                             value_proc=enforce_fn)
 
     if isinstance(value, OptionalDefault):
         # Default was None, return None

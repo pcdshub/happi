@@ -77,3 +77,13 @@ class OptionalDefault():
     """
     def __str__(self):
         return 'optional'
+
+
+def optional_enforce(enforce_value):
+    def inner(value):
+        if isinstance(value, OptionalDefault):
+            return value
+        else:
+            return enforce_value(value)
+
+    return inner
