@@ -126,7 +126,7 @@ class EntryInfo:
                 if self.enforce_doc:
                     raise EnforceError(self.enforce_doc) from e
                 else:
-                    raise e
+                    raise EnforceError(e)
 
         elif isinstance(self.enforce, (list, tuple, set)):
             # Check that value is in list, otherwise raise EnforceError
@@ -137,11 +137,16 @@ class EntryInfo:
 
         elif isinstance(self.enforce, Pattern):
             # Try and match regex patttern, otherwise raise EnforceError
-            if not self.enforce.match(value):
-                raise EnforceError(
-                    f'{self.key}={value!r} did not match the enforced pattern'
-                    f': ({self.enforce.pattern}). {self.enforce_doc}'
-                )
+            try:
+                if not self.enforce.match(value):
+                    raise EnforceError(
+                        f'{self.key}={value!r} did not match the enforced '
+                        f'pattern: ({self.enforce.pattern}). '
+                        f'{self.enforce_doc}'
+                    )
+            except TypeError as e:
+                raise EnforceError(e)
+
             return value
 
         # Invalid enforcement

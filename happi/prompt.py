@@ -1,11 +1,121 @@
+import ast
 import logging
+from typing import Optional
 
 import click
 import prettytable
 
-from happi.errors import TransferError
+from happi.errors import EnforceError, TransferError
+from happi.utils import (OptionalDefault, is_valid_identifier_not_keyword,
+                         optional_enforce)
 
 logger = logging.getLogger(__name__)
+
+hopefully_unique_keyword = 'verylonghopefullyuniquekeywordthatdoesnotconflict'
+
+
+def read_user_dict(prompt, default: Optional[dict] = None):
+    """
+    Prompt for a dictionary, prompting for keys and values separately
+    """
+    user_dict = {}
+    click.echo(prompt + '\nKey must be a string.  ' +
+               'Enter a blank key to complete dict entry.')
+    while True:
+        key = click.prompt('  key',
+                           default=hopefully_unique_keyword,
+                           show_default=False,
+                           value_proc=is_valid_identifier_not_keyword)
+        if key is hopefully_unique_keyword:
+            break
+
+        value = click.prompt('  value')
+        try:
+            value = ast.literal_eval(value)
+        except (ValueError, SyntaxError):
+            logger.debug(f'Taking {value} as a string')
+
+        user_dict.update({key: value})
+
+    if not user_dict:
+        return default
+
+    return user_dict
+
+
+def enforce_list(value):
+    """
+    Special handling for list inputs.
+    Accept python lists, and attempts to intepret any strings as lists
+
+    Raises
+    ------
+    EnforceError
+        if value cannot be interpreted as a list
+    """
+    if isinstance(value, list):
+        return value
+
+    # if not a list, try to interpret as a list
+    try:
+        value = ast.literal_eval(value)
+    except (ValueError, SyntaxError) as e:
+        raise EnforceError(e)
+
+    if not isinstance(value, list):
+        raise EnforceError(f'Provided value ({value}) is not a list')
+    return value
+
+
+def prompt_for_entry(entry_info, clone_source=None):
+    """Prompt for an entry based on the entry_info provided"""
+    if clone_source:
+        default = getattr(clone_source, entry_info.key)
+    else:
+        default = entry_info.default
+
+    if entry_info.optional and (default is None):
+        # Prompt will continue to prompt if default is None
+        # Provide a dummy value to allow prompt to exit
+        default = OptionalDefault()
+        enforce_fn = optional_enforce(entry_info.enforce_value)
+    else:
+        enforce_fn = entry_info.enforce_value
+
+    enforce_str = getattr(entry_info.enforce, '__name__',
+                          str(entry_info.enforce))
+    val_prompt = (f'Enter value for {entry_info.key}, '
+                  f'enforce={enforce_str}')
+
+    # prompt differently depending on the enforce type
+    if entry_info.enforce is list:
+        logger.debug('prompting for list')
+        # special handling for an optional list
+        if isinstance(default, OptionalDefault):
+            list_enforce = optional_enforce(enforce_list)
+        else:
+            list_enforce = enforce_list
+
+        value = click.prompt(val_prompt, default=default,
+                             value_proc=list_enforce)
+    elif entry_info.enforce is dict:
+        logger.debug('prompting for dict')
+        value = read_user_dict(val_prompt, default=default)
+    elif entry_info.enforce is bool:
+        logger.debug('prompting for bool')
+        # coerces into y or n, preventing random strings (eg. 'f') from
+        # evaluating as True
+        value = click.confirm(val_prompt, default=default)
+    else:
+        # everything else is a callable
+        value = click.prompt(val_prompt, default=default,
+                             value_proc=enforce_fn)
+
+    if isinstance(value, OptionalDefault):
+        # Default was None, return None
+        value = None
+
+    return value
 
 
 def transfer_container(client, item, target):

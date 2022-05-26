@@ -13,4 +13,4 @@ setup(name='happi',
       include_package_data=True,
       install_requires=requirements,
       description='Happi Database Access for LCLS Beamline Devices',
-      entry_points={'console_scripts': ['happi=happi.cli:main']})
+      entry_points={'console_scripts': ['happi=happi.cli:happi_cli']})

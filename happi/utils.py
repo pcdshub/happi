@@ -4,6 +4,8 @@ Basic module utilities
 import keyword
 import logging
 
+from happi.errors import EnforceError
+
 logger = logging.getLogger(__name__)
 
 
@@ -63,5 +65,25 @@ def is_valid_identifier_not_keyword(str_value):
             return str_value
     except Exception:
         pass
-    raise ValueError(f'{str_value} is either not a valid Python identifier, '
-                     'or is a reserved keyword.')
+    raise EnforceError(f'{str_value} is either not a valid Python identifier, '
+                       'or is a reserved keyword.')
+
+
+class OptionalDefault():
+    """
+    Dummy object to pass to click.prompt if there is no default
+
+    Simply meant to be unique, to avoid collisions with real defaults
+    """
+    def __str__(self):
+        return 'optional'
+
+
+def optional_enforce(enforce_value):
+    def inner(value):
+        if isinstance(value, OptionalDefault):
+            return value
+        else:
+            return enforce_value(value)
+
+    return inner

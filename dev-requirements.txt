@@ -8,8 +8,7 @@ mongomock >=3.22.0
 sphinx
 sphinx_rtd_theme
 psdm_qs_cli
-sphinx-argparse
-
+sphinx-click
 # PyPI's 2020 resolver can be problematic with these
 # dependencies-of-dependencies.  Constrain them here:
 six >=1.10.0
