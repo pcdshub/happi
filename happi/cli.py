@@ -228,6 +228,10 @@ def edit(ctx, name, edits):
 
     logger.debug('Starting edit block')
     device = client.find_device(name=name)
+    if len(edits) < 1:
+        click.echo('No edits provided, aborting')
+        raise click.Abort()
+
     for edit in edits:
         field, value = edit.split('=', 1)
         # validate field
