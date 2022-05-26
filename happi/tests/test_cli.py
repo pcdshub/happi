@@ -191,6 +191,42 @@ def test_both_range_and_regex_search(client):
     assert [r.item for r in res] == [r.item for r in res_cli]
 
 
+def test_search_json(runner, happi_cfg):
+    expected_output = '''[
+  {
+    "name": "tst_base_pim2",
+    "device_class": "types.SimpleNamespace",
+    "args": [
+      "{{prefix}}"
+    ],
+    "kwargs": {
+      "name": "{{name}}"
+    },
+    "active": true,
+    "documentation": null,
+    "prefix": "TST:BASE:PIM2",
+    "_id": "TST_BASE_PIM2",
+    "beamline": "TST",
+    "creation": "Wed Jan 30 09:46:00 2019",
+    "last_edit": "Fri Apr 13 14:40:08 2018",
+    "macros": null,
+    "parent": null,
+    "screen": null,
+    "stand": "BAS",
+    "system": "diagnostic",
+    "type": "OphydItem",
+    "z": 6.0
+  }
+]'''
+
+    result = runner.invoke(
+        happi_cli, ['--path', happi_cfg, 'search', '-j', 'TST_BASE_PIM2']
+    )
+
+    assert result.exit_code == 0
+    assert_match_expected(result, expected_output.split('\n'))
+
+
 @pytest.mark.parametrize("from_user, expected_output", [
     # Test add item - succeeding
     pytest.param('\n'.join(['HappiItem', 'happi_nname', 'device_class',
