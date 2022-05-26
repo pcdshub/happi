@@ -179,7 +179,7 @@ def add(ctx, clone):
         ctnr_prompt = (
             'Please select a container, or press enter for generic '
             f'Ophyd Device container: {os.linesep}{options}'
-            '{}{}Selection'.format(os.linesep, os.linesep)
+            f'{os.linesep}{os.linesep}Selection'
         )
         logger.debug(ctnr_prompt)
         response = click.prompt(ctnr_prompt, default='OphydItem')
