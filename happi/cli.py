@@ -58,12 +58,13 @@ def happi_cli(ctx, path, verbose):
 
 
 @happi_cli.command()
-@click.option('--json', is_flag=True, help='Show results in JSON format.')
+@click.option('--show_json', '-j', is_flag=True,
+              help='Show results in JSON format.')
 @click.option('--names', is_flag=True,
               help='Return results as whitespace-separated names.')
 @click.argument('search_criteria', nargs=-1)
 @click.pass_context
-def search(ctx, json, names, search_criteria):
+def search(ctx, show_json, names, search_criteria):
     """
     Search the happi database.  SEARCH_CRITERIA take the form: field=value.
     If 'field=' is omitted, it will assumed to be 'name'.
@@ -138,7 +139,7 @@ def search(ctx, json, names, search_criteria):
     else:
         final_results = []
 
-    if json:
+    if show_json:
         json.dump([dict(res.item) for res in final_results], indent=2,
                   fp=sys.stdout)
     elif names:
