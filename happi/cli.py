@@ -6,7 +6,7 @@ import fnmatch
 import json
 import logging
 import os
-# allows arrow key navigation in prompt
+# on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
 
