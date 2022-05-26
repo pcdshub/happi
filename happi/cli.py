@@ -22,11 +22,13 @@ from .utils import is_a_range, is_valid_identifier_not_keyword
 logger = logging.getLogger(__name__)
 
 version_msg = f'Happi: Version {happi.__version__} from {happi.__file__}'
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.group(
     help=('commands available: search, add, edit, load, update, '
-          'container-registry, transfer')
+          'container-registry, transfer'),
+    context_settings=CONTEXT_SETTINGS
 )
 @click.option('--path', type=click.Path(exists=True),
               help='Provide the path to happi configuration file.')
