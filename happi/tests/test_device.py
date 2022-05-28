@@ -152,4 +152,4 @@ def test_add_and_save(three_valves, device, happi_client):
     device.active = False
     device.save()
 
-    assert not happi_client[device.name].device.active
+    assert not happi_client[device.name].item.active

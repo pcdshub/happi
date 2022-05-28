@@ -68,7 +68,7 @@ def test_create_device(happi_client, device_info):
 
 
 def test_all_devices(happi_client, device):
-    assert happi_client.all_devices == [device]
+    assert happi_client.all_items == [device]
 
 
 def test_add_device(happi_client, valve):
@@ -137,14 +137,14 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     res = happi_client.search(name=device_info['name'])
     # Single search return
     assert len(res) == 1
-    loaded_device = res[0].device
+    loaded_device = res[0].item
     assert loaded_device.prefix == device_info['prefix']
     assert loaded_device.name == device_info['name']
     # No results
     assert not happi_client.search(name='not')
     # Returned as dict
     res = happi_client.search(**device_info)
-    loaded_device = res[0].device
+    loaded_device = res[0].item
     assert loaded_device['prefix'] == device_info['prefix']
     assert loaded_device['name'] == device_info['name']
     # Search off keyword

@@ -186,7 +186,7 @@ def test_qsbackend_with_client(mockqsbackend):
 @requires_pcdsdevices
 def test_qsbackend_with_acromag(mockqsbackend):
     c = Client(database=mockqsbackend)
-    d = load_devices(*c.all_devices, pprint=False).__dict__
+    d = load_devices(*c.all_items, pprint=False).__dict__
     ai1 = d.get('ai_7')
     ao1 = d.get('ao_6')
     assert ai1.__class__.__name__ == 'EpicsSignalRO'
