@@ -64,9 +64,12 @@ def happi_cli(ctx, path, verbose):
               help='Show results in JSON format.')
 @click.option('--names', is_flag=True,
               help='Return results as whitespace-separated names.')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='use glob style (default) or regex style search terms. '
+              'Regex requires backslashes to be escaped (eg. at\\\\d.\\\\d)')
 @click.argument('search_criteria', nargs=-1)
 @click.pass_context
-def search(ctx, show_json, names, search_criteria):
+def search(ctx, show_json, names, use_glob, search_criteria):
     """
     Search the happi database.  SEARCH_CRITERIA take the form: field=value.
     If 'field=' is omitted, it will assumed to be 'name'.
@@ -95,7 +98,7 @@ def search(ctx, show_json, names, search_criteria):
                 criteria, value, client_args[criteria]
             )
             return
-        if value.replace('.', '').isnumeric():
+        if value.replace('.', '', 1).isdigit():
             logger.debug('Changed %s to float', value)
             value = str(float(value))
 
@@ -105,16 +108,16 @@ def search(ctx, show_json, names, search_criteria):
             stop = float(stop)
             is_range = True
             if start < stop:
-                range_list = client.search_range(criteria, start, stop)
+                range_list += client.search_range(criteria, start, stop)
             else:
                 logger.error('Invalid range, make sure start < stop')
 
-        # skip the criteria for range values
-        # it won't be a valid criteria for search_regex()
-        if is_range:
-            pass
-        else:
+            continue
+
+        if use_glob:
             client_args[criteria] = fnmatch.translate(value)
+        else:  # already using regex
+            client_args[criteria] = value
 
     regex_list = client.search_regex(**client_args)
     results = regex_list + range_list
