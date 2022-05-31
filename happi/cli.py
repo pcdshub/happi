@@ -86,7 +86,6 @@ def search(ctx, show_json, names, use_glob, search_criteria):
     regex_list = []
     is_range = False
     for user_arg in search_criteria:
-        is_range = False
         if '=' in user_arg:
             criteria, value = user_arg.split('=', 1)
         else:
@@ -121,6 +120,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
 
     regex_list = client.search_regex(**client_args)
     results = regex_list + range_list
+    logger.debug(f'results: {len(regex_list)} + {len(range_list)}')
 
     # find the repeated items
     res_size = len(results)
