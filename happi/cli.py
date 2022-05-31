@@ -17,7 +17,7 @@ import prettytable
 import happi
 
 from .prompt import prompt_for_entry, transfer_container
-from .utils import is_a_range, is_valid_identifier_not_keyword
+from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
 logger = logging.getLogger(__name__)
 
@@ -96,8 +96,8 @@ def search(ctx, show_json, names, use_glob, search_criteria):
                 'Received duplicate search criteria %s=%r (was %r)',
                 criteria, value, client_args[criteria]
             )
-            return
-        if value.replace('.', '', 1).isdigit():
+            raise click.Abort()
+        if is_number(value):
             logger.debug('Changed %s to float', value)
             value = str(float(value))
 
@@ -110,6 +110,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
                 range_list += client.search_range(criteria, start, stop)
             else:
                 logger.error('Invalid range, make sure start < stop')
+                raise click.Abort()
 
             continue
 
@@ -143,6 +144,8 @@ def search(ctx, show_json, names, use_glob, search_criteria):
         final_results = range_list
     else:
         final_results = []
+        logger.error('No devices found')
+        return
 
     if show_json:
         json.dump([dict(res.item) for res in final_results], indent=2,
@@ -154,8 +157,6 @@ def search(ctx, show_json, names, use_glob, search_criteria):
         for res in final_results:
             res.item.show_info()
 
-    if not final_results:
-        logger.error('No devices found')
     return final_results
 
 
