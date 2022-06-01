@@ -97,9 +97,6 @@ def search(ctx, show_json, names, use_glob, search_criteria):
                 criteria, value, client_args[criteria]
             )
             raise click.Abort()
-        if is_number(value):
-            logger.debug('Changed %s to float', value)
-            value = str(float(value))
 
         if is_a_range(value):
             start, stop = value.split(',')
@@ -107,12 +104,25 @@ def search(ctx, show_json, names, use_glob, search_criteria):
             stop = float(stop)
             is_range = True
             if start < stop:
-                range_list += client.search_range(criteria, start, stop)
+                new_range_list = client.search_range(criteria, start, stop)
             else:
                 logger.error('Invalid range, make sure start < stop')
                 raise click.Abort()
 
+            if not range_list:
+                # first range
+                range_list = new_range_list
+            else:
+                # subsequent ranges, only take intersection
+                final_range = [item for item in new_range_list
+                               if item in range_list]
+                range_list = final_range
+
             continue
+
+        elif is_number(value):
+            logger.debug('Changed %s to float', value)
+            value = str(float(value))
 
         if use_glob:
             client_args[criteria] = fnmatch.translate(value)
@@ -120,30 +130,34 @@ def search(ctx, show_json, names, use_glob, search_criteria):
             client_args[criteria] = value
 
     regex_list = client.search_regex(**client_args)
-    results = regex_list + range_list
-    logger.debug(f'results: {len(regex_list)} + {len(range_list)}')
 
-    # find the repeated items
-    res_size = len(results)
-    repeated = []
-    for i in range(res_size):
-        k = i + 1
-        for j in range(k, res_size):
-            if results[i] == results[j] and results[i] not in repeated:
-                repeated.append(results[i])
-
-    # we only want to return the ones that have been repeated when
-    # they have been matched with both search_regex() & search_range()
-    if repeated:
-        final_results = repeated
-    elif regex_list and not is_range:
-        # only matched with search_regex()
+    final_results = []
+    # Gather final results
+    if regex_list and not is_range:
+        # only matched with one search_regex()
         final_results = regex_list
-    elif range_list and is_range:
+    elif range_list and is_range and not regex_list:
         # only matched with search_range()
         final_results = range_list
+    elif range_list and regex_list:
+        # find the intersection between regex_list and range_list
+        results = regex_list + range_list
+        res_size = len(results)
+        repeated = []
+        for i in range(res_size):
+            k = i + 1
+            for j in range(k, res_size):
+                if results[i] == results[j] and results[i] not in repeated:
+                    repeated.append(results[i])
+
+        # we only want to return the ones that have been repeated when
+        # they have been matched with both search_regex() & search_range()
+        if repeated:
+            final_results = repeated
     else:
-        final_results = []
+        logger.error('why are we here')
+
+    if not final_results:
         logger.error('No devices found')
         return
 
