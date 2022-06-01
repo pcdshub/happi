@@ -149,19 +149,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
         final_results = range_list
     elif range_list and regex_list:
         # find the intersection between regex_list and range_list
-        results = regex_list + range_list
-        res_size = len(results)
-        repeated = []
-        for i in range(res_size):
-            k = i + 1
-            for j in range(k, res_size):
-                if results[i] == results[j] and results[i] not in repeated:
-                    repeated.append(results[i])
-
-        # we only want to return the ones that have been repeated when
-        # they have been matched with both search_regex() & search_range()
-        if repeated:
-            final_results = repeated
+        final_results = [item for item in range_list if item in regex_list]
     else:
         logger.debug('No regex or range items found')
 
