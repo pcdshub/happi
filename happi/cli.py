@@ -84,7 +84,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
     client_args = {}
     range_list = []
     regex_list = []
-    first_range = True
+    range_found = False
     for user_arg in search_criteria:
         if '=' in user_arg:
             criteria, value = user_arg.split('=', 1)
@@ -108,8 +108,9 @@ def search(ctx, show_json, names, use_glob, search_criteria):
                 logger.error('Invalid range, make sure start < stop')
                 raise click.Abort()
 
-            if first_range:
-                first_range = False
+            if not range_found:
+                # if first range, just replace
+                range_found = True
                 range_list = new_range_list
             else:
                 # subsequent ranges, only take intersection
@@ -118,7 +119,8 @@ def search(ctx, show_json, names, use_glob, search_criteria):
                 range_list = final_range
 
             if not range_list:
-                # no matches found, or intesection is empty. abort early
+                # we have searched via a range query.  At this point
+                # no matches, or intesection is empty. abort early
                 logger.error('No devices found')
                 return
 
@@ -127,6 +129,8 @@ def search(ctx, show_json, names, use_glob, search_criteria):
         elif is_number(value):
             logger.debug('Changed %s to float', value)
             value = str(float(value))
+        else:
+            logger.debug('Value %s interpreted as string', value)
 
         if use_glob:
             client_args[criteria] = fnmatch.translate(value)
@@ -135,9 +139,9 @@ def search(ctx, show_json, names, use_glob, search_criteria):
 
     regex_list = client.search_regex(**client_args)
 
-    final_results = []
     # Gather final results
-    if regex_list and first_range:
+    final_results = []
+    if regex_list and not range_list:
         # only matched with one search_regex()
         final_results = regex_list
     elif range_list and not regex_list:
@@ -159,12 +163,13 @@ def search(ctx, show_json, names, use_glob, search_criteria):
         if repeated:
             final_results = repeated
     else:
-        logger.error('why are we here')
+        logger.debug('No regex or range items found')
 
     if not final_results:
         logger.error('No devices found')
         return
 
+    # Final processing for output
     if show_json:
         json.dump([dict(res.item) for res in final_results], indent=2,
                   fp=sys.stdout)
