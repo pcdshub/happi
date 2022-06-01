@@ -156,6 +156,16 @@ def test_search_with_name(client, runner, happi_cfg):
     assert 'duplicate search criteria' in bad_result.output
 
 
+def test_search_glob_regex(runner, happi_cfg):
+    glob_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'search',
+                                '--names', 'tst_*2'])
+
+    regex_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'search',
+                                 '--names', '--regex', r'tst_.*\d'])
+
+    assert glob_result.output == regex_result.output
+
+
 def test_search_z(client):
     res = client.search_regex(z="6.0")
     with search.make_context('search', ['z=6.0'], obj=client) as ctx:
