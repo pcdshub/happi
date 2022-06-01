@@ -50,7 +50,8 @@ def db(tmp_path):
         "stand": "BAS",
         "system": "diagnostic",
         "type": "OphydItem",
-        "z": 3.0
+        "z": 3.0,
+        "y": 40.0
     },
     "TST_BASE_PIM2": {
         "_id": "TST_BASE_PIM2",
@@ -73,7 +74,8 @@ def db(tmp_path):
         "stand": "BAS",
         "system": "diagnostic",
         "type": "OphydItem",
-        "z": 6.0
+        "z": 6.0,
+        "y": 10.0
     }
 }
 """)
@@ -138,7 +140,7 @@ def test_search(client):
     assert [r.item for r in res] == [r.item for r in res_cli]
 
 
-def test_search_with_name(client, caplog):
+def test_search_with_name(client, runner, happi_cfg):
     res = client.search_regex(name='TST_BASE_PIM2')
 
     with search.make_context('search', ['TST_BASE_PIM2'], obj=client) as ctx:
@@ -146,13 +148,12 @@ def test_search_with_name(client, caplog):
 
     assert [r.item for r in res] == [r.item for r in res_cli]
     # test duplicate search parameters
-    with caplog.at_level(logging.ERROR):
-        with search.make_context('search', ['TST_BASE_PIM2',
-                                 'name=TST_BASE_PIM2'],
-                                 obj=client) as ctx:
-            res_cli = search.invoke(ctx)
+    bad_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+                                           'search', 'TST_BASE_PIM2',
+                                           'name=TST_BASE_PIM2'])
 
-    assert "Received duplicate search criteria" in caplog.text
+    assert bad_result.exit_code == 1
+    assert 'duplicate search criteria' in bad_result.output
 
 
 def test_search_z(client):
@@ -163,20 +164,27 @@ def test_search_z(client):
     assert [r.item for r in res] == [r.item for r in res_cli]
 
 
-def test_search_z_range(client, caplog):
+def test_search_z_range(client, runner, happi_cfg):
     res = client.search_range('z', 3.0, 6.0)
 
     with search.make_context('search', ['z=3.0,6.0'], obj=client) as ctx:
         res_cli = search.invoke(ctx)
 
     assert [r.item for r in res] == [r.item for r in res_cli]
-    # test invalid range
-    with caplog.at_level(logging.ERROR):
-        with search.make_context('search', ['z=6.0,3.0'], obj=client) as ctx:
-            res_cli = search.invoke(ctx)
 
-        assert "Invalid range, make sure start < stop" in caplog.text
-        caplog.clear()
+    # test invalid range
+    bad_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+                               'search', 'z=6.0,3.0'])
+
+    assert bad_result.exit_code == 1
+    assert "Invalid range, make sure start < stop" in bad_result.output
+
+    # test conflicting ranges (should return none)
+    conflict_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+                                    'search', 'y=1,3', 'z=3.0,6.0'])
+
+    assert conflict_result.exit_code == 0
+    assert 'No devices found' in conflict_result.output
 
 
 def test_both_range_and_regex_search(client):
@@ -215,7 +223,8 @@ def test_search_json(runner, happi_cfg):
     "stand": "BAS",
     "system": "diagnostic",
     "type": "OphydItem",
-    "z": 6.0
+    "z": 6.0,
+    "y": 10.0
   }
 ]'''
 
@@ -490,7 +499,7 @@ def test_update(happi_cfg, runner):
 
 
 @pytest.mark.parametrize("from_user, expected_output", [
-    pytest.param('\n'.join(['n', 'n', 'n', 'n', 'N', 'n', 'n', '']), [
+    pytest.param('\n'.join(['n', 'n', 'n', 'n', 'N', 'n', 'n', 'n', '']), [
         'Attempting to transfer tst_base_pim to OphydItem...',
         '+---------------+---------------+',
         '|  tst_base_pim |   OphydItem   |',
@@ -508,6 +517,7 @@ def test_update(happi_cfg, runner):
         '|     screen    |       -       |',
         '|     stand     |       -       |',
         '|     system    |       -       |',
+        '|       y       |       -       |',
         '|       z       |       -       |',
         '+---------------+---------------+', '',
         '----------Prepare Entries-----------',
@@ -517,6 +527,7 @@ def test_update(happi_cfg, runner):
         'Include entry from tst_base_pim: screen = "None"? [Y/n]: n',
         'Include entry from tst_base_pim: stand = "BAS"? [Y/n]: N',
         'Include entry from tst_base_pim: system = "diagnostic"? [Y/n]: n',
+        'Include entry from tst_base_pim: y = "40.0"? [Y/n]: n',
         'Include entry from tst_base_pim: z = "3.0"? [Y/n]: n', '',
         '----------Amend Entries-----------', 'Save final device? [y/N]: ',
         ''], id="transfer_succeeding",
