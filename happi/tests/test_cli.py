@@ -172,6 +172,13 @@ def test_search_z_range(client, runner, happi_cfg):
 
     assert [r.item for r in res] == [r.item for r in res_cli]
 
+    # test range intersection
+    result = runner.invoke(happi_cli, ['--path', happi_cfg, 'search',
+                           '--names', 'z=3.0,6.1', 'y=9.0,12.0'])
+
+    assert result.exit_code == 0
+    assert result.output == 'tst_base_pim2\n'
+
     # test invalid range
     bad_result = runner.invoke(happi_cli, ['--path', happi_cfg,
                                'search', 'z=6.0,3.0'])
