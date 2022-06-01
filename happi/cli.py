@@ -84,7 +84,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
     client_args = {}
     range_list = []
     regex_list = []
-    is_range = False
+    first_range = True
     for user_arg in search_criteria:
         if '=' in user_arg:
             criteria, value = user_arg.split('=', 1)
@@ -102,21 +102,25 @@ def search(ctx, show_json, names, use_glob, search_criteria):
             start, stop = value.split(',')
             start = float(start)
             stop = float(stop)
-            is_range = True
             if start < stop:
                 new_range_list = client.search_range(criteria, start, stop)
             else:
                 logger.error('Invalid range, make sure start < stop')
                 raise click.Abort()
 
-            if not range_list:
-                # first range
+            if first_range:
+                first_range = False
                 range_list = new_range_list
             else:
                 # subsequent ranges, only take intersection
                 final_range = [item for item in new_range_list
                                if item in range_list]
                 range_list = final_range
+
+            if not range_list:
+                # no matches found, or intesection is empty. abort early
+                logger.error('No devices found')
+                return
 
             continue
 
@@ -133,10 +137,10 @@ def search(ctx, show_json, names, use_glob, search_criteria):
 
     final_results = []
     # Gather final results
-    if regex_list and not is_range:
+    if regex_list and first_range:
         # only matched with one search_regex()
         final_results = regex_list
-    elif range_list and is_range and not regex_list:
+    elif range_list and not regex_list:
         # only matched with search_range()
         final_results = range_list
     elif range_list and regex_list:

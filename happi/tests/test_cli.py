@@ -179,9 +179,16 @@ def test_search_z_range(client, runner, happi_cfg):
     assert bad_result.exit_code == 1
     assert "Invalid range, make sure start < stop" in bad_result.output
 
-    # test conflicting ranges (should return none)
+    # test conflicting ranges (should return no devices)
     conflict_result = runner.invoke(happi_cli, ['--path', happi_cfg,
                                     'search', 'y=1,3', 'z=3.0,6.0'])
+
+    assert conflict_result.exit_code == 0
+    assert 'No devices found' in conflict_result.output
+
+    # test conflicting ranges but with opposite order
+    conflict_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+                                    'search', 'z=3.0,6.0', 'y=1,3'])
 
     assert conflict_result.exit_code == 0
     assert 'No devices found' in conflict_result.output
