@@ -9,6 +9,7 @@ import os
 # on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
+from typing import List
 
 import click
 import coloredlogs
@@ -17,7 +18,7 @@ import prettytable
 import happi
 
 from .prompt import prompt_for_entry, transfer_container
-from .utils import is_a_range, is_valid_identifier_not_keyword
+from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
 logger = logging.getLogger(__name__)
 
@@ -64,9 +65,18 @@ def happi_cli(ctx, path, verbose):
               help='Show results in JSON format.')
 @click.option('--names', is_flag=True,
               help='Return results as whitespace-separated names.')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
 @click.argument('search_criteria', nargs=-1)
 @click.pass_context
-def search(ctx, show_json, names, search_criteria):
+def search(
+    ctx: click.Context,
+    show_json: bool,
+    names: bool,
+    use_glob: bool,
+    search_criteria: List[str]
+):
     """
     Search the happi database.  SEARCH_CRITERIA take the form: field=value.
     If 'field=' is omitted, it will assumed to be 'name'.
@@ -81,9 +91,8 @@ def search(ctx, show_json, names, search_criteria):
     client_args = {}
     range_list = []
     regex_list = []
-    is_range = False
+    range_found = False
     for user_arg in search_criteria:
-        is_range = False
         if '=' in user_arg:
             criteria, value = user_arg.split('=', 1)
         else:
@@ -94,53 +103,68 @@ def search(ctx, show_json, names, search_criteria):
                 'Received duplicate search criteria %s=%r (was %r)',
                 criteria, value, client_args[criteria]
             )
-            return
-        if value.replace('.', '').isnumeric():
-            logger.debug('Changed %s to float', value)
-            value = str(float(value))
+            raise click.Abort()
 
         if is_a_range(value):
             start, stop = value.split(',')
             start = float(start)
             stop = float(stop)
-            is_range = True
             if start < stop:
-                range_list = client.search_range(criteria, start, stop)
+                new_range_list = client.search_range(criteria, start, stop)
             else:
                 logger.error('Invalid range, make sure start < stop')
+                raise click.Abort()
 
-        # skip the criteria for range values
-        # it won't be a valid criteria for search_regex()
-        if is_range:
-            pass
+            if not range_found:
+                # if first range, just replace
+                range_found = True
+                range_list = new_range_list
+            else:
+                # subsequent ranges, only take intersection
+                final_range = [item for item in new_range_list
+                               if item in range_list]
+                range_list = final_range
+
+            if not range_list:
+                # we have searched via a range query.  At this point
+                # no matches, or intesection is empty. abort early
+                logger.error('No devices found')
+                return
+
+            continue
+
+        elif is_number(value):
+            logger.debug('Changed %s to float', value)
+            # value = str(float(value))
         else:
+            logger.debug('Value %s interpreted as string', value)
+
+        if use_glob:
             client_args[criteria] = fnmatch.translate(value)
+        else:  # already using regex
+            client_args[criteria] = value
 
     regex_list = client.search_regex(**client_args)
-    results = regex_list + range_list
 
-    # find the repeated items
-    res_size = len(results)
-    repeated = []
-    for i in range(res_size):
-        k = i + 1
-        for j in range(k, res_size):
-            if results[i] == results[j] and results[i] not in repeated:
-                repeated.append(results[i])
-
-    # we only want to return the ones that have been repeated when
-    # they have been matched with both search_regex() & search_range()
-    if repeated:
-        final_results = repeated
-    elif regex_list and not is_range:
-        # only matched with search_regex()
+    # Gather final results
+    final_results = []
+    if regex_list and not range_list:
+        # only matched with one search_regex()
         final_results = regex_list
-    elif range_list and is_range:
+    elif range_list and not regex_list:
         # only matched with search_range()
         final_results = range_list
+    elif range_list and regex_list:
+        # find the intersection between regex_list and range_list
+        final_results = [item for item in range_list if item in regex_list]
     else:
-        final_results = []
+        logger.debug('No regex or range items found')
 
+    if not final_results:
+        logger.error('No devices found')
+        return
+
+    # Final processing for output
     if show_json:
         json.dump([dict(res.item) for res in final_results], indent=2,
                   fp=sys.stdout)
@@ -151,8 +175,6 @@ def search(ctx, show_json, names, search_criteria):
         for res in final_results:
             res.item.show_info()
 
-    if not final_results:
-        logger.error('No devices found')
     return final_results
 
 
@@ -161,7 +183,7 @@ def search(ctx, show_json, names, search_criteria):
               help='Copy the fields from an existing container. '
               'Provide the name of the item to clone.')
 @click.pass_context
-def add(ctx, clone):
+def add(ctx, clone: str):
     """Add new entries interactively."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
@@ -218,7 +240,7 @@ def add(ctx, clone):
 @click.argument('name')
 @click.argument('edits', nargs=-1, type=str)
 @click.pass_context
-def edit(ctx, name, edits):
+def edit(ctx, name: str, edits: List[str]):
     """
     Change an existing entry by applying EDITS of the form: field=value
     to the item of name NAME.
@@ -278,7 +300,7 @@ def edit(ctx, name, edits):
 @happi_cli.command()
 @click.argument('device_names', nargs=-1)
 @click.pass_context
-def load(ctx, device_names):
+def load(ctx, device_names: List[str]):
     """Open IPython terminal with DEVICE_NAMES loaded"""
 
     logger.debug('Starting load block')
@@ -304,7 +326,7 @@ def load(ctx, device_names):
 @happi_cli.command()
 @click.argument("json_data", nargs=-1)
 @click.pass_context
-def update(ctx, json_data):
+def update(ctx, json_data: str):
     """Update happi db with JSON_DATA payload"""
     # retrieve client
     print(json_data)
@@ -343,7 +365,7 @@ def container_registry():
 @click.pass_context
 @click.argument("name", type=str, nargs=1)
 @click.argument("target", type=str, nargs=1)
-def transfer(ctx, name, target):
+def transfer(ctx, name: str, target: str):
     """Change the container of an item (NAME) to a new container (TARGET)"""
     logger.debug('Starting transfer block')
     # retrive client
