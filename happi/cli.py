@@ -9,6 +9,7 @@ import os
 # on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
+from typing import List
 
 import click
 import coloredlogs
@@ -66,10 +67,16 @@ def happi_cli(ctx, path, verbose):
               help='Return results as whitespace-separated names.')
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='use glob style (default) or regex style search terms. '
-              'Regex requires backslashes to be escaped (eg. at\\\\d.\\\\d)')
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
 @click.argument('search_criteria', nargs=-1)
 @click.pass_context
-def search(ctx, show_json, names, use_glob, search_criteria):
+def search(
+    ctx: click.Context,
+    show_json: bool,
+    names: bool,
+    use_glob: bool,
+    search_criteria: List[str]
+):
     """
     Search the happi database.  SEARCH_CRITERIA take the form: field=value.
     If 'field=' is omitted, it will assumed to be 'name'.
@@ -128,7 +135,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
 
         elif is_number(value):
             logger.debug('Changed %s to float', value)
-            value = str(float(value))
+            # value = str(float(value))
         else:
             logger.debug('Value %s interpreted as string', value)
 
@@ -176,7 +183,7 @@ def search(ctx, show_json, names, use_glob, search_criteria):
               help='Copy the fields from an existing container. '
               'Provide the name of the item to clone.')
 @click.pass_context
-def add(ctx, clone):
+def add(ctx, clone: str):
     """Add new entries interactively."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
@@ -233,7 +240,7 @@ def add(ctx, clone):
 @click.argument('name')
 @click.argument('edits', nargs=-1, type=str)
 @click.pass_context
-def edit(ctx, name, edits):
+def edit(ctx, name: str, edits: List[str]):
     """
     Change an existing entry by applying EDITS of the form: field=value
     to the item of name NAME.
@@ -293,7 +300,7 @@ def edit(ctx, name, edits):
 @happi_cli.command()
 @click.argument('device_names', nargs=-1)
 @click.pass_context
-def load(ctx, device_names):
+def load(ctx, device_names: List[str]):
     """Open IPython terminal with DEVICE_NAMES loaded"""
 
     logger.debug('Starting load block')
@@ -319,7 +326,7 @@ def load(ctx, device_names):
 @happi_cli.command()
 @click.argument("json_data", nargs=-1)
 @click.pass_context
-def update(ctx, json_data):
+def update(ctx, json_data: str):
     """Update happi db with JSON_DATA payload"""
     # retrieve client
     print(json_data)
@@ -358,7 +365,7 @@ def container_registry():
 @click.pass_context
 @click.argument("name", type=str, nargs=1)
 @click.argument("target", type=str, nargs=1)
-def transfer(ctx, name, target):
+def transfer(ctx, name: str, target: str):
     """Change the container of an item (NAME) to a new container (TARGET)"""
     logger.debug('Starting transfer block')
     # retrive client
