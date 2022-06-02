@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Containers &mdash; Happi 1.12.0+54.g6a1147a documentation</title>
+  <title>Containers &mdash; Happi 1.12.0+67.gccf5ad4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -30,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.12.0+54.g6a1147a
+                1.12.0+67.gccf5ad4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -93,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="containers">
-<span id="id1"></span><h1>Containers<a class="headerlink" href="#containers" title="Permalink to this headline"></a></h1>
+<span id="id1"></span><h1>Containers<a class="headerlink" href="#containers" title="Permalink to this heading"></a></h1>
 <p>In order to regulate and template the information that gets entered into the
 Happi database, we use the concept of containers. Containers serve two primary
 roles:</p>
@@ -108,7 +109,7 @@ fields or “entries” of type <a class="reference internal" href="#happi.Entry
 specify fields that are essential to every instance of a specific container
 type.</p>
 <section id="entryinfo">
-<h2>EntryInfo<a class="headerlink" href="#entryinfo" title="Permalink to this headline"></a></h2>
+<h2>EntryInfo<a class="headerlink" href="#entryinfo" title="Permalink to this heading"></a></h2>
 <p>These fields are specified using an instance of <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>. This class
 provides several primary features:</p>
 <ul class="simple">
@@ -175,7 +176,7 @@ will be converted to the correct type if <code class="docutils literal notransla
 
 </section>
 <section id="happiitem">
-<h2>HappiItem<a class="headerlink" href="#happiitem" title="Permalink to this headline"></a></h2>
+<h2>HappiItem<a class="headerlink" href="#happiitem" title="Permalink to this heading"></a></h2>
 <p>In order to ensure that information is entered into the database in an
 organized fashion, the client will only accept classes that inherit from
 <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>. Each item will have the key information represented as
@@ -196,7 +197,7 @@ conflicting with <code class="xref py py-class docutils literal notranslate"><sp
 </div>
 </section>
 <section id="example-container">
-<h2>Example Container<a class="headerlink" href="#example-container" title="Permalink to this headline"></a></h2>
+<h2>Example Container<a class="headerlink" href="#example-container" title="Permalink to this heading"></a></h2>
 <p>In order to show the flexibility of the <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> class, we’ll put
 together a new example container. The class can be invoked in the same way you
 would usually handle class inheritance, the only difference is that you specify
@@ -282,7 +283,7 @@ optional and mandatory <a class="reference internal" href="#happi.EntryInfo" tit
 reject the item if these fields do not have the requisite values set.</p>
 </section>
 <section id="loading-your-object">
-<h2>Loading your Object<a class="headerlink" href="#loading-your-object" title="Permalink to this headline"></a></h2>
+<h2>Loading your Object<a class="headerlink" href="#loading-your-object" title="Permalink to this heading"></a></h2>
 <p>A container’s primary role is containing the information necessary to load the
 Python representation of an object.</p>
 <p>Internally, happi keeps track of all containers by way of its registry, the
@@ -318,12 +319,12 @@ attribute alone, the type will also be converted.</p>
 <span class="gp">In [11]: </span><span class="n">obj</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">attach_md</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="gp">In [12]: </span><span class="n">obj</span>
-<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1653592527.4912288)</span>
+<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1654213846.452795)</span>
 </pre></div>
 </div>
 </section>
 <section id="integrating-with-your-package">
-<h2>Integrating with your package<a class="headerlink" href="#integrating-with-your-package" title="Permalink to this headline"></a></h2>
+<h2>Integrating with your package<a class="headerlink" href="#integrating-with-your-package" title="Permalink to this heading"></a></h2>
 <p>Happi provides some containers for your convenience, but intentionally does
 not support all use cases or control systems in a monolithic fashion.</p>
 <p>The suggested method for supporting your new package would be to make your
@@ -337,12 +338,12 @@ Example entry points can be found <a class="reference external" href="https://gi
 and making them available throughout the library.</p>
 </section>
 <section id="built-in-container-conventions">
-<span id="convention-label"></span><h2>Built-in Container Conventions<a class="headerlink" href="#built-in-container-conventions" title="Permalink to this headline"></a></h2>
+<span id="convention-label"></span><h2>Built-in Container Conventions<a class="headerlink" href="#built-in-container-conventions" title="Permalink to this heading"></a></h2>
 <p>In order for the database to be as easy to parse as possible we need to
 establish conventions on how information is entered. Please read through this
 before entering any information into the database.</p>
 <section id="happiitem-entries">
-<h3>HappiItem Entries<a class="headerlink" href="#happiitem-entries" title="Permalink to this headline"></a></h3>
+<h3>HappiItem Entries<a class="headerlink" href="#happiitem-entries" title="Permalink to this heading"></a></h3>
 <p>These are fields that are common to all Happi items.</p>
 <blockquote>
 <div><p><strong>name</strong></p>
@@ -370,7 +371,7 @@ templated macros such as <code class="docutils literal notranslate"><span class=
 </div></blockquote>
 </section>
 <section id="ophyditem-entries">
-<h3>OphydItem entries<a class="headerlink" href="#ophyditem-entries" title="Permalink to this headline"></a></h3>
+<h3>OphydItem entries<a class="headerlink" href="#ophyditem-entries" title="Permalink to this heading"></a></h3>
 <p><a class="reference external" href="blueskyproject.io/ophyd/">ophyd</a> has first-class support in happi - but
 not much is required on top of the base HappiItem to support it.</p>
 <blockquote>
@@ -380,7 +381,7 @@ does not matter if this is an invalid record by itself.</p>
 </div></blockquote>
 </section>
 <section id="lclsitem-entries">
-<h3>LCLSItem entries<a class="headerlink" href="#lclsitem-entries" title="Permalink to this headline"></a></h3>
+<h3>LCLSItem entries<a class="headerlink" href="#lclsitem-entries" title="Permalink to this heading"></a></h3>
 <p>This class is now part of <a class="reference external" href="https://github.com/pcdshub/pcdsdevices">pcdsdevices</a>.  It remains documented here as
 PCDS is the original developer and primary user of happi as of the time of
 writing. If you intend to use the same metadata that we do, please copy and

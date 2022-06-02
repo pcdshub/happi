@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using the Client &mdash; Happi 1.12.0+54.g6a1147a documentation</title>
+  <title>Using the Client &mdash; Happi 1.12.0+67.gccf5ad4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -30,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.12.0+54.g6a1147a
+                1.12.0+67.gccf5ad4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -92,7 +93,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-client">
-<span id="client-label"></span><h1>Using the Client<a class="headerlink" href="#using-the-client" title="Permalink to this headline"></a></h1>
+<span id="client-label"></span><h1>Using the Client<a class="headerlink" href="#using-the-client" title="Permalink to this heading"></a></h1>
 <p>Users will interact with the database by using the <a class="reference internal" href="api.html#happi.Client" title="happi.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">happi.Client</span></code></a>, this
 will handle the authentication, and methods for adding, editing and removing
 devices.</p>
@@ -103,7 +104,7 @@ will need to be performed by the <a class="reference internal" href="api.html#ha
 intuitive, the Client deals primarily with <a class="reference internal" href="containers.html#containers"><span class="std std-ref">Containers</span></a>, which are objects
 that hold and specify these rules.</p>
 <section id="creating-a-new-entry">
-<span id="entry-code"></span><h2>Creating a New Entry<a class="headerlink" href="#creating-a-new-entry" title="Permalink to this headline"></a></h2>
+<span id="entry-code"></span><h2>Creating a New Entry<a class="headerlink" href="#creating-a-new-entry" title="Permalink to this heading"></a></h2>
 <p>A new device must be a subclass of the basic container <code class="xref py py-class docutils literal notranslate"><span class="pre">Device</span></code>.
 While you are free to use the initialized object wherever you see fit, the client
 has a hook to create new devices.</p>
@@ -141,7 +142,7 @@ mandatory information needs to be given to the device before it can be loaded
 into the database.</p>
 </section>
 <section id="searching-the-database">
-<h2>Searching the Database<a class="headerlink" href="#searching-the-database" title="Permalink to this headline"></a></h2>
+<h2>Searching the Database<a class="headerlink" href="#searching-the-database" title="Permalink to this heading"></a></h2>
 <p>There are two ways to load information from the database
 <a class="reference internal" href="api.html#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a> and <a class="reference internal" href="api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a>. The former should only
 be used to load one device at at a time. Both accept criteria in the from of
@@ -155,7 +156,7 @@ example searches to demonstrate the power of the Happi Client.</p>
 be used to introspect metadata or even instantiate the corresponding device
 instance.</p>
 <section id="working-with-the-searchresult">
-<h3>Working with the SearchResult<a class="headerlink" href="#working-with-the-searchresult" title="Permalink to this headline"></a></h3>
+<h3>Working with the SearchResult<a class="headerlink" href="#working-with-the-searchresult" title="Permalink to this heading"></a></h3>
 <p>Representing a single search result from <code class="docutils literal notranslate"><span class="pre">Client.search</span></code> and its variants, a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">SearchResult</span></code> can be used in multiple ways.</p>
 <p>This result can be keyed for metadata as in:</p>
@@ -194,19 +195,19 @@ beamline or use programmer-friendly regular expressions, described in the
 upcoming sections.</p>
 </section>
 <section id="searching-for-items-on-a-beamline">
-<h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Permalink to this headline"></a></h3>
+<h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Permalink to this heading"></a></h3>
 <p>To search for items on a beamline such as ‘MFX’, one would use the following:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [17]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
-<span class="gh">Out[17]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f6519a076d0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu May 26 19:15:26 2022&#39;, &#39;last_edit&#39;: &#39;Thu May 26 19:15:26 2022&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+<span class="gh">Out[17]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f1aebd23ac0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu Jun  2 23:50:45 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun  2 23:50:45 2022&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
 </section>
 <section id="searching-a-range">
-<h3>Searching a range<a class="headerlink" href="#searching-a-range" title="Permalink to this headline"></a></h3>
+<h3>Searching a range<a class="headerlink" href="#searching-a-range" title="Permalink to this heading"></a></h3>
 <p>Searching a Z-range on the beamline, or a range with any arbitrary key is also
 easy by way of <a class="reference internal" href="api.html#happi.Client.search_range" title="happi.Client.search_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_range()</span></code></a>. For example:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_range</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Device&#39;</span><span class="p">)</span>
-<span class="gh">Out[18]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f6519a076d0&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE&#39;, &#39;beamline&#39;: &#39;XRT&#39;, &#39;location_group&#39;: &#39;Loc1&#39;, &#39;functional_group&#39;: &#39;Func1&#39;, &#39;z&#39;: 345.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Thu May 26 19:15:26 2022&#39;, &#39;last_edit&#39;: &#39;Thu May 26 19:15:26 2022&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+<span class="gh">Out[18]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f1aebd23ac0&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE&#39;, &#39;beamline&#39;: &#39;XRT&#39;, &#39;location_group&#39;: &#39;Loc1&#39;, &#39;functional_group&#39;: &#39;Func1&#39;, &#39;z&#39;: 345.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Thu Jun  2 23:50:45 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun  2 23:50:45 2022&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
 <p>This would return all devices between Z=314.4 and Z=348.6.</p>
@@ -214,16 +215,16 @@ easy by way of <a class="reference internal" href="api.html#happi.Client.search_
 key name.</p>
 </section>
 <section id="searching-with-regular-expressions">
-<h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this headline"></a></h3>
+<h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this heading"></a></h3>
 <p>Any key can use a regular expression for searching by using <a class="reference internal" href="api.html#happi.Client.search_regex" title="happi.Client.search_regex"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_regex()</span></code></a></p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_regex</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device[2345]&#39;</span><span class="p">)</span>
-<span class="gh">Out[19]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f6519a076d0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu May 26 19:15:26 2022&#39;, &#39;last_edit&#39;: &#39;Thu May 26 19:15:26 2022&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
+<span class="gh">Out[19]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f1aebd23ac0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: None, &#39;args&#39;: [&#39;{{prefix}}&#39;], &#39;kwargs&#39;: {&#39;name&#39;: &#39;{{name}}&#39;}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;prefix&#39;: &#39;PV:BASE2&#39;, &#39;beamline&#39;: &#39;MFX&#39;, &#39;location_group&#39;: &#39;Loc2&#39;, &#39;functional_group&#39;: &#39;Func2&#39;, &#39;z&#39;: 355.5, &#39;stand&#39;: None, &#39;detailed_screen&#39;: None, &#39;embedded_screen&#39;: None, &#39;engineering_screen&#39;: None, &#39;system&#39;: None, &#39;macros&#39;: None, &#39;lightpath&#39;: False, &#39;parent&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu Jun  2 23:50:45 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun  2 23:50:45 2022&#39;, &#39;type&#39;: &#39;Device&#39;})]</span>
 </pre></div>
 </div>
 </section>
 </section>
 <section id="editing-device-information">
-<h2>Editing Device Information<a class="headerlink" href="#editing-device-information" title="Permalink to this headline"></a></h2>
+<h2>Editing Device Information<a class="headerlink" href="#editing-device-information" title="Permalink to this heading"></a></h2>
 <p>The workflow for editing a device looks very similar to the code within
 <a class="reference internal" href="#entry-code"><span class="std std-ref">Creating a New Entry</span></a>, but instead of instantiating the device you use either
 <a class="reference internal" href="api.html#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a> or <a class="reference internal" href="api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a> to grab an existing device from
@@ -258,7 +259,7 @@ entry.</p>
 </div>
 </section>
 <section id="selecting-a-backend">
-<span id="db-choice"></span><h2>Selecting a Backend<a class="headerlink" href="#selecting-a-backend" title="Permalink to this headline"></a></h2>
+<span id="db-choice"></span><h2>Selecting a Backend<a class="headerlink" href="#selecting-a-backend" title="Permalink to this heading"></a></h2>
 <p>Happi supports both JSON and MongoDB backends. You can always import your
 chosen backend directly, but in order to save time you can create an
 environment variable <code class="docutils literal notranslate"><span class="pre">HAPPI_BACKEND</span></code> and set this to <code class="docutils literal notranslate"><span class="pre">&quot;mongodb&quot;</span></code>. This well
