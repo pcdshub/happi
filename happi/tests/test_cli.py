@@ -6,7 +6,6 @@ from unittest import mock
 
 import IPython
 import pytest
-from click.testing import CliRunner
 
 import happi
 from happi.cli import happi_cli, search
@@ -80,11 +79,6 @@ def db(tmp_path):
 }
 """)
     return str(json_path.absolute())
-
-
-@pytest.fixture(scope='function')
-def runner():
-    return CliRunner()
 
 
 @pytest.fixture(scope='function')
