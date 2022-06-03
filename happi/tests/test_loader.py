@@ -1,11 +1,12 @@
 import pytest
 
-from happi import Device, EntryInfo, cache
+from happi import EntryInfo, OphydItem, cache
+from happi.item import HappiItem
 from happi.loader import fill_template, from_container, load_devices
 from happi.utils import create_alias
 
 
-class TimeDevice(Device):
+class TimeDevice(OphydItem):
     days = EntryInfo("Number of days", enforce=int)
 
 
@@ -62,11 +63,11 @@ def test_caching():
 
 
 def test_add_md():
-    d = Device(name='test', prefix='Tst:This:3',
-               beamline="TST", args=list(),
-               device_class="happi.Device")
+    d = HappiItem(name='test', prefix='Tst:This:3',
+                  beamline="TST", args=list(),
+                  device_class="happi.HappiItem")
     obj = from_container(d, attach_md=True)
-    assert obj.md.beamline == 'TST'
+    assert obj.md.extraneous['beamline'] == 'TST'
     assert obj.md.name == 'test'
 
 
@@ -102,8 +103,8 @@ def test_load_devices(threaded: bool, post_load, include_load_time: bool):
             TimeDevice(name='test_3', prefix='Tst3:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
                        kwargs={'days': '{{days}}', 'seconds': 30}),
-            Device(name='bad', prefix='Not:Here', beamline='BAD',
-                   device_class='non.existant')]
+            HappiItem(name='bad', prefix='Not:Here', beamline='BAD',
+                      device_class='non.existant')]
     # Load our devices
     space = load_devices(
         *devs,

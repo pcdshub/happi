@@ -4,7 +4,7 @@ import re
 
 import pytest
 
-from happi import Device
+from happi import HappiItem
 from happi.device import EntryInfo
 from happi.errors import ContainerError
 
@@ -20,7 +20,7 @@ def test_init(device, device_info):
 
 def test_list_enforce():
     # Generic device with a list enforce
-    class MyDevice(Device):
+    class MyDevice(HappiItem):
         list_attr = EntryInfo(enforce=['a', 'b', 'c'],
                               enforce_doc='list only')
 
@@ -37,7 +37,7 @@ def test_list_enforce():
 
 
 def test_regex_enforce():
-    class MyDevice(Device):
+    class MyDevice(HappiItem):
         re_attr = EntryInfo(enforce=re.compile(r'[A-Z]{2}$'),
                             enforce_doc='only 2 chars')
 
@@ -88,7 +88,7 @@ def test_enforce(device):
 
 def test_container_error():
     with pytest.raises(ContainerError):
-        class MyDevice(Device):
+        class MyDevice(HappiItem):
             fault = EntryInfo(enforce=int,  default='not-int')
 
 
@@ -99,7 +99,7 @@ def test_mandatory_info(device):
 
 def test_restricted_attr():
     with pytest.raises(TypeError):
-        class MyDevice(Device):
+        class MyDevice(HappiItem):
             info_names = EntryInfo()
 
 
@@ -120,26 +120,26 @@ def test_show_info(device, device_info):
 
 
 def test_device_equivalance():
-    a = Device(name='abcd', prefix='b')
-    b = Device(name='abcd', prefix='b')
-    c = Device(name='cbcd', prefix='b')
+    a = HappiItem(name='abcd', prefix='b')
+    b = HappiItem(name='abcd', prefix='b')
+    c = HappiItem(name='cbcd', prefix='b')
     assert a == b
     assert not c == a
 
 
 def test_dictify():
-    a = Device(name='abcd', prefix='b')
+    a = HappiItem(name='abcd', prefix='b')
     assert dict(a) == a.post()
 
 
 def test_device_copy():
-    a = Device(name='abcd', prefix='b')
+    a = HappiItem(name='abcd', prefix='b')
     b = copy.copy(a)
     assert dict(a) == dict(b)
 
 
 def test_device_deepcopy():
-    a = Device(name='abcd', prefix='abc', kwargs={'abc': 'def'})
+    a = HappiItem(name='abcd', prefix='abc', kwargs={'abc': 'def'})
 
     c = copy.deepcopy(a)
     assert a.kwargs == c.kwargs
