@@ -31,3 +31,4 @@ provide relevant metadata based on the object type.
    :caption: Information
 
    releases.rst
+   upcoming_changes.rst
