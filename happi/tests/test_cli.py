@@ -2,10 +2,13 @@
 
 import logging
 import re
+from typing import Any, Iterable, List, Tuple
 from unittest import mock
 
+import click
 import IPython
 import pytest
+from click.testing import CliRunner
 
 import happi
 from happi.cli import happi_cli, search
@@ -82,11 +85,11 @@ def db(tmp_path):
 
 
 @pytest.fixture(scope='function')
-def client(happi_cfg):
+def client(happi_cfg: str):
     return happi.client.Client.from_config(cfg=happi_cfg)
 
 
-def trim_split_output(strings, delim='\n'):
+def trim_split_output(strings: str, delim: str = '\n'):
     """
     Trim output of timestamped messages and registry lists.
     Split on delimiter (newline by default)
@@ -106,7 +109,10 @@ def trim_split_output(strings, delim='\n'):
     return new_out
 
 
-def assert_match_expected(result, expected_output):
+def assert_match_expected(
+    result: click.testing.Result,
+    expected_output: Iterable[str]
+):
     """standard checks for a cli result, confirms output matches expected"""
     assert result.exit_code == 0
     assert not result.exception
@@ -116,7 +122,7 @@ def assert_match_expected(result, expected_output):
         assert message == expected
 
 
-def test_cli_no_argument(runner):
+def test_cli_no_argument(runner: CliRunner):
     result = runner.invoke(happi_cli)
     assert result.exit_code == 0
     assert result.exception is None
@@ -125,7 +131,7 @@ def test_cli_no_argument(runner):
     assert 'Commands:' in result.output
 
 
-def test_search(client):
+def test_search(client: happi.client.Client):
     res = client.search_regex(beamline="TST")
 
     with search.make_context('search', ['beamline=TST'], obj=client) as ctx:
@@ -134,7 +140,11 @@ def test_search(client):
     assert [r.item for r in res] == [r.item for r in res_cli]
 
 
-def test_search_with_name(client, runner, happi_cfg):
+def test_search_with_name(
+    client: happi.client.Client,
+    runner: CliRunner,
+    happi_cfg: str
+):
     res = client.search_regex(name='TST_BASE_PIM2')
 
     with search.make_context('search', ['TST_BASE_PIM2'], obj=client) as ctx:
@@ -150,7 +160,7 @@ def test_search_with_name(client, runner, happi_cfg):
     assert 'duplicate search criteria' in bad_result.output
 
 
-def test_search_glob_regex(runner, happi_cfg):
+def test_search_glob_regex(runner: CliRunner, happi_cfg: str):
     glob_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'search',
                                 '--names', 'tst_*2'])
 
@@ -160,7 +170,7 @@ def test_search_glob_regex(runner, happi_cfg):
     assert glob_result.output == regex_result.output
 
 
-def test_search_z(client):
+def test_search_z(client: happi.client.Client):
     res = client.search_regex(z="6.0")
     with search.make_context('search', ['z=6.0'], obj=client) as ctx:
         res_cli = search.invoke(ctx)
@@ -168,7 +178,11 @@ def test_search_z(client):
     assert [r.item for r in res] == [r.item for r in res_cli]
 
 
-def test_search_z_range(client, runner, happi_cfg):
+def test_search_z_range(
+    client: happi.client.Client,
+    runner: CliRunner,
+    happi_cfg: str
+):
     res = client.search_range('z', 3.0, 6.0)
 
     with search.make_context('search', ['z=3.0,6.0'], obj=client) as ctx:
@@ -205,7 +219,7 @@ def test_search_z_range(client, runner, happi_cfg):
     assert 'No devices found' in conflict_result.output
 
 
-def test_both_range_and_regex_search(client):
+def test_both_range_and_regex_search(client: happi.client.Client):
     # we're only interested in getting this entry (TST_BASE_PIM2)
     res = client.search_regex(z='6.0')
     # we're going to search for z=3,7 name=TST_BASE_PIM2
@@ -217,7 +231,7 @@ def test_both_range_and_regex_search(client):
     assert [r.item for r in res] == [r.item for r in res_cli]
 
 
-def test_search_json(runner, happi_cfg):
+def test_search_json(runner: CliRunner, happi_cfg: str):
     expected_output = '''[
   {
     "name": "tst_base_pim2",
@@ -355,7 +369,12 @@ def test_search_json(runner, happi_cfg):
     ),
     ], ids=["add_succeeding", "add_aborting",
             "add_invalid_container", "add_not_optional_field"])
-def test_add_cli(from_user, expected_output, caplog, runner, happi_cfg):
+def test_add_cli(
+    from_user: str,
+    expected_output: Tuple[str, ...],
+    happi_cfg: str,
+    runner: CliRunner
+):
     result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
                            input=from_user)
     assert_match_expected(result, expected_output)
@@ -385,7 +404,12 @@ def test_add_cli(from_user, expected_output, caplog, runner, happi_cfg):
         ' - INFO -  HappiItem HappiItem (name=happi_new_name) has been '
         'succesfully added to the database', ''], id="clone_succeeding",
     )])
-def test_add_clone(from_user, expected_output, happi_cfg, runner):
+def test_add_clone(
+    from_user: str,
+    expected_output: Tuple[str, ...],
+    happi_cfg: str,
+    runner: CliRunner
+):
     device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
                              "['arg1', 'arg2']", 'name', 'my_name', '',
                              'Y', 'docs', 'y'])
@@ -401,7 +425,7 @@ def test_add_clone(from_user, expected_output, happi_cfg, runner):
     assert_match_expected(clone_result, expected_output)
 
 
-def test_add_clone_device_not_found(happi_cfg, runner):
+def test_add_clone_device_not_found(happi_cfg: str, runner: CliRunner):
     result = runner.invoke(
         happi_cli,
         ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name']
@@ -421,7 +445,14 @@ def test_add_clone_device_not_found(happi_cfg, runner):
      [False, 'yes'])
     ]
 )
-def test_edit(from_user, fields, values, happi_cfg, runner, client):
+def test_edit(
+    from_user: List[str],
+    fields: List[str],
+    values: List[Any],
+    client: happi.client.Client,
+    happi_cfg: str,
+    runner: CliRunner
+):
     device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
                              "['arg1', 'arg2']", 'name', 'my_name', '',
                              'Y', 'docs', 'y'])
@@ -454,7 +485,7 @@ def test_edit(from_user, fields, values, happi_cfg, runner, client):
     ["name=2"],  # bad value for name
     ["kwargs={\'str\':\'beh\'}"],  # bad key in kwarg
 ])
-def test_bad_edit(edit_args, runner, happi_cfg):
+def test_bad_edit(edit_args: List[str], happi_cfg: str, runner: CliRunner):
     # Test invalid field, note the name is changed to new_name
     bad_edit_result = runner.invoke(
         happi_cli,
@@ -463,7 +494,12 @@ def test_bad_edit(edit_args, runner, happi_cfg):
     assert bad_edit_result.exit_code == 1
 
 
-def test_load(caplog, client, happi_cfg, runner):
+def test_load(
+    caplog: pytest.LogCaptureFixture,
+    client: happi.client.Client,
+    happi_cfg: str,
+    runner: CliRunner
+):
     device_info = '\n'.join(['HappiItem', 'happi_name',
                              'types.SimpleNamespace', '', 'name', 'my_name',
                              '', 'y', 'docs', 'y'])
@@ -484,7 +520,7 @@ def test_load(caplog, client, happi_cfg, runner):
         assert "Creating shell with devices" in caplog.text
 
 
-def test_update(happi_cfg, runner):
+def test_update(happi_cfg: str, runner: CliRunner):
     new = """[ {
         "_id": "TST_BASE_PIM2",
         "active": true,
@@ -550,7 +586,12 @@ def test_update(happi_cfg, runner):
         '----------Amend Entries-----------', 'Save final device? [y/N]: ',
         ''], id="transfer_succeeding",
     )])
-def test_transfer_cli(from_user, expected_output, happi_cfg, runner):
+def test_transfer_cli(
+    from_user: str,
+    expected_output: List[str],
+    happi_cfg: str,
+    runner: CliRunner
+):
     results = runner.invoke(happi_cli, ['--path', happi_cfg, 'transfer',
                             'tst_base_pim', 'OphydItem'], input=from_user)
     assert_match_expected(results, expected_output)

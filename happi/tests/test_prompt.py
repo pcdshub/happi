@@ -1,10 +1,13 @@
+from typing import Any
+
 import pytest
+from click.testing import CliRunner
 
 from happi.prompt import enforce_list, read_user_dict
 from happi.utils import EnforceError
 
 
-def test_user_dict(runner):
+def test_user_dict(runner: CliRunner):
     default_dict = {'default_key': 'default_value'}
 
     # normal operation
@@ -36,7 +39,7 @@ def test_user_dict(runner):
     ['a', 'b', 2, 3],
     "['a', 'b', 2, 3]"
 ))
-def test_enforce_list(user_in):
+def test_enforce_list(user_in: Any):
     result = enforce_list(user_in)
     assert result == ['a', 'b', 2, 3]
 

@@ -1,19 +1,21 @@
 import copy
 import io
 import re
+from typing import Any, Dict, Tuple
 
 import pytest
 
-from happi import HappiItem
+from happi import HappiItem, OphydItem
+from happi.client import Client
 from happi.device import EntryInfo
 from happi.errors import ContainerError
 
 
-def test_get(device, device_info):
+def test_get(device: OphydItem, device_info: Dict[str, Any]):
     assert device.name == device_info['name']
 
 
-def test_init(device, device_info):
+def test_init(device: OphydItem, device_info: Dict[str, Any]):
     assert device.prefix == device_info['prefix']
     assert device.name == device_info['name']
 
@@ -56,7 +58,11 @@ def test_regex_enforce():
                           (str, 'hat', 'hat'), (str, 5, '5'),
                           (bool, True, True), (bool, 0, False),
                           (bool, 'true', True), (bool, 'NO', False)])
-def test_type_enforce_ok(type_spec, value, expected):
+def test_type_enforce_ok(
+    type_spec: Tuple[type, Any, Any],
+    value: Tuple[type, Any, Any],
+    expected: Tuple[type, Any, Any]
+):
     entry = EntryInfo(enforce=type_spec)
     assert entry.enforce_value(value) == expected
 
@@ -64,7 +70,10 @@ def test_type_enforce_ok(type_spec, value, expected):
 @pytest.mark.parametrize('type_spec, value',
                          [(int, 'cats'),
                           (bool, '24'), (bool, 'catastrophe')])
-def test_type_enforce_exceptions(type_spec, value):
+def test_type_enforce_exceptions(
+    type_spec: Tuple[type, Any, Any],
+    value: Tuple[type, Any, Any]
+):
     entry = EntryInfo(enforce=type_spec, enforce_doc='bad type')
     with pytest.raises(ValueError) as excinfo:
         entry.enforce_value(value)
@@ -72,16 +81,16 @@ def test_type_enforce_exceptions(type_spec, value):
     assert 'bad type' in str(excinfo)
 
 
-def test_set(device):
+def test_set(device: OphydItem):
     device.name = 'new_name'
     assert device.name == 'new_name'
 
 
-def test_optional(device):
+def test_optional(device: OphydItem):
     assert device.documentation is None
 
 
-def test_enforce(device):
+def test_enforce(device: OphydItem):
     with pytest.raises(ValueError):
         device.name = 'Invalid!Name'
 
@@ -92,7 +101,7 @@ def test_container_error():
             fault = EntryInfo(enforce=int,  default='not-int')
 
 
-def test_mandatory_info(device):
+def test_mandatory_info(device: OphydItem):
     for info in ('prefix', 'name'):
         assert info in device.mandatory_info
 
@@ -103,13 +112,13 @@ def test_restricted_attr():
             info_names = EntryInfo()
 
 
-def test_post(device, device_info):
+def test_post(device: OphydItem, device_info: Dict[str, Any]):
     post = device.post()
     assert post['prefix'] == device_info['prefix']
     assert post['name'] == device_info['name']
 
 
-def test_show_info(device, device_info):
+def test_show_info(device: OphydItem, device_info: Dict[str, Any]):
     f = io.StringIO()
     device.show_info(handle=f)
     f.seek(0)
@@ -146,10 +155,10 @@ def test_device_deepcopy():
     assert id(a.kwargs) != id(c.kwargs)
 
 
-def test_add_and_save(three_valves, device, happi_client):
-    device.active = True
-    happi_client.add_device(device)
-    device.active = False
-    device.save()
+def test_add_and_save(valve: OphydItem, happi_client: Client):
+    valve.active = True
+    happi_client.add_device(valve)
+    valve.active = False
+    valve.save()
 
-    assert not happi_client[device.name].item.active
+    assert not happi_client[valve.name].item.active

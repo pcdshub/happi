@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from happi import EntryInfo, OphydItem, cache
@@ -10,7 +12,7 @@ class TimeDevice(OphydItem):
     days = EntryInfo("Number of days", enforce=int)
 
 
-def test_fill_template(device):
+def test_fill_template(device: OphydItem):
     # Check that we can properly render a template
     template = "{{name}}"
     assert device.name == fill_template(template, device)
@@ -92,7 +94,7 @@ def test_add_md():
         pytest.param(True, id="load_times")
     ],
 )
-def test_load_devices(threaded: bool, post_load, include_load_time: bool):
+def test_load_devices(threaded: bool, post_load: Any, include_load_time: bool):
     # Create a bunch of devices to load
     devs = [TimeDevice(name='test_1', prefix='Tst1:This', beamline='TST',
                        device_class='datetime.timedelta', args=list(), days=10,
