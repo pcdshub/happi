@@ -104,9 +104,11 @@ def test_json_find(valve_info, device_info, mockjson):
                for info in (device_info, valve_info))
 
 
-def test_find_regex(happi_client, three_valves):
+def test_find_regex(client_with_three_valves, three_valves):
+    client = client_with_three_valves
+
     def find(**kwargs):
-        return list(happi_client.backend.find_regex(kwargs))
+        return list(client.backend.find_regex(kwargs))
 
     valve1 = three_valves['VALVE1']
     valve2 = three_valves['VALVE2']

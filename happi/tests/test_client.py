@@ -178,22 +178,19 @@ def test_search_range(happi_client: Client, valve: OphydItem):
 
 
 def test_search_regex(
-    happi_client: Client,
-    three_valves: Dict[str, Dict[str, Any]]
+    client_with_three_valves: Client
 ):
+    client = client_with_three_valves
+
     def find(**kwargs):
         return [
             dict(item) for item in
-            happi_client.search_regex(**kwargs, flags=re.IGNORECASE)
+            client.search_regex(**kwargs, flags=re.IGNORECASE)
         ]
 
-    valve1 = dict(happi_client['VALVE1'])
-    valve2 = dict(happi_client['VALVE2'])
-    valve3 = dict(happi_client['VALVE3'])
-
-    assert valve1['name'] == three_valves['VALVE1']['name']
-    assert valve2['name'] == three_valves['VALVE2']['name']
-    assert valve3['name'] == three_valves['VALVE3']['name']
+    valve1 = dict(client['VALVE1'])
+    valve2 = dict(client['VALVE2'])
+    valve3 = dict(client['VALVE3'])
 
     assert find(beamline='LCLS') == [valve1, valve2, valve3]
     assert find(beamline='lcls') == [valve1, valve2, valve3]
@@ -317,19 +314,18 @@ def test_choices_for_field(happi_client: Client):
         happi_client.choices_for_field('not_a_field')
 
 
-def test_searchresults(
-    happi_client: Client, three_valves: Dict[str, Dict[str, Any]]
-):
-    valve1 = happi_client['VALVE1']
-    assert three_valves['VALVE1']['name'] == valve1.item.name
+def test_searchresults(client_with_three_valves: Client):
+    valve1 = client_with_three_valves['VALVE1']
     assert valve1.metadata == valve1
     assert isinstance(valve1.get(), types.SimpleNamespace)
 
 
 def test_client_mapping(
-    happi_client: Client, three_valves: Dict[str, Dict[str, Any]]
+    client_with_three_valves: Client,
+    three_valves: Dict[str, Dict[str, Any]]
 ):
-    assert len(happi_client) == 3
-    assert list(dict(happi_client)) == list(three_valves.keys())
-    for name in happi_client:
-        assert happi_client[name]['name']
+    client = client_with_three_valves
+    assert len(client) == 3
+    assert list(dict(client)) == list(three_valves.keys())
+    for name in client:
+        assert client[name]['name']
