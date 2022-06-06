@@ -1,6 +1,7 @@
 import pytest
 
 from happi.prompt import enforce_list, read_user_dict
+from happi.utils import EnforceError
 
 
 def test_user_dict(runner):
@@ -38,3 +39,13 @@ def test_user_dict(runner):
 def test_enforce_list(user_in):
     result = enforce_list(user_in)
     assert result == ['a', 'b', 2, 3]
+
+
+@pytest.mark.parametrize('user_in', (
+    'a',
+    "['a', 'b'=2, 2, 3]",
+    '[1,2,3,4.5.4]'
+))
+def test_enforce_list_fail(user_in: str):
+    with pytest.raises(EnforceError):
+        _ = enforce_list(user_in)
