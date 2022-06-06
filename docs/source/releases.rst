@@ -2,6 +2,52 @@
  Release History
 =================
 
+v1.13.0 (2022-06-03)
+====================
+
+Features
+--------
+- Added the ``enforce_doc`` argument to ``EntryInfo``. This lets us explain
+  what the entry info represents and how it is meant to be filled out
+  in more explicit words when it would be helpful to do.
+- Added methods to client and cli entry points for changing the container
+  of a happi item. This will walk the user through the process of
+  switching to or between custom containers while making sure we adhere
+  to the defined ``EntryInfo``. Check out ``happi transfer --help`` for
+  command-line usage or ``Client.change_container`` for library usage.
+- Added the option to pick between glob and regex searching from the CLI,
+  rather than only allowing glob as in the past.
+  Give ``happi search --regex`` a try and check out ``happi search --help``
+  for more information.
+
+Fixes
+-----
+- Fixed an issue where it was previously impossible to input dictionary
+  and list fields using the CLI.
+- Fixed handling of numeric values in ``happi search``.
+- Fixed range searching logic for multiple range searches in one query.
+- Fixed the ambiguity between a search returning no results (exit code 0)
+  and a search being malformed (exit code 1).
+
+Maintenance
+-----------
+- Refactored the CLI to use ``click`` instead of bare ``argparse``.
+  This implementation is much cleaner and will lead to more advanced
+  CLI features in the future.
+- ``psdm_qs_cli`` and ``pymongo`` are no longer required dependencies of
+  ``happi``. These have been reclassified into the ``run_constrained``
+  portion of the conda recipe bundled in this repository and will also
+  be adjusted on conda-forge.
+- Improved usage and cleanup of temporary files when running the happi
+  test suite.
+- Restored the automatic documention uploads.
+- Added/modified test cases to better cover search behavior.
+
+Contributors
+------------
+- tangkong
+
+
 v1.12.0 (2022-03-31)
 ====================
 
