@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 import simplejson
+from click.testing import CliRunner
 
 from happi import Client, EntryInfo, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
@@ -287,7 +288,7 @@ def mockqsbackend():
 
 
 @pytest.fixture(scope='function')
-def three_valves(happi_client):
+def three_valves():
     valve1 = {'name': 'valve1',
               'z': 300,
               'prefix': 'BASE:VGC1:PV',
@@ -330,15 +331,25 @@ def three_valves(happi_client):
               'kwargs': {'hi': 'oh hello'},
               }
 
-    for dev in happi_client.all_items:
-        happi_client.backend.delete(dev['_id'])
-
     valves = dict(
         VALVE1=valve1,
         VALVE2=valve2,
         VALVE3=valve3,
     )
 
-    for name, valve in valves.items():
-        happi_client.backend.save(name, valve, insert=True)
     return valves
+
+
+@pytest.fixture(scope='function')
+def client_with_three_valves(happi_client, three_valves):
+    for dev in happi_client.all_items:
+        happi_client.backend.delete(dev['_id'])
+
+    for name, valve in three_valves.items():
+        happi_client.backend.save(name, valve, insert=True)
+    return happi_client
+
+
+@pytest.fixture(scope='function')
+def runner():
+    return CliRunner()

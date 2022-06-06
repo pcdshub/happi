@@ -3,10 +3,11 @@ import os
 import re
 import tempfile
 import types
+from typing import Any, Dict
 
 import pytest
 
-from happi import Client, OphydItem
+from happi import Client, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, EntryError, SearchError, TransferError
 
@@ -21,7 +22,7 @@ def xdg_config_home(tmp_path):
 
 
 @pytest.fixture(scope='function')
-def happi_cfg(tmp_path, xdg_config_home):
+def happi_cfg(xdg_config_home):
     # Store current happi config
     xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
     happi_cfg = os.environ.get("HAPPI_CFG", '')
@@ -43,7 +44,7 @@ path=db.json
     os.environ["XDG_CONFIG_HOME"] = xdg_cfg
 
 
-def test_find_document(happi_client, device_info):
+def test_find_document(happi_client: Client, device_info: Dict[str, Any]):
     doc = happi_client.find_document(**device_info)
     assert doc.pop('prefix') == device_info['prefix']
     assert doc.pop('name') == device_info['name']
@@ -58,7 +59,7 @@ def test_find_document(happi_client, device_info):
         doc = happi_client.find_document(prefix='Does not Exist')
 
 
-def test_create_device(happi_client, device_info):
+def test_create_device(happi_client: Client, device_info: Dict[str, Any]):
     device = happi_client.create_device(OphydItem, **device_info)
     assert device.prefix == device_info['prefix']
     assert device.name == device_info['name']
@@ -67,11 +68,11 @@ def test_create_device(happi_client, device_info):
         happi_client.create_device(int)
 
 
-def test_all_devices(happi_client, device):
-    assert happi_client.all_devices == [device]
+def test_all_devices(happi_client: Client, device: OphydItem):
+    assert happi_client.all_items == [device]
 
 
-def test_add_device(happi_client, valve):
+def test_add_device(happi_client: Client, valve: OphydItem):
     happi_client.add_device(valve)
     # No duplicates
     with pytest.raises(DuplicateError):
@@ -82,14 +83,18 @@ def test_add_device(happi_client, valve):
         happi_client.add_device(d)
 
 
-def test_add_and_find_device(happi_client, valve, valve_info):
+def test_add_and_find_device(
+    happi_client: Client,
+    valve: OphydItem,
+    valve_info: Dict[str, Any]
+):
     happi_client.add_device(valve)
     loaded_device = happi_client.find_device(**valve_info)
     assert loaded_device.prefix == valve.prefix
     assert loaded_device.name == valve.name
 
 
-def test_find_device(happi_client, device_info):
+def test_find_device(happi_client: Client, device_info: Dict[str, Any]):
     device = happi_client.find_device(**device_info)
     assert isinstance(device, OphydItem)
     assert device.prefix == device_info['prefix']
@@ -107,7 +112,7 @@ def test_find_device(happi_client, device_info):
         happi_client.find_device(**bad)
 
 
-def test_change_item_name(happi_client, device_info):
+def test_change_item_name(happi_client: Client, device_info: Dict[str, Any]):
     device = happi_client.find_device(**device_info)
     assert device.name != 'new_name'
     device.name = 'new_name'
@@ -123,7 +128,7 @@ def test_change_item_name(happi_client, device_info):
     assert happi_client.all_items == [new_device]
 
 
-def test_validate(happi_client):
+def test_validate(happi_client: Client):
     # No bad devices
     assert happi_client.validate() == list()
     # A single bad device
@@ -132,19 +137,23 @@ def test_validate(happi_client):
     assert happi_client.validate() == ['bad']
 
 
-def test_search(happi_client, device, valve, device_info, valve_info):
+def test_search(
+    happi_client: Client,
+    valve: OphydItem,
+    device_info: Dict[str, Any]
+):
     happi_client.add_device(valve)
     res = happi_client.search(name=device_info['name'])
     # Single search return
     assert len(res) == 1
-    loaded_device = res[0].device
+    loaded_device = res[0].item
     assert loaded_device.prefix == device_info['prefix']
     assert loaded_device.name == device_info['name']
     # No results
     assert not happi_client.search(name='not')
     # Returned as dict
     res = happi_client.search(**device_info)
-    loaded_device = res[0].device
+    loaded_device = res[0].item
     assert loaded_device['prefix'] == device_info['prefix']
     assert loaded_device['name'] == device_info['name']
     # Search off keyword
@@ -152,7 +161,7 @@ def test_search(happi_client, device, valve, device_info, valve_info):
     assert len(res) == 2
 
 
-def test_search_range(happi_client, device, valve, device_info, valve_info):
+def test_search_range(happi_client: Client, valve: OphydItem):
     happi_client.add_device(valve)
     # Search between two points
     res = happi_client.search_range('z', start=0, end=500)
@@ -168,16 +177,20 @@ def test_search_range(happi_client, device, valve, device_info, valve_info):
         happi_client.search_range('z', start=1000, end=5)
 
 
-def test_search_regex(happi_client, three_valves):
+def test_search_regex(
+    client_with_three_valves: Client
+):
+    client = client_with_three_valves
+
     def find(**kwargs):
         return [
             dict(item) for item in
-            happi_client.search_regex(**kwargs, flags=re.IGNORECASE)
+            client.search_regex(**kwargs, flags=re.IGNORECASE)
         ]
 
-    valve1 = dict(happi_client['VALVE1'])
-    valve2 = dict(happi_client['VALVE2'])
-    valve3 = dict(happi_client['VALVE3'])
+    valve1 = dict(client['VALVE1'])
+    valve2 = dict(client['VALVE2'])
+    valve3 = dict(client['VALVE3'])
 
     assert find(beamline='LCLS') == [valve1, valve2, valve3]
     assert find(beamline='lcls') == [valve1, valve2, valve3]
@@ -187,14 +200,23 @@ def test_search_regex(happi_client, three_valves):
     assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
 
 
-def test_get_by_id(happi_client, device, valve, device_info, valve_info):
+def test_get_by_id(
+    happi_client: Client,
+    valve: OphydItem,
+    valve_info: Dict[str, Any]
+):
     happi_client.add_device(valve)
     name = valve_info['name']
     for k, v in valve_info.items():
         assert happi_client[name][k] == valve_info[k]
 
 
-def test_remove_device(happi_client, device, valve, device_info):
+def test_remove_device(
+    happi_client: Client,
+    device: OphydItem,
+    valve: OphydItem,
+    device_info: Dict[str, Any]
+):
     happi_client.remove_device(device)
     assert list(happi_client.backend.find(device_info)) == []
     # Invalid Device
@@ -205,7 +227,7 @@ def test_remove_device(happi_client, device, valve, device_info):
         happi_client.remove_device(valve)
 
 
-def test_export(happi_client, valve):
+def test_export(happi_client: Client, valve: OphydItem):
     # Setup client with both devices
     happi_client.add_device(valve)
     fd, temp_path = tempfile.mkstemp()
@@ -220,7 +242,7 @@ def test_export(happi_client, valve):
     os.close(fd)
 
 
-def test_load_device(happi_client, device):
+def test_load_device(happi_client: Client, device: OphydItem):
     device = happi_client.load_device(name=device.name)
     assert isinstance(device, types.SimpleNamespace)
     assert device.hi == 'oh hello'
@@ -234,14 +256,19 @@ def test_load_device(happi_client, device):
         ('valve', 'Item1')
     ],
 )
-def test_change_container_fail(happi_client, item, target, request):
+def test_change_container_fail(
+    happi_client: Client,
+    item: str,
+    target: str,
+    request: pytest.FixtureRequest
+):
     i = request.getfixturevalue(item)
     t = request.getfixturevalue(target)
     with pytest.raises(TransferError):
         happi_client.change_container(i, t)
 
 
-def test_change_fail_mandatory(happi_client, item2_dev):
+def test_change_fail_mandatory(happi_client: Client, item2_dev: HappiItem):
     with pytest.raises(TransferError):
         happi_client.change_container(item2_dev, OphydItem)
 
@@ -249,7 +276,12 @@ def test_change_fail_mandatory(happi_client, item2_dev):
 @pytest.mark.parametrize(
     'item, target', [('item1_dev', 'Item1'), ('item2_dev', 'Item2')],
 )
-def test_change_container_pass(happi_client, item, target, request):
+def test_change_container_pass(
+    happi_client: Client,
+    item: str,
+    target: str,
+    request: pytest.FixtureRequest
+):
     i = request.getfixturevalue(item)
     t = request.getfixturevalue(target)
     kw = happi_client.change_container(i, t)
@@ -258,7 +290,7 @@ def test_change_container_pass(happi_client, item, target, request):
         assert i.post()[k] == kw[k]
 
 
-def test_find_cfg(happi_cfg):
+def test_find_cfg(happi_cfg: str):
     # Use our config directory
     assert happi_cfg == Client.find_config()
     # Set the path explicitly using HAPPI env variable
@@ -266,13 +298,14 @@ def test_find_cfg(happi_cfg):
     assert happi_cfg == Client.find_config()
 
 
-def test_from_cfg(happi_cfg):
+def test_from_cfg(happi_cfg: str):
+    # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
     assert isinstance(client.backend, JSONBackend)
     assert client.backend.path == 'db.json'
 
 
-def test_choices_for_field(happi_client):
+def test_choices_for_field(happi_client: Client):
     name_choices = happi_client.choices_for_field('name')
     assert name_choices == {'alias'}
     prefix_choices = happi_client.choices_for_field('prefix')
@@ -281,16 +314,18 @@ def test_choices_for_field(happi_client):
         happi_client.choices_for_field('not_a_field')
 
 
-def test_searchresults(happi_client, three_valves):
-    valve1 = happi_client['VALVE1']
-    print(repr(valve1))
-    print(dict(valve1))
+def test_searchresults(client_with_three_valves: Client):
+    valve1 = client_with_three_valves['VALVE1']
     assert valve1.metadata == valve1
     assert isinstance(valve1.get(), types.SimpleNamespace)
 
 
-def test_client_mapping(happi_client, three_valves):
-    assert len(happi_client) == 3
-    assert list(dict(happi_client)) == ['VALVE1', 'VALVE2', 'VALVE3']
-    for name in happi_client:
-        assert happi_client[name]['name']
+def test_client_mapping(
+    client_with_three_valves: Client,
+    three_valves: Dict[str, Dict[str, Any]]
+):
+    client = client_with_three_valves
+    assert len(client) == 3
+    assert list(dict(client)) == list(three_valves.keys())
+    for name in client:
+        assert client[name]['name']
