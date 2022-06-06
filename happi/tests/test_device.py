@@ -1,7 +1,7 @@
 import copy
 import io
 import re
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Type
 
 import pytest
 
@@ -58,11 +58,7 @@ def test_regex_enforce():
                           (str, 'hat', 'hat'), (str, 5, '5'),
                           (bool, True, True), (bool, 0, False),
                           (bool, 'true', True), (bool, 'NO', False)])
-def test_type_enforce_ok(
-    type_spec: Tuple[type, Any, Any],
-    value: Tuple[type, Any, Any],
-    expected: Tuple[type, Any, Any]
-):
+def test_type_enforce_ok(type_spec: Type, value: Any, expected: Any):
     entry = EntryInfo(enforce=type_spec)
     assert entry.enforce_value(value) == expected
 
@@ -70,10 +66,7 @@ def test_type_enforce_ok(
 @pytest.mark.parametrize('type_spec, value',
                          [(int, 'cats'),
                           (bool, '24'), (bool, 'catastrophe')])
-def test_type_enforce_exceptions(
-    type_spec: Tuple[type, Any, Any],
-    value: Tuple[type, Any, Any]
-):
+def test_type_enforce_exceptions(type_spec: Type, value: Any):
     entry = EntryInfo(enforce=type_spec, enforce_doc='bad type')
     with pytest.raises(ValueError) as excinfo:
         entry.enforce_value(value)
