@@ -316,8 +316,24 @@ def test_choices_for_field(happi_client: Client):
 
 def test_searchresults(client_with_three_valves: Client):
     valve1 = client_with_three_valves['VALVE1']
-    assert valve1.metadata == valve1
     assert isinstance(valve1.get(), types.SimpleNamespace)
+
+
+def test_hashable_searchresults(client_with_three_valves: Client):
+    client = client_with_three_valves
+    valve1 = client['VALVE1']
+    valve2 = client['VALVE2']
+    valve3 = client['VALVE3']
+    results1 = set(client.search_regex(name='valve1|valve2'))
+    results2 = set(client.search_regex(name='valve.*'))
+
+    assert len(results1 & results2) == 2
+    assert valve1 in (results1 & results2)
+    assert valve2 in (results1 & results2)
+    assert len(results1 ^ results2) == 1
+    assert valve3 in (results1 ^ results2)
+    assert valve2 not in (results1 ^ results2)
+    assert results2 == (results1 | results2)
 
 
 def test_client_mapping(
