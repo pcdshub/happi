@@ -101,6 +101,8 @@ class SearchResult(collections.abc.Mapping):
                 [i1 == i2 for i1, i2 in zip(self.items(), __o.items())]
             )
             return result
+        else:
+            return False
 
     def __hash__(self) -> int:
         # Need to thoroughly sort to deal with nested dicts
