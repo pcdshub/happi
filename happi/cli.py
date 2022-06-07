@@ -121,8 +121,7 @@ def search(
                 range_list = new_range_list
             else:
                 # subsequent ranges, only take intersection
-                final_range = [item for item in new_range_list
-                               if item in range_list]
+                final_range = set(new_range_list) & set(range_list)
                 range_list = final_range
 
             if not range_list:
@@ -156,7 +155,7 @@ def search(
         final_results = range_list
     elif range_list and regex_list:
         # find the intersection between regex_list and range_list
-        final_results = [item for item in range_list if item in regex_list]
+        final_results = set(range_list) & set(regex_list)
     else:
         logger.debug('No regex or range items found')
 
