@@ -102,7 +102,6 @@ class SearchResult(collections.abc.Mapping):
             return False
 
     def __hash__(self) -> int:
-        # Need to thoroughly sort to deal with nested dicts
         return hash((self.client.backend, self['_id']))
 
 
