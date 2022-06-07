@@ -2,7 +2,6 @@ import collections
 import configparser
 import inspect
 import itertools
-import json
 import logging
 import os
 import re
@@ -97,16 +96,14 @@ class SearchResult(collections.abc.Mapping):
 
     def __eq__(self, __o: object) -> bool:
         if isinstance(__o, self.__class__):
-            result = all(
-                [i1 == i2 for i1, i2 in zip(self.items(), __o.items())]
-            )
-            return result
+            return ((self.client.backend == __o.client.backend)
+                    and (self['_id'] == __o['_id']))
         else:
             return False
 
     def __hash__(self) -> int:
         # Need to thoroughly sort to deal with nested dicts
-        return hash(json.dumps(dict(self.items()), sort_keys=True))
+        return hash((self.client.backend, self['_id']))
 
 
 class Client(collections.abc.Mapping):
