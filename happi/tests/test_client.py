@@ -327,6 +327,9 @@ def test_hashable_searchresults(client_with_three_valves: Client):
     results1 = set(client.search_regex(name='valve1|valve2'))
     results2 = set(client.search_regex(name='valve.*'))
 
+    assert valve1 != 'VALVE1'
+    assert valve1 != valve1.metadata
+
     assert len(results1 & results2) == 2
     assert valve1 in (results1 & results2)
     assert valve2 in (results1 & results2)
