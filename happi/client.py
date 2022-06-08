@@ -94,6 +94,16 @@ class SearchResult(collections.abc.Mapping):
             f'metadata={self.metadata})'
         )
 
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, self.__class__):
+            return ((self.client.backend == __o.client.backend)
+                    and (self['_id'] == __o['_id']))
+        else:
+            return False
+
+    def __hash__(self) -> int:
+        return hash((self.client.backend, self['_id']))
+
 
 class Client(collections.abc.Mapping):
     """
