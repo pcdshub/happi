@@ -316,6 +316,9 @@ def test_choices_for_field(happi_client: Client):
 
 def test_searchresults(client_with_three_valves: Client):
     valve1 = client_with_three_valves['VALVE1']
+    assert valve1['name'] == 'valve1'
+    assert valve1['type'] == 'OphydItem'
+    assert valve1['z'] == 300
     assert isinstance(valve1.get(), types.SimpleNamespace)
 
 
