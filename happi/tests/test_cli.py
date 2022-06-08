@@ -219,6 +219,29 @@ def test_search_z_range(
     assert 'No devices found' in conflict_result.output
 
 
+def test_search_int_float(runner: CliRunner, happi_cfg: str):
+    int_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+                               'search', '--names', 'z=3'])
+    float_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+                                 'search', '--names', 'z=3.0'])
+    assert int_result.output == float_result.output
+
+    # # TODO: add this test case once edit works on extraneous info
+    # edit_result = runner.invoke(
+    #     happi_cli,
+    #     ['-v', '--path', happi_cfg, 'edit', 'tst_base_pim', 'z=3.001'],
+    #     input='y'
+    # )
+    # assert edit_result.exit_code == 0
+
+    # int_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+    #                            'search', '--names', 'z=3'])
+    # float_result = runner.invoke(happi_cli, ['--path', happi_cfg,
+    #                              'search', '--names', 'z=3.0'])
+    # assert int_result.output == ''
+    # assert float_result.output == ''
+
+
 def test_both_range_and_regex_search(client: happi.client.Client):
     # we're only interested in getting this entry (TST_BASE_PIM2)
     res = client.search_regex(z='6.0')
