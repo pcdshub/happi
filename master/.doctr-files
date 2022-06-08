@@ -9,6 +9,7 @@ master/_sources/index.rst.txt
 master/_sources/releases.rst.txt
 master/_sources/upcoming_changes.rst.txt
 master/_sources/upcoming_release_notes/253-fix_tests.rst.txt
+master/_sources/upcoming_release_notes/260-hashable.rst.txt
 master/_static/_sphinx_javascript_frameworks_compat.js
 master/_static/basic.css
 master/_static/css/badge_only.css
@@ -61,3 +62,4 @@ master/search.html
 master/searchindex.js
 master/upcoming_changes.html
 master/upcoming_release_notes/253-fix_tests.html
+master/upcoming_release_notes/260-hashable.html
