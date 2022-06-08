@@ -121,8 +121,7 @@ def search(
                 range_list = new_range_list
             else:
                 # subsequent ranges, only take intersection
-                final_range = set(new_range_list) & set(range_list)
-                range_list = final_range
+                range_list = set(new_range_list) & set(range_list)
 
             if not range_list:
                 # we have searched via a range query.  At this point
