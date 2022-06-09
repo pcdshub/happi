@@ -132,8 +132,16 @@ def search(
             continue
 
         elif is_number(value):
-            logger.debug('Changed %s to float', value)
-            # value = str(float(value))
+            if float(value) == int(float(value)):
+                # value is an int, allow the float version (optional .0)
+                logger.debug(f'looking for int value: {value}')
+                value = f'^{int(float(value))}(\\.0+$)?$'
+
+                # don't translate from glob
+                client_args[criteria] = value
+                continue
+            else:
+                value = str(float(value))
         else:
             logger.debug('Value %s interpreted as string', value)
 
