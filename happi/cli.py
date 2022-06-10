@@ -425,15 +425,22 @@ def benchmark(
     logger.debug('Starting benchmark block')
     client: happi.Client = ctx.obj
     full_stats = []
-    for result in client.all_items:
-        full_stats.append(
-            Stats.from_search_result(
+    logger.info('Collecting happi items...')
+    start = time.monotonic()
+    items = client.search()
+    logger.info(f'Done, took {time.monotonic() - start} s')
+    for result in items:
+        try:
+            stats = Stats.from_search_result(
                 result=result,
                 duration=duration,
                 iterations=iterations,
                 wait_connected=wait_connected,
             )
-        )
+        except Exception:
+            logger.exception(f'Error running benchmark for {result["name"]}')
+        else:
+            full_stats.append(stats)
     table = prettytable.PrettyTable()
     table.field_names = ['name', 'avg_time', 'iterations', 'tot_time']
     for stats in sorted(full_stats, key=lambda x: x.avg_time, reverse=True):
@@ -451,14 +458,14 @@ class Stats:
     tot_time: float
 
     @classmethod
-    def from_search_results(
+    def from_search_result(
         cls,
         result: happi.SearchResult,
         duration: float,
         iterations: int,
         wait_connected: bool,
     ) -> Stats:
-        logger.debug(f'Checking stats for {result.name}')
+        logger.debug(f'Checking stats for {result["name"]}')
         if not duration and not iterations:
             return Stats(avg_time=0, iterations=0, tot_time=0)
         raw_stats: List[float] = []
@@ -476,7 +483,7 @@ class Stats:
                     wait_connected=wait_connected
                 ))
         return Stats(
-            name=result.name,
+            name=result["name"],
             avg_time=sum(raw_stats) / len(raw_stats),
             iterations=len(raw_stats),
             tot_time=sum(raw_stats)
@@ -488,18 +495,18 @@ class Stats:
         wait_connected: bool,
     ) -> float:
         start = time.monotonic()
-        device = result.get()
+        device = result.get(use_cache=False)
         if wait_connected:
             try:
                 device.wait_for_connection(timeout=10.0)
             except AttributeError:
                 logger.warning(
-                    f'{result.name} does not have wait_for_connection.'
+                    f'{result["name"]} does not have wait_for_connection.'
                 )
             except Exception:
                 logger.warning(
                     'Timeout after 10s while waiting for connection of '
-                    f'{result.name}',
+                    f'{result["name"]}',
                 )
         return time.monotonic() - start
 
