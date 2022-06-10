@@ -402,12 +402,14 @@ def transfer(ctx, name: str, target: str):
 @click.option("-i", "--iterations", type=int, default=0)
 @click.option("-w", "--wait-connected", type=bool, default=False)
 @click.option("-t", "--tracebacks", type=bool, default=False)
+@click.option("-s", "--sort-key", type=str, default='avg_time')
 def benchmark(
     ctx,
     duration: float,
     iterations: int,
     wait_connected: bool,
     tracebacks: bool,
+    sort_key: str,
 ):
     """
     Check which happi devices have the longest startup times.
@@ -448,10 +450,29 @@ def benchmark(
         else:
             full_stats.append(stats)
     table = prettytable.PrettyTable()
-    table.field_names = ['name', 'avg_time', 'iterations', 'tot_time']
-    for stats in sorted(full_stats, key=lambda x: x.avg_time, reverse=True):
+    table.field_names = [
+        'name',
+        'avg_time',
+        'iterations',
+        'tot_time',
+        'max_time',
+    ]
+    if sort_key not in table.field_names:
+        logger.warning(f'Sort key {sort_key} invalid, reverting to avg_time')
+        sort_key = 'avg_time'
+    for stats in sorted(
+        full_stats,
+        key=lambda x: getattr(x, sort_key),
+        reverse=True,
+    ):
         table.add_row(
-            [stats.name, stats.avg_time, stats.iterations, stats.tot_time]
+            [
+                stats.name,
+                stats.avg_time,
+                stats.iterations,
+                stats.tot_time,
+                stats.max_time,
+            ]
         )
     print(table)
 
@@ -462,6 +483,7 @@ class Stats:
     avg_time: float
     iterations: int
     tot_time: float
+    max_time: float
 
     @classmethod
     def from_search_result(
@@ -492,7 +514,8 @@ class Stats:
             name=result["name"],
             avg_time=sum(raw_stats) / len(raw_stats),
             iterations=len(raw_stats),
-            tot_time=sum(raw_stats)
+            tot_time=sum(raw_stats),
+            max_time=max(raw_stats),
         )
 
     @staticmethod
