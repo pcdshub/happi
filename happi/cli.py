@@ -456,6 +456,7 @@ def benchmark(
         'iterations',
         'tot_time',
         'max_time',
+        'import_time',
     ]
     if sort_key not in table.field_names:
         logger.warning(f'Sort key {sort_key} invalid, reverting to avg_time')
@@ -472,6 +473,7 @@ def benchmark(
                 stats.iterations,
                 stats.tot_time,
                 stats.max_time,
+                stats.import_time,
             ]
         )
     print(table)
@@ -484,6 +486,7 @@ class Stats:
     iterations: int
     tot_time: float
     max_time: float
+    import_time: float
 
     @classmethod
     def from_search_result(
@@ -497,6 +500,7 @@ class Stats:
         if not duration and not iterations:
             return Stats(avg_time=0, iterations=0, tot_time=0)
         raw_stats: List[float] = []
+        import_time = cls.import_benchmark(result)
         if iterations > 0:
             for _ in range(iterations):
                 raw_stats.append(cls.run_one_benchmark(
@@ -516,7 +520,14 @@ class Stats:
             iterations=len(raw_stats),
             tot_time=sum(raw_stats),
             max_time=max(raw_stats),
+            import_time=import_time,
         )
+
+    @staticmethod
+    def import_benchmark(result: happi.SearchResult) -> float:
+        start = time.monotonic()
+        happi.loader.import_class(result.item.device_class)
+        return time.monotonic() - start
 
     @staticmethod
     def run_one_benchmark(
