@@ -1,7 +1,10 @@
 """
 This module defines the ``happi`` command line interface.
 """
+from __future__ import annotations
+
 import ast
+import dataclasses
 import fnmatch
 import json
 import logging
@@ -9,6 +12,7 @@ import os
 # on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
+import time
 from typing import List
 
 import click
@@ -390,6 +394,114 @@ def transfer(ctx, name: str, target: str):
     target = happi.containers.registry._registry[target_match[0]]
     # transfer item and prompt for fixes
     transfer_container(client, item, target)
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option("-d", "--duration", type=float, default=0)
+@click.option("-i", "--iterations", type=int, default=0)
+@click.option("-w", "--wait-connected", type=bool, default=False)
+def benchmark(
+    ctx,
+    duration: float,
+    iterations: int,
+    wait_connected: bool,
+):
+    """
+    Check which happi devices have the longest startup times.
+
+    Repeats either for a max (DURATION) per device or for a fixed number or
+    (ITERATIONS) per device, showing stats and averages.
+    By default we time only the duration of __init__, but you can also
+    (WAIT_CONNECTED) to see the full time until the device is fully ready
+    to go.
+
+    This can be used to benchmark happi itself and also to benchmark
+    specific device instances.
+
+    This will print a table mapping of device name to execution stats
+    sorted from slowest to fastest.
+    """
+    logger.debug('Starting benchmark block')
+    client: happi.Client = ctx.obj
+    full_stats = []
+    for result in client.all_items:
+        full_stats.append(
+            Stats.from_search_result(
+                result=result,
+                duration=duration,
+                iterations=iterations,
+                wait_connected=wait_connected,
+            )
+        )
+    table = prettytable.PrettyTable()
+    table.field_names = ['name', 'avg_time', 'iterations', 'tot_time']
+    for stats in sorted(full_stats, key=lambda x: x.avg_time, reverse=True):
+        table.add_row(
+            [stats.name, stats.avg_time, stats.iterations, stats.tot_time]
+        )
+    print(table)
+
+
+@dataclasses.dataclass
+class Stats:
+    name: str
+    avg_time: float
+    iterations: int
+    tot_time: float
+
+    @classmethod
+    def from_search_results(
+        cls,
+        result: happi.SearchResult,
+        duration: float,
+        iterations: int,
+        wait_connected: bool,
+    ) -> Stats:
+        logger.debug(f'Checking stats for {result.name}')
+        if not duration and not iterations:
+            return Stats(avg_time=0, iterations=0, tot_time=0)
+        raw_stats: List[float] = []
+        if iterations > 0:
+            for _ in range(iterations):
+                raw_stats.append(cls.run_one_benchmark(
+                    result=result,
+                    wait_connected=wait_connected
+                ))
+        else:
+            start = time.monotonic()
+            while time.monotonic() - start < duration:
+                raw_stats.append(cls.run_one_benchmark(
+                    result=result,
+                    wait_connected=wait_connected
+                ))
+        return Stats(
+            name=result.name,
+            avg_time=sum(raw_stats) / len(raw_stats),
+            iterations=len(raw_stats),
+            tot_time=sum(raw_stats)
+        )
+
+    @staticmethod
+    def run_one_benchmark(
+        result: happi.SearchResult,
+        wait_connected: bool,
+    ) -> float:
+        start = time.monotonic()
+        device = result.get()
+        if wait_connected:
+            try:
+                device.wait_for_connection(timeout=10.0)
+            except AttributeError:
+                logger.warning(
+                    f'{result.name} does not have wait_for_connection.'
+                )
+            except Exception:
+                logger.warning(
+                    'Timeout after 10s while waiting for connection of '
+                    f'{result.name}',
+                )
+        return time.monotonic() - start
 
 
 def main():
