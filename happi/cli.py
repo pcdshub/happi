@@ -401,11 +401,13 @@ def transfer(ctx, name: str, target: str):
 @click.option("-d", "--duration", type=float, default=0)
 @click.option("-i", "--iterations", type=int, default=0)
 @click.option("-w", "--wait-connected", type=bool, default=False)
+@click.option("-t", "--tracebacks", type=bool, default=False)
 def benchmark(
     ctx,
     duration: float,
     iterations: int,
     wait_connected: bool,
+    tracebacks: bool,
 ):
     """
     Check which happi devices have the longest startup times.
@@ -430,6 +432,7 @@ def benchmark(
     items = client.search()
     logger.info(f'Done, took {time.monotonic() - start} s')
     for result in items:
+        logger.info(f'Running benchmark on {result["name"]}')
         try:
             stats = Stats.from_search_result(
                 result=result,
@@ -438,7 +441,10 @@ def benchmark(
                 wait_connected=wait_connected,
             )
         except Exception:
-            logger.exception(f'Error running benchmark for {result["name"]}')
+            logger.error(
+                f'Error running benchmark on {result["name"]}',
+                exc_info=tracebacks,
+            )
         else:
             full_stats.append(stats)
     table = prettytable.PrettyTable()
