@@ -88,9 +88,50 @@ def search(
     be combined with ANDs.
     """
     logger.debug("We're in the search block")
-    # Retrieve client
-    client = ctx.obj
 
+    final_results = search_parser(
+        client=ctx.obj,
+        use_glob=use_glob,
+        search_criteria=search_criteria,
+    )
+    if not final_results:
+        return []
+
+    # Final processing for output
+    if show_json:
+        json.dump([dict(res.item) for res in final_results], indent=2,
+                  fp=sys.stdout)
+    elif names:
+        out = " ".join([res.item.name for res in final_results])
+        click.echo(out)
+    else:
+        for res in final_results:
+            res.item.show_info()
+
+    return final_results
+
+
+def search_parser(
+    client: happi.Client,
+    use_glob: bool,
+    search_criteria: List[str],
+) -> List[happi.SearchResult]:
+    """
+    Parse the user's search criteria and return the search results.
+
+    ``search_criteria`` must be a list of key=value strings.
+    If key is omitted, it will be assumed to be "name".
+
+    Parameters
+    ----------
+    client : Client
+        The happi client that we'll be doing searches in.
+    use_glob : bool
+        True if we're using glob matching, False if we're using
+        regex matching.
+    search_criteria : list of str
+        The user's search selection from the command line.
+    """
     # Get search criteria into dictionary for use by client
     client_args = {}
     range_list = []
@@ -131,7 +172,7 @@ def search(
                 # we have searched via a range query.  At this point
                 # no matches, or intesection is empty. abort early
                 logger.error('No devices found')
-                return
+                return []
 
             continue
 
@@ -172,19 +213,6 @@ def search(
 
     if not final_results:
         logger.error('No devices found')
-        return
-
-    # Final processing for output
-    if show_json:
-        json.dump([dict(res.item) for res in final_results], indent=2,
-                  fp=sys.stdout)
-    elif names:
-        out = " ".join([res.item.name for res in final_results])
-        click.echo(out)
-    else:
-        for res in final_results:
-            res.item.show_info()
-
     return final_results
 
 
@@ -403,6 +431,10 @@ def transfer(ctx, name: str, target: str):
 @click.option("-w", "--wait-connected", type=bool, default=False)
 @click.option("-t", "--tracebacks", type=bool, default=False)
 @click.option("-s", "--sort-key", type=str, default='avg_time')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.argument('search_criteria', nargs=-1)
 def benchmark(
     ctx,
     duration: float,
@@ -410,6 +442,8 @@ def benchmark(
     wait_connected: bool,
     tracebacks: bool,
     sort_key: str,
+    use_glob: bool,
+    search_criteria: List[str],
 ):
     """
     Check which happi devices have the longest startup times.
@@ -431,7 +465,15 @@ def benchmark(
     full_stats = []
     logger.info('Collecting happi items...')
     start = time.monotonic()
-    items = client.search()
+    if search_criteria:
+        items = search_parser(
+            client=client,
+            use_glob=use_glob,
+            search_criteria=search_criteria,
+        )
+    else:
+        # All the items
+        items = client.search()
     logger.info(f'Done, took {time.monotonic() - start} s')
     for result in items:
         logger.info(f'Running benchmark on {result["name"]}')
