@@ -685,6 +685,7 @@ def profile(
         db_context = profiler_context
     else:
         db_context = null_context
+    start = time.monotonic()
     with db_context(
         module_names=['happi'],
         use_global_profiler=True,
@@ -699,6 +700,9 @@ def profile(
         else:
             # All the items
             items = client.search()
+    logger.info(
+        f'Searched the happi database in {time.monotonic() - start} s'
+    )
 
     if not any((profile_import, profile_object)):
         return output_profile()
@@ -709,25 +713,42 @@ def profile(
         import_context = profiler_context
     else:
         import_context = null_context
-    # Check which modules to focus on
-    module_names = set(('happi', 'importlib'))
-    for search_result in items:
-        module_names.add(search_result['device_class'].split('.')[0])
+
+    classes = set()
+    start = time.monotonic()
     with import_context(
-        module_names=module_names,
+        module_names=['happi'],
         use_global_profiler=True,
         output_now=False,
     ):
         for search_result in items:
             try:
-                happi.loader.import_class(search_result.item.device_class)
+                cls = happi.loader.import_class(
+                    search_result.item.device_class,
+                )
+                classes.add(cls)
             except ImportError:
                 logger.warning(
                     f'Failed to import {search_result.item.device_class}'
                 )
+    logger.info(
+        f'Imported the device classes in {time.monotonic() - start} s'
+    )
 
     if not profile_object:
         return output_profile()
+
+    # Check which modules to focus on for line profiler
+    module_names = set(('happi',))
+    for instance_class in classes:
+        try:
+            parents = instance_class.mro()
+        except AttributeError:
+            # E.g. we have a function
+            parents = [instance_class]
+        for parent_class in parents:
+            module = parent_class.__module__
+            module_names.add(module.split('.')[0])
 
     # Profile stage 3: create the device classes
     logger.info('Creating the device classes')
@@ -735,6 +756,7 @@ def profile(
         object_context = profiler_context
     else:
         object_context = null_context
+    start = time.monotonic()
     with object_context(
         module_names=module_names,
         use_global_profiler=True,
@@ -742,7 +764,9 @@ def profile(
     ):
         for search_result in items:
             search_result.get(use_cache=False)
-
+    logger.info(
+        f'Created the device classes in {time.monotonic() - start} s'
+    )
     return output_profile()
 
 
