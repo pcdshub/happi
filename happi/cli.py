@@ -13,6 +13,8 @@ import os
 import readline  # noqa
 import sys
 import time
+from contextlib import contextmanager
+from cProfile import Profile
 from typing import List
 
 import click
@@ -591,6 +593,157 @@ class Stats:
                     f'{result["name"]}',
                 )
         return time.monotonic() - start
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option('-d', '--database', 'profile_database', is_flag=True)
+@click.option('-i', '--import', 'profile_import', is_flag=True)
+@click.option('-o', '--object', 'profile_object', is_flag=True)
+@click.option('-a', '--all', 'profile_all', is_flag=True)
+@click.option('-p', '--profiler', default='auto')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.argument('search_criteria', nargs=-1)
+def profile(
+    ctx,
+    profile_database: bool,
+    profile_import: bool,
+    profile_object: bool,
+    profile_all: bool,
+    profiler: str,
+    use_glob: bool,
+    search_criteria: List[str],
+):
+    """
+    Diagnostic tool to check why happi loading might be slow.
+
+    Contains options for picking which devices to check and which
+    part of the loading process to profile. You can choose to
+    profile:
+    - happi database loading (-d, --database)
+    - class imports          (-i, --import)
+    - object instantiation   (-o, --object)
+    - all of the above       (-a, --all)
+
+    By default this will use whichever profiler you have installed,
+    but this can also be overriden with the (-p, --profiler) option.
+    The priority order is:
+    - the pcdsutils line_profiler wrapper (--profiler pcdsutils)
+    - the built-in cProfile module        (--profiler cprofile)
+
+    Search terms are standard as in the same search terms as the search
+    cli function. A blank search term means to load all the devices.
+    """
+    logger.debug('Starting profile block')
+    if profiler not in ('auto', 'pcdsutils', 'cprofile'):
+        raise RuntimeError(f'Invalid profiler selection {profiler}')
+    client: happi.Client = ctx.obj
+    if profile_all:
+        profile_database = True
+        profile_import = True
+        profile_object = True
+    if not any((profile_database, profile_import, profile_object)):
+        raise RuntimeError('No profile options selected!')
+    if profiler == 'auto':
+        try:
+            import pcdsutils.profile
+            if pcdsutils.profile.has_line_profiler:
+                profiler = 'pcdsutils'
+            else:
+                profiler = 'cprofile'
+        except ImportError:
+            profiler = 'cprofile'
+    if profiler == 'pcdsutils':
+        from pcdsutils.profile import profiler_context
+        context_profiler = None
+    elif profiler == 'cprofile':
+        context_profiler = Profile()
+
+        @contextmanager
+        def profiler_context(*args, **kwargs):
+            context_profiler.enable()
+            yield
+            context_profiler.disable()
+
+    @contextmanager
+    def null_context(*args, **kwargs):
+        yield
+
+    def output_profile():
+        # Call at the end: let's output results to stdout
+        if profiler == 'pcdsutils':
+            from pcdsutils.profile import print_results
+            print_results()
+        elif profiler == 'cprofile':
+            context_profiler.print_stats(sort='cumulative')
+
+    # Profile stage 1: searching the happi database
+    logger.info('Searching the happi database')
+    if profile_database:
+        db_context = profiler_context
+    else:
+        db_context = null_context
+    with db_context(
+        module_names=['happi'],
+        use_global_profiler=True,
+        output_now=False,
+    ):
+        if search_criteria:
+            items = search_parser(
+                client=client,
+                use_glob=use_glob,
+                search_criteria=search_criteria,
+            )
+        else:
+            # All the items
+            items = client.search()
+
+    if not any((profile_import, profile_object)):
+        return output_profile()
+
+    # Profile stage 2: import the device classes
+    logger.info('Importing the device classes')
+    if profile_import:
+        import_context = profiler_context
+    else:
+        import_context = null_context
+    # Check which modules to focus on
+    module_names = set(('happi', 'importlib'))
+    for search_result in items:
+        module_names.add(search_result['device_class'].split('.')[0])
+    with import_context(
+        module_names=module_names,
+        use_global_profiler=True,
+        output_now=False,
+    ):
+        for search_result in items:
+            try:
+                happi.loader.import_class(search_result.item.device_class)
+            except ImportError:
+                logger.warning(
+                    f'Failed to import {search_result.item.device_class}'
+                )
+
+    if not profile_object:
+        return output_profile()
+
+    # Profile stage 3: create the device classes
+    logger.info('Creating the device classes')
+    if profile_object:
+        object_context = profiler_context
+    else:
+        object_context = null_context
+    with object_context(
+        module_names=module_names,
+        use_global_profiler=True,
+        output_now=False,
+    ):
+        for search_result in items:
+            search_result.get(use_cache=False)
+
+    return output_profile()
 
 
 def main():
