@@ -763,7 +763,12 @@ def profile(
         output_now=False,
     ):
         for search_result in items:
-            search_result.get(use_cache=False)
+            try:
+                search_result.get(use_cache=False)
+            except Exception:
+                logger.warning(
+                    f'Failed to create {search_result["name"]}'
+                )
     logger.info(
         f'Created the device classes in {time.monotonic() - start} s'
     )
