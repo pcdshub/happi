@@ -426,15 +426,34 @@ def transfer(ctx, name: str, target: str):
     transfer_container(client, item, target)
 
 
+benchmark_sort_keys = [
+    'name',
+    'avg_time',
+    'iterations',
+    'tot_time',
+    'max_time',
+    'import_time',
+]
+
+
 @happi_cli.command()
 @click.pass_context
-@click.option("-d", "--duration", type=float, default=0)
-@click.option("-i", "--iterations", type=int, default=0)
-@click.option("-w", "--wait-connected", type=bool, default=False)
-@click.option("-t", "--tracebacks", type=bool, default=False)
-@click.option("-s", "--sort-key", type=str, default='avg_time')
+@click.option("-d", "--duration", type=float, default=0,
+              help="Specify how long in seconds to spend per device.")
+@click.option("-i", "--iterations", type=int, default=0,
+              help="Specify the number of times to instantiate each device.")
+@click.option("-w", "--wait-connected", is_flag=True,
+              help="Wait for the devices to be connected.")
+@click.option("-t", "--tracebacks", is_flag=True,
+              help="Show tracebacks from failing device loads.")
+@click.option("-s", "--sort-key", type=str, default="avg_time",
+              help=(
+                "Sort the output table. Valid options are "
+                f"{', '.join(benchmark_sort_keys)}"
+              )
+            )
 @click.option('--glob/--regex', 'use_glob', default=True,
-              help='use glob style (default) or regex style search terms. '
+              help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
 @click.argument('search_criteria', nargs=-1)
 def benchmark(
@@ -448,7 +467,10 @@ def benchmark(
     search_criteria: List[str],
 ):
     """
-    Check which happi devices have the longest startup times.
+    Compare happi device startup times.
+
+    This will generate a table that shows you how long each device took
+    to instantiate.
 
     Repeats either for a max (DURATION) per device or for a fixed number or
     (ITERATIONS) per device, showing stats and averages.
@@ -456,11 +478,8 @@ def benchmark(
     (WAIT_CONNECTED) to see the full time until the device is fully ready
     to go.
 
-    This can be used to benchmark happi itself and also to benchmark
-    specific device instances.
-
-    This will print a table mapping of device name to execution stats
-    sorted from slowest to fastest.
+    Search terms are standard as in the same search terms as the search
+    cli function. A blank search term means to load all the devices.
     """
     logger.debug('Starting benchmark block')
     client: happi.Client = ctx.obj
@@ -494,14 +513,7 @@ def benchmark(
         else:
             full_stats.append(stats)
     table = prettytable.PrettyTable()
-    table.field_names = [
-        'name',
-        'avg_time',
-        'iterations',
-        'tot_time',
-        'max_time',
-        'import_time',
-    ]
+    table.field_names = benchmark_sort_keys
     if sort_key not in table.field_names:
         logger.warning(f'Sort key {sort_key} invalid, reverting to avg_time')
         sort_key = 'avg_time'
@@ -510,16 +522,7 @@ def benchmark(
         key=lambda x: getattr(x, sort_key),
         reverse=True,
     ):
-        table.add_row(
-            [
-                stats.name,
-                stats.avg_time,
-                stats.iterations,
-                stats.tot_time,
-                stats.max_time,
-                stats.import_time,
-            ]
-        )
+        table.add_row([getattr(stats, key) for key in benchmark_sort_keys])
     print(table)
 
 
@@ -542,7 +545,14 @@ class Stats:
     ) -> Stats:
         logger.debug(f'Checking stats for {result["name"]}')
         if not duration and not iterations:
-            return Stats(avg_time=0, iterations=0, tot_time=0)
+            return Stats(
+                name=result["name"],
+                avg_time=0,
+                iterations=0,
+                tot_time=0,
+                max_time=0,
+                import_time=0,
+            )
         raw_stats: List[float] = []
         import_time = cls.import_benchmark(result)
         if iterations > 0:
@@ -597,13 +607,18 @@ class Stats:
 
 @happi_cli.command()
 @click.pass_context
-@click.option('-d', '--database', 'profile_database', is_flag=True)
-@click.option('-i', '--import', 'profile_import', is_flag=True)
-@click.option('-o', '--object', 'profile_object', is_flag=True)
-@click.option('-a', '--all', 'profile_all', is_flag=True)
-@click.option('-p', '--profiler', default='auto')
+@click.option('-d', '--database', 'profile_database', is_flag=True,
+              help='Profile the database loading.')
+@click.option('-i', '--import', 'profile_import', is_flag=True,
+              help='Profile the module importing.')
+@click.option('-o', '--object', 'profile_object', is_flag=True,
+              help='Profile the object instantiation.')
+@click.option('-a', '--all', 'profile_all', is_flag=True,
+              help='Shortcut for enabling all profile stages.')
+@click.option('-p', '--profiler', default='auto',
+              help='Select which profiler to use.')
 @click.option('--glob/--regex', 'use_glob', default=True,
-              help='use glob style (default) or regex style search terms. '
+              help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
 @click.argument('search_criteria', nargs=-1)
 def profile(
@@ -617,21 +632,23 @@ def profile(
     search_criteria: List[str],
 ):
     """
-    Diagnostic tool to check why happi loading might be slow.
+    Per-function startup speed diagnostic.
+
+    This will go through the happi loading process and show
+    information about the execution time of all the
+    functions called during the process.
 
     Contains options for picking which devices to check and which
     part of the loading process to profile. You can choose to
-    profile:
-    - happi database loading (-d, --database)
-    - class imports          (-i, --import)
-    - object instantiation   (-o, --object)
-    - all of the above       (-a, --all)
+    profile the happi database loading (-d, --database), the
+    class imports (-i, --import), the object instantiation
+    (-o, --object), or all of the above (-a, --all).
 
     By default this will use whichever profiler you have installed,
     but this can also be overriden with the (-p, --profiler) option.
-    The priority order is:
-    - the pcdsutils line_profiler wrapper (--profiler pcdsutils)
-    - the built-in cProfile module        (--profiler cprofile)
+    The priority order is, first, the pcdsutils line_profiler wrapper
+    (--profiler pcdsutils), and second, the built-in cProfile module
+    (--profiler cprofile). More options may be added later.
 
     Search terms are standard as in the same search terms as the search
     cli function. A blank search term means to load all the devices.
