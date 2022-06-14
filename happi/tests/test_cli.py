@@ -1,5 +1,7 @@
 # test_cli.py
 
+import functools
+import itertools
 import logging
 import re
 from typing import Any, Iterable, List, Tuple
@@ -13,6 +15,9 @@ from click.testing import CliRunner
 import happi
 from happi.cli import happi_cli, search
 from happi.errors import SearchError
+
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope='function')
@@ -114,12 +119,24 @@ def assert_match_expected(
     expected_output: Iterable[str]
 ):
     """standard checks for a cli result, confirms output matches expected"""
+    logger.debug(result.output)
     assert result.exit_code == 0
     assert not result.exception
 
     trimmed_output = trim_split_output(result.output)
     for message, expected in zip(trimmed_output, expected_output):
         assert message == expected
+
+
+def assert_in_expected(
+    result: click.testing.Result,
+    expected_inclusion: str
+):
+    """standard checks for a cli result, confirms output includes expected"""
+    logger.debug(result.output)
+    assert result.exit_code == 0
+    assert not result.exception
+    assert expected_inclusion in result.output
 
 
 def test_cli_no_argument(runner: CliRunner):
@@ -618,3 +635,38 @@ def test_transfer_cli(
     results = runner.invoke(happi_cli, ['--path', happi_cfg, 'transfer',
                             'tst_base_pim', 'OphydItem'], input=from_user)
     assert_match_expected(results, expected_output)
+
+
+def arg_variants(variants: Tuple[Tuple[Tuple[str]]]):
+    """
+    Collapse argument variants into all possible combinations.
+    """
+    for arg_set in itertools.product(*variants):
+        yield functools.reduce(
+            lambda x, y: x+y,
+            arg_set,
+            )
+
+
+benchmark_arg_variants = (
+    (('--duration', '0.1'), ('--iterations', '5')),
+    (('--wait-connected',), ()),
+    (('--tracebacks',), ()),
+    (('--sort-key', 'name'), ()),
+    (('--glob', '*pim'), ('--regex', '.*pim'), ()),
+)
+
+
+@pytest.mark.parametrize(
+    "args", tuple(arg_variants(benchmark_arg_variants))
+)
+def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: Tuple[str]):
+    # Make sure the benchmark can complete in some form with valid inputs
+    result = runner.invoke(
+        happi_cli,
+        ['--path', happi_cfg, 'benchmark'] + list(args),
+    )
+    assert_in_expected(
+        result,
+        'Benchmark completed successfully'
+    )

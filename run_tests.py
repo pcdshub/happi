@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 import sys
 
 import pytest
@@ -14,4 +15,5 @@ if __name__ == '__main__':
 
     print('pytest arguments: {}'.format(args))
 
+    logging.basicConfig(level=logging.DEBUG)
     sys.exit(pytest.main(args))

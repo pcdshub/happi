@@ -522,7 +522,9 @@ def benchmark(
         reverse=True,
     ):
         table.add_row([getattr(stats, key) for key in benchmark_sort_keys])
+    print('Benchmark output:')
     print(table)
+    print('Benchmark completed successfully')
 
 
 @dataclasses.dataclass
