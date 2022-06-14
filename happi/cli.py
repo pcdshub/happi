@@ -527,6 +527,9 @@ def benchmark(
 
 @dataclasses.dataclass
 class Stats:
+    """
+    Collect and hold results from benchmark runs.
+    """
     name: str
     avg_time: float
     iterations: int
@@ -542,6 +545,9 @@ class Stats:
         iterations: int,
         wait_connected: bool,
     ) -> Stats:
+        """
+        Create an object using a search result and store benchmarking info.
+        """
         logger.debug(f'Checking stats for {result["name"]}')
         if not duration and not iterations:
             return Stats(
@@ -578,6 +584,9 @@ class Stats:
 
     @staticmethod
     def import_benchmark(result: happi.SearchResult) -> float:
+        """
+        Check only the module import in isolation.
+        """
         start = time.monotonic()
         happi.loader.import_class(result.item.device_class)
         return time.monotonic() - start
@@ -587,6 +596,9 @@ class Stats:
         result: happi.SearchResult,
         wait_connected: bool,
     ) -> float:
+        """
+        Create one object and time it.
+        """
         start = time.monotonic()
         device = result.get(use_cache=False)
         if wait_connected:
