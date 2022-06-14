@@ -450,8 +450,7 @@ benchmark_sort_keys = [
               help=(
                 "Sort the output table. Valid options are "
                 f"{', '.join(benchmark_sort_keys)}"
-              )
-            )
+              ))
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
