@@ -708,6 +708,7 @@ def profile(
             print_results()
         elif profiler == 'cprofile':
             context_profiler.print_stats(sort='cumulative')
+        print('Profile completed successfully')
 
     # Profile stage 1: searching the happi database
     logger.info('Searching the happi database')

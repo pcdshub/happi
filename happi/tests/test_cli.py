@@ -670,3 +670,26 @@ def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: Tuple[str]):
         result,
         'Benchmark completed successfully'
     )
+
+
+profile_arg_variants = (
+    (('--database',), ('--import',), ('--object', ),
+     ('--all', ), ('--import', '--object')),
+    (('--profiler', 'pcdsutils'), ('--profiler', 'cprofile'), ()),
+    (('--glob', '*pim'), ('--regex', '.*pim'), ()),
+)
+
+
+@pytest.mark.parametrize(
+    "args", tuple(arg_variants(profile_arg_variants))
+)
+def test_profile_cli(runner: CliRunner, happi_cfg: str, args: Tuple[str]):
+    # Make sure the profile can complete in some form with valid inputs
+    result = runner.invoke(
+        happi_cli,
+        ['--path', happi_cfg, 'profile'] + list(args),
+    )
+    assert_in_expected(
+        result,
+        'Profile completed successfully'
+    )
