@@ -784,9 +784,10 @@ def profile(
         for parent_class in parents:
             module = parent_class.__module__
             module_names.add(module.split('.')[0])
-    # All all ophyd control layers
-    module_names.add('epics')
-    module_names.add('caproto')
+    # Add imported ophyd control layers
+    for cl in ('epics', 'caproto'):
+        if cl in sys.modules:
+            module_names.add(cl)
 
     # Profile stage 3: create the device classes
     logger.info('Creating the device classes')
