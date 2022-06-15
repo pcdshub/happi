@@ -65,6 +65,11 @@ def happi_cli(ctx, path, verbose):
     # through to new context objects
     ctx.obj = client
 
+    # Cleanup tasks related to loaded devices
+    @ctx.call_on_close
+    def device_cleanup():
+        ophyd_cleanup()
+
 
 @happi_cli.command()
 @click.option('--show_json', '-j', is_flag=True,
@@ -812,6 +817,15 @@ def profile(
         f'Created the device classes in {time.monotonic() - start} s'
     )
     return output_profile()
+
+
+def ophyd_cleanup():
+    """Clean up ophyd - avoid teardown errors by stopping callbacks."""
+    if 'ophyd' in sys.modules:
+        import ophyd
+        dispatcher = ophyd.cl.get_dispatcher()
+        if dispatcher is not None:
+            dispatcher.stop()
 
 
 def main():
