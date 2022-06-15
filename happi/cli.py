@@ -68,6 +68,7 @@ def happi_cli(ctx, path, verbose):
     # Cleanup tasks related to loaded devices
     @ctx.call_on_close
     def device_cleanup():
+        pyepics_cleanup()
         ophyd_cleanup()
 
 
@@ -820,12 +821,46 @@ def profile(
 
 
 def ophyd_cleanup():
-    """Clean up ophyd - avoid teardown errors by stopping callbacks."""
+    """
+    Clean up ophyd - avoid teardown errors by stopping callbacks.
+
+    If this is not run, ophyd callbacks continue to run and can cause
+    terminal spam and segfaults.
+    """
     if 'ophyd' in sys.modules:
         import ophyd
         dispatcher = ophyd.cl.get_dispatcher()
         if dispatcher is not None:
             dispatcher.stop()
+
+
+def pyepics_cleanup():
+    """
+    Clean up pyepics - avoid teardown errors by stopping callbacks.
+
+    If this is not run, pyepics callbacks continue to run and if they throw
+    exceptions they will create terminal spam.
+
+    Run this before ophyd_cleanup to prevent race conditions where pyepics
+    is trying to call ophyd things that have been torn down.
+    """
+    if 'epics' in sys.modules:
+        from epics import ca
+
+        # Prevent new callbacks from being set up
+        def no_create_channel(*args, **kwargs):
+            ...
+
+        ca.create_channel = no_create_channel
+
+        # Remove references to existing callbacks
+        for context_cache in ca._cache.values():
+            for cache_item in context_cache.values():
+                try:
+                    cache_item.callbacks.clear()
+                    cache_item.access_event_callback.clear()
+                except AttributeError:
+                    print(cache_item)
 
 
 def main():
