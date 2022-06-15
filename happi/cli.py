@@ -610,9 +610,14 @@ class Stats:
                 logger.warning(
                     f'{result["name"]} does not have wait_for_connection.'
                 )
-            except Exception:
+            except TimeoutError:
                 logger.warning(
                     'Timeout after 10s while waiting for connection of '
+                    f'{result["name"]}',
+                )
+            except Exception:
+                logger.warning(
+                    'Unknown exception while waiting for connection of '
                     f'{result["name"]}',
                 )
         return time.monotonic() - start
