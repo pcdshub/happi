@@ -16,6 +16,15 @@ import happi
 from happi.cli import happi_cli, search
 from happi.errors import SearchError
 
+try:
+    import pcdsutils.profile
+    if pcdsutils.profile.has_line_profiler:
+        test_line_prof = True
+    else:
+        test_line_prof = False
+except ImportError:
+    test_line_prof = False
+
 
 logger = logging.getLogger(__name__)
 
@@ -685,6 +694,8 @@ profile_arg_variants = (
 )
 def test_profile_cli(runner: CliRunner, happi_cfg: str, args: Tuple[str]):
     # Make sure the profile can complete in some form with valid inputs
+    if 'pcdsutils' in args and not test_line_prof:
+        pytest.skip('Missing pcdsutils or line_profiler.')
     result = runner.invoke(
         happi_cli,
         ['--path', happi_cfg, 'profile'] + list(args),
