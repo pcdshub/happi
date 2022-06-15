@@ -440,7 +440,7 @@ benchmark_sort_keys = [
 @click.pass_context
 @click.option("-d", "--duration", type=float, default=0,
               help="Specify how long in seconds to spend per device.")
-@click.option("-i", "--iterations", type=int, default=0,
+@click.option("-i", "--iterations", type=int, default=1,
               help="Specify the number of times to instantiate each device.")
 @click.option("-w", "--wait-connected", is_flag=True,
               help="Wait for the devices to be connected.")
@@ -471,11 +471,13 @@ def benchmark(
     This will generate a table that shows you how long each device took
     to instantiate.
 
-    Repeats either for a max (DURATION) per device or for a fixed number or
-    (ITERATIONS) per device, showing stats and averages.
+    Repeats for at least the (-d, --duration) arg (default = 0 seconds)
+    and for at least the number of the (-i, --iterations) arg (default = 1
+    iteration), showing stats and averages.
+
     By default we time only the duration of __init__, but you can also
-    (WAIT_CONNECTED) to see the full time until the device is fully ready
-    to go.
+    (wait_connected) to see the full time until the device is fully ready
+    to go, presuming the device has a wait_for_connection method.
 
     Search terms are standard as in the same search terms as the search
     cli function. A blank search term means to load all the devices.
@@ -562,19 +564,16 @@ class Stats:
             )
         raw_stats: List[float] = []
         import_time = cls.import_benchmark(result)
-        if iterations > 0:
-            for _ in range(iterations):
-                raw_stats.append(cls.run_one_benchmark(
+        counter = 0
+        start = time.monotonic()
+        while counter < iterations or time.monotonic() - start < duration:
+            raw_stats.append(
+                cls.run_one_benchmark(
                     result=result,
                     wait_connected=wait_connected
-                ))
-        else:
-            start = time.monotonic()
-            while time.monotonic() - start < duration:
-                raw_stats.append(cls.run_one_benchmark(
-                    result=result,
-                    wait_connected=wait_connected
-                ))
+                )
+            )
+            counter += 1
         return Stats(
             name=result["name"],
             avg_time=sum(raw_stats) / len(raw_stats),
