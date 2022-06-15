@@ -11,7 +11,7 @@ from happi.backends.json_db import JSONBackend
 from happi.errors import DuplicateError, SearchError
 from happi.loader import load_devices
 
-from .conftest import (requires_mongo, requires_pcdsdevices,
+from .conftest import (requires_mongo, requires_pcdsdevices, requires_py39,
                        requires_questionnaire)
 
 
@@ -186,6 +186,7 @@ def test_qsbackend_with_client(mockqsbackend):
 
 @requires_questionnaire
 @requires_pcdsdevices
+@requires_py39
 def test_qsbackend_with_acromag(mockqsbackend):
     c = Client(database=mockqsbackend)
     d = load_devices(*c.all_items, pprint=False).__dict__
@@ -197,6 +198,7 @@ def test_qsbackend_with_acromag(mockqsbackend):
 
 @requires_questionnaire
 @requires_pcdsdevices
+@requires_py39
 def test_beckoff_axis_device_class(mockqsbackend):
     c = Client(database=mockqsbackend)
     d = load_devices(*c.all_items).__dict__

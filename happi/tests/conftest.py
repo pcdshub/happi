@@ -1,4 +1,5 @@
 import logging
+import sys
 import tempfile
 from unittest.mock import patch
 
@@ -49,6 +50,9 @@ except ImportError as exc:
 
 requires_pcdsdevices = pytest.mark.skipif(not has_pcdsdevices,
                                           reason='Missing pcdsdevices')
+
+
+requires_py39 = pytest.mark.skipif(sys.version_info < (3, 9))
 
 
 @pytest.fixture(scope='function')
