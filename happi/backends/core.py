@@ -7,12 +7,24 @@ logger = logging.getLogger(__name__)
 
 
 class _Backend:
-    """Base class for backend database."""
+    """
+    Base class for backend database.
+
+    Backends are internal to happi and are subject to change.  Users should
+    interact with the :class:`happi.Client`.
+    """
 
     @property
     def all_devices(self):
         """List of all device sub-dictionaries."""
         raise NotImplementedError
+
+    def clear_cache(self) -> None:
+        """
+        Request to clear any cached data.
+
+        Optional implementation may be customized in subclass.
+        """
 
     def find(self, multiples=False, **kwargs):
         """

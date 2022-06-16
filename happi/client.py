@@ -175,6 +175,7 @@ class Client(collections.abc.Mapping):
         if len(kwargs) == 0:
             raise SearchError('No information pertinent to device given')
 
+        self.backend.clear_cache()
         matches = list(itertools.islice(self.backend.find(kwargs), 1))
         if not matches:
             raise SearchError(
@@ -268,6 +269,34 @@ class Client(collections.abc.Mapping):
         device.save = save_device
         return _id
 
+    def _get_item_from_document(self, doc: Dict[str, Any]) -> HappiItem:
+        """
+        Get a HappiItem given the database document.
+
+        Parameters
+        ----------
+        post
+            Key-value pairs of search criteria used to find the device.
+
+        Returns
+        -------
+        item : :class:`.HappiItem`
+            A HappiItem instance for the document.
+        """
+
+        logger.debug("Instantiating device based on found information ...")
+        try:
+            device = self.create_device(doc['type'], **doc)
+        except (KeyError, TypeError) as exc:
+            raise EntryError('The information relating to the device class '
+                             'has been modified to the point where the object '
+                             'can not be initialized, please load the '
+                             'corresponding document') from exc
+
+        # Add the save method to the device
+        device.save = lambda: self._store(device, insert=False)
+        return device
+
     def find_device(self, **post):
         """
         Query the database for an individual HappiItem.
@@ -291,20 +320,7 @@ class Client(collections.abc.Mapping):
         """
 
         logger.debug("Gathering information about the device ...")
-        doc = self.find_document(**post)
-        # Instantiate HappiItem
-        logger.debug("Instantiating device based on found information ...")
-        try:
-            device = self.create_device(doc['type'], **doc)
-        except (KeyError, TypeError) as exc:
-            raise EntryError('The information relating to the device class '
-                             'has been modified to the point where the object '
-                             'can not be initialized, please load the '
-                             'corresponding document') from exc
-
-        # Add the save method to the device
-        device.save = lambda: self._store(device, insert=False)
-        return device
+        return self._get_item_from_document(self.find_document(**post))
 
     def load_device(self, use_cache=True, **post):
         """
@@ -434,23 +450,17 @@ class Client(collections.abc.Mapping):
 
         bad = list()
         logger.debug('Loading database to validate contained devices ...')
-        for post in self.backend.all_devices:
+        for doc in self.backend.all_devices:
             # Try and load device based on database info
+            _id = doc.get(self._id_key, "(unknown id)")
             try:
-                # HappiItem identification
-                _id = post[self._id_key]
-                logger.debug('Attempting to initialize %s...', _id)
-                # Load HappiItem
-                device = self.find_device(**post)
-                logger.debug('Attempting to validate ...')
-                self._validate_device(device)
-            except KeyError:
-                logger.error("Post has no id  %s", post)
-            # Log all generated exceptions
+                logger.debug("Attempting to initialize %s...", _id)
+                item = self._get_item_from_document(doc)
+                logger.debug("Attempting to validate ...")
+                self._validate_device(item)
             except Exception as e:
                 logger.warning("Failed to validate %s because %s", _id, e)
                 bad.append(_id)
-            # Report successes
             else:
                 logger.debug('Successfully validated %s', _id)
         return bad
@@ -469,7 +479,7 @@ class Client(collections.abc.Mapping):
     def __getitem__(self, key):
         """Get a device ID."""
         try:
-            device = self.find_device(**self.backend.get_by_id(key))
+            device = self._get_item_from_document(self.backend.get_by_id(key))
         except Exception as ex:
             raise KeyError(key) from ex
 
@@ -526,6 +536,7 @@ class Client(collections.abc.Mapping):
                                               beamline='HXR')
         """
 
+        self.backend.clear_cache()
         items = self.backend.find_range(key, start=start, stop=end,
                                         to_match=kwargs)
         return self._get_search_results(items)
@@ -553,6 +564,7 @@ class Client(collections.abc.Mapping):
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
 
+        self.backend.clear_cache()
         items = self.backend.find(kwargs)
         return self._get_search_results(items)
 
@@ -582,6 +594,7 @@ class Client(collections.abc.Mapping):
             three_valves = client.search_regex(_id='VALVE[123]')
         """
 
+        self.backend.clear_cache()
         items = self.backend.find_regex(kwargs, flags=flags)
         return self._get_search_results(items)
 

@@ -7,6 +7,7 @@ import math
 import os
 import os.path
 import re
+from typing import Any, Dict
 
 import simplejson as json
 
@@ -51,20 +52,27 @@ class JSONBackend(_Backend):
     """
 
     def __init__(self, path, initialize=False):
+        self._load_cache = None
         self.path = os.path.expanduser(path)
         # Create a new JSON file if requested
         if initialize:
             self.initialize()
 
+    def clear_cache(self) -> None:
+        """Clear the loaded cache."""
+        self._load_cache = None
+
     def _load_or_initialize(self):
         """Load an existing database or initialize a new one."""
-        try:
-            return self.load()
-        except FileNotFoundError:
-            logger.debug('Initializing new database')
+        if self._load_cache is None:
+            try:
+                self._load_cache = self.load()
+            except FileNotFoundError:
+                logger.debug("Initializing new database")
+                self.initialize()
+                self._load_cache = self.load()
 
-        self.initialize()
-        return self.load()
+        return self._load_cache
 
     @property
     def all_devices(self):
@@ -233,7 +241,7 @@ class JSONBackend(_Backend):
 
         yield from self._iterative_compare(comparison)
 
-    def save(self, _id, post, insert=True):
+    def save(self, _id: str, post: Dict[str, Any], insert: bool = True):
         """
         Save information to the database.
 
@@ -275,7 +283,7 @@ class JSONBackend(_Backend):
                 except KeyError:
                     raise SearchError("No device found {}".format(_id))
 
-    def delete(self, _id):
+    def delete(self, _id: str):
         """
         Delete a device instance from the database.
 
