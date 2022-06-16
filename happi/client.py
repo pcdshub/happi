@@ -9,7 +9,7 @@ import re
 import sys
 import time as ttime
 import warnings
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Sequence, Type
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -340,8 +340,6 @@ class Client(collections.abc.Mapping):
         device : :class:`.HappiItem`
             A device that matches the characteristics given.
         """
-
-        logger.debug("Gathering information about the device ...")
         return self._get_item_from_document(self.find_document(**post))
 
     def load_device(self, use_cache=True, **post):
@@ -519,19 +517,23 @@ class Client(collections.abc.Mapping):
         if not self._retain_cache:
             self.backend.clear_cache()
 
-    def _get_search_results(self, items, *, wrap_cls=None):
+    def _get_search_results(
+        self, docs: Sequence[Dict[str, Any]], *, wrap_cls: Optional[type] = None
+    ):
         """
         Return search results to the user, optionally wrapping with a class.
         """
         wrap_cls = wrap_cls or self._results_wrap_class
         results = []
-        for info in items:
+        for doc in docs:
             try:
-                result = wrap_cls(client=self, device=self.find_device(**info))
+                result = wrap_cls(client=self, device=self._get_item_from_document(doc))
                 results.append(result)
             except Exception as exc:
-                logger.warning('Entry for %s is malformed (%s). Skipping.',
-                               info['name'], exc)
+                logger.warning(
+                    "Entry for %s is malformed (%s). Skipping.",
+                    doc["name"], exc
+                )
         return results
 
     def search_range(self, key, start, end=None, **kwargs):
