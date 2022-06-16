@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Command Line Interface &mdash; Happi 1.13.0+30.g1953c5b documentation</title>
+  <title>Command Line Interface &mdash; Happi 1.13.0+56.g744f084 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.13.0+30.g1953c5b
+                1.13.0+56.g744f084
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,9 +48,11 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#happi">happi</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#happi-add">add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#happi-benchmark">benchmark</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-container-registry">container-registry</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-edit">edit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-load">load</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#happi-profile">profile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-search">search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-transfer">transfer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-update">update</a></li>
@@ -134,6 +136,67 @@
 </dd></dl>
 
 </section>
+<section id="happi-benchmark">
+<h3>benchmark<a class="headerlink" href="#happi-benchmark" title="Permalink to this heading"></a></h3>
+<p>Compare happi device startup times.</p>
+<p>This will generate a table that shows you how long each device took
+to instantiate.</p>
+<p>Repeats for at least the (-d, –duration) arg (default = 0 seconds)
+and for at least the number of the (-i, –iterations) arg (default = 1
+iteration), showing stats and averages.</p>
+<p>By default we time only the duration of __init__, but you can also
+(wait_connected) to see the full time until the device is fully ready
+to go, presuming the device has a wait_for_connection method.</p>
+<p>Search terms are standard as in the same search terms as the search
+cli function. A blank search term means to load all the devices.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi benchmark <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-d">
+<span id="cmdoption-happi-benchmark-duration"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--duration</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;duration&gt;</span></span><a class="headerlink" href="#cmdoption-happi-benchmark-d" title="Permalink to this definition"></a></dt>
+<dd><p>Specify how long in seconds to spend per device.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-i">
+<span id="cmdoption-happi-benchmark-iterations"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--iterations</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;iterations&gt;</span></span><a class="headerlink" href="#cmdoption-happi-benchmark-i" title="Permalink to this definition"></a></dt>
+<dd><p>Specify the number of times to instantiate each device.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-w">
+<span id="cmdoption-happi-benchmark-wait-connected"></span><span class="sig-name descname"><span class="pre">-w</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--wait-connected</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-benchmark-w" title="Permalink to this definition"></a></dt>
+<dd><p>Wait for the devices to be connected.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-t">
+<span id="cmdoption-happi-benchmark-tracebacks"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tracebacks</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-benchmark-t" title="Permalink to this definition"></a></dt>
+<dd><p>Show tracebacks from failing device loads.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-s">
+<span id="cmdoption-happi-benchmark-sort-key"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--sort-key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;sort_key&gt;</span></span><a class="headerlink" href="#cmdoption-happi-benchmark-s" title="Permalink to this definition"></a></dt>
+<dd><p>Sort the output table. Valid options are name, avg_time, iterations, tot_time, max_time, import_time</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-glob">
+<span id="cmdoption-happi-benchmark-regex"></span><span class="sig-name descname"><span class="pre">--glob</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-benchmark-glob" title="Permalink to this definition"></a></dt>
+<dd><p>Use glob style (default) or regex style search terms. Regex requires backslashes to be escaped (eg. at\d.\d)</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-benchmark-arg-SEARCH_CRITERIA">
+<span id="cmdoption-happi-benchmark-arg-search-criteria"></span><span class="sig-name descname"><span class="pre">SEARCH_CRITERIA</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-benchmark-arg-SEARCH_CRITERIA" title="Permalink to this definition"></a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
 <section id="happi-container-registry">
 <h3>container-registry<a class="headerlink" href="#happi-container-registry" title="Permalink to this heading"></a></h3>
 <p>Print container registry</p>
@@ -172,6 +235,72 @@ to the item of name NAME.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-happi-load-arg-DEVICE_NAMES">
 <span id="cmdoption-happi-load-arg-device-names"></span><span class="sig-name descname"><span class="pre">DEVICE_NAMES</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-load-arg-DEVICE_NAMES" title="Permalink to this definition"></a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
+<section id="happi-profile">
+<h3>profile<a class="headerlink" href="#happi-profile" title="Permalink to this heading"></a></h3>
+<p>Per-function startup speed diagnostic.</p>
+<p>This will go through the happi loading process and show
+information about the execution time of all the
+functions called during the process.</p>
+<p>Contains options for picking which devices to check and which
+part of the loading process to profile. You can choose to
+profile the happi database loading (-d, –database), the
+class imports (-i, –import), the object instantiation
+(-o, –object), or all of the above (-a, –all).</p>
+<p>By default this will use whichever profiler you have installed,
+but this can also be overriden with the (-p, –profiler) option.
+The priority order is, first, the pcdsutils line_profiler wrapper
+(–profiler pcdsutils), and second, the built-in cProfile module
+(–profiler cprofile). More options may be added later.</p>
+<p>Search terms are standard as in the same search terms as the search
+cli function. A blank search term means to load all the devices.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi profile <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-d">
+<span id="cmdoption-happi-profile-database"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--database</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-profile-d" title="Permalink to this definition"></a></dt>
+<dd><p>Profile the database loading.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-i">
+<span id="cmdoption-happi-profile-import"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--import</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-profile-i" title="Permalink to this definition"></a></dt>
+<dd><p>Profile the module importing.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-o">
+<span id="cmdoption-happi-profile-object"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--object</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-profile-o" title="Permalink to this definition"></a></dt>
+<dd><p>Profile the object instantiation.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-a">
+<span id="cmdoption-happi-profile-all"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--all</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-profile-a" title="Permalink to this definition"></a></dt>
+<dd><p>Shortcut for enabling all profile stages.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-p">
+<span id="cmdoption-happi-profile-profiler"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--profiler</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;profiler&gt;</span></span><a class="headerlink" href="#cmdoption-happi-profile-p" title="Permalink to this definition"></a></dt>
+<dd><p>Select which profiler to use.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-glob">
+<span id="cmdoption-happi-profile-regex"></span><span class="sig-name descname"><span class="pre">--glob</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-profile-glob" title="Permalink to this definition"></a></dt>
+<dd><p>Use glob style (default) or regex style search terms. Regex requires backslashes to be escaped (eg. at\d.\d)</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-profile-arg-SEARCH_CRITERIA">
+<span id="cmdoption-happi-profile-arg-search-criteria"></span><span class="sig-name descname"><span class="pre">SEARCH_CRITERIA</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-profile-arg-SEARCH_CRITERIA" title="Permalink to this definition"></a></dt>
 <dd><p>Optional argument(s)</p>
 </dd></dl>
 
