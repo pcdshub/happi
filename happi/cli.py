@@ -1,7 +1,10 @@
 """
 This module defines the ``happi`` command line interface.
 """
+from __future__ import annotations
+
 import ast
+import dataclasses
 import fnmatch
 import json
 import logging
@@ -9,6 +12,9 @@ import os
 # on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
+import time
+from contextlib import contextmanager
+from cProfile import Profile
 from typing import List
 
 import click
@@ -59,6 +65,12 @@ def happi_cli(ctx, path, verbose):
     # through to new context objects
     ctx.obj = client
 
+    # Cleanup tasks related to loaded devices
+    @ctx.call_on_close
+    def device_cleanup():
+        pyepics_cleanup()
+        ophyd_cleanup()
+
 
 @happi_cli.command()
 @click.option('--show_json', '-j', is_flag=True,
@@ -84,9 +96,50 @@ def search(
     be combined with ANDs.
     """
     logger.debug("We're in the search block")
-    # Retrieve client
-    client = ctx.obj
 
+    final_results = search_parser(
+        client=ctx.obj,
+        use_glob=use_glob,
+        search_criteria=search_criteria,
+    )
+    if not final_results:
+        return []
+
+    # Final processing for output
+    if show_json:
+        json.dump([dict(res.item) for res in final_results], indent=2,
+                  fp=sys.stdout)
+    elif names:
+        out = " ".join([res.item.name for res in final_results])
+        click.echo(out)
+    else:
+        for res in final_results:
+            res.item.show_info()
+
+    return final_results
+
+
+def search_parser(
+    client: happi.Client,
+    use_glob: bool,
+    search_criteria: List[str],
+) -> List[happi.SearchResult]:
+    """
+    Parse the user's search criteria and return the search results.
+
+    ``search_criteria`` must be a list of key=value strings.
+    If key is omitted, it will be assumed to be "name".
+
+    Parameters
+    ----------
+    client : Client
+        The happi client that we'll be doing searches in.
+    use_glob : bool
+        True if we're using glob matching, False if we're using
+        regex matching.
+    search_criteria : list of str
+        The user's search selection from the command line.
+    """
     # Get search criteria into dictionary for use by client
     client_args = {}
     range_list = []
@@ -127,7 +180,7 @@ def search(
                 # we have searched via a range query.  At this point
                 # no matches, or intesection is empty. abort early
                 logger.error('No devices found')
-                return
+                return []
 
             continue
 
@@ -168,19 +221,6 @@ def search(
 
     if not final_results:
         logger.error('No devices found')
-        return
-
-    # Final processing for output
-    if show_json:
-        json.dump([dict(res.item) for res in final_results], indent=2,
-                  fp=sys.stdout)
-    elif names:
-        out = " ".join([res.item.name for res in final_results])
-        click.echo(out)
-    else:
-        for res in final_results:
-            res.item.show_info()
-
     return final_results
 
 
@@ -390,6 +430,437 @@ def transfer(ctx, name: str, target: str):
     target = happi.containers.registry._registry[target_match[0]]
     # transfer item and prompt for fixes
     transfer_container(client, item, target)
+
+
+benchmark_sort_keys = [
+    'name',
+    'avg_time',
+    'iterations',
+    'tot_time',
+    'max_time',
+    'import_time',
+]
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option("-d", "--duration", type=float, default=0,
+              help="Specify how long in seconds to spend per device.")
+@click.option("-i", "--iterations", type=int, default=1,
+              help="Specify the number of times to instantiate each device.")
+@click.option("-w", "--wait-connected", is_flag=True,
+              help="Wait for the devices to be connected.")
+@click.option("-t", "--tracebacks", is_flag=True,
+              help="Show tracebacks from failing device loads.")
+@click.option("-s", "--sort-key", type=str, default="avg_time",
+              help=(
+                "Sort the output table. Valid options are "
+                f"{', '.join(benchmark_sort_keys)}"
+              ))
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='Use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.argument('search_criteria', nargs=-1)
+def benchmark(
+    ctx,
+    duration: float,
+    iterations: int,
+    wait_connected: bool,
+    tracebacks: bool,
+    sort_key: str,
+    use_glob: bool,
+    search_criteria: List[str],
+):
+    """
+    Compare happi device startup times.
+
+    This will generate a table that shows you how long each device took
+    to instantiate.
+
+    Repeats for at least the (-d, --duration) arg (default = 0 seconds)
+    and for at least the number of the (-i, --iterations) arg (default = 1
+    iteration), showing stats and averages.
+
+    By default we time only the duration of __init__, but you can also
+    (wait_connected) to see the full time until the device is fully ready
+    to go, presuming the device has a wait_for_connection method.
+
+    Search terms are standard as in the same search terms as the search
+    cli function. A blank search term means to load all the devices.
+    """
+    logger.debug('Starting benchmark block')
+    client: happi.Client = ctx.obj
+    full_stats = []
+    logger.info('Collecting happi items...')
+    start = time.monotonic()
+    if search_criteria:
+        items = search_parser(
+            client=client,
+            use_glob=use_glob,
+            search_criteria=search_criteria,
+        )
+    else:
+        # All the items
+        items = client.search()
+    logger.info(f'Done, took {time.monotonic() - start} s')
+    for result in items:
+        logger.info(f'Running benchmark on {result["name"]}')
+        try:
+            stats = Stats.from_search_result(
+                result=result,
+                duration=duration,
+                iterations=iterations,
+                wait_connected=wait_connected,
+            )
+        except Exception:
+            logger.error(
+                f'Error running benchmark on {result["name"]}',
+                exc_info=tracebacks,
+            )
+        else:
+            full_stats.append(stats)
+    table = prettytable.PrettyTable()
+    table.field_names = benchmark_sort_keys
+    if sort_key not in table.field_names:
+        logger.warning(f'Sort key {sort_key} invalid, reverting to avg_time')
+        sort_key = 'avg_time'
+    for stats in sorted(
+        full_stats,
+        key=lambda x: getattr(x, sort_key),
+        reverse=True,
+    ):
+        table.add_row([getattr(stats, key) for key in benchmark_sort_keys])
+    print('Benchmark output:')
+    print(table)
+    print('Benchmark completed successfully')
+
+
+@dataclasses.dataclass
+class Stats:
+    """
+    Collect and hold results from benchmark runs.
+    """
+    name: str
+    avg_time: float
+    iterations: int
+    tot_time: float
+    max_time: float
+    import_time: float
+
+    @classmethod
+    def from_search_result(
+        cls,
+        result: happi.SearchResult,
+        duration: float,
+        iterations: int,
+        wait_connected: bool,
+    ) -> Stats:
+        """
+        Create an object using a search result and store benchmarking info.
+        """
+        logger.debug(f'Checking stats for {result["name"]}')
+        if not duration and not iterations:
+            return Stats(
+                name=result["name"],
+                avg_time=0,
+                iterations=0,
+                tot_time=0,
+                max_time=0,
+                import_time=0,
+            )
+        raw_stats: List[float] = []
+        import_time = cls.import_benchmark(result)
+        counter = 0
+        start = time.monotonic()
+        while counter < iterations or time.monotonic() - start < duration:
+            raw_stats.append(
+                cls.run_one_benchmark(
+                    result=result,
+                    wait_connected=wait_connected
+                )
+            )
+            counter += 1
+        return Stats(
+            name=result["name"],
+            avg_time=sum(raw_stats) / len(raw_stats),
+            iterations=len(raw_stats),
+            tot_time=sum(raw_stats),
+            max_time=max(raw_stats),
+            import_time=import_time,
+        )
+
+    @staticmethod
+    def import_benchmark(result: happi.SearchResult) -> float:
+        """
+        Check only the module import in isolation.
+        """
+        start = time.monotonic()
+        happi.loader.import_class(result.item.device_class)
+        return time.monotonic() - start
+
+    @staticmethod
+    def run_one_benchmark(
+        result: happi.SearchResult,
+        wait_connected: bool,
+    ) -> float:
+        """
+        Create one object and time it.
+        """
+        start = time.monotonic()
+        device = result.get(use_cache=False)
+        if wait_connected:
+            try:
+                device.wait_for_connection(timeout=10.0)
+            except AttributeError:
+                logger.warning(
+                    f'{result["name"]} does not have wait_for_connection.'
+                )
+            except TimeoutError:
+                logger.warning(
+                    'Timeout after 10s while waiting for connection of '
+                    f'{result["name"]}',
+                )
+            except Exception:
+                logger.warning(
+                    'Unknown exception while waiting for connection of '
+                    f'{result["name"]}',
+                )
+        return time.monotonic() - start
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option('-d', '--database', 'profile_database', is_flag=True,
+              help='Profile the database loading.')
+@click.option('-i', '--import', 'profile_import', is_flag=True,
+              help='Profile the module importing.')
+@click.option('-o', '--object', 'profile_object', is_flag=True,
+              help='Profile the object instantiation.')
+@click.option('-a', '--all', 'profile_all', is_flag=True,
+              help='Shortcut for enabling all profile stages.')
+@click.option('-p', '--profiler', default='auto',
+              help='Select which profiler to use.')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='Use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.argument('search_criteria', nargs=-1)
+def profile(
+    ctx,
+    profile_database: bool,
+    profile_import: bool,
+    profile_object: bool,
+    profile_all: bool,
+    profiler: str,
+    use_glob: bool,
+    search_criteria: List[str],
+):
+    """
+    Per-function startup speed diagnostic.
+
+    This will go through the happi loading process and show
+    information about the execution time of all the
+    functions called during the process.
+
+    Contains options for picking which devices to check and which
+    part of the loading process to profile. You can choose to
+    profile the happi database loading (-d, --database), the
+    class imports (-i, --import), the object instantiation
+    (-o, --object), or all of the above (-a, --all).
+
+    By default this will use whichever profiler you have installed,
+    but this can also be overriden with the (-p, --profiler) option.
+    The priority order is, first, the pcdsutils line_profiler wrapper
+    (--profiler pcdsutils), and second, the built-in cProfile module
+    (--profiler cprofile). More options may be added later.
+
+    Search terms are standard as in the same search terms as the search
+    cli function. A blank search term means to load all the devices.
+    """
+    logger.debug('Starting profile block')
+    if profiler not in ('auto', 'pcdsutils', 'cprofile'):
+        raise RuntimeError(f'Invalid profiler selection {profiler}')
+    client: happi.Client = ctx.obj
+    if profile_all:
+        profile_database = True
+        profile_import = True
+        profile_object = True
+    if not any((profile_database, profile_import, profile_object)):
+        raise RuntimeError('No profile options selected!')
+    if profiler == 'auto':
+        try:
+            import pcdsutils.profile
+            if pcdsutils.profile.has_line_profiler:
+                profiler = 'pcdsutils'
+            else:
+                profiler = 'cprofile'
+        except ImportError:
+            profiler = 'cprofile'
+    if profiler == 'pcdsutils':
+        from pcdsutils.profile import profiler_context
+        context_profiler = None
+    elif profiler == 'cprofile':
+        context_profiler = Profile()
+
+        @contextmanager
+        def profiler_context(*args, **kwargs):
+            context_profiler.enable()
+            yield
+            context_profiler.disable()
+
+    @contextmanager
+    def null_context(*args, **kwargs):
+        yield
+
+    def output_profile():
+        # Call at the end: let's output results to stdout
+        if profiler == 'pcdsutils':
+            from pcdsutils.profile import print_results
+            print_results()
+        elif profiler == 'cprofile':
+            context_profiler.print_stats(sort='cumulative')
+        print('Profile completed successfully')
+
+    # Profile stage 1: searching the happi database
+    logger.info('Searching the happi database')
+    if profile_database:
+        db_context = profiler_context
+    else:
+        db_context = null_context
+    start = time.monotonic()
+    with db_context(
+        module_names=['happi'],
+        use_global_profiler=True,
+        output_now=False,
+    ):
+        if search_criteria:
+            items = search_parser(
+                client=client,
+                use_glob=use_glob,
+                search_criteria=search_criteria,
+            )
+        else:
+            # All the items
+            items = client.search()
+    logger.info(
+        f'Searched the happi database in {time.monotonic() - start} s'
+    )
+
+    if not any((profile_import, profile_object)):
+        return output_profile()
+
+    # Profile stage 2: import the device classes
+    logger.info('Importing the device classes')
+    if profile_import:
+        import_context = profiler_context
+    else:
+        import_context = null_context
+
+    classes = set()
+    start = time.monotonic()
+    with import_context(
+        module_names=['happi'],
+        use_global_profiler=True,
+        output_now=False,
+    ):
+        for search_result in items:
+            try:
+                cls = happi.loader.import_class(
+                    search_result.item.device_class,
+                )
+                classes.add(cls)
+            except ImportError:
+                logger.warning(
+                    f'Failed to import {search_result.item.device_class}'
+                )
+    logger.info(
+        f'Imported the device classes in {time.monotonic() - start} s'
+    )
+
+    if not profile_object:
+        return output_profile()
+
+    # Check which modules to focus on for line profiler
+    module_names = set(('happi',))
+    for instance_class in classes:
+        try:
+            parents = instance_class.mro()
+        except AttributeError:
+            # E.g. we have a function
+            parents = [instance_class]
+        for parent_class in parents:
+            module = parent_class.__module__
+            module_names.add(module.split('.')[0])
+    # Add imported ophyd control layers
+    for cl in ('epics', 'caproto'):
+        if cl in sys.modules:
+            module_names.add(cl)
+
+    # Profile stage 3: create the device classes
+    logger.info('Creating the device classes')
+    if profile_object:
+        object_context = profiler_context
+    else:
+        object_context = null_context
+    start = time.monotonic()
+    with object_context(
+        module_names=module_names,
+        use_global_profiler=True,
+        output_now=False,
+    ):
+        for search_result in items:
+            try:
+                search_result.get(use_cache=False)
+            except Exception:
+                logger.warning(
+                    f'Failed to create {search_result["name"]}'
+                )
+    logger.info(
+        f'Created the device classes in {time.monotonic() - start} s'
+    )
+    return output_profile()
+
+
+def ophyd_cleanup():
+    """
+    Clean up ophyd - avoid teardown errors by stopping callbacks.
+
+    If this is not run, ophyd callbacks continue to run and can cause
+    terminal spam and segfaults.
+    """
+    if 'ophyd' in sys.modules:
+        import ophyd
+        dispatcher = ophyd.cl.get_dispatcher()
+        if dispatcher is not None:
+            dispatcher.stop()
+
+
+def pyepics_cleanup():
+    """
+    Clean up pyepics - avoid teardown errors by stopping callbacks.
+
+    If this is not run, pyepics callbacks continue to run and if they throw
+    exceptions they will create terminal spam.
+
+    Run this before ophyd_cleanup to prevent race conditions where pyepics
+    is trying to call ophyd things that have been torn down.
+    """
+    if 'epics' in sys.modules:
+        from epics import ca
+
+        # Prevent new callbacks from being set up
+        def no_create_channel(*args, **kwargs):
+            ...
+
+        ca.create_channel = no_create_channel
+
+        # Remove references to existing callbacks
+        for context_cache in ca._cache.values():
+            for cache_item in context_cache.values():
+                try:
+                    cache_item.callbacks.clear()
+                    cache_item.access_event_callback.clear()
+                except AttributeError:
+                    print(cache_item)
 
 
 def main():
