@@ -1,0 +1,5 @@
+[flake8]
+exclude = .git,__pycache__,build,dist,versioneer.py,happi/_version.py,docs/source/conf.py
+max-line-length = 88
+select = C,E,F,W,B,B950
+extend-ignore = E203, E501

@@ -14,6 +14,7 @@ TITLE_UNDER = '#'
 RELEASE_UNDER = '='
 SECTION_UNDER = '-'
 
+
 def parse_pre_release_file(path):
     """
     Return dict mapping of release notes section to lines.

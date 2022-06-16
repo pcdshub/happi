@@ -424,6 +424,9 @@ class QSBackend(JSONBackend):
 
     def __init__(self, expname, *, url=None, use_kerberos=True, user=None,
                  pw=None):
+        # Load cache is unused for this backend, but we have it here for
+        # API compatibility with the superclass JSONBackend.
+        self._load_cache = None
         # Create our client and gather the raw information from the client
         self._client = QuestionnaireClient(
             url=url, use_kerberos=use_kerberos, user=user, pw=pw
