@@ -1,5 +1,6 @@
 import collections
 import configparser
+import contextlib
 import inspect
 import itertools
 import logging
@@ -128,6 +129,8 @@ class Client(collections.abc.Mapping):
     _results_wrap_class = SearchResult
 
     def __init__(self, database=None, **kwargs):
+        self._retain_cache = False
+
         # Use supplied backend
         if database:
             self.backend = database
@@ -143,6 +146,25 @@ class Client(collections.abc.Mapping):
                 raise DatabaseError(
                     f"Failed to instantiate a {DEFAULT_BACKEND} backend"
                 ) from exc
+
+    @contextlib.contextmanager
+    def retain_cache_context(self, clear_first: bool = True):
+        """
+        Context manager which can be used to retain the happi backend cache.
+
+        Parameters
+        ----------
+        clear_first : bool, optional
+            Clear the cache before entering the block.  Defaults to True.
+        """
+        if clear_first:
+            self.backend.clear_cache()
+
+        try:
+            self._retain_cache = True
+            yield
+        finally:
+            self._retain_cache = False
 
     def find_document(self, **kwargs):
         """
@@ -175,7 +197,7 @@ class Client(collections.abc.Mapping):
         if len(kwargs) == 0:
             raise SearchError('No information pertinent to device given')
 
-        self.backend.clear_cache()
+        self._maybe_clear_cache()
         matches = list(itertools.islice(self.backend.find(kwargs), 1))
         if not matches:
             raise SearchError(
@@ -492,6 +514,11 @@ class Client(collections.abc.Mapping):
     def __len__(self):
         return len(self.all_items)
 
+    def _maybe_clear_cache(self):
+        """Clear the backend cache if not in a retain-cache block."""
+        if not self._retain_cache:
+            self.backend.clear_cache()
+
     def _get_search_results(self, items, *, wrap_cls=None):
         """
         Return search results to the user, optionally wrapping with a class.
@@ -536,7 +563,7 @@ class Client(collections.abc.Mapping):
                                               beamline='HXR')
         """
 
-        self.backend.clear_cache()
+        self._maybe_clear_cache()
         items = self.backend.find_range(key, start=start, stop=end,
                                         to_match=kwargs)
         return self._get_search_results(items)
@@ -564,7 +591,7 @@ class Client(collections.abc.Mapping):
             hxr_valves  = client.search(type='Valve', beamline='HXR')
         """
 
-        self.backend.clear_cache()
+        self._maybe_clear_cache()
         items = self.backend.find(kwargs)
         return self._get_search_results(items)
 
@@ -594,7 +621,7 @@ class Client(collections.abc.Mapping):
             three_valves = client.search_regex(_id='VALVE[123]')
         """
 
-        self.backend.clear_cache()
+        self._maybe_clear_cache()
         items = self.backend.find_regex(kwargs, flags=flags)
         return self._get_search_results(items)
 

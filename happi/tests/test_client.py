@@ -351,3 +351,36 @@ def test_client_mapping(
     assert list(dict(client)) == list(three_valves.keys())
     for name in client:
         assert client[name]['name']
+
+
+def test_cache_context(monkeypatch, client_with_three_valves: Client):
+    client = client_with_three_valves
+    valve1 = client['VALVE1']
+    valve2 = client['VALVE2']
+    valve3 = client['VALVE3']
+
+    cache_clear_count = 0
+    orig_clear_cache = client.backend.clear_cache
+
+    def clear_cache():
+        nonlocal cache_clear_count
+        cache_clear_count += 1
+        return orig_clear_cache()
+
+    monkeypatch.setattr(client.backend, "clear_cache", clear_cache)
+    with client.retain_cache_context():
+        results1 = set(client.search_regex(name='valve1|valve2'))
+        results2 = set(client.search_regex(name='valve.*'))
+
+    assert cache_clear_count == 1
+
+    assert valve1 != 'VALVE1'
+    assert valve1 != valve1.metadata
+
+    assert len(results1 & results2) == 2
+    assert valve1 in (results1 & results2)
+    assert valve2 in (results1 & results2)
+    assert len(results1 ^ results2) == 1
+    assert valve3 in (results1 ^ results2)
+    assert valve2 not in (results1 ^ results2)
+    assert results2 == (results1 | results2)

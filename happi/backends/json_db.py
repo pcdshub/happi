@@ -60,6 +60,7 @@ class JSONBackend(_Backend):
 
     def clear_cache(self) -> None:
         """Clear the loaded cache."""
+        print("cache clear")
         self._load_cache = None
 
     def _load_or_initialize(self):
