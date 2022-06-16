@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>261 search_nums &mdash; Happi 1.13.0+64.g5565f16 documentation</title>
+  <title>235 client performance &mdash; Happi 1.13.0+64.g5565f16 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,7 +19,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="260 hashable" href="260-hashable.html" /> 
+    <link rel="next" title="253 fix_tests" href="253-fix_tests.html" />
+    <link rel="prev" title="Upcoming Changes" href="../upcoming_changes.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,10 +55,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../releases.html">Release History</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../upcoming_changes.html">Upcoming Changes</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="235-performance.html">235 client performance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="253-fix_tests.html">253 fix_tests</a></li>
-<li class="toctree-l2"><a class="reference internal" href="260-hashable.html">260 hashable</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">261 search_nums</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">235 client performance</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#api-changes">API Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
@@ -65,6 +63,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#contributors">Contributors</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="253-fix_tests.html">253 fix_tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="260-hashable.html">260 hashable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="261-search_nums.html">261 search_nums</a></li>
 </ul>
 </li>
 </ul>
@@ -84,9 +85,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../upcoming_changes.html">Upcoming Changes</a> &raquo;</li>
-      <li>261 search_nums</li>
+      <li>235 client performance</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/upcoming_release_notes/261-search_nums.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/upcoming_release_notes/235-performance.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -94,36 +95,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="search-nums">
-<h1>261 search_nums<a class="headerlink" href="#search-nums" title="Permalink to this heading"></a></h1>
+  <section id="client-performance">
+<h1>235 client performance<a class="headerlink" href="#client-performance" title="Permalink to this heading"></a></h1>
 <section id="api-changes">
 <h2>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">happi.Client.retain_cache_context</span></code> for clients that desire to
+control when reloading the database from a happi backend happens.</p></li>
+<li><p>Backend implementations may now optionally support a caching mechanism with
+<code class="docutils literal notranslate"><span class="pre">clear_cache</span></code> being called externally by the client when desirable.</p></li>
 </ul>
 </section>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>Significant performance increase for JSON-backed happi clients.</p></li>
 </ul>
 </section>
 <section id="bugfixes">
 <h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Allow int search values to match their float counterparts</p></li>
+<li><p>Issue where happi Client would repeatedly (and unnecessarily) make database
+backend calls has been fixed.</p></li>
 </ul>
 </section>
 <section id="maintenance">
 <h2>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>Added relaxed flake8 configuration.</p></li>
 </ul>
 </section>
 <section id="contributors">
 <h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>tangkong</p></li>
+<li><p>klauer</p></li>
 </ul>
 </section>
 </section>
@@ -132,7 +137,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="260-hashable.html" class="btn btn-neutral float-left" title="260 hashable" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../upcoming_changes.html" class="btn btn-neutral float-left" title="Upcoming Changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="253-fix_tests.html" class="btn btn-neutral float-right" title="253 fix_tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

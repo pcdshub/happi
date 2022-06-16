@@ -14,6 +14,7 @@
    .. autosummary::
    
       ~MongoBackend.__init__
+      ~MongoBackend.clear_cache
       ~MongoBackend.delete
       ~MongoBackend.find
       ~MongoBackend.find_range
