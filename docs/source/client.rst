@@ -59,7 +59,7 @@ Alternatively, you can create the item separately and add it explicitly using
     client.add_item(item)
 
 The main advantage of the first method is that all of the container classes are
-already managed by th eclient so they can be easily accessed with a string.
+already managed by the client so they can be easily accessed with a string.
 Keep in mind, that either way, all of the mandatory information needs to be
 given to the item before it can be loaded into the database.
 
