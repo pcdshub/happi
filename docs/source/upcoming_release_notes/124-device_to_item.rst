@@ -1,5 +1,5 @@
 124 device_to_item
-#################
+##################
 
 API Changes
 -----------
@@ -27,6 +27,8 @@ Maintenance
 -----------
 - Old terminology for ``HappiItem`` instances has been scrubbed and clarified
   in documentation.
+- Test suite and documentation has been updated to reflect trajectory of
+  deprecated methods and naming.
 
 Contributors
 ------------
