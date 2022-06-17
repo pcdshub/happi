@@ -55,7 +55,7 @@ def test_caching():
     # Modify md and check we see a reload
     d.days = 12
     assert id(td) != id(from_container(d, use_cache=True))
-    # Check with a item where metadata is unavailable
+    # Check with an item where metadata is unavailable
     d = TimeDevice(name='test', prefix='Tst:Delta:3', beamline='TST',
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})

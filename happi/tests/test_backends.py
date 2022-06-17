@@ -49,13 +49,13 @@ def test_mongo_find(
     assert [item_info] == find(_id=item_info['_id'])
     # Single item by kwarg
     assert [valve_info] == find(prefix=valve_info['prefix'])
-    # No multiple devices expected
+    # No multiple items expected
     assert find(beamline='BLERG') == []
-    # Multiple devices by id
+    # Multiple items by id
     assert [item_info] == find(_id=item_info['_id'])
-    # Multiple devices by kwarg
+    # Multiple items by kwarg
     assert [item_info] == find(prefix=item_info['prefix'])
-    # Multiple devices expected
+    # Multiple items expected
     assert all(info in find(beamline='LCLS')
                for info in (item_info, valve_info))
 
@@ -106,13 +106,13 @@ def test_json_find(
     assert [item_info] == find(_id=item_info['_id'])
     # Single item by kwarg
     assert [valve_info] == find(prefix=valve_info['prefix'])
-    # No multiple devices expected
+    # No multiple items expected
     assert find(beamline='BLERG') == []
-    # Multiple devices by id
+    # Multiple items by id
     assert [item_info] == find(_id=item_info['_id'])
-    # Multiple devices by kwarg
+    # Multiple items by kwarg
     assert [item_info] == find(prefix=item_info['prefix'])
-    # Multiple devices expected
+    # Multiple items expected
     assert all(info in find(beamline='LCLS')
                for info in (item_info, valve_info))
 

@@ -89,9 +89,9 @@ def test_add_and_find_item(
     valve_info: Dict[str, Any]
 ):
     happi_client.add_item(valve)
-    loaded_device = happi_client.find_item(**valve_info)
-    assert loaded_device.prefix == valve.prefix
-    assert loaded_device.name == valve.name
+    loaded_item = happi_client.find_item(**valve_info)
+    assert loaded_item.prefix == valve.prefix
+    assert loaded_item.name == valve.name
 
 
 def test_find_item(happi_client: Client, item_info: Dict[str, Any]):
@@ -102,9 +102,9 @@ def test_find_item(happi_client: Client, item_info: Dict[str, Any]):
     # Test edit and save
     item.stand = 'DG3'
     item.save()
-    loaded_device = happi_client.find_item(**item_info)
-    assert loaded_device.prefix == item_info['prefix']
-    assert loaded_device.name == item_info['name']
+    loaded_item = happi_client.find_item(**item_info)
+    assert loaded_item.prefix == item_info['prefix']
+    assert loaded_item.name == item_info['name']
     # Bad load
     bad = {'a': 'b'}
     happi_client.backend.save('a', bad, insert=True)
@@ -121,15 +121,15 @@ def test_change_item_name(happi_client: Client, item_info: Dict[str, Any]):
     with pytest.raises(SearchError):
         happi_client.find_item(**item_info)
     # new entry with new name should be there
-    new_device = happi_client.find_item(name=item.name)
+    new_item = happi_client.find_item(name=item.name)
     # prefix or other attributes should be the same
-    assert new_device.prefix == item.prefix
+    assert new_item.prefix == item.prefix
     # we should only have one deivce now which is the new one
-    assert happi_client.all_items == [new_device]
+    assert happi_client.all_items == [new_item]
 
 
 def test_validate(happi_client: Client):
-    # No bad devices
+    # No bad items
     assert happi_client.validate() == list()
     # A single bad item
     happi_client.backend.save('_id', {happi_client._id_key: 'bad'},
@@ -146,16 +146,16 @@ def test_search(
     res = happi_client.search(name=item_info['name'])
     # Single search return
     assert len(res) == 1
-    loaded_device = res[0].item
-    assert loaded_device.prefix == item_info['prefix']
-    assert loaded_device.name == item_info['name']
+    loaded_item = res[0].item
+    assert loaded_item.prefix == item_info['prefix']
+    assert loaded_item.name == item_info['name']
     # No results
     assert not happi_client.search(name='not')
     # Returned as dict
     res = happi_client.search(**item_info)
-    loaded_device = res[0].item
-    assert loaded_device['prefix'] == item_info['prefix']
-    assert loaded_device['name'] == item_info['name']
+    loaded_item = res[0].item
+    assert loaded_item['prefix'] == item_info['prefix']
+    assert loaded_item['name'] == item_info['name']
     # Search off keyword
     res = happi_client.search(beamline='LCLS')
     assert len(res) == 2
@@ -219,7 +219,7 @@ def test_remove_item(
 ):
     happi_client.remove_item(item)
     assert list(happi_client.backend.find(item_info)) == []
-    # Invalid Device
+    # Invalid item
     with pytest.raises(ValueError):
         happi_client.remove_item(5)
     # Valve not in dictionary
@@ -228,7 +228,7 @@ def test_remove_item(
 
 
 def test_export(happi_client: Client, valve: OphydItem):
-    # Setup client with both devices
+    # Setup client with both items
     happi_client.add_item(valve)
     fd, temp_path = tempfile.mkstemp()
     happi_client.export(open(temp_path, 'w+'),

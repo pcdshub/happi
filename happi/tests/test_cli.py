@@ -459,12 +459,23 @@ def test_add_clone(
     happi_cfg: str,
     runner: CliRunner
 ):
-    device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
-                             "['arg1', 'arg2']", 'name', 'my_name', '',
-                             'Y', 'docs', 'y'])
+    item_info = "\n".join(
+        [
+            "HappiItem",
+            "happi_name",
+            "device_class",
+            "['arg1', 'arg2']",
+            "name",
+            "my_name",
+            "",
+            "Y",
+            "docs",
+            "y",
+        ]
+    )
     # add item first
     add_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
-                               input=device_info)
+                               input=item_info)
     assert add_result.exit_code == 0
 
     clone_result = runner.invoke(
@@ -474,7 +485,7 @@ def test_add_clone(
     assert_match_expected(clone_result, expected_output)
 
 
-def test_add_clone_device_not_found(happi_cfg: str, runner: CliRunner):
+def test_add_clone_item_not_found(happi_cfg: str, runner: CliRunner):
     result = runner.invoke(
         happi_cli,
         ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name']
@@ -502,14 +513,25 @@ def test_edit(
     happi_cfg: str,
     runner: CliRunner
 ):
-    device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
-                             "['arg1', 'arg2']", 'name', 'my_name', '',
-                             'Y', 'docs', 'y'])
+    item_info = "\n".join(
+        [
+            "HappiItem",
+            "happi_name",
+            "device_class",
+            "['arg1', 'arg2']",
+            "name",
+            "my_name",
+            "",
+            "Y",
+            "docs",
+            "y",
+        ]
+    )
     # add item first
     add_result = runner.invoke(
         happi_cli,
         ['--verbose', '--path', happi_cfg, 'add'],
-        input=device_info
+        input=item_info
     )
     assert add_result.exit_code == 0
 
@@ -549,12 +571,23 @@ def test_load(
     happi_cfg: str,
     runner: CliRunner
 ):
-    device_info = '\n'.join(['HappiItem', 'happi_name',
-                             'types.SimpleNamespace', '', 'name', 'my_name',
-                             '', 'y', 'docs', 'y'])
+    item_info = "\n".join(
+        [
+            "HappiItem",
+            "happi_name",
+            "types.SimpleNamespace",
+            "",
+            "name",
+            "my_name",
+            "",
+            "y",
+            "docs",
+            "y",
+        ]
+    )
     # add item first
     add_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
-                               input=device_info)
+                               input=item_info)
     assert add_result.exit_code == 0
 
     # try to load the item
