@@ -145,65 +145,67 @@ def search_parser(
     range_list = []
     regex_list = []
     range_found = False
-    for user_arg in search_criteria:
-        if '=' in user_arg:
-            criteria, value = user_arg.split('=', 1)
-        else:
-            criteria = 'name'
-            value = user_arg
-        if criteria in client_args:
-            logger.error(
-                'Received duplicate search criteria %s=%r (was %r)',
-                criteria, value, client_args[criteria]
-            )
-            raise click.Abort()
 
-        if is_a_range(value):
-            start, stop = value.split(',')
-            start = float(start)
-            stop = float(stop)
-            if start < stop:
-                new_range_list = client.search_range(criteria, start, stop)
+    with client.retain_cache_context():
+        for user_arg in search_criteria:
+            if '=' in user_arg:
+                criteria, value = user_arg.split('=', 1)
             else:
-                logger.error('Invalid range, make sure start < stop')
+                criteria = 'name'
+                value = user_arg
+            if criteria in client_args:
+                logger.error(
+                    'Received duplicate search criteria %s=%r (was %r)',
+                    criteria, value, client_args[criteria]
+                )
                 raise click.Abort()
 
-            if not range_found:
-                # if first range, just replace
-                range_found = True
-                range_list = new_range_list
-            else:
-                # subsequent ranges, only take intersection
-                range_list = set(new_range_list) & set(range_list)
+            if is_a_range(value):
+                start, stop = value.split(',')
+                start = float(start)
+                stop = float(stop)
+                if start < stop:
+                    new_range_list = client.search_range(criteria, start, stop)
+                else:
+                    logger.error('Invalid range, make sure start < stop')
+                    raise click.Abort()
 
-            if not range_list:
-                # we have searched via a range query.  At this point
-                # no matches, or intesection is empty. abort early
-                logger.error('No items found')
-                return []
+                if not range_found:
+                    # if first range, just replace
+                    range_found = True
+                    range_list = new_range_list
+                else:
+                    # subsequent ranges, only take intersection
+                    range_list = set(new_range_list) & set(range_list)
 
-            continue
+                if not range_list:
+                    # we have searched via a range query.  At this point
+                    # no matches, or intesection is empty. abort early
+                    logger.error("No items found")
+                    return []
 
-        elif is_number(value):
-            if float(value) == int(float(value)):
-                # value is an int, allow the float version (optional .0)
-                logger.debug(f'looking for int value: {value}')
-                value = f'^{int(float(value))}(\\.0+$)?$'
-
-                # don't translate from glob
-                client_args[criteria] = value
                 continue
+
+            elif is_number(value):
+                if float(value) == int(float(value)):
+                    # value is an int, allow the float version (optional .0)
+                    logger.debug(f'looking for int value: {value}')
+                    value = f'^{int(float(value))}(\\.0+$)?$'
+
+                    # don't translate from glob
+                    client_args[criteria] = value
+                    continue
+                else:
+                    value = str(float(value))
             else:
-                value = str(float(value))
-        else:
-            logger.debug('Value %s interpreted as string', value)
+                logger.debug('Value %s interpreted as string', value)
 
-        if use_glob:
-            client_args[criteria] = fnmatch.translate(value)
-        else:  # already using regex
-            client_args[criteria] = value
+            if use_glob:
+                client_args[criteria] = fnmatch.translate(value)
+            else:  # already using regex
+                client_args[criteria] = value
 
-    regex_list = client.search_regex(**client_args)
+        regex_list = client.search_regex(**client_args)
 
     # Gather final results
     final_results = []
