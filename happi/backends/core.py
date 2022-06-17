@@ -15,8 +15,13 @@ class _Backend:
     """
 
     @property
-    def all_devices(self):
-        """List of all device sub-dictionaries."""
+    def all_items(self):
+        """
+        List of all items in the database.
+
+        This base class ``_Backend`` provides no implementation and requires
+        that a subclass provide its customized implementation.
+        """
         raise NotImplementedError
 
     def clear_cache(self) -> None:
@@ -29,6 +34,9 @@ class _Backend:
     def find(self, multiples=False, **kwargs):
         """
         Find an instance or instances that matches the search criteria.
+
+        This base class ``_Backend`` provides no implementation and requires
+        that a subclass provide its customized implementation.
 
         Parameters
         ----------
@@ -43,6 +51,9 @@ class _Backend:
     def save(self, _id, post, insert=True):
         """
         Save information to the database.
+
+        This base class ``_Backend`` provides no implementation and requires
+        that a subclass provide its customized implementation.
 
         Parameters
         ----------
@@ -69,6 +80,9 @@ class _Backend:
     def delete(self, _id):
         """
         Delete a device instance from the database.
+
+        This base class ``_Backend`` provides no implementation and requires
+        that a subclass provide its customized implementation.
 
         Parameters
         ----------
