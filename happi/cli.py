@@ -347,7 +347,7 @@ def edit(ctx, name: str, edits: List[str]):
 @click.argument('item_names', nargs=-1)
 @click.pass_context
 def load(ctx, item_names: List[str]):
-    """Open IPython terminal with DEVICE_NAMES loaded"""
+    """Open IPython terminal with ITEM_NAMES loaded"""
 
     logger.debug('Starting load block')
     # retrieve client
