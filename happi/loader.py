@@ -24,18 +24,18 @@ main_event_loop = None
 
 def fill_template(
     template: str,
-    device: HappiItem,
+    item: HappiItem,
     enforce_type: bool = False
 ) -> Any:
     """
-    Fill a Jinja2 template using information from a device.
+    Fill a Jinja2 template using information from a happi item.
 
     Parameters
     ----------
     template : str
         Jinja2 template source.
 
-    device : HappiItem
+    item : HappiItem
         Any happi item container.
 
     enforce_type : bool, optional
@@ -50,7 +50,7 @@ def fill_template(
     """
     # Create a template and render our happi information inside it
     env = Environment().from_string(template)
-    filled = env.render(**device.post())
+    filled = env.render(**item.post())
     # Find which variable we used in the template, get the type and convert our
     # rendered template to agree with this
     info = meta.find_undeclared_variables(env.environment.parse(template))
@@ -58,11 +58,11 @@ def fill_template(
         # Enforcing types only works with 1 attribute name in the template
         return filled
 
-    # Get the original attribute back from the device. If this does not exist
+    # Get the original attribute back from the item. If this does not exist
     # there is a possibility it is a piece of metadata e.t.c
     attr_name = info.pop()
     try:
-        typed_attr = getattr(device, attr_name)
+        typed_attr = getattr(item, attr_name)
     except AttributeError:
         logger.warning(
             "Can not enforce type to match attribute %s as it does not "
@@ -89,7 +89,7 @@ def fill_template(
 
 
 def from_container(
-    device: HappiItem,
+    item: HappiItem,
     attach_md: bool = True,
     use_cache: bool = True,
     threaded: bool = False,
@@ -97,12 +97,16 @@ def from_container(
     """
     Load an object (or "device") from a compatible HappiItem.
 
-    The container is queried for the device_class, args, and kwargs. Then if
-    the associated package is not already loaded it is imported. The specified
-    class is then instantiated with the given args and kwargs provided.
+    The item container is queried for the ``device_class``, ``args``, and
+    ``kwargs``. If the associated Python module is not already loaded it will
+    be imported. The specified class is then instantiated with the given args
+    and kwargs provided.
+
+    The name ``device`` here refers to what is created after instantiating
+    ``device_class``.
 
     This function does not attempt to catch exceptions either during module
-    imports or device creation. If you would like a series of independent
+    imports or object creation. If you would like a series of independent
     devices to be loaded use :func:`.load_devices`.
 
     By default, the instantiated object has the original container added on as
@@ -114,8 +118,8 @@ def from_container(
 
     Parameters
     ----------
-    device : happi.HappiItem
-        The device to load.
+    item : happi.HappiItem
+        The item to load.
     attach_md : bool, optional
         Attach the container to the instantiated object as ``md``.
     use_cache : bool, optional
@@ -140,50 +144,50 @@ def from_container(
     """
 
     # Return a cached version of the device if present and not forced
-    if use_cache and device.name in cache:
-        cached_device = cache[device.name]
+    if use_cache and item.name in cache:
+        cached_device = cache[item.name]
         # If the metadata has not been modified or we can't review it.
         # Return the cached object
-        if hasattr(cached_device, 'md') and cached_device.md == device:
-            logger.debug("Loading %s from cache...", device.name)
+        if hasattr(cached_device, 'md') and cached_device.md == item:
+            logger.debug("Loading %s from cache...", item.name)
             return cached_device
 
         # Otherwise reload
         logger.warning(
             "Device %s has already been loaded, but the database information "
             "has been modified. Reloading...",
-            device.name
+            item.name
         )
 
     # Find the class and module of the container.
-    if not device.device_class:
+    if not item.device_class:
         raise ValueError(
-            f"Device {device.name} does not have an associated Python class"
+            f"Item {item.name} does not have an associated Python class"
         )
 
-    cls = import_class(device.device_class)
+    cls = import_class(item.device_class)
 
     # Create correctly typed arguments from happi information
     def create_arg(arg):
         if not isinstance(arg, str):
             return arg
-        return fill_template(arg, device, enforce_type=True)
+        return fill_template(arg, item, enforce_type=True)
 
     # Treat all our args and kwargs as templates
-    args = [create_arg(arg) for arg in device.args]
+    args = [create_arg(arg) for arg in item.args]
     kwargs = dict((key, create_arg(val))
-                  for key, val in device.kwargs.items())
-    # Return the instantiated device
+                  for key, val in item.kwargs.items())
+    # Return the instantiated item
     obj = cls(*args, **kwargs)
     # Attach the metadata to the object
     if attach_md:
         try:
-            setattr(obj, 'md', device)
+            setattr(obj, 'md', item)
         except Exception:
             logger.warning("Unable to attach metadata dictionary to device")
 
     # Store the device in the cache
-    cache[device.name] = obj
+    cache[item.name] = obj
     return obj
 
 
@@ -224,7 +228,7 @@ PostLoad = Callable[[Any], None]
 
 
 def load_devices(
-    *devices: HappiItem,
+    *items: HappiItem,
     pprint: bool = False,
     namespace: Optional[object] = None,
     use_cache: bool = True,
@@ -235,11 +239,11 @@ def load_devices(
     **kwargs
 ):
     """
-    Load a series of devices into a namespace.
+    Load a series of devices by way of their HappiItems into a namespace.
 
     Parameters
     ----------
-    *devices
+    *items : HappiItem
         List of happi containers to load.
     pprint: bool, optional
         Print results of device loads.
@@ -256,8 +260,7 @@ def load_devices(
         device to be loaded twice in the same threaded load.
     post_load : function, optional
         Function of one argument to run on each device after instantiation.
-        This is your opportunity to check for good device health during the
-        threaded load.
+        This could be especially useful during the threaded loading process.
     include_load_time : bool, optional
         Include load time in each message.
     load_time_threshold : float, optional
@@ -269,19 +272,19 @@ def load_devices(
 
     # Create our namespace if we were not given one
     namespace = namespace or types.SimpleNamespace()
-    name_list = [container.name for container in devices]
+    name_list = [container.name for container in items]
     if threaded:
         # Pre-import because imports in threads have race conditions
-        for device in devices:
+        for item in items:
             try:
-                import_class(device.device_class)
+                import_class(item.device_class)
             except Exception:
                 # Just wait for the normal error handling later
                 pass
         global main_event_loop
         if main_event_loop is None:
             main_event_loop = asyncio.get_event_loop()
-        pool = ThreadPool(len(devices))
+        pool = ThreadPool(len(items))
         opt_load = partial(
             load_device,
             pprint=pprint,
@@ -292,12 +295,12 @@ def load_devices(
             load_time_threshold=load_time_threshold,
             **kwargs
         )
-        loaded_list = pool.map(opt_load, devices)
+        loaded_list = pool.map(opt_load, items)
     else:
         loaded_list = []
-        for device in devices:
+        for item in items:
             loaded = load_device(
-                device,
+                item,
                 pprint=pprint,
                 use_cache=use_cache,
                 threaded=False,
@@ -314,7 +317,7 @@ def load_devices(
 
 
 def load_device(
-    device: HappiItem,
+    item: HappiItem,
     pprint: bool = False,
     threaded: bool = False,
     post_load: Optional[PostLoad] = None,
@@ -327,16 +330,15 @@ def load_device(
 
     Parameters
     ----------
-    device : happi.HappiItem
+    item : happi.HappiItem
         HappiItem to be loaded.
     pprint: bool, optional
-        Print results of device loads.
+        Print results of the loading status.
     threaded: bool, optional
         Set this to `True` when calling inside a thread.
     post_load : function, optional
-        Function of one argument to run on each device after instantiation.
-        This is your opportunity to check for good device health during the
-        threaded load.
+        Function of one argument to run on each object after instantiation.
+        This could be especially useful during the threaded loading process.
     include_load_time : bool, optional
         Include load time in each message.
     load_time_threshold : float, optional
@@ -352,13 +354,13 @@ def load_device(
         trying to load the object.
     """
 
-    logger.debug("Loading device %s ...", device.name)
+    logger.debug("Loading device from item %s ...", item.name)
 
     # We sync with the main thread's loop so that they work as expected later
     if threaded and main_event_loop is not None:
         asyncio.set_event_loop(main_event_loop)
 
-    load_message = f"Loading {device.name} [{device.device_class}] ... "
+    load_message = f"Loading {item.name} [{item.device_class}] ... "
     success = "\033[32mSUCCESS\033[0m!"
     failed = "\033[31mFAILED\033[0m"
 
@@ -383,16 +385,16 @@ def load_device(
             print(f"{message}{elapsed}")
 
     try:
-        loaded = from_container(device, **kwargs)
+        obj = from_container(item, **kwargs)
         if post_load is not None:
-            post_load(loaded)
+            post_load(obj)
     except Exception as exc:
         elapsed = get_load_time()
         print_load_message(failed, elapsed)
-        logger.exception("Error loading %s%s", device.name, elapsed)
+        logger.exception("Error loading %s%s", item.name, elapsed)
         return exc
 
     elapsed = get_load_time()
     logger.info("%s %s%s", load_message, success, elapsed)
     print_load_message(success, elapsed)
-    return loaded
+    return obj
