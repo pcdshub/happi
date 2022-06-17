@@ -2,6 +2,7 @@ import fcntl
 import os
 import os.path
 import tempfile
+from typing import Any, Dict
 
 import pytest
 import simplejson
@@ -21,10 +22,10 @@ def mockmongo(mockmongoclient):
 
 
 @pytest.fixture(scope='function')
-def mockjson(device_info, valve_info):
+def mockjson(item_info: Dict[str, Any], valve_info: Dict[str, Any]):
     # Write underlying database
     with tempfile.NamedTemporaryFile(mode='w') as handle:
-        simplejson.dump({device_info['_id']: device_info},
+        simplejson.dump({item_info['_id']: item_info},
                         handle)
         handle.flush()
         # Return handle name
@@ -32,7 +33,11 @@ def mockjson(device_info, valve_info):
 
 
 @requires_mongo
-def test_mongo_find(valve_info, device_info, mockmongo):
+def test_mongo_find(
+    valve_info: Dict[str, Any],
+    item_info: Dict[str, Any],
+    mockmongo
+):
     mm = mockmongo
     mm._collection.insert_one(valve_info)
 
@@ -40,28 +45,32 @@ def test_mongo_find(valve_info, device_info, mockmongo):
         return list(mm.find(kwargs))
 
     assert find(beamline='BLERG') == []
-    # Single device by id
-    assert [device_info] == find(_id=device_info['_id'])
-    # Single device by kwarg
+    # Single item by id
+    assert [item_info] == find(_id=item_info['_id'])
+    # Single item by kwarg
     assert [valve_info] == find(prefix=valve_info['prefix'])
     # No multiple devices expected
     assert find(beamline='BLERG') == []
     # Multiple devices by id
-    assert [device_info] == find(_id=device_info['_id'])
+    assert [item_info] == find(_id=item_info['_id'])
     # Multiple devices by kwarg
-    assert [device_info] == find(prefix=device_info['prefix'])
+    assert [item_info] == find(prefix=item_info['prefix'])
     # Multiple devices expected
     assert all(info in find(beamline='LCLS')
-               for info in (device_info, valve_info))
+               for info in (item_info, valve_info))
 
 
 @requires_mongo
-def test_mongo_save(mockmongo, device_info, valve_info):
-    # Duplicate device
+def test_mongo_save(
+    mockmongo,
+    item_info: Dict[str, Any],
+    valve_info: Dict[str, Any]
+):
+    # Duplicate item
     with pytest.raises(DuplicateError):
-        mockmongo.save(device_info[Client._id_key], device_info, insert=True)
+        mockmongo.save(item_info[Client._id_key], item_info, insert=True)
 
-    # Device not found
+    # Item not found
     with pytest.raises(SearchError):
         mockmongo.save(valve_info[Client._id_key], valve_info, insert=False)
 
@@ -71,37 +80,41 @@ def test_mongo_save(mockmongo, device_info, valve_info):
 
 
 @requires_mongo
-def test_mongo_delete(mockmongo, device_info):
-    mockmongo.delete(device_info[Client._id_key])
-    assert mockmongo._collection.find_one(device_info) is None
+def test_mongo_delete(mockmongo, item_info: Dict[str, Any]):
+    mockmongo.delete(item_info[Client._id_key])
+    assert mockmongo._collection.find_one(item_info) is None
 
 
-def test_json_find(valve_info, device_info, mockjson):
+def test_json_find(
+    valve_info: Dict[str, Any],
+    item_info: Dict[str, Any],
+    mockjson
+):
     mm = mockjson
     # Write underlying database
     with open(mm.path, 'w+') as handle:
         simplejson.dump({valve_info['_id']: valve_info,
-                         device_info['_id']: device_info},
+                         item_info['_id']: item_info},
                         handle)
 
     def find(**kwargs):
         return list(mm.find(kwargs))
 
-    # No single device expected
+    # No single item expected
     assert find(beamline='BLERG') == []
-    # Single device by id
-    assert [device_info] == find(_id=device_info['_id'])
-    # Single device by kwarg
+    # Single item by id
+    assert [item_info] == find(_id=item_info['_id'])
+    # Single item by kwarg
     assert [valve_info] == find(prefix=valve_info['prefix'])
     # No multiple devices expected
     assert find(beamline='BLERG') == []
     # Multiple devices by id
-    assert [device_info] == find(_id=device_info['_id'])
+    assert [item_info] == find(_id=item_info['_id'])
     # Multiple devices by kwarg
-    assert [device_info] == find(prefix=device_info['prefix'])
+    assert [item_info] == find(prefix=item_info['prefix'])
     # Multiple devices expected
     assert all(info in find(beamline='LCLS')
-               for info in (device_info, valve_info))
+               for info in (item_info, valve_info))
 
 
 def test_find_regex(client_with_three_valves, three_valves):
@@ -121,23 +134,23 @@ def test_find_regex(client_with_three_valves, three_valves):
     assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
 
 
-def test_json_delete(mockjson, device_info):
-    mockjson.delete(device_info[Client._id_key])
-    assert device_info not in mockjson.all_devices
+def test_json_delete(mockjson, item_info: Dict[str, Any]):
+    mockjson.delete(item_info[Client._id_key])
+    assert item_info not in mockjson.all_items
 
 
-def test_json_save(mockjson, device_info, valve_info):
-    # Duplicate device
+def test_json_save(mockjson, item_info: Dict[str, Any], valve_info):
+    # Duplicate item
     with pytest.raises(DuplicateError):
-        mockjson.save(device_info[Client._id_key], device_info, insert=True)
+        mockjson.save(item_info[Client._id_key], item_info, insert=True)
 
-    # Device not found
+    # Item not found
     with pytest.raises(SearchError):
         mockjson.save(valve_info[Client._id_key], valve_info, insert=False)
 
     # Add to database
     mockjson.save(valve_info[Client._id_key], valve_info, insert=True)
-    assert valve_info in mockjson.all_devices
+    assert valve_info in mockjson.all_items
 
 
 def test_json_locking(mockjson):
@@ -177,11 +190,11 @@ def test_qsbackend_with_client(mockqsbackend):
         d.__class__.__name__ in {'Trigger', 'Motor', 'Acromag', 'LCLSItem'}
         for d in c.all_items
     )
-    device_types = [device.__class__.__name__ for device in c.all_items]
-    assert device_types.count('Motor') == 7
-    assert device_types.count('Trigger') == 2
+    item_types = [item.__class__.__name__ for item in c.all_items]
+    assert item_types.count('Motor') == 7
+    assert item_types.count('Trigger') == 2
     # Acromag: six entries, but one erroneously has the same name
-    assert device_types.count('Acromag') == 5
+    assert item_types.count('Acromag') == 5
 
 
 @requires_questionnaire

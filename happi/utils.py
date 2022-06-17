@@ -1,10 +1,13 @@
 """
 Basic module utilities
 """
+import functools
 import keyword
 import logging
+import warnings
+from typing import Callable
 
-from happi.errors import EnforceError
+from .errors import EnforceError
 
 logger = logging.getLogger(__name__)
 
@@ -87,3 +90,31 @@ def optional_enforce(enforce_value):
             return enforce_value(value)
 
     return inner
+
+
+def deprecated(message: str):
+    """
+    Decorate a method as deprecated with this wrapper.
+
+    Parameters
+    ----------
+    message : str
+        The deprecation warning message.
+    """
+    def wrapper(func: Callable):
+        warned = False
+
+        @functools.wraps(func)
+        def warn_and_call(*args, **kwargs):
+            nonlocal warned
+            if not warned:
+                warnings.warn(
+                    message=f"{func.__name__} is deprecated: {message}",
+                    category=DeprecationWarning,
+                )
+                warned = True
+            return func(*args, **kwargs)
+
+        return warn_and_call
+
+    return wrapper

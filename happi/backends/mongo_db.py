@@ -64,7 +64,7 @@ class MongoBackend(_Backend):
                                 'port specified at startup')
 
     @property
-    def all_devices(self):
+    def all_items(self):
         """List of all device sub-dictionaries."""
         return self._collection.find()
 

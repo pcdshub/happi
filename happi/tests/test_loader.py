@@ -12,28 +12,28 @@ class TimeDevice(OphydItem):
     days = EntryInfo("Number of days", enforce=int)
 
 
-def test_fill_template(device: OphydItem):
+def test_fill_template(item: OphydItem):
     # Check that we can properly render a template
     template = "{{name}}"
-    assert device.name == fill_template(template, device)
+    assert item.name == fill_template(template, item)
     # Check that we can enforce a type
     template = '{{active}}'
-    active = fill_template(template, device, enforce_type=True)
+    active = fill_template(template, item, enforce_type=True)
     assert isinstance(active, bool)
     # Check that we will convert a more complex template
     template = '{{name|length()}}'
-    text_len = fill_template(template, device, enforce_type=False)
-    assert len(device.name) == int(text_len)
+    text_len = fill_template(template, item, enforce_type=False)
+    assert len(item.name) == int(text_len)
     # Check that we can handle non-jinja template
     template = "blah"
-    assert template == fill_template(template, device, enforce_type=True)
+    assert template == fill_template(template, item, enforce_type=True)
     # Check that we do not enforce a NoneType
     template = "{{detailed_screen}}"
-    assert fill_template(template, device, enforce_type=True) == ""
+    assert fill_template(template, item, enforce_type=True) == ""
 
 
 def test_from_container():
-    # Create a datetime device
+    # Create a datetime item
     d = TimeDevice(name='test', prefix='Tst:This:1', beamline='TST',
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
@@ -44,7 +44,7 @@ def test_from_container():
 
 
 def test_caching():
-    # Create a datetime device
+    # Create a datetime item
     d = TimeDevice(name='test', prefix='Tst:This:2', beamline='TST',
                    device_class='types.SimpleNamespace', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})
@@ -55,7 +55,7 @@ def test_caching():
     # Modify md and check we see a reload
     d.days = 12
     assert id(td) != id(from_container(d, use_cache=True))
-    # Check with a device where metadata is unavailable
+    # Check with a item where metadata is unavailable
     d = TimeDevice(name='test', prefix='Tst:Delta:3', beamline='TST',
                    device_class='datetime.timedelta', args=list(), days=10,
                    kwargs={'days': '{{days}}', 'seconds': 30})

@@ -59,8 +59,7 @@ class EntryInfo:
     ------
     .. code::
 
-        class MyDevice(Device):
-
+        class MyItem(HappiItem):
             my_field = EntryInfo('My generated field')
             number   = EntryInfo('Device number', enforce=int, default=0,
                                  enforce_doc='This must be a number')

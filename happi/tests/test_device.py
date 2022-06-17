@@ -5,23 +5,22 @@ from typing import Any, Dict, Type
 
 import pytest
 
-from happi import HappiItem, OphydItem
-from happi.client import Client
-from happi.device import EntryInfo
-from happi.errors import ContainerError
+from ..client import Client
+from ..errors import ContainerError
+from ..item import EntryInfo, HappiItem, OphydItem
 
 
-def test_get(device: OphydItem, device_info: Dict[str, Any]):
-    assert device.name == device_info['name']
+def test_get(item: OphydItem, item_info: Dict[str, Any]):
+    assert item.name == item_info['name']
 
 
-def test_init(device: OphydItem, device_info: Dict[str, Any]):
-    assert device.prefix == device_info['prefix']
-    assert device.name == device_info['name']
+def test_init(item: OphydItem, item_info: Dict[str, Any]):
+    assert item.prefix == item_info['prefix']
+    assert item.name == item_info['name']
 
 
 def test_list_enforce():
-    # Generic device with a list enforce
+    # Generic HappiItem with a list enforce
     class MyDevice(HappiItem):
         list_attr = EntryInfo(enforce=['a', 'b', 'c'],
                               enforce_doc='list only')
@@ -74,18 +73,18 @@ def test_type_enforce_exceptions(type_spec: Type, value: Any):
     assert 'bad type' in str(excinfo)
 
 
-def test_set(device: OphydItem):
-    device.name = 'new_name'
-    assert device.name == 'new_name'
+def test_set(item: OphydItem):
+    item.name = 'new_name'
+    assert item.name == 'new_name'
 
 
-def test_optional(device: OphydItem):
-    assert device.documentation is None
+def test_optional(item: OphydItem):
+    assert item.documentation is None
 
 
-def test_enforce(device: OphydItem):
+def test_enforce(item: OphydItem):
     with pytest.raises(ValueError):
-        device.name = 'Invalid!Name'
+        item.name = 'Invalid!Name'
 
 
 def test_container_error():
@@ -94,9 +93,9 @@ def test_container_error():
             fault = EntryInfo(enforce=int,  default='not-int')
 
 
-def test_mandatory_info(device: OphydItem):
+def test_mandatory_info(item: OphydItem):
     for info in ('prefix', 'name'):
-        assert info in device.mandatory_info
+        assert info in item.mandatory_info
 
 
 def test_restricted_attr():
@@ -105,20 +104,20 @@ def test_restricted_attr():
             info_names = EntryInfo()
 
 
-def test_post(device: OphydItem, device_info: Dict[str, Any]):
-    post = device.post()
-    assert post['prefix'] == device_info['prefix']
-    assert post['name'] == device_info['name']
+def test_post(item: OphydItem, item_info: Dict[str, Any]):
+    post = item.post()
+    assert post['prefix'] == item_info['prefix']
+    assert post['name'] == item_info['name']
 
 
-def test_show_info(device: OphydItem, device_info: Dict[str, Any]):
+def test_show_info(item: OphydItem, item_info: Dict[str, Any]):
     f = io.StringIO()
-    device.show_info(handle=f)
+    item.show_info(handle=f)
     f.seek(0)
     out = f.read()
-    device_info.pop('_id')
+    item_info.pop('_id')
     assert '_id' not in out
-    assert all([info in out for info in device_info.keys()])
+    assert all([info in out for info in item_info.keys()])
 
 
 def test_device_equivalance():
@@ -150,7 +149,16 @@ def test_device_deepcopy():
 
 def test_add_and_save(valve: OphydItem, happi_client: Client):
     valve.active = True
-    happi_client.add_device(valve)
+    happi_client.add_item(valve)
+    valve.active = False
+    valve.save()
+
+    assert not happi_client[valve.name].item.active
+
+
+def test_add_and_save_deprecated(valve: OphydItem, happi_client: Client):
+    valve.active = True
+    happi_client.add_device(valve)  # intentionally raise DeprecationWarning
     valve.active = False
     valve.save()
 

@@ -75,8 +75,8 @@ class JSONBackend(_Backend):
         return self._load_cache
 
     @property
-    def all_devices(self):
-        """All of the devices in the database."""
+    def all_items(self):
+        """All of the items in the database."""
         json = self._load_or_initialize()
         return list(json.values())
 
@@ -146,7 +146,7 @@ class JSONBackend(_Backend):
         Parameters
         ----------
         comparison : callable
-            A comparison function with a signature of (device_id, doc).
+            A comparison function with a signature of (item_id, doc).
         """
 
         db = self._load_or_initialize()
@@ -161,7 +161,7 @@ class JSONBackend(_Backend):
                 logger.debug('Comparison method failed: %s', ex, exc_info=ex)
 
     def get_by_id(self, id_):
-        """Get a device by ID if it exists, or return None."""
+        """Get an item by ID if it exists, or return None."""
         db = self._load_or_initialize()
         return db.get(id_)
 
@@ -248,49 +248,49 @@ class JSONBackend(_Backend):
         Parameters
         ----------
         _id : str
-            ID of device.
+            ID of item.
         post : dict
             Information to place in database.
         insert : bool, optional
-            Whether or not this is a new device to the database.
+            Whether or not this is a new item to the database.
 
         Raises
         ------
         DuplicateError
-            If ``insert`` is `True`, but there is already a device with the
+            If ``insert`` is `True`, but there is already an item with the
             provided ``_id``.
         SearchError
-            If ``insert`` is `False`, but there is no device with the provided
+            If ``insert`` is `False`, but there is no item with the provided
             ``_id``.
         PermissionError
             If the write operation fails due to issues with permissions.
         """
 
         with _load_and_store_context(self) as db:
-            # New device
+            # New item
             if insert:
                 if _id in db.keys():
-                    raise DuplicateError(f"Device {_id} already exists")
+                    raise DuplicateError(f"Item {_id} already exists")
                 # Add _id keyword
                 post.update({'_id': _id})
                 # Add to database
                 db[_id] = post
-            # Updating device
+            # Updating item
             else:
                 # Edit information
                 try:
                     db[_id].update(post)
                 except KeyError:
-                    raise SearchError("No device found {}".format(_id))
+                    raise SearchError("No item found {}".format(_id))
 
     def delete(self, _id: str):
         """
-        Delete a device instance from the database.
+        Delete an item instance from the database.
 
         Parameters
         ----------
         _id : str
-            ID of device.
+            ID of item.
 
         Raises
         ------
