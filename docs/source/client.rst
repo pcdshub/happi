@@ -4,7 +4,7 @@ Using the Client
 ****************
 Users will interact with the database by using the :class:`happi.Client`, this
 will handle the authentication, and methods for adding, editing and removing
-devices.
+items.
 
 Happi is incredibly flexible, allowing us to put arbitrary key-value pair
 information into the database. While this will make adding functionality easy in
@@ -17,12 +17,17 @@ that hold and specify these rules.
 
 Creating a New Entry
 ^^^^^^^^^^^^^^^^^^^^
-A new device must be a subclass of the basic container :class:`.Device`.
+A new item must be a subclass of the basic :class:`.HappiItem` container.
 While you are free to use the initialized object wherever you see fit, the client
-has a hook to create new devices.
+has a hook to create new items.
 
-Before we can create our first client, we need to create a backend for our device
+Before we can create our first client, we need to create a backend for our item
 information to be stored.
+
+.. ipython:: python
+   :suppress:
+
+   rm -f doc_test.json
 
 .. ipython:: python
 
@@ -36,47 +41,78 @@ about how to configure your default backend choice.
 
 .. ipython:: python
 
-    from happi import Client, Device
+    from happi import Client, HappiItem
 
     client = Client(path='doc_test.json')
 
-    device = client.create_device("Device", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1", device_class='types.SimpleNamespace', args=[])
+    item = client.create_item("HappiItem", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1", device_class='types.SimpleNamespace', args=[])
 
-    device.save()
+    item.save()
 
-Alternatively, you can create the device separately and add the device
-explicitly using :meth:`.Device.save`
+Alternatively, you can create the item separately and add it explicitly using
+:meth:`.HappiItem.save`
 
 .. ipython:: python
 
-    device = Device(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5, location_group="Loc2", functional_group="Func2")
+    item = HappiItem(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5, location_group="Loc2", functional_group="Func2")
 
-    client.add_device(device)
+    client.add_item(item)
 
 The main advantage of the first method is that all of the container classes are
-already stored in the :attr:`.Client.device_types` dictionary so they can be
-easily accessed with a string. Keep in mind, that either way, all of the
-mandatory information needs to be given to the device before it can be loaded
-into the database.
+already managed by th eclient so they can be easily accessed with a string.
+Keep in mind, that either way, all of the mandatory information needs to be
+given to the item before it can be loaded into the database.
 
 Searching the Database
 ^^^^^^^^^^^^^^^^^^^^^^
-There are two ways to load information from the database
-:meth:`.Client.find_device` and :meth:`.Client.search`. The former should only
-be used to load one device at at a time. Both accept criteria in the from of
-keyword-value pairs to find the device or device/s you desire. Here are some
-example searches to demonstrate the power of the Happi Client.
+There are several ways to load information from the database
+:meth:`.Client.find_item`, :meth:`.Client.search`, and dictionary-like access.
 
-First, lets look for all the devices of type generic ``Device``:
+:meth:`.Client.find_item` is intended to only load one item at at a time. Both
+accept criteria in the from of keyword-value pairs to find the item or items
+you desire.
+
+You can quickly query the client by item name and get a ``SearchResult`` that
+can be used to introspect metadata or even instantiate the corresponding item
+instance.
 
 .. ipython:: python
 
-    results = client.search(type='Device')
+    result = client["my_device"]
+
+The client acts as a Python mapping, so you may inspect it as you would a
+dictionary. For example:
+
+.. ipython:: python
+
+    # All of the item names:
+    list(client.keys())
+    # All of the database entries as SearchResults:
+    list(client.values())
+    # Pairs of (name, SearchResult):
+    list(client.items())
 
 
-This returns a list of zero or more :class:`SearchResult` instances, which can
-be used to introspect metadata or even instantiate the corresponding device
-instance.
+You could, for example, grab the first key by name and access it using
+``__getitem__``:
+
+.. ipython:: python
+
+    key_0 = list(client)[0]
+    key_0
+    client[key_0]
+
+Or see how many entries are in the database:
+
+.. ipython:: python
+
+    len(client)
+
+Here's a search that gets all the items of type generic ``HappiItem``:
+
+.. ipython:: python
+
+    results = client.search(type="HappiItem")
 
 
 Working with the SearchResult
@@ -130,7 +166,7 @@ To search for items on a beamline such as 'MFX', one would use the following:
 
 .. ipython:: python
 
-    client.search(type='Device', beamline='MFX')
+    client.search(type='HappiItem', beamline='MFX')
 
 
 Searching a range
@@ -141,9 +177,9 @@ easy by way of :meth:`.Client.search_range`. For example:
 
 .. ipython:: python
 
-    client.search_range('z', start=314.4, end=348.6, type='Device')
+    client.search_range('z', start=314.4, end=348.6, type='HappiItem')
 
-This would return all devices between Z=314.4 and Z=348.6.
+This would return all items between Z=314.4 and Z=348.6.
 
 Any numeric key can be filtered in the same way, replacing ``'z'`` with the
 key name.
@@ -158,18 +194,18 @@ Any key can use a regular expression for searching by using :meth:`.Client.searc
     client.search_regex(name='my_device[2345]')
 
 
-Editing Device Information
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-The workflow for editing a device looks very similar to the code within
-:ref:`entry_code`, but instead of instantiating the device you use either
-:meth:`.Client.find_device` or :meth:`.Client.search` to grab an existing device from
-the data prefix. When the device is retrieved this way the class method
-:meth:`.Device.save` is overwritten, simply call this when you are done editing
-the Device information.
+Editing Item Information
+^^^^^^^^^^^^^^^^^^^^^^^^
+The workflow for editing an item looks very similar to the code within
+:ref:`entry_code`, but instead of instantiating the item you use either
+:meth:`.Client.find_item` or :meth:`.Client.search` to grab an existing item from
+the data prefix. When the item is retrieved this way the class method
+:meth:`.HappiItem.save` is overwritten, simply call this when you are done
+editing.
 
 .. ipython:: python
 
-    my_motor = client.find_device(prefix='PV:BASE')
+    my_motor = client.find_item(prefix='PV:BASE')
 
     my_motor.z = 425.4
 
@@ -177,22 +213,22 @@ the Device information.
 
 .. note::
 
-    Because the database uses the ``prefix`` key as a device's identification you
+    Because the database uses the ``name`` key as an item's identification you
     can not edit this information in the same way. Instead you must explicitly
-    remove the device and then use :meth:`.Client.add_device` to create a new
+    remove the item and then use :meth:`.Client.add_item` to create a new
     entry.
 
 Finally, lets clean up our example objects by using
-:meth:`.Client.remove_device` to clean them from the database
+:meth:`.Client.remove_item` to clean them from the database
 
 .. ipython:: python
 
-    device_1 = client.find_device(name='my_device')
+    item_1 = client.find_item(name='my_device')
 
-    device_2 = client.find_device(name='my_device2')
+    item_2 = client.find_item(name='my_device2')
 
-    for device in (device_1, device_2):
-        client.remove_device(device)
+    for item in (item_1, item_2):
+        client.remove_item(item)
 
 .. _db_choice:
 
