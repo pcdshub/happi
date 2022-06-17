@@ -45,16 +45,37 @@ about how to configure your default backend choice.
 
     client = Client(path='doc_test.json')
 
-    item = client.create_item("HappiItem", name='my_device',prefix='PV:BASE', beamline='XRT', z=345.5, location_group="Loc1", functional_group="Func1", device_class='types.SimpleNamespace', args=[])
+    item = client.create_item(
+        "HappiItem",
+        name="my_device",
+        device_class="types.SimpleNamespace",
+        args=[],
+        kwargs={},
+        position=345.5,   # <- this is an extra field which happi allows
+    )
+
+    item
 
     item.save()
+
+For this example, we have added an "extraneous" field to the item called
+"position".  This is something that happi allows for.  If you wish to make
+this a recognized field of an eforced type (e.g., don't allow the user to
+make position a string value instead of a floating point value), please
+see the documentation on making your own container class.
 
 Alternatively, you can create the item separately and add it explicitly using
 :meth:`.HappiItem.save`
 
 .. ipython:: python
 
-    item = HappiItem(name='my_device2',prefix='PV:BASE2', beamline='MFX', z=355.5, location_group="Loc2", functional_group="Func2")
+    item = HappiItem(
+        name="my_device2",
+        device_class="types.SimpleNamespace",
+        position=355.5,   # <- this is an extra field which happi allows
+    )
+
+    item
 
     client.add_item(item)
 
@@ -172,17 +193,20 @@ To search for items on a beamline such as 'MFX', one would use the following:
 Searching a range
 """""""""""""""""
 
-Searching a Z-range on the beamline, or a range with any arbitrary key is also
-easy by way of :meth:`.Client.search_range`. For example:
+In this example, we have added an extraneous field ``position`` that is not
+present normally in the ``HappiItem`` container.
+
+We can search a range of values with any arbitrary key using
+:meth:`.Client.search_range`. For example:
 
 .. ipython:: python
 
-    client.search_range('z', start=314.4, end=348.6, type='HappiItem')
+    client.search_range("position", start=314.4, end=348.6)
 
-This would return all items between Z=314.4 and Z=348.6.
+This would return all items between positions 314.4 and 348.6.
 
-Any numeric key can be filtered in the same way, replacing ``'z'`` with the
-key name.
+Any numeric key can be filtered in the same way, replacing ``'position'`` with
+the key name.
 
 Searching with regular expressions
 """"""""""""""""""""""""""""""""""
@@ -198,16 +222,15 @@ Editing Item Information
 ^^^^^^^^^^^^^^^^^^^^^^^^
 The workflow for editing an item looks very similar to the code within
 :ref:`entry_code`, but instead of instantiating the item you use either
-:meth:`.Client.find_item` or :meth:`.Client.search` to grab an existing item from
-the data prefix. When the item is retrieved this way the class method
-:meth:`.HappiItem.save` is overwritten, simply call this when you are done
-editing.
+:meth:`.Client.find_item` or :meth:`.Client.search`. When the item is retrieved
+this way the class method :meth:`.HappiItem.save` is overwritten, simply call
+this when you are done editing.
 
 .. ipython:: python
 
-    my_motor = client.find_item(prefix='PV:BASE')
+    my_motor = client.find_item(name="my_device")
 
-    my_motor.z = 425.4
+    my_motor.position = 425.4
 
     my_motor.save()
 
