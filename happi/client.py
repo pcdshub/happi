@@ -553,7 +553,6 @@ class Client(collections.abc.Mapping):
                     "Entry for %s is malformed (%s). Skipping.",
                     doc["name"], exc
                 )
-                raise
         return results
 
     def search_range(
