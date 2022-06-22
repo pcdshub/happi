@@ -8,6 +8,7 @@ master/_sources/generated/happi.backends.qs_db.QSBackend.rst.txt
 master/_sources/index.rst.txt
 master/_sources/releases.rst.txt
 master/_sources/upcoming_changes.rst.txt
+master/_sources/upcoming_release_notes/124-device_to_item.rst.txt
 master/_sources/upcoming_release_notes/235-performance.rst.txt
 master/_sources/upcoming_release_notes/253-fix_tests.rst.txt
 master/_sources/upcoming_release_notes/260-hashable.rst.txt
@@ -64,6 +65,7 @@ master/releases.html
 master/search.html
 master/searchindex.js
 master/upcoming_changes.html
+master/upcoming_release_notes/124-device_to_item.html
 master/upcoming_release_notes/235-performance.html
 master/upcoming_release_notes/253-fix_tests.html
 master/upcoming_release_notes/260-hashable.html

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happi API &mdash; Happi 1.13.0+67.g9875d94 documentation</title>
+  <title>Happi API &mdash; Happi 1.13.0+82.gfc6222b documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.13.0+67.g9875d94
+                1.13.0+82.gfc6222b
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -116,22 +116,22 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="happi.Client.add_device">
-<span class="sig-name descname"><span class="pre">add_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.add_device" title="Permalink to this definition"></a></dt>
-<dd><p>Add a device into the database.</p>
+<dt class="sig sig-object py" id="happi.Client.add_item">
+<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.add_item" title="Permalink to this definition"></a></dt>
+<dd><p>Add an item into the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>device</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – The device to store in the database.</p>
+<dd class="field-odd"><p><strong>item</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – The item to store in the database.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>_id</strong> – The id of the device added.</p>
+<dd class="field-even"><p><strong>_id</strong> – The id of the item added.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>EntryError</strong> – If all of the mandatory information for the device has not been
-    specified or there is already a device with that <code class="docutils literal notranslate"><span class="pre">id</span></code> in the
+<dd class="field-even"><p><strong>EntryError</strong> – If all of the mandatory information for the item has not been
+    specified or there is already an item with that <code class="docutils literal notranslate"><span class="pre">id</span></code> in the
     database.</p>
 </dd>
 </dl>
@@ -194,7 +194,7 @@ item and target container</p></li>
 i.e ‘beamline’, ‘name’, ‘z’, ‘prefix’, etc.</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>SearchError</strong> – If no devices in the database have an entry for the given field.</p>
+<dd class="field-even"><p><strong>SearchError</strong> – If no items in the database have an entry for the given field.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><strong>field_choices</strong> – List of choices for a given field that are in the database.</p>
@@ -206,18 +206,18 @@ i.e ‘beamline’, ‘name’, ‘z’, ‘prefix’, etc.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="happi.Client.create_device">
-<span class="sig-name descname"><span class="pre">create_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_cls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.create_device" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="happi.Client.create_item">
+<span class="sig-name descname"><span class="pre">create_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_cls</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.create_item" title="Permalink to this definition"></a></dt>
 <dd><p>Instantiate a HappiItem from its container class and keyword arguments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>device_cls</strong> (<em>class</em>) – The HappiItem container class to instantiate.</p></li>
-<li><p><strong>kwargs</strong> – Information to pass through to the device, upon initialization.</p></li>
+<li><p><strong>item_cls</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.10)"><em>type</em></a>) – The HappiItem container class to instantiate.</p></li>
+<li><p><strong>**kwargs</strong> – Information to pass through to the item, upon initialization.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>device</strong> – An instantiated version of the device.</p>
+<dd class="field-even"><p><strong>item</strong> – An instantiated version of the item.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)">object</a></p>
@@ -227,8 +227,8 @@ i.e ‘beamline’, ‘name’, ‘z’, ‘prefix’, etc.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="n">Device</span><span class="p">,</span>   <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span> <span class="o">...</span><span class="p">)</span>
-<span class="n">device</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_device</span><span class="p">(</span><span class="s1">&#39;Device&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">item</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_item</span><span class="p">(</span><span class="n">Item</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_item&#39;</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">item</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_item</span><span class="p">(</span><span class="s1">&#39;Item&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_item&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -271,36 +271,15 @@ variable set by <code class="docutils literal notranslate"><span class="pre">$XD
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="happi.Client.find_device">
-<span class="sig-name descname"><span class="pre">find_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">post</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.find_device" title="Permalink to this definition"></a></dt>
-<dd><p>Query the database for an individual HappiItem.</p>
-<p>If multiple devices are found, only the first is returned.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>post</strong> – Key-value pairs of search criteria used to find the device.</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>SearchError</strong> – If no match for the given information is found.</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>device</strong> – A device that matches the characteristics given.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.find_document">
 <span class="sig-name descname"><span class="pre">find_document</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.find_document" title="Permalink to this definition"></a></dt>
-<dd><p>Load a device document from the database.</p>
+<dd><p>Load an item document from the database.</p>
 <p>If multiple matches are found, a single document will be returned to
-the user. How the database will choose to select this device is based
+the user. How the database will choose to select this item is based
 on each individual implementation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kwargs</strong> – Keyword pairs of information used to locate the device</p>
+<dd class="field-odd"><p><strong>kwargs</strong> – Keyword pairs of information used to locate the item</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>document</strong> – A dict that matches the specified information.</p>
@@ -314,8 +293,29 @@ on each individual implementation</p>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_device()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a></p>
+<p><a class="reference internal" href="#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_item()</span></code></a>, <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">search()</span></code></a></p>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="happi.Client.find_item">
+<span class="sig-name descname"><span class="pre">find_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">post</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.find_item" title="Permalink to this definition"></a></dt>
+<dd><p>Query the database for an individual HappiItem.</p>
+<p>If multiple items are found, only the first is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**post</strong> – Key-value pairs of search criteria used to find the item.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>SearchError</strong> – If no match for the given information is found.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>item</strong> – A HappiItem instance for the document.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -341,18 +341,18 @@ will be use.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.load_device">
 <span class="sig-name descname"><span class="pre">load_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">post</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.load_device" title="Permalink to this definition"></a></dt>
-<dd><p>Find a device in the database and instantiate it.</p>
+<dd><p>Find an item in the database and instantiate it.</p>
 <p>Essentially a shortcut for:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_device</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
-<span class="n">device</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_item</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+<span class="n">item</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>post</strong> – Key-value pairs of search criteria passed to
-<a class="reference internal" href="#happi.Client.find_device" title="happi.Client.find_device"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_device()</span></code></a>.</p></li>
-<li><p><strong>use_cache</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Choice to use a cached device. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code> for more
+<a class="reference internal" href="#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a>.</p></li>
+<li><p><strong>use_cache</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Choice to use a cached item. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_container()</span></code> for more
 information.</p></li>
 </ul>
 </dd>
@@ -366,12 +366,12 @@ information.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="happi.Client.remove_device">
-<span class="sig-name descname"><span class="pre">remove_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.remove_device" title="Permalink to this definition"></a></dt>
-<dd><p>Remove a device from the database.</p>
+<dt class="sig sig-object py" id="happi.Client.remove_item">
+<span class="sig-name descname"><span class="pre">remove_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.remove_item" title="Permalink to this definition"></a></dt>
+<dd><p>Remove an item from the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>device</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – HappiItem to be removed from the database.</p>
+<dd class="field-odd"><p><strong>item</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>) – HappiItem to be removed from the database.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -390,7 +390,7 @@ information.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.search">
 <span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.search" title="Permalink to this definition"></a></dt>
-<dd><p>Search the database for a device or devices.</p>
+<dd><p>Search the database for item(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>**kwargs</strong> – Information to filter through the database structured as key, value
@@ -412,20 +412,20 @@ pairs for the desired pieces of EntryInfo.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.search_range">
-<span class="sig-name descname"><span class="pre">search_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.search_range" title="Permalink to this definition"></a></dt>
-<dd><p>Search the database for a device or devices using a numerical range.</p>
+<span class="sig-name descname"><span class="pre">search_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#happi.SearchResult" title="happi.client.SearchResult"><span class="pre">SearchResult</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#happi.Client.search_range" title="Permalink to this definition"></a></dt>
+<dd><p>Search the database for an item or items using a numerical range.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Database key to search.</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum beamline position to include devices.</p></li>
-<li><p><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum beamline position to include devices.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum beamline position to include items.</p></li>
+<li><p><strong>end</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum beamline position to include items.</p></li>
 <li><p><strong>**kwargs</strong> (<em>optional</em>) – Additional information used to filter through the database
 structured as key-value pairs for the desired pieces of EntryInfo.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of devices or dictionaries</p>
+<dd class="field-even"><p>list of SearchResult</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -438,8 +438,8 @@ structured as key-value pairs for the desired pieces of EntryInfo.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.search_regex">
-<span class="sig-name descname"><span class="pre">search_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RegexFlag.IGNORECASE</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.search_regex" title="Permalink to this definition"></a></dt>
-<dd><p>Search the database for a device or devices.</p>
+<span class="sig-name descname"><span class="pre">search_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RegexFlag.IGNORECASE</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#happi.SearchResult" title="happi.client.SearchResult"><span class="pre">SearchResult</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#happi.Client.search_regex" title="Permalink to this definition"></a></dt>
+<dd><p>Search the database for items(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -451,7 +451,7 @@ to contain a Python regular expression.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>list of devices or dictionaries</p>
+<dd class="field-even"><p>list of SearchResult</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -464,13 +464,13 @@ to contain a Python regular expression.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.validate">
 <span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.validate" title="Permalink to this definition"></a></dt>
-<dd><p>Validate all of the devices in the database.</p>
-<p>This is done by attempting to initialize each device and asserting
+<dd><p>Validate all of the items in the database.</p>
+<p>This is done by attempting to initialize each item and asserting
 their mandatory information is present. Information is written to the
 logger.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>ids</strong> – List of device ids that have failed verification.</p>
+<dd class="field-odd"><p><strong>ids</strong> – List of item ids that have failed verification.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list of str</p>
@@ -482,7 +482,7 @@ logger.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="happi.SearchResult">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">SearchResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.SearchResult" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">SearchResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.SearchResult" title="Permalink to this definition"></a></dt>
 <dd><p>A single search result from <a class="reference internal" href="#happi.Client.search" title="happi.Client.search"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">Client.search</span></code></a>.</p>
 <p class="rubric">Examples</p>
 <p>This result can be keyed for metadata as in:
@@ -530,9 +530,11 @@ logger.</p>
 <p>Backends are internal to happi and are subject to change.  Users should
 interact with the <a class="reference internal" href="#happi.Client" title="happi.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">happi.Client</span></code></a>.</p>
 <dl class="py property">
-<dt class="sig sig-object py" id="happi.backends.core._Backend.all_devices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_devices</span></span><a class="headerlink" href="#happi.backends.core._Backend.all_devices" title="Permalink to this definition"></a></dt>
-<dd><p>List of all device sub-dictionaries.</p>
+<dt class="sig sig-object py" id="happi.backends.core._Backend.all_items">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_items</span></span><a class="headerlink" href="#happi.backends.core._Backend.all_items" title="Permalink to this definition"></a></dt>
+<dd><p>List of all items in the database.</p>
+<p>This base class <code class="docutils literal notranslate"><span class="pre">_Backend</span></code> provides no implementation and requires
+that a subclass provide its customized implementation.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -546,6 +548,8 @@ interact with the <a class="reference internal" href="#happi.Client" title="happ
 <dt class="sig sig-object py" id="happi.backends.core._Backend.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.delete" title="Permalink to this definition"></a></dt>
 <dd><p>Delete a device instance from the database.</p>
+<p>This base class <code class="docutils literal notranslate"><span class="pre">_Backend</span></code> provides no implementation and requires
+that a subclass provide its customized implementation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – ID of device.</p>
@@ -560,6 +564,8 @@ interact with the <a class="reference internal" href="#happi.Client" title="happ
 <dt class="sig sig-object py" id="happi.backends.core._Backend.find">
 <span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.find" title="Permalink to this definition"></a></dt>
 <dd><p>Find an instance or instances that matches the search criteria.</p>
+<p>This base class <code class="docutils literal notranslate"><span class="pre">_Backend</span></code> provides no implementation and requires
+that a subclass provide its customized implementation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -575,6 +581,8 @@ information.</p></li>
 <dt class="sig sig-object py" id="happi.backends.core._Backend.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">insert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.backends.core._Backend.save" title="Permalink to this definition"></a></dt>
 <dd><p>Save information to the database.</p>
+<p>This base class <code class="docutils literal notranslate"><span class="pre">_Backend</span></code> provides no implementation and requires
+that a subclass provide its customized implementation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -770,13 +778,16 @@ correspond to a specific EntryInfo.</p>
 <h3>Loading<a class="headerlink" href="#loading" title="Permalink to this heading"></a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="happi.from_container">
-<span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">from_container</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#happi.HappiItem" title="happi.item.HappiItem"><span class="pre">HappiItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attach_md</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threaded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></span><a class="headerlink" href="#happi.from_container" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">from_container</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#happi.HappiItem" title="happi.item.HappiItem"><span class="pre">HappiItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">attach_md</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threaded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a></span></span><a class="headerlink" href="#happi.from_container" title="Permalink to this definition"></a></dt>
 <dd><p>Load an object (or “device”) from a compatible HappiItem.</p>
-<p>The container is queried for the device_class, args, and kwargs. Then if
-the associated package is not already loaded it is imported. The specified
-class is then instantiated with the given args and kwargs provided.</p>
+<p>The item container is queried for the <code class="docutils literal notranslate"><span class="pre">device_class</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">kwargs</span></code>. If the associated Python module is not already loaded it will
+be imported. The specified class is then instantiated with the given args
+and kwargs provided.</p>
+<p>The name <code class="docutils literal notranslate"><span class="pre">device</span></code> here refers to what is created after instantiating
+<code class="docutils literal notranslate"><span class="pre">device_class</span></code>.</p>
 <p>This function does not attempt to catch exceptions either during module
-imports or device creation. If you would like a series of independent
+imports or object creation. If you would like a series of independent
 devices to be loaded use <a class="reference internal" href="#happi.load_devices" title="happi.load_devices"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_devices()</span></code></a>.</p>
 <p>By default, the instantiated object has the original container added on as
 <code class="docutils literal notranslate"><span class="pre">.md</span></code>. This allows applications to utilize additional metadata
@@ -787,7 +798,7 @@ retrieved from the cache.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>device</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><em>happi.HappiItem</em></a>) – The device to load.</p></li>
+<li><p><strong>item</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><em>happi.HappiItem</em></a>) – The item to load.</p></li>
 <li><p><strong>attach_md</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Attach the container to the instantiated object as <code class="docutils literal notranslate"><span class="pre">md</span></code>.</p></li>
 <li><p><strong>use_cache</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – When devices are loaded they are stored in the <code class="docutils literal notranslate"><span class="pre">happi.cache</span></code>
 dictionary. This means that repeated attempts to load the device will
@@ -814,12 +825,12 @@ class, the exact return type is not guaranteed.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="happi.load_devices">
-<span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">load_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">devices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#happi.HappiItem" title="happi.item.HappiItem"><span class="pre">HappiItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pprint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threaded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_load_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_time_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.load_devices" title="Permalink to this definition"></a></dt>
-<dd><p>Load a series of devices into a namespace.</p>
+<span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">load_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#happi.HappiItem" title="happi.item.HappiItem"><span class="pre">HappiItem</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pprint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threaded</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_load_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_time_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.load_devices" title="Permalink to this definition"></a></dt>
+<dd><p>Load a series of devices by way of their HappiItems into a namespace.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*devices</strong> – List of happi containers to load.</p></li>
+<li><p><strong>*items</strong> (<a class="reference internal" href="#happi.HappiItem" title="happi.HappiItem"><em>HappiItem</em></a>) – List of happi containers to load.</p></li>
 <li><p><strong>pprint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Print results of device loads.</p></li>
 <li><p><strong>namespace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><em>object</em></a><em>, </em><em>optional</em>) – Namespace to collect loaded devices in. By default this will be a
 <a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.10)"><code class="xref any docutils literal notranslate"><span class="pre">types.SimpleNamespace</span></code></a>.</p></li>
@@ -830,8 +841,7 @@ this assumes that no two devices provided are the same. You are not
 guaranteed to load from the cache correctly if you ask for the same
 device to be loaded twice in the same threaded load.</p></li>
 <li><p><strong>post_load</strong> (<em>function</em><em>, </em><em>optional</em>) – Function of one argument to run on each device after instantiation.
-This is your opportunity to check for good device health during the
-threaded load.</p></li>
+This could be especially useful during the threaded loading process.</p></li>
 <li><p><strong>include_load_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>, </em><em>optional</em>) – Include load time in each message.</p></li>
 <li><p><strong>load_time_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>optional</em>) – Load time above this value, in seconds, will be shown if
 <code class="docutils literal notranslate"><span class="pre">include_load_time</span></code> is set.</p></li>

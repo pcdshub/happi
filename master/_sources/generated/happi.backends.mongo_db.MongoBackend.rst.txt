@@ -30,6 +30,6 @@
 
    .. autosummary::
    
-      ~MongoBackend.all_devices
+      ~MongoBackend.all_items
    
    

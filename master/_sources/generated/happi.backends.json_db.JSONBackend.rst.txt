@@ -33,6 +33,6 @@
 
    .. autosummary::
    
-      ~JSONBackend.all_devices
+      ~JSONBackend.all_items
    
    
