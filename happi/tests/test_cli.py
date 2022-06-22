@@ -230,19 +230,19 @@ def test_search_z_range(
     assert bad_result.exit_code == 1
     assert "Invalid range, make sure start < stop" in bad_result.output
 
-    # test conflicting ranges (should return no devices)
+    # test conflicting ranges (should return no items)
     conflict_result = runner.invoke(happi_cli, ['--path', happi_cfg,
                                     'search', 'y=1,3', 'z=3.0,6.0'])
 
     assert conflict_result.exit_code == 0
-    assert 'No devices found' in conflict_result.output
+    assert 'No items found' in conflict_result.output
 
     # test conflicting ranges but with opposite order
     conflict_result = runner.invoke(happi_cli, ['--path', happi_cfg,
                                     'search', 'z=3.0,6.0', 'y=1,3'])
 
     assert conflict_result.exit_code == 0
-    assert 'No devices found' in conflict_result.output
+    assert 'No items found' in conflict_result.output
 
 
 def test_search_int_float(runner: CliRunner, happi_cfg: str):
@@ -339,9 +339,9 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         'Selecting value: True',
         'Enter value for documentation, enforce=str [optional]: docs',
         'Selecting value: docs',
-        'Please confirm the device info is correct [y/N]: y',
-        ' - INFO -  Adding device',
-        ' - INFO -  Storing device HappiItem (name=happi_nname) ...',
+        'Please confirm the item info is correct [y/N]: y',
+        ' - INFO -  Adding item',
+        ' - INFO -  Storing item HappiItem (name=happi_nname) ...',
         ' - INFO -  Adding / Modifying information for happi_nname ...',
         ' - INFO -  HappiItem HappiItem (name=happi_nname) has been '
         'succesfully added to the database'),
@@ -369,7 +369,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         'Selecting value: True',
         'Enter value for documentation, enforce=str [optional]: docs',
         'Selecting value: docs',
-        'Please confirm the device info is correct [y/N]: N',
+        'Please confirm the item info is correct [y/N]: N',
         ' - INFO -  Aborting'),
     ),
     # Test add item - invalid container
@@ -377,7 +377,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         'Please select a container, or press enter for generic '
         'Ophyd Device container: ', 'OphydItem', 'HappiItem', '',
         'Selection [OphydItem]: HappiInvalidItem',
-        ' - INFO -  Invalid device container HappiInvalidItem'),
+        ' - INFO -  Invalid item container HappiInvalidItem'),
     ),
     # Test add item - no reponse, not an optional field,
     # invalid value, add OphydItem
@@ -408,9 +408,9 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         'Enter value for prefix, enforce=str: ',
         'Enter value for prefix, enforce=str: some_prefix',
         'Selecting value: some_prefix',
-        'Please confirm the device info is correct [y/N]: y',
-        ' - INFO -  Adding device',
-        ' - INFO -  Storing device OphydItem (name=ophyd_name) ...',
+        'Please confirm the item info is correct [y/N]: y',
+        ' - INFO -  Adding item',
+        ' - INFO -  Storing item OphydItem (name=ophyd_name) ...',
         ' - INFO -  Adding / Modifying information for ophyd_name ...',
         ' - INFO -  HappiItem OphydItem (name=ophyd_name) has been '
         'succesfully added to the database'
@@ -446,9 +446,9 @@ def test_add_cli(
         "Selecting value: {'name': 'my_name'}", 'Enter value for active, '
         'enforce=bool [Y/n]: ', 'Selecting value: True',
         'Enter value for documentation, enforce=str [docs]: ',
-        'Selecting value: docs', 'Please confirm the device info is '
-        'correct [y/N]: y', ' - INFO -  Adding device',
-        ' - INFO -  Storing device HappiItem (name=happi_new_name) ...',
+        'Selecting value: docs', 'Please confirm the item info is '
+        'correct [y/N]: y', ' - INFO -  Adding item',
+        ' - INFO -  Storing item HappiItem (name=happi_new_name) ...',
         ' - INFO -  Adding / Modifying information for happi_new_name ...',
         ' - INFO -  HappiItem HappiItem (name=happi_new_name) has been '
         'succesfully added to the database', ''], id="clone_succeeding",
@@ -459,12 +459,23 @@ def test_add_clone(
     happi_cfg: str,
     runner: CliRunner
 ):
-    device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
-                             "['arg1', 'arg2']", 'name', 'my_name', '',
-                             'Y', 'docs', 'y'])
-    # add device first
+    item_info = "\n".join(
+        [
+            "HappiItem",
+            "happi_name",
+            "device_class",
+            "['arg1', 'arg2']",
+            "name",
+            "my_name",
+            "",
+            "Y",
+            "docs",
+            "y",
+        ]
+    )
+    # add item first
     add_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
-                               input=device_info)
+                               input=item_info)
     assert add_result.exit_code == 0
 
     clone_result = runner.invoke(
@@ -474,7 +485,7 @@ def test_add_clone(
     assert_match_expected(clone_result, expected_output)
 
 
-def test_add_clone_device_not_found(happi_cfg: str, runner: CliRunner):
+def test_add_clone_item_not_found(happi_cfg: str, runner: CliRunner):
     result = runner.invoke(
         happi_cli,
         ['--verbose', '--path', happi_cfg, 'add', '--clone', 'happi_name']
@@ -502,18 +513,29 @@ def test_edit(
     happi_cfg: str,
     runner: CliRunner
 ):
-    device_info = '\n'.join(['HappiItem', 'happi_name', 'device_class',
-                             "['arg1', 'arg2']", 'name', 'my_name', '',
-                             'Y', 'docs', 'y'])
-    # add device first
+    item_info = "\n".join(
+        [
+            "HappiItem",
+            "happi_name",
+            "device_class",
+            "['arg1', 'arg2']",
+            "name",
+            "my_name",
+            "",
+            "Y",
+            "docs",
+            "y",
+        ]
+    )
+    # add item first
     add_result = runner.invoke(
         happi_cli,
         ['--verbose', '--path', happi_cfg, 'add'],
-        input=device_info
+        input=item_info
     )
     assert add_result.exit_code == 0
 
-    # try edit the previous added device
+    # try edit the previous added item
     edit_result = runner.invoke(
         happi_cli,
         ['--path', happi_cfg, 'edit', 'happi_name', *from_user],
@@ -549,15 +571,26 @@ def test_load(
     happi_cfg: str,
     runner: CliRunner
 ):
-    device_info = '\n'.join(['HappiItem', 'happi_name',
-                             'types.SimpleNamespace', '', 'name', 'my_name',
-                             '', 'y', 'docs', 'y'])
-    # add device first
+    item_info = "\n".join(
+        [
+            "HappiItem",
+            "happi_name",
+            "types.SimpleNamespace",
+            "",
+            "name",
+            "my_name",
+            "",
+            "y",
+            "docs",
+            "y",
+        ]
+    )
+    # add item first
     add_result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
-                               input=device_info)
+                               input=item_info)
     assert add_result.exit_code == 0
 
-    # try to load the device
+    # try to load the item
     devices = {}
     devices['happi_name'] = client.load_device(name='happi_name')
     with mock.patch.object(IPython, 'start_ipython') as m:
@@ -597,7 +630,7 @@ def test_update(happi_cfg: str, runner: CliRunner):
     result = runner.invoke(happi_cli, ["--path", happi_cfg, "update", new])
     assert result.exit_code == 0
     client = happi.client.Client.from_config(cfg=happi_cfg)
-    item = client.find_device(name="tst_base_pim2")
+    item = client.find_item(name="tst_base_pim2")
     assert item["from_update"]
 
 
@@ -632,7 +665,7 @@ def test_update(happi_cfg: str, runner: CliRunner):
         'Include entry from tst_base_pim: system = "diagnostic"? [Y/n]: n',
         'Include entry from tst_base_pim: y = "40.0"? [Y/n]: n',
         'Include entry from tst_base_pim: z = "3.0"? [Y/n]: n', '',
-        '----------Amend Entries-----------', 'Save final device? [y/N]: ',
+        '----------Amend Entries-----------', 'Save final item? [y/N]: ',
         ''], id="transfer_succeeding",
     )])
 def test_transfer_cli(

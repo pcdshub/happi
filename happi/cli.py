@@ -181,7 +181,7 @@ def search_parser(
                 if not range_list:
                     # we have searched via a range query.  At this point
                     # no matches, or intesection is empty. abort early
-                    logger.error('No devices found')
+                    logger.error("No items found")
                     return []
 
                 continue
@@ -222,7 +222,7 @@ def search_parser(
         logger.debug('No regex or range items found')
 
     if not final_results:
-        logger.error('No devices found')
+        logger.error('No items found')
     return final_results
 
 
@@ -239,13 +239,13 @@ def add(ctx, clone: str):
 
     registry = happi.containers.registry
     if clone:
-        clone_source = client.find_device(name=clone)
+        clone_source = client.find_item(name=clone)
         # Must use the same container if cloning
         response = registry.entry_for_class(clone_source.__class__)
     else:
         clone_source = None
         # Keep Device at registry for backwards compatibility but filter
-        # it out of new devices options
+        # it out of new item options
         options = os.linesep.join(
             [k for k, _ in registry.items() if k != "Device"]
         )
@@ -257,7 +257,7 @@ def add(ctx, clone: str):
         logger.debug(ctnr_prompt)
         response = click.prompt(ctnr_prompt, default='OphydItem')
         if response and response not in registry:
-            logger.info(f'Invalid device container {response}')
+            logger.info(f'Invalid item container {response}')
             return
 
     container = registry[response]
@@ -275,11 +275,11 @@ def add(ctx, clone: str):
         except Exception:
             logger.info(f'Invalid value {item_value}')
 
-    device = client.create_device(container, **kwargs)
-    device.show_info()
-    if click.confirm('Please confirm the device info is correct'):
-        logger.info('Adding device')
-        device.save()
+    item = client.create_item(container, **kwargs)
+    item.show_info()
+    if click.confirm('Please confirm the item info is correct'):
+        logger.info('Adding item')
+        item.save()
     else:
         logger.info('Aborting')
 
@@ -297,7 +297,7 @@ def edit(ctx, name: str, edits: List[str]):
     client = ctx.obj
 
     logger.debug('Starting edit block')
-    device = client.find_device(name=name)
+    item = client.find_item(name=name)
     if len(edits) < 1:
         click.echo('No edits provided, aborting')
         raise click.Abort()
@@ -312,7 +312,7 @@ def edit(ctx, name: str, edits: List[str]):
             raise click.Abort()
 
         # validate field depending on enforce type
-        if device._info_attrs[field].enforce in (dict, list):
+        if item._info_attrs[field].enforce in (dict, list):
             # try interpreting with ast
             try:
                 value = ast.literal_eval(value)
@@ -323,41 +323,41 @@ def edit(ctx, name: str, edits: List[str]):
                 raise click.Abort()
         else:
             try:
-                value = device._info_attrs[field].enforce_value(value)
+                value = item._info_attrs[field].enforce_value(value)
             except ValueError:
                 logger.error(f'Error enforcing type for value: {value}')
                 raise click.Abort()
 
         # set field
         try:
-            getattr(device, field)
+            getattr(item, field)
             logger.info(f'Setting {name}.{field}: {value}')
-            setattr(device, field, value)
+            setattr(item, field, value)
         except Exception as e:
             logger.error(f'Could not edit {name}.{field}: {e}')
             raise click.Abort()
 
-    device.show_info()
-    if click.confirm('Please confirm the device info is correct'):
-        logger.info('Editing device')
-        device.save()
+    item.show_info()
+    if click.confirm('Please confirm the item info is correct'):
+        logger.info('Editing item')
+        item.save()
     else:
         logger.info('Aborting')
 
 
 @happi_cli.command()
-@click.argument('device_names', nargs=-1)
+@click.argument('item_names', nargs=-1)
 @click.pass_context
-def load(ctx, device_names: List[str]):
-    """Open IPython terminal with DEVICE_NAMES loaded"""
+def load(ctx, item_names: List[str]):
+    """Open IPython terminal with ITEM_NAMES loaded"""
 
     logger.debug('Starting load block')
     # retrieve client
     client = ctx.obj
 
-    logger.info(f'Creating shell with devices {device_names}')
+    logger.info(f'Creating shell with devices {item_names}')
     devices = {}
-    names = " ".join(device_names)
+    names = " ".join(item_names)
     names = names.split()
     if len(names) < 1:
         raise click.Abort()
@@ -391,7 +391,7 @@ def update(ctx, json_data: str):
         items_input = json.loads(input_)
     # insert
     for item in items_input:
-        item = client.create_device(device_cls=item["type"], **item)
+        item = client.create_item(item["type"], **item)
         exists = item["_id"] in [c["_id"] for c in client.all_items]
         client._store(item, insert=not exists)
 
@@ -419,7 +419,7 @@ def transfer(ctx, name: str, target: str):
     # retrive client
     client = ctx.obj
     # verify name and target both exist and are valid
-    item = client.find_device(name=name)
+    item = client.find_item(name=name)
     registry = happi.containers.registry
     # This is slow if dictionary is large
     target_match = [k for k, _ in registry.items() if target in k]

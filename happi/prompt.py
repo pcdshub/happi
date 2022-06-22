@@ -138,7 +138,7 @@ def transfer_container(client, item, target):
         Happi client connected to database and container registry
 
     item : happi.HappiItem
-        Loaded device to transfer
+        Loaded item to transfer
 
     target : Type[happi.HappiItem]
         Target container for ``item``.  Container constructor
@@ -190,6 +190,7 @@ def transfer_container(client, item, target):
     # Enforce conditions are dealt with here
     click.echo('\n----------Amend Entries-----------')
     success = False
+    new_kwargs = None
     while not success:
         try:
             new_kwargs = client.change_container(item, target, edits=edits)
@@ -204,10 +205,10 @@ def transfer_container(client, item, target):
         logger.debug('transfer_container failed, no kwargs returned')
         return
 
-    device = client.create_device(target, **new_kwargs)
-    device.show_info()
+    item = client.create_item(target, **new_kwargs)
+    item.show_info()
 
-    if click.confirm('Save final device?'):
+    if click.confirm('Save final item?'):
         logger.debug('deleting original object and replacing')
-        client.remove_device(item)
-        device.save()
+        client.remove_item(item)
+        item.save()

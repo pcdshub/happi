@@ -64,8 +64,8 @@ class MongoBackend(_Backend):
                                 'port specified at startup')
 
     @property
-    def all_devices(self):
-        """List of all device sub-dictionaries."""
+    def all_items(self):
+        """List of all item sub-dictionaries."""
         return self._collection.find()
 
     def find(self, to_match):
@@ -112,12 +112,12 @@ class MongoBackend(_Backend):
 
     def get_by_id(self, _id):
         """
-        Get a device by ID if it exists, or return None.
+        Get an item by ID if it exists, or return None.
 
         Parameters
         ----------
         _id : str
-            The device ID.
+            The item ID.
         """
 
         for item in self._collection.find({'_id': _id}):
@@ -151,19 +151,19 @@ class MongoBackend(_Backend):
         Parameters
         ----------
         _id : str
-            ID of device.
+            ID of item.
         post : dict
             Information to place in database.
         insert : bool, optional
-            Whether or not this a new device to the database.
+            Whether or not this a new item to the database.
 
         Raises
         ------
         DuplicateError
-            If ``insert`` is `True`, but there is already a device with the
+            If ``insert`` is `True`, but there is already an item with the
             provided ``_id``.
         SearchError
-            If ``insert`` is `False`, but there is no device with the provided
+            If ``insert`` is `False`, but there is no item with the provided
             ``_id``.
         PermissionError
             If the write operation fails due to issues with permissions.
@@ -175,29 +175,35 @@ class MongoBackend(_Backend):
                                                  {'$set': post},
                                                  upsert=insert)
         except OperationFailure:
-            raise PermissionError("Unauthorized command, make sure you are "
-                                  "using a user with write permissions")
+            raise PermissionError(
+                "Unauthorized command, make sure you are "
+                "using a user with write permissions"
+            )
 
         if insert and not result.upserted_id:
-            raise DuplicateError('Device with id {} has already been entered '
-                                 'into the database, use load_device and '
-                                 'save if you wish to make changes to the '
-                                 'device'.format(_id))
+            raise DuplicateError(
+                "Item with id {} has already been entered "
+                "into the database, use load_item and "
+                "save if you wish to make changes to the "
+                "item".format(_id)
+            )
 
         if not insert and result.matched_count == 0:
-            raise SearchError('No device found with id {} please, if this is '
-                              'a new device, try add_device. If not, make '
-                              'sure that the device information being sent is '
-                              'correct'.format(_id))
+            raise SearchError(
+                "No item found with id {} please, if this is "
+                "a new item, try add_item. If not, make "
+                "sure that the item information being sent is "
+                "correct".format(_id)
+            )
 
     def delete(self, _id):
         """
-        Delete a device instance from the database.
+        Delete an item instance from the database.
 
         Parameters
         ----------
         _id : str
-            ID of device.
+            ID of item.
         """
 
         res = self._collection.delete_one({'_id': _id})

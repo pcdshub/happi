@@ -1,6 +1,7 @@
-import collections
+import collections.abc
 import configparser
 import contextlib
+import copy
 import inspect
 import itertools
 import logging
@@ -8,8 +9,7 @@ import os
 import re
 import sys
 import time as ttime
-import warnings
-from typing import Any, Dict, Optional, Sequence, Type
+from typing import Any, Dict, List, Optional, Sequence, Type
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -17,6 +17,7 @@ from .backends.core import _Backend
 from .errors import DatabaseError, EntryError, SearchError, TransferError
 from .item import HappiItem
 from .loader import from_container
+from .utils import deprecated
 
 logger = logging.getLogger(__name__)
 
@@ -54,22 +55,22 @@ class SearchResult(collections.abc.Mapping):
         The resulting HappiItem metadata.
     """
 
-    def __init__(self, client, device):
-        self._device = device
+    def __init__(self, client, item):
+        self._item = item
         self._instantiated = None
         self.client = client
-        self.metadata = device.post()
+        self.metadata = item.post()
 
     @property
+    @deprecated("Use .item")
     def device(self):
-        warnings.warn('SearchResult.device deprecated, use SearchResult.item')
         return self.item
 
     @property
     def item(self):
-        if self._device is None:
-            self._device = self.client.find_device(**self.metadata)
-        return self._device
+        if self._item is None:
+            self._item = self.client.find_item(**self.metadata)
+        return self._item
 
     def get(self, attach_md=True, use_cache=True, threaded=False):
         '''(get) ''' + from_container.__doc__
@@ -168,16 +169,16 @@ class Client(collections.abc.Mapping):
 
     def find_document(self, **kwargs):
         """
-        Load a device document from the database.
+        Load an item document from the database.
 
         If multiple matches are found, a single document will be returned to
-        the user. How the database will choose to select this device is based
+        the user. How the database will choose to select this item is based
         on each individual implementation
 
         Parameters
         ----------
         kwargs
-            Keyword pairs of information used to locate the device
+            Keyword pairs of information used to locate the item
 
         Returns
         -------
@@ -191,144 +192,153 @@ class Client(collections.abc.Mapping):
 
         See Also
         --------
-        :meth:`.find_device`, :meth:`.search`
+        :meth:`.find_item`, :meth:`.search`
         """
 
         if len(kwargs) == 0:
-            raise SearchError('No information pertinent to device given')
+            raise SearchError("No information pertinent to item given")
 
         self._maybe_clear_cache()
         matches = list(itertools.islice(self.backend.find(kwargs), 1))
         if not matches:
             raise SearchError(
-                'No device information found that matches the search criteria')
-        return matches[0]
+                "No item information found that matches the search criteria"
+            )
+        return copy.deepcopy(matches[0])
 
-    def create_device(self, device_cls, **kwargs):
+    def create_item(self, item_cls, **kwargs):
         """
         Instantiate a HappiItem from its container class and keyword arguments.
 
         Parameters
         ----------
-        device_cls : class
+        item_cls : type
             The HappiItem container class to instantiate.
-        kwargs
-            Information to pass through to the device, upon initialization.
+
+        **kwargs :
+            Information to pass through to the item, upon initialization.
 
         Returns
         -------
-        device : object
-            An instantiated version of the device.
+        item : object
+            An instantiated version of the item.
 
         Raises
         ------
         TypeError
             If the provided class is not a subclass of :class:`.HappiItem`.
 
-
         Example
         -------
         .. code::
 
-            device = client.create_device(Device,   name='my_device' ...)
-            device = client.create_device('Device', name='my_device',...)
-
+            item = client.create_item(Item, name='my_item' ...)
+            item = client.create_item('Item', name='my_item',...)
         """
 
-        # If specified by a string
-        if device_cls in containers.registry:
-            device_cls = containers.registry[device_cls]
+        # string -> class, if in the registry
+        if item_cls in containers.registry:
+            item_cls = containers.registry[item_cls]
 
         # Check that this is a valid HappiItem
-        if isinstance(device_cls, str):
+        if isinstance(item_cls, str):
             raise TypeError(
-                f'The device class {device_cls!r} is not in the registry'
+                f'The container class {item_cls!r} is not in the registry'
             )
 
-        if (not inspect.isclass(device_cls) or
-                not issubclass(device_cls, HappiItem)):
-            raise TypeError(f'{device_cls!r} is not a subclass of HappiItem')
+        if not (inspect.isclass(item_cls) and issubclass(item_cls, HappiItem)):
+            raise TypeError(f"{item_cls!r} is not a subclass of HappiItem")
 
-        device = device_cls(**kwargs)
-        # Add the method to the device
+        item = item_cls(**kwargs)
 
-        def save_device():
-            self.add_device(device)
+        def save_item():
+            self.add_item(item)
 
-        device.save = save_device
-        return device
+        # Add the method to the item
+        item.save = save_item
+        return item
 
-    def add_device(self, device):
+    @deprecated("use .create_item")
+    def create_device(self, device_cls, **kwargs):
+        return self.create_item(device_cls, **kwargs)
+
+    def add_item(self, item):
         """
-        Add a device into the database.
+        Add an item into the database.
 
         Parameters
         ----------
-        device : :class:`.HappiItem`
-            The device to store in the database.
+        item : :class:`.HappiItem`
+            The item to store in the database.
 
         Returns
         -------
         _id : str
-            The id of the device added.
+            The id of the item added.
 
         Raises
         ------
         EntryError
-            If all of the mandatory information for the device has not been
-            specified or there is already a device with that ``id`` in the
+            If all of the mandatory information for the item has not been
+            specified or there is already an item with that ``id`` in the
             database.
         """
 
-        logger.info("Storing device %r ...", device)
-        _id = self._store(device, insert=True)
-        logger.info('HappiItem %r has been succesfully added to the '
-                    'database', device)
+        logger.info("Storing item %r ...", item)
+        _id = self._store(item, insert=True)
+        logger.info(
+            "HappiItem %r has been succesfully added to the database",
+            item
+        )
 
-        def save_device():
-            self._store(device, insert=False)
+        def save_item():
+            self._store(item, insert=False)
 
-        device.save = save_device
+        item.save = save_item
         return _id
+
+    @deprecated("use .add_item")
+    def add_device(self, *args, **kwargs):
+        return self.add_item(*args, **kwargs)
 
     def _get_item_from_document(self, doc: Dict[str, Any]) -> HappiItem:
         """
-        Get a HappiItem given the database document.
+        Create a HappiItem given its backend-provided document.
 
         Parameters
         ----------
-        post
-            Key-value pairs of search criteria used to find the device.
+        doc : dict
+            Document from the backend.
 
         Returns
         -------
         item : :class:`.HappiItem`
-            A HappiItem instance for the document.
+            An item that matches the characteristics given.
         """
-
-        logger.debug("Instantiating device based on found information ...")
         try:
-            device = self.create_device(doc['type'], **doc)
+            item = self.create_item(doc["type"], **doc)
         except (KeyError, TypeError) as exc:
-            raise EntryError('The information relating to the device class '
-                             'has been modified to the point where the object '
-                             'can not be initialized, please load the '
-                             'corresponding document') from exc
+            raise EntryError(
+                "The information relating to the container class "
+                "has been modified to the point where the object "
+                "can not be initialized, please load the "
+                "corresponding document"
+            ) from exc
 
-        # Add the save method to the device
-        device.save = lambda: self._store(device, insert=False)
-        return device
+        # Add the save method to the item
+        item.save = lambda: self._store(item, insert=False)
+        return item
 
-    def find_device(self, **post):
+    def find_item(self, **post):
         """
         Query the database for an individual HappiItem.
 
-        If multiple devices are found, only the first is returned.
+        If multiple items are found, only the first is returned.
 
         Parameters
         ----------
-        post
-            Key-value pairs of search criteria used to find the device.
+        **post :
+            Key-value pairs of search criteria used to find the item.
 
         Raises
         ------
@@ -337,30 +347,34 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        device : :class:`.HappiItem`
-            A device that matches the characteristics given.
+        item : :class:`.HappiItem`
+            A HappiItem instance for the document.
         """
         return self._get_item_from_document(self.find_document(**post))
 
+    @deprecated("use .find_item")
+    def find_device(self, **kwargs):
+        return self.find_item(**kwargs)
+
     def load_device(self, use_cache=True, **post):
         """
-        Find a device in the database and instantiate it.
+        Find an item in the database and instantiate it.
 
         Essentially a shortcut for:
 
         .. code:: python
 
-            container = client.find_device(name='...')
-            device = from_container(container)
+            container = client.find_item(name='...')
+            item = from_container(container)
 
         Parameters
         ----------
         post
             Key-value pairs of search criteria passed to
-            :meth:`.Client.find_device`.
+            :meth:`.Client.find_item`.
 
         use_cache : bool, optional
-            Choice to use a cached device. See :meth:`.from_container` for more
+            Choice to use a cached item. See :meth:`.from_container` for more
             information.
 
         Returns
@@ -368,8 +382,7 @@ class Client(collections.abc.Mapping):
         object
             Instantiated object.
         """
-
-        cntr = self.find_device(**post)
+        cntr = self.find_item(**post)
         return from_container(cntr, use_cache=use_cache)
 
     def change_container(
@@ -456,28 +469,28 @@ class Client(collections.abc.Mapping):
 
     def validate(self):
         """
-        Validate all of the devices in the database.
+        Validate all of the items in the database.
 
-        This is done by attempting to initialize each device and asserting
+        This is done by attempting to initialize each item and asserting
         their mandatory information is present. Information is written to the
         logger.
 
         Returns
         -------
         ids : list of str
-            List of device ids that have failed verification.
+            List of item ids that have failed verification.
         """
 
         bad = list()
         logger.debug('Loading database to validate contained devices ...')
-        for doc in self.backend.all_devices:
+        for doc in self.backend.all_items:
             # Try and load device based on database info
             _id = doc.get(self._id_key, "(unknown id)")
             try:
                 logger.debug("Attempting to initialize %s...", _id)
                 item = self._get_item_from_document(doc)
                 logger.debug("Attempting to validate ...")
-                self._validate_device(item)
+                self._validate_item(item)
             except Exception as e:
                 logger.warning("Failed to validate %s because %s", _id, e)
                 bad.append(_id)
@@ -486,9 +499,9 @@ class Client(collections.abc.Mapping):
         return bad
 
     @property
+    @deprecated("use .all_items")
     def all_devices(self):
         """A list of all contained devices."""
-        warnings.warn('Client.all_devices deprecated, use all_items instead')
         return self.all_items
 
     @property
@@ -497,13 +510,13 @@ class Client(collections.abc.Mapping):
         return [res.item for res in self.search()]
 
     def __getitem__(self, key):
-        """Get a device ID."""
+        """Get an item ID."""
         try:
-            device = self._get_item_from_document(self.backend.get_by_id(key))
+            item = self._get_item_from_document(self.backend.get_by_id(key))
         except Exception as ex:
             raise KeyError(key) from ex
 
-        return SearchResult(client=self, device=device)
+        return SearchResult(client=self, item=item)
 
     def __iter__(self):
         for info in self.backend.find({}):
@@ -519,16 +532,22 @@ class Client(collections.abc.Mapping):
 
     def _get_search_results(
         self, docs: Sequence[Dict[str, Any]], *, wrap_cls: Optional[type] = None
-    ):
+    ) -> List[SearchResult]:
         """
         Return search results to the user, optionally wrapping with a class.
         """
         wrap_cls = wrap_cls or self._results_wrap_class
+        assert wrap_cls is not None
+
         results = []
         for doc in docs:
             try:
-                result = wrap_cls(client=self, device=self._get_item_from_document(doc))
-                results.append(result)
+                results.append(
+                    wrap_cls(
+                        client=self,
+                        item=self._get_item_from_document(doc)
+                    )
+                )
             except Exception as exc:
                 logger.warning(
                     "Entry for %s is malformed (%s). Skipping.",
@@ -536,25 +555,27 @@ class Client(collections.abc.Mapping):
                 )
         return results
 
-    def search_range(self, key, start, end=None, **kwargs):
+    def search_range(
+        self, key: str, start: float, end: Optional[float] = None, **kwargs
+    ) -> List[SearchResult]:
         """
-        Search the database for a device or devices using a numerical range.
+        Search the database for an item or items using a numerical range.
 
         Parameters
         -----------
         key : str
             Database key to search.
         start : float, optional
-            Minimum beamline position to include devices.
+            Minimum beamline position to include items.
         end : float, optional
-            Maximum beamline position to include devices.
+            Maximum beamline position to include items.
         **kwargs : optional
             Additional information used to filter through the database
             structured as key-value pairs for the desired pieces of EntryInfo.
 
         Returns
         -------
-        list of devices or dictionaries
+        list of SearchResult
 
         Example
         -------
@@ -572,7 +593,7 @@ class Client(collections.abc.Mapping):
 
     def search(self, **kwargs):
         """
-        Search the database for a device or devices.
+        Search the database for item(s).
 
         Parameters
         -----------
@@ -597,9 +618,11 @@ class Client(collections.abc.Mapping):
         items = self.backend.find(kwargs)
         return self._get_search_results(items)
 
-    def search_regex(self, flags=re.IGNORECASE, **kwargs):
+    def search_regex(
+        self, flags=re.IGNORECASE, **kwargs
+    ) -> List[SearchResult]:
         """
-        Search the database for a device or devices.
+        Search the database for items(s).
 
         Parameters
         -----------
@@ -613,7 +636,7 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        list of devices or dictionaries
+        list of SearchResult
 
         Example
         -------
@@ -644,7 +667,7 @@ class Client(collections.abc.Mapping):
         # Load documents
         devs = self.all_items
         logger.info('Creating file at %s ...', path)
-        # Load device information
+        # Load item information
         with path as f:
             for dev in devs:
                 try:
@@ -655,52 +678,56 @@ class Client(collections.abc.Mapping):
                     logger.error("HappiItem %s was missing attribute %s",
                                  dev.name, e)
 
-    def remove_device(self, device):
+    def remove_item(self, item):
         """
-        Remove a device from the database.
+        Remove an item from the database.
 
         Parameters
         ----------
-        device : :class:`.HappiItem`
+        item : :class:`.HappiItem`
             HappiItem to be removed from the database.
         """
 
         # HappiItem Check
-        if not isinstance(device, HappiItem):
+        if not isinstance(item, HappiItem):
             raise ValueError("Must supply an object of type `HappiItem`")
         logger.info("Attempting to remove %r from the "
-                    "collection ...", device)
-        # Check that device is in the database
-        _id = getattr(device, self._id_key)
+                    "collection ...", item)
+        # Check that item is in the database
+        _id = getattr(item, self._id_key)
         self.backend.delete(_id)
 
-    def _validate_device(self, device):
-        """Validate that a device has all of the mandatory information."""
-        logger.debug('Validating device %r ...', device)
+    @deprecated("use .remove_item")
+    def remove_device(self, device):
+        return self.remove_item(device)
+
+    def _validate_item(self, item):
+        """Validate that an item has all of the mandatory information."""
+        logger.debug('Validating item %r ...', item)
 
         # Check type
-        if not isinstance(device, HappiItem):
-            raise ValueError('{!r} is not a subclass of '
-                             'HappiItem'.format(device))
+        if not isinstance(item, HappiItem):
+            raise ValueError(f"{item!r} is not a subclass of HappiItem")
         logger.debug('Checking mandatory information has been entered ...')
         # Check that all mandatory info has been entered
-        missing = [info.key for info in device.entry_info
+        missing = [info.key for info in item.entry_info
                    if not info.optional and
-                   info.default == getattr(device, info.key)]
+                   info.default == getattr(item, info.key)]
         # Abort initialization if missing mandatory info
         if missing:
-            raise EntryError('Missing mandatory information ({}) for {}'
-                             ''.format(', '.join(missing),
-                                       device.__class__.__name__))
-        logger.debug('HappiItem %r has been validated.', device)
+            raise EntryError(
+                "Missing mandatory information ({}) for {}"
+                "".format(", ".join(missing), item.__class__.__name__)
+            )
+        logger.debug('HappiItem %r has been validated.', item)
 
-    def _store(self, device, insert=False):
+    def _store(self, item, insert=False):
         """
         Store a document in the database.
 
         Parameters
         ----------
-        post : :class:`.HappiItem`
+        item : :class:`.HappiItem`
             HappiItem to save.
         insert : bool, optional
             Set to `True` if this is a new entry.
@@ -710,19 +737,19 @@ class Client(collections.abc.Mapping):
         DuplicateError
             When ``_id`` already exists.
         EntryError
-            If the device doesn't the correct information.
+            If the item doesn't the correct information.
 
         Todo
         ----
         Enforce parent is an already entered name
         """
 
-        logger.debug('Loading a device into the collection ...')
+        logger.debug('Loading an item into the collection ...')
 
-        # Validate device is ready for storage
-        self._validate_device(device)
-        # Grab information from device
-        post = device.post()
+        # Validate item is ready for storage
+        self._validate_item(item)
+        # Grab information from item
+        post = item.post()
         # save the old name in case the user is trying to
         # change the 'name' of an entry
         the_old_name = post.get('_id', None)
@@ -730,15 +757,18 @@ class Client(collections.abc.Mapping):
         creation = post.get('creation', ttime.ctime())
         # Clean supplied information
         [post.pop(key) for key in self._client_attrs if key in post]
-        # Note that device has some unrecognized metadata
+        # Note that item has some unrecognized metadata
         for key in post.keys():
-            if key not in device.info_names:
-                logger.debug("HappiItem %r defines an extra piece of "
-                             "information under the keyword %s",
-                             device, key)
+            if key not in item.info_names:
+                logger.debug(
+                    "HappiItem %r defines an extra piece of "
+                    "information under the keyword %s",
+                    item,
+                    key,
+                )
         # Add metadata from the Client Side
 
-        tpe = containers.registry.entry_for_class(device.__class__)
+        tpe = containers.registry.entry_for_class(item.__class__)
         post.update({'type': tpe,
                      'creation': creation,
                      'last_edit': ttime.ctime()})
@@ -884,7 +914,7 @@ class Client(collections.abc.Mapping):
         Raises
         ------
         SearchError
-            If no devices in the database have an entry for the given field.
+            If no items in the database have an entry for the given field.
 
         Returns
         -------

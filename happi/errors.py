@@ -12,7 +12,7 @@ class EntryError(Exception):
 
 
 class DuplicateError(Exception):
-    """Raised when a duplicate device is saved."""
+    """Raised when a duplicate item is saved."""
     pass
 
 
@@ -22,7 +22,7 @@ class ContainerError(Exception):
 
 
 class SearchError(Exception):
-    """Raised when no device is found while searching."""
+    """Raised when no item is found while searching."""
     pass
 
 

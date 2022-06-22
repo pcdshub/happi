@@ -1,6 +1,7 @@
 import logging
 import sys
 import tempfile
+from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
@@ -59,7 +60,7 @@ requires_py39 = pytest.mark.skipif(
 
 
 @pytest.fixture(scope='function')
-def device_info():
+def item_info() -> Dict[str, Any]:
     return {'name': 'alias',
             'z': 400,
             '_id': 'alias',
@@ -75,13 +76,12 @@ def device_info():
 
 
 @pytest.fixture(scope='function')
-def device(device_info):
-    t = OphydItem(**device_info)
-    return t
+def item(item_info: Dict[str, Any]) -> OphydItem:
+    return OphydItem(**item_info)
 
 
 @pytest.fixture(scope='function')
-def valve_info():
+def valve_info() -> Dict[str, Any]:
     return {'name': 'name',
             'z': 300,
             'prefix': 'BASE:VGC:PV',
@@ -94,9 +94,8 @@ def valve_info():
 
 
 @pytest.fixture(scope='function')
-def valve(valve_info):
-    t = OphydItem(**valve_info)
-    return t
+def valve(valve_info: Dict[str, Any]) -> OphydItem:
+    return OphydItem(**valve_info)
 
 
 @pytest.fixture(scope='function')
@@ -142,10 +141,10 @@ def item2_dev(Item2):
 
 
 @pytest.fixture(scope='function')
-def mockjsonclient(device_info):
+def mockjsonclient(item_info: Dict[str, Any]):
     # Write underlying database
     with tempfile.NamedTemporaryFile(mode='w') as handle:
-        simplejson.dump({device_info['name']: device_info},
+        simplejson.dump({item_info['name']: item_info},
                         handle)
         handle.flush()  # flush buffer to write file
         # Return handle name
@@ -156,7 +155,7 @@ def mockjsonclient(device_info):
 
 @pytest.fixture(scope='function')
 @requires_mongo
-def mockmongoclient(device_info):
+def mockmongoclient(item_info: Dict[str, Any]):
     with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
         mc = MongoClient()
         mc['test_db'].create_collection('test_collect')
@@ -166,7 +165,7 @@ def mockmongoclient(device_info):
                                collection='test_collect')
         client = Client(database=backend)
         # Insert a single device
-        client.backend._collection.insert_one(device_info)
+        client.backend._collection.insert_one(item_info)
         return client
 
 

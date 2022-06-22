@@ -44,94 +44,94 @@ path=db.json
     os.environ["XDG_CONFIG_HOME"] = xdg_cfg
 
 
-def test_find_document(happi_client: Client, device_info: Dict[str, Any]):
-    doc = happi_client.find_document(**device_info)
-    assert doc.pop('prefix') == device_info['prefix']
-    assert doc.pop('name') == device_info['name']
+def test_find_document(happi_client: Client, item_info: Dict[str, Any]):
+    doc = happi_client.find_document(**item_info)
+    assert doc.pop('prefix') == item_info['prefix']
+    assert doc.pop('name') == item_info['name']
     # Remove id and check
-    prefix = device_info.pop('prefix')
-    doc = happi_client.find_document(**device_info)
+    prefix = item_info.pop('prefix')
+    doc = happi_client.find_document(**item_info)
 
     assert doc.pop('prefix') == prefix
-    assert doc.pop('name') == device_info['name']
+    assert doc.pop('name') == item_info['name']
     # Not available
     with pytest.raises(SearchError):
         doc = happi_client.find_document(prefix='Does not Exist')
 
 
-def test_create_device(happi_client: Client, device_info: Dict[str, Any]):
-    device = happi_client.create_device(OphydItem, **device_info)
-    assert device.prefix == device_info['prefix']
-    assert device.name == device_info['name']
+def test_create_item(happi_client: Client, item_info: Dict[str, Any]):
+    item = happi_client.create_item(OphydItem, **item_info)
+    assert item.prefix == item_info['prefix']
+    assert item.name == item_info['name']
     # Invalid Entry
     with pytest.raises(TypeError):
-        happi_client.create_device(int)
+        happi_client.create_item(int)
 
 
-def test_all_devices(happi_client: Client, device: OphydItem):
-    assert happi_client.all_items == [device]
+def test_all_items(happi_client: Client, item: OphydItem):
+    assert happi_client.all_items == [item]
 
 
-def test_add_device(happi_client: Client, valve: OphydItem):
-    happi_client.add_device(valve)
+def test_add_item(happi_client: Client, valve: OphydItem):
+    happi_client.add_item(valve)
     # No duplicates
     with pytest.raises(DuplicateError):
-        happi_client.add_device(valve)
+        happi_client.add_item(valve)
     # No incompletes
     d = OphydItem()
     with pytest.raises(EntryError):
-        happi_client.add_device(d)
+        happi_client.add_item(d)
 
 
-def test_add_and_find_device(
+def test_add_and_find_item(
     happi_client: Client,
     valve: OphydItem,
     valve_info: Dict[str, Any]
 ):
-    happi_client.add_device(valve)
-    loaded_device = happi_client.find_device(**valve_info)
-    assert loaded_device.prefix == valve.prefix
-    assert loaded_device.name == valve.name
+    happi_client.add_item(valve)
+    loaded_item = happi_client.find_item(**valve_info)
+    assert loaded_item.prefix == valve.prefix
+    assert loaded_item.name == valve.name
 
 
-def test_find_device(happi_client: Client, device_info: Dict[str, Any]):
-    device = happi_client.find_device(**device_info)
-    assert isinstance(device, OphydItem)
-    assert device.prefix == device_info['prefix']
-    assert device.name == device_info['name']
+def test_find_item(happi_client: Client, item_info: Dict[str, Any]):
+    item = happi_client.find_item(**item_info)
+    assert isinstance(item, OphydItem)
+    assert item.prefix == item_info['prefix']
+    assert item.name == item_info['name']
     # Test edit and save
-    device.stand = 'DG3'
-    device.save()
-    loaded_device = happi_client.find_device(**device_info)
-    assert loaded_device.prefix == device_info['prefix']
-    assert loaded_device.name == device_info['name']
+    item.stand = 'DG3'
+    item.save()
+    loaded_item = happi_client.find_item(**item_info)
+    assert loaded_item.prefix == item_info['prefix']
+    assert loaded_item.name == item_info['name']
     # Bad load
     bad = {'a': 'b'}
     happi_client.backend.save('a', bad, insert=True)
     with pytest.raises(EntryError):
-        happi_client.find_device(**bad)
+        happi_client.find_item(**bad)
 
 
-def test_change_item_name(happi_client: Client, device_info: Dict[str, Any]):
-    device = happi_client.find_device(**device_info)
-    assert device.name != 'new_name'
-    device.name = 'new_name'
-    device.save()
+def test_change_item_name(happi_client: Client, item_info: Dict[str, Any]):
+    item = happi_client.find_item(**item_info)
+    assert item.name != 'new_name'
+    item.name = 'new_name'
+    item.save()
     # old entry should not exist anymore
     with pytest.raises(SearchError):
-        happi_client.find_device(**device_info)
+        happi_client.find_item(**item_info)
     # new entry with new name should be there
-    new_device = happi_client.find_device(name=device.name)
+    new_item = happi_client.find_item(name=item.name)
     # prefix or other attributes should be the same
-    assert new_device.prefix == device.prefix
+    assert new_item.prefix == item.prefix
     # we should only have one deivce now which is the new one
-    assert happi_client.all_items == [new_device]
+    assert happi_client.all_items == [new_item]
 
 
 def test_validate(happi_client: Client):
-    # No bad devices
+    # No bad items
     assert happi_client.validate() == list()
-    # A single bad device
+    # A single bad item
     happi_client.backend.save('_id', {happi_client._id_key: 'bad'},
                               insert=True)
     assert happi_client.validate() == ['bad']
@@ -140,29 +140,29 @@ def test_validate(happi_client: Client):
 def test_search(
     happi_client: Client,
     valve: OphydItem,
-    device_info: Dict[str, Any]
+    item_info: Dict[str, Any]
 ):
-    happi_client.add_device(valve)
-    res = happi_client.search(name=device_info['name'])
+    happi_client.add_item(valve)
+    res = happi_client.search(name=item_info['name'])
     # Single search return
     assert len(res) == 1
-    loaded_device = res[0].item
-    assert loaded_device.prefix == device_info['prefix']
-    assert loaded_device.name == device_info['name']
+    loaded_item = res[0].item
+    assert loaded_item.prefix == item_info['prefix']
+    assert loaded_item.name == item_info['name']
     # No results
     assert not happi_client.search(name='not')
     # Returned as dict
-    res = happi_client.search(**device_info)
-    loaded_device = res[0].item
-    assert loaded_device['prefix'] == device_info['prefix']
-    assert loaded_device['name'] == device_info['name']
+    res = happi_client.search(**item_info)
+    loaded_item = res[0].item
+    assert loaded_item['prefix'] == item_info['prefix']
+    assert loaded_item['name'] == item_info['name']
     # Search off keyword
     res = happi_client.search(beamline='LCLS')
     assert len(res) == 2
 
 
 def test_search_range(happi_client: Client, valve: OphydItem):
-    happi_client.add_device(valve)
+    happi_client.add_item(valve)
     # Search between two points
     res = happi_client.search_range('z', start=0, end=500)
     assert len(res) == 2
@@ -205,31 +205,31 @@ def test_get_by_id(
     valve: OphydItem,
     valve_info: Dict[str, Any]
 ):
-    happi_client.add_device(valve)
+    happi_client.add_item(valve)
     name = valve_info['name']
     for k, v in valve_info.items():
         assert happi_client[name][k] == valve_info[k]
 
 
-def test_remove_device(
+def test_remove_item(
     happi_client: Client,
-    device: OphydItem,
+    item: OphydItem,
     valve: OphydItem,
-    device_info: Dict[str, Any]
+    item_info: Dict[str, Any]
 ):
-    happi_client.remove_device(device)
-    assert list(happi_client.backend.find(device_info)) == []
-    # Invalid Device
+    happi_client.remove_item(item)
+    assert list(happi_client.backend.find(item_info)) == []
+    # Invalid item
     with pytest.raises(ValueError):
-        happi_client.remove_device(5)
+        happi_client.remove_item(5)
     # Valve not in dictionary
     with pytest.raises(SearchError):
-        happi_client.remove_device(valve)
+        happi_client.remove_item(valve)
 
 
 def test_export(happi_client: Client, valve: OphydItem):
-    # Setup client with both devices
-    happi_client.add_device(valve)
+    # Setup client with both items
+    happi_client.add_item(valve)
     fd, temp_path = tempfile.mkstemp()
     happi_client.export(open(temp_path, 'w+'),
                         sep=',',
@@ -242,8 +242,8 @@ def test_export(happi_client: Client, valve: OphydItem):
     os.close(fd)
 
 
-def test_load_device(happi_client: Client, device: OphydItem):
-    device = happi_client.load_device(name=device.name)
+def test_load_device(happi_client: Client, item: OphydItem):
+    device = happi_client.load_device(name=item.name)
     assert isinstance(device, types.SimpleNamespace)
     assert device.hi == 'oh hello'
 
