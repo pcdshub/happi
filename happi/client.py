@@ -849,7 +849,7 @@ class Client(collections.abc.Mapping):
 
         # Create our database with provided kwargs
         try:
-            database = backend(**db_kwargs)
+            database = backend(**db_kwargs, cfg_path=cfg)
             return cls(database=database)
         except Exception as ex:
             raise RuntimeError(

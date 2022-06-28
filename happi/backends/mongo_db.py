@@ -32,6 +32,8 @@ class MongoBackend(_Backend):
         Database name within the MongoDB instance.
     timeout : float, optional
         Time to wait for connection attempt.
+    cfg_path : str, optional
+        Path to the happi config.
     """
 
     _timeout = 5
@@ -39,7 +41,7 @@ class MongoBackend(_Backend):
 
     def __init__(self, host=None, user=None,
                  pw=None, db=None, collection=None,
-                 timeout=None):
+                 timeout=None, cfg_path=None):
         # Default timeout
         timeout = timeout or self._timeout
         # Format connection string

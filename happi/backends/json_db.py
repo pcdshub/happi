@@ -7,10 +7,11 @@ import math
 import os
 import os.path
 import re
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import simplejson as json
 
+from .. import utils
 from ..errors import DuplicateError, SearchError
 from .core import _Backend
 
@@ -49,11 +50,18 @@ class JSONBackend(_Backend):
         Path to JSON file.
     initialze : bool, optional
         Initialize a new empty JSON file to begin filling.
+    cfg_path : str, optional
+        Path to the happi config.
     """
 
-    def __init__(self, path, initialize=False):
+    def __init__(self, path: str, initialize: bool = False, cfg_path: Optional[str] = None):
         self._load_cache = None
-        self.path = os.path.expanduser(path)
+        # Determine the cfg dir and build path to json db based on that unless we're initted w/o a config
+        if cfg_path is not None:
+            cfg_dir = os.path.dirname(cfg_path)
+            self.path = utils.build_abs_path(cfg_dir, path)
+        else:
+            self.path = path
         # Create a new JSON file if requested
         if initialize:
             self.initialize()
