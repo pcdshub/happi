@@ -44,6 +44,29 @@ path=db.json
     os.environ["XDG_CONFIG_HOME"] = xdg_cfg
 
 
+@pytest.fixture(scope='function')
+def happi_cfg_abs(xdg_config_home):
+    # Store current happi config
+    xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
+    happi_cfg = os.environ.get("HAPPI_CFG", '')
+
+    # Setup environment variables
+    os.environ['XDG_CONFIG_HOME'] = str(xdg_config_home)
+    os.environ['HAPPI_CFG'] = ''
+
+    # Write file
+    happi_cfg = xdg_config_home / 'happi.cfg'
+    happi_cfg.write_text("""\
+[DEFAULT]
+backend=json
+path=/var/run/db.json
+""")
+    yield str(happi_cfg)
+    # Restore environment variables
+    os.environ["HAPPI_CFG"] = str(happi_cfg)
+    os.environ["XDG_CONFIG_HOME"] = xdg_cfg
+
+
 def test_find_document(happi_client: Client, item_info: Dict[str, Any]):
     doc = happi_client.find_document(**item_info)
     assert doc.pop('prefix') == item_info['prefix']
@@ -301,8 +324,19 @@ def test_find_cfg(happi_cfg: str):
 def test_from_cfg(happi_cfg: str):
     # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
+    # Internal db path should be constructed relative to the happi cfg dir
+    expected_db = os.path.abspath(os.path.join(os.path.dirname(happi_cfg), 'db.json'))
+    print(happi_cfg)
     assert isinstance(client.backend, JSONBackend)
-    assert client.backend.path == 'db.json'
+    assert client.backend.path == expected_db
+
+
+def test_from_cfg_abs(happi_cfg_abs: str):
+    # happi_cfg modifies environment variables to make config discoverable
+    client = Client.from_config()
+    assert isinstance(client.backend, JSONBackend)
+    # Ensure the json backend is using the db that we gave an absolute path to.
+    assert client.backend.path == '/var/run/db.json'
 
 
 def test_choices_for_field(happi_client: Client):

@@ -418,12 +418,14 @@ class QSBackend(JSONBackend):
     pw : str, optional
         A password for ws_auth sign-in. If not provided a password will be
         requested.
+    cfg_path : str, optional
+        Path to the happi config.
     """
 
     translations = DEFAULT_TRANSLATIONS
 
-    def __init__(self, expname, *, url=None, use_kerberos=True, user=None,
-                 pw=None):
+    def __init__(self, expname: str, *, url=None, use_kerberos=True, user=None,
+                 pw=None, cfg_path=None):
         # Load cache is unused for this backend, but we have it here for
         # API compatibility with the superclass JSONBackend.
         self._load_cache = None
