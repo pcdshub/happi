@@ -9,6 +9,16 @@ if [[ -z "$ISSUE" || -z "$DESCRIPTION" ]]; then
     exit 1
 fi
 
+re_issue_number='^[1-9][0-9]*$'
+
+if ! [[ "$ISSUE" =~ $re_issue_number ]]; then
+    echo "Error: Issue number is not a number: $ISSUE"
+    echo
+    echo "This should preferably be the issue number that this pull request solves."
+    echo "We may also accept the Pull Request number in place of the issue."
+    exit 1
+fi
+
 echo "Issue: $ISSUE"
 echo "Description: $DESCRIPTION"
 
@@ -24,4 +34,4 @@ if ${EDITOR} "${FILENAME}"; then
     git add "${FILENAME}"
 fi
 
-popd
+popd || exit 0
