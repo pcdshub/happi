@@ -402,7 +402,7 @@ def container_registry():
     pt = prettytable.PrettyTable()
     pt.field_names = ["Container Name", "Container Class", "Object Class"]
     pt.align = "l"
-    for type_, class_, in happi.containers.registry._registry.items():
+    for type_, class_, in happi.containers.registry.items():
         pt.add_row([type_,
                     f'{class_.__module__}.{class_.__name__}',
                     class_.device_class.default])
