@@ -50,6 +50,14 @@ class HappiRegistry:
                 ],
             },
         )
+
+    Containers may also be added manually to the registry by way of:
+
+    .. code::
+
+        import happi
+
+        happi.containers.registry[item_name] = ContainerClass
     """
     #: Has __init__ been called on the registry?
     __initialized: bool
@@ -136,9 +144,13 @@ class HappiRegistry:
             return ".".join([entry_name, module, klass.__name__])
 
         key = make_entry_name()
-        if key in self._registry:
+
+        class_in_registry = self._registry.get(key, None)
+        if class_in_registry is klass:
+            return
+        if class_in_registry is not None:
             raise RuntimeError(f"Duplicated entry found for key: {key} "
-                               f"and class: {klass}")
+                               f"and class: {klass} {class_in_registry}")
         if klass in self._reverse_registry:
             dup_key = self._reverse_registry.get(klass)
             raise RuntimeError(f"Duplicated entry found. Keys: {key} "
@@ -157,8 +169,11 @@ class HappiRegistry:
                    and not klass.__module__.startswith('happi.')
 
         self._loaded = True
-        self._registry = {k: v for k, v in DEFAULT_REGISTRY.items()}
-        self._reverse_registry = {v: k for k, v in self._registry.items()}
+
+        for name, klass in DEFAULT_REGISTRY.items():
+            if name not in self._registry:
+                self._registry[name] = klass
+                self._reverse_registry[klass] = name
 
         _entries = entrypoints.get_group_all(HAPPI_ENTRY_POINT_KEY)
 
