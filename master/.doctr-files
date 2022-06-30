@@ -14,6 +14,7 @@ master/_sources/upcoming_release_notes/253-fix_tests.rst.txt
 master/_sources/upcoming_release_notes/260-hashable.rst.txt
 master/_sources/upcoming_release_notes/261-search_nums.rst.txt
 master/_sources/upcoming_release_notes/267-use-search-cache.rst.txt
+master/_sources/upcoming_release_notes/270-lazy-registry.rst.txt
 master/_static/_sphinx_javascript_frameworks_compat.js
 master/_static/basic.css
 master/_static/css/badge_only.css
@@ -71,3 +72,4 @@ master/upcoming_release_notes/253-fix_tests.html
 master/upcoming_release_notes/260-hashable.html
 master/upcoming_release_notes/261-search_nums.html
 master/upcoming_release_notes/267-use-search-cache.html
+master/upcoming_release_notes/270-lazy-registry.html

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>267 use-search-cache &mdash; Happi 1.13.0+94.g9728c8a documentation</title>
+  <title>270 lazy registry &mdash; Happi 1.13.0+94.g9728c8a documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,8 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="270 lazy registry" href="270-lazy-registry.html" />
-    <link rel="prev" title="261 search_nums" href="261-search_nums.html" /> 
+    <link rel="prev" title="267 use-search-cache" href="267-use-search-cache.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,7 +59,8 @@
 <li class="toctree-l2"><a class="reference internal" href="253-fix_tests.html">253 fix_tests</a></li>
 <li class="toctree-l2"><a class="reference internal" href="260-hashable.html">260 hashable</a></li>
 <li class="toctree-l2"><a class="reference internal" href="261-search_nums.html">261 search_nums</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">267 use-search-cache</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="267-use-search-cache.html">267 use-search-cache</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">270 lazy registry</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#api-changes">API Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
@@ -68,7 +68,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#contributors">Contributors</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="270-lazy-registry.html">270 lazy registry</a></li>
 </ul>
 </li>
 </ul>
@@ -88,9 +87,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../upcoming_changes.html">Upcoming Changes</a> &raquo;</li>
-      <li>267 use-search-cache</li>
+      <li>270 lazy registry</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/upcoming_release_notes/267-use-search-cache.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/upcoming_release_notes/270-lazy-registry.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -98,12 +97,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="use-search-cache">
-<h1>267 use-search-cache<a class="headerlink" href="#use-search-cache" title="Permalink to this heading"></a></h1>
+  <section id="lazy-registry">
+<h1>270 lazy registry<a class="headerlink" href="#lazy-registry" title="Permalink to this heading"></a></h1>
 <section id="api-changes">
 <h2>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>The happi container registry now supports adding new container classes
+manually by way of
+<code class="docutils literal notranslate"><span class="pre">happi.containers.registry[&quot;ContainerName&quot;]</span> <span class="pre">=</span> <span class="pre">ContainerClass</span></code>.</p></li>
 </ul>
 </section>
 <section id="features">
@@ -115,20 +116,22 @@
 <section id="bugfixes">
 <h2>Bugfixes<a class="headerlink" href="#bugfixes" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Fix a rare race condition related to reading a json device database
-twice in a command line search command between database updates.</p></li>
+<li><p>The happi container registry is loaded at first use and not on import.  This
+can result in increased performance where the happi database is not used.
+It also fixes a scenario in which a module that defines a happi container
+attempts to import certain classes from happi.</p></li>
 </ul>
 </section>
 <section id="maintenance">
 <h2>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>More documentation about the happi container registry was added.</p></li>
 </ul>
 </section>
 <section id="contributors">
 <h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>zllentz</p></li>
+<li><p>klauer</p></li>
 </ul>
 </section>
 </section>
@@ -137,8 +140,7 @@ twice in a command line search command between database updates.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="261-search_nums.html" class="btn btn-neutral float-left" title="261 search_nums" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="270-lazy-registry.html" class="btn btn-neutral float-right" title="270 lazy registry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="267-use-search-cache.html" class="btn btn-neutral float-left" title="267 use-search-cache" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
