@@ -1,5 +1,6 @@
 import inspect
 import logging
+from typing import ClassVar, Dict, Generator, Optional, Tuple, Type
 
 import entrypoints
 
@@ -14,14 +15,61 @@ DEFAULT_REGISTRY = {"OphydItem": OphydItem, "HappiItem": HappiItem}
 
 
 class HappiRegistry:
-    __instance = None
+    """
+    Happi Container Registry singleton.
+
+    This registry keeps a mapping of full happi container names to their
+    respective :class:`HappiItem` subclasses.
+
+    Entries in the registry are populated in the following order:
+
+    1. From the ``happi.containers.DEFAULT_REGISTRY`` dictionary.  The names
+       of the containers are assumed to already include any relevant qualifiers
+       such as package names.  That is, the default ``"OphydItem"`` will be
+       used as-is and retrieved from the registry by that name alone.
+    2. Through Python package-defined entrypoints with the key
+       ``happi.containers``.
+
+       For example, consider a package named ``"mypackagename"`` that defines
+       the happi container ``ContainerName`` inside of the Python module
+       ``mypackagename.happi.containers_module.ContainerName``.
+       The fully qualified name - as accessed through the happi client for each
+       item in the database - may be customized in the entrypoint.
+
+       Here, we want the container to be accessible by way of
+       ``"desired_prefix.ContainerName"``.  The following would be how this
+       entrypoint should be configured in ``setup.py``.
+
+    .. code::
+
+        setup(
+            name="mypackagename",
+            entry_points={
+                "happi.containers": [
+                    "desired_prefix=mypackagename.happi.containers_module",
+                ],
+            },
+        )
+    """
+    #: Has __init__ been called on the registry?
+    __initialized: bool
+    #: The singleton instance of the HappiRegistry.
+    __instance: ClassVar[Optional["HappiRegistry"]] = None
+    #: Has the registry been initialized once?
+    _loaded: bool
+    #: Registry of happi container name to class
+    _registry: Dict[str, Type[HappiItem]]
+    #: Registry of happi container class to name
+    _reverse_registry: Dict[Type[HappiItem], str]
 
     def __init__(self):
         if self.__initialized:
+            # This guard ensures that `__init__` is not called twice on the
+            # singleton.
             return
         self._registry = {}
         self._reverse_registry = {}
-        self.load()
+        self._loaded = False
         self.__initialized = True
 
     def __new__(cls, *args, **kwargs):
@@ -30,25 +78,30 @@ class HappiRegistry:
             cls.__instance.__initialized = False
         return cls.__instance
 
-    def __getitem__(self, item):
-        if item not in self._registry:
+    def __getitem__(self, item: str) -> Optional[Type[HappiItem]]:
+        if not self._loaded:
             self.load()
         return self._registry.get(item)
 
-    def __contains__(self, item):
-        if item not in self._registry:
+    def __setitem__(self, item: str, klass: Type[HappiItem]) -> None:
+        self._safe_add(item, klass)
+
+    def __contains__(self, item: str):
+        if not self._loaded:
             self.load()
         return item in self._registry
 
-    def items(self):
+    def items(self) -> Generator[Tuple[str, Type[HappiItem]], None, None]:
+        if not self._loaded:
+            self.load()
         yield from self._registry.items()
 
     def entry_for_class(self, klass):
-        if klass not in self._reverse_registry:
+        if not self._loaded:
             self.load()
         return self._reverse_registry.get(klass)
 
-    def _safe_add(self, entry_name, klass):
+    def _safe_add(self, entry_name: str, klass: Type[HappiItem]):
         """
         Add and entry into the registry and raise RuntimeError in case a
         duplicated entry is found.
@@ -94,7 +147,7 @@ class HappiRegistry:
         self._registry[key] = klass
         self._reverse_registry[klass] = key
 
-    def load(self):
+    def load(self) -> None:
         """
         Load entries into the Registry.
         """
@@ -103,8 +156,10 @@ class HappiRegistry:
             return inspect.isclass(klass) and issubclass(klass, HappiItem) \
                    and not klass.__module__.startswith('happi.')
 
+        self._loaded = True
         self._registry = {k: v for k, v in DEFAULT_REGISTRY.items()}
         self._reverse_registry = {v: k for k, v in self._registry.items()}
+
         _entries = entrypoints.get_group_all(HAPPI_ENTRY_POINT_KEY)
 
         for entry in _entries:
