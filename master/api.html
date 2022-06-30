@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happi API &mdash; Happi 1.13.0+84.g6c4d585 documentation</title>
+  <title>Happi API &mdash; Happi 1.13.0+90.g81555a8 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.13.0+84.g6c4d585
+                1.13.0+90.g81555a8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -235,7 +235,7 @@ i.e ‘beamline’, ‘name’, ‘z’, ‘prefix’, etc.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.Client.export">
-<span class="sig-name descname"><span class="pre">export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path=&lt;colorama.ansitowin32.StreamWrapper</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep='\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.export" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path=&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep='\t'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.Client.export" title="Permalink to this definition"></a></dt>
 <dd><p>Export the contents of the database into a text file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -857,7 +857,44 @@ This could be especially useful during the threaded loading process.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="happi.containers.HappiRegistry">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">happi.containers.</span></span><span class="sig-name descname"><span class="pre">HappiRegistry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.containers.HappiRegistry" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Happi Container Registry singleton.</p>
+<p>This registry keeps a mapping of full happi container names to their
+respective <code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code> subclasses.</p>
+<p>Entries in the registry are populated in the following order:</p>
+<ol class="arabic">
+<li><p>From the <code class="docutils literal notranslate"><span class="pre">happi.containers.DEFAULT_REGISTRY</span></code> dictionary.  The names
+of the containers are assumed to already include any relevant qualifiers
+such as package names.  That is, the default <code class="docutils literal notranslate"><span class="pre">&quot;OphydItem&quot;</span></code> will be
+used as-is and retrieved from the registry by that name alone.</p></li>
+<li><p>Through Python package-defined entrypoints with the key
+<code class="docutils literal notranslate"><span class="pre">happi.containers</span></code>.</p>
+<p>For example, consider a package named <code class="docutils literal notranslate"><span class="pre">&quot;mypackagename&quot;</span></code> that defines
+the happi container <code class="docutils literal notranslate"><span class="pre">ContainerName</span></code> inside of the Python module
+<code class="docutils literal notranslate"><span class="pre">mypackagename.happi.containers_module.ContainerName</span></code>.
+The fully qualified name - as accessed through the happi client for each
+item in the database - may be customized in the entrypoint.</p>
+<p>Here, we want the container to be accessible by way of
+<code class="docutils literal notranslate"><span class="pre">&quot;desired_prefix.ContainerName&quot;</span></code>.  The following would be how this
+entrypoint should be configured in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>.</p>
+</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;mypackagename&quot;</span><span class="p">,</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;happi.containers&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;desired_prefix=mypackagename.happi.containers_module&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Containers may also be added manually to the registry by way of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">happi</span>
+
+<span class="n">happi</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">registry</span><span class="p">[</span><span class="n">item_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContainerClass</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 </section>
