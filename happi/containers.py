@@ -182,8 +182,6 @@ class HappiRegistry:
             return inspect.isclass(klass) and issubclass(klass, HappiItem) \
                    and not klass.__module__.startswith('happi.')
 
-        self._loaded = True
-
         for name, klass in DEFAULT_REGISTRY.items():
             if name not in self._registry:
                 self._registry[name] = klass
@@ -205,6 +203,8 @@ class HappiRegistry:
                 for _, var in inspect.getmembers(obj):
                     if valid_entry(var):
                         self._safe_add(entry_name, var)
+
+        self._loaded = True
 
 
 registry = HappiRegistry()
