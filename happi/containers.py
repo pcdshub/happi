@@ -87,25 +87,39 @@ class HappiRegistry:
         return cls.__instance
 
     def __getitem__(self, item: str) -> Optional[Type[HappiItem]]:
-        if not self._loaded:
+        if not self._loaded or item not in self._registry:
             self.load()
         return self._registry.get(item)
 
     def __setitem__(self, item: str, klass: Type[HappiItem]) -> None:
         self._safe_add(item, klass)
 
-    def __contains__(self, item: str):
-        if not self._loaded:
+    def __contains__(self, item: str) -> bool:
+        if not self._loaded or item not in self._registry:
             self.load()
         return item in self._registry
 
     def items(self) -> Generator[Tuple[str, Type[HappiItem]], None, None]:
+        """All (item_name, item_class) entries in the registry."""
         if not self._loaded:
             self.load()
         yield from self._registry.items()
 
-    def entry_for_class(self, klass):
-        if not self._loaded:
+    def entry_for_class(self, klass: Type[HappiItem]) -> Optional[str]:
+        """
+        Get the happi item container name given its class.
+
+        Parameters
+        ----------
+        klass : HappiItem class
+            The class to get the name of.
+
+        Returns
+        -------
+        str or None
+            The full container name, if in the registry.
+        """
+        if not self._loaded or klass not in self._reverse_registry:
             self.load()
         return self._reverse_registry.get(klass)
 
