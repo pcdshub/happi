@@ -30,6 +30,7 @@ Features
 - Significant performance increase for JSON-backed happi clients.
 - Makes ``SearchResult`` hashable
 - Uses hashable ``SearchResult`` in happi search cli command
+- JSON database paths may now be relative to the configuration file.
 
 Bugfixes
 --------
@@ -58,6 +59,7 @@ Maintenance
 
 Contributors
 ------------
+- JJL772
 - klauer
 - tangkong
 - zllentz
