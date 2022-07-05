@@ -2,7 +2,7 @@ Release History
 ###############
 
 
-v1.14.0 (2022-06-30)
+v1.14.0 (2022-07-05)
 ====================
 
 API Changes
@@ -17,7 +17,6 @@ API Changes
 - Deprecated ``happi.SearchResult.device`` and above deprecated items are now
   scheduled for removal in the next major happi release.
 - Internal backend API ``all_devices`` has been changed to ``all_items``.
-- Removed previously-deprecated ``happi.Device`` container.
 - Added ``happi.Client.retain_cache_context`` for clients that desire to
   control when reloading the database from a happi backend happens.
 - Backend implementations may now optionally support a caching mechanism with
