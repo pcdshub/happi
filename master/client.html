@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using the Client &mdash; Happi 1.13.0+94.g9728c8a documentation</title>
+  <title>Using the Client &mdash; Happi 1.13.0+96.g3b4d623 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.13.0+94.g9728c8a
+                1.13.0+96.g3b4d623
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -187,16 +187,16 @@ dictionary. For example:</p>
 <span class="go"># All of the database entries as SearchResults:</span>
 <span class="gp">In [13]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 <span class="gh">Out[13]: </span><span class="go"></span>
-<span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;}),</span>
-<span class="go"> SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+<span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;}),</span>
+<span class="go"> SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
 
 <span class="go"># Pairs of (name, SearchResult):</span>
 <span class="gp">In [14]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 <span class="gh">Out[14]: </span><span class="go"></span>
 <span class="go">[(&#39;my_device&#39;,</span>
-<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})),</span>
+<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})),</span>
 <span class="go"> (&#39;my_device2&#39;,</span>
-<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;}))]</span>
+<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;}))]</span>
 </pre></div>
 </div>
 <p>You could, for example, grab the first key by name and access it using
@@ -207,7 +207,7 @@ dictionary. For example:</p>
 <span class="gh">Out[16]: </span><span class="go">&#39;my_device&#39;</span>
 
 <span class="gp">In [17]: </span><span class="n">client</span><span class="p">[</span><span class="n">key_0</span><span class="p">]</span>
-<span class="gh">Out[17]: </span><span class="go">SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})</span>
+<span class="gh">Out[17]: </span><span class="go">SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})</span>
 </pre></div>
 </div>
 <p>Or see how many entries are in the database:</p>
@@ -271,7 +271,7 @@ present normally in the <code class="docutils literal notranslate"><span class="
 <p>We can search a range of values with any arbitrary key using
 <a class="reference internal" href="api.html#happi.Client.search_range" title="happi.Client.search_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_range()</span></code></a>. For example:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [28]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_range</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">)</span>
-<span class="gh">Out[28]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+<span class="gh">Out[28]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
 </pre></div>
 </div>
 <p>This would return all items between positions 314.4 and 348.6.</p>
@@ -282,7 +282,7 @@ the key name.</p>
 <h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this heading"></a></h3>
 <p>Any key can use a regular expression for searching by using <a class="reference internal" href="api.html#happi.Client.search_regex" title="happi.Client.search_regex"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_regex()</span></code></a></p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_regex</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device[2345]&#39;</span><span class="p">)</span>
-<span class="gh">Out[29]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f0c65e79a00&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;last_edit&#39;: &#39;Thu Jun 30 22:25:27 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+<span class="gh">Out[29]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f2377e04ca0&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;last_edit&#39;: &#39;Tue Jul  5 21:47:22 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
 </pre></div>
 </div>
 </section>
