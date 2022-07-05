@@ -1,6 +1,67 @@
-=================
- Release History
-=================
+Release History
+###############
+
+
+v1.14.0 (2022-07-05)
+====================
+
+API Changes
+-----------
+- Added ``happi.Client.create_item`` and deprecated
+  ``happi.Client.create_device``.
+- Added ``happi.Client.add_item`` and deprecated ``happi.Client.add_device``.
+- Added ``happi.Client.find_item`` and deprecated ``happi.Client.find_device``.
+- Added ``happi.Client.all_items`` and deprecated ``happi.Client.all_devices``.
+- Added ``happi.Client.remove_item`` and deprecated
+  ``happi.Client.remove_device``.
+- Deprecated ``happi.SearchResult.device`` and above deprecated items are now
+  scheduled for removal in the next major happi release.
+- Internal backend API ``all_devices`` has been changed to ``all_items``.
+- Added ``happi.Client.retain_cache_context`` for clients that desire to
+  control when reloading the database from a happi backend happens.
+- Backend implementations may now optionally support a caching mechanism with
+  ``clear_cache`` being called externally by the client when desirable.
+- The happi container registry now supports adding new container classes
+  manually by way of
+  ``happi.containers.registry["ContainerName"] = ContainerClass``.
+
+Features
+--------
+- Significant performance increase for JSON-backed happi clients.
+- Makes ``SearchResult`` hashable
+- Uses hashable ``SearchResult`` in happi search cli command
+
+Bugfixes
+--------
+- Fix a rare race condition related to reading a json device database
+  twice in a command line search command between database updates.
+- Issue where happi Client would repeatedly (and unnecessarily) make database
+  backend calls has been fixed.
+- Allow int search values to match their float counterparts
+- The happi container registry is loaded at first use and not on import.  This
+  can result in increased performance where the happi database is not used.
+  It also fixes a scenario in which a module that defines a happi container
+  attempts to import certain classes from happi.
+
+Maintenance
+-----------
+- Old terminology for ``HappiItem`` instances has been scrubbed and clarified
+  in documentation.
+- Test suite and documentation has been updated to reflect trajectory of
+  deprecated methods and naming.
+- Added relaxed flake8 configuration.
+- Remove happi.device.Device from tests to avoid deprecation warnings
+- Add type annotations to test suite
+- Clean up fixture usage and separate ``three_valves`` fixture into ``three_valves`` and ``client_with_three_valves``
+- add pre-release notes scripts
+- More documentation about the happi container registry was added.
+
+Contributors
+------------
+- klauer
+- tangkong
+- zllentz
+
 
 v1.13.0 (2022-06-03)
 ====================
