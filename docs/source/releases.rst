@@ -31,6 +31,8 @@ Features
 - Makes ``SearchResult`` hashable
 - Uses hashable ``SearchResult`` in happi search cli command
 - JSON database paths may now be relative to the configuration file.
+- Added ``happi benchmark`` for identifying which items are slow to load.
+- Added ``happi profile`` for identifying why particular items are slow to load.
 
 Bugfixes
 --------
@@ -56,6 +58,7 @@ Maintenance
 - Clean up fixture usage and separate ``three_valves`` fixture into ``three_valves`` and ``client_with_three_valves``
 - add pre-release notes scripts
 - More documentation about the happi container registry was added.
+- Refactored CLI slightly to re-use searching logic.
 
 Contributors
 ------------
