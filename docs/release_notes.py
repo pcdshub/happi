@@ -75,20 +75,40 @@ def extend_release_notes(path, version, release_notes):
         fd.writelines(output_lines)
 
 
-def main(version):
+def main(version_number: str):
     section_notes = parse_pre_release_file(TEMPLATE)
+    to_delete = []
     for path in PRE_RELEASE.iterdir():
         if path.name[0] in '1234567890':
+            to_delete.append(path)
             extra_notes = parse_pre_release_file(path)
             for section, notes in section_notes.items():
                 notes.extend(extra_notes[section])
                 section_notes[section] = notes
 
-    extend_release_notes(RELEASE_NOTES, version, section_notes)
+    extend_release_notes(RELEASE_NOTES, version_number, section_notes)
 
-    # git rm all of the pre-release files
-    # git add the new release notes file
+    print(
+        "* Wrote release notes.  Please perform the following manually:",
+        file=sys.stderr,
+    )
+    for path in to_delete:
+        print(f" git rm {path}", file=sys.stderr)
+    print(f" git add {RELEASE_NOTES}", file=sys.stderr)
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    if len(sys.argv) != 2:
+        print(f"Usage: {sys.argv[0]} VERSION_NUMBER", file=sys.stderr)
+        sys.exit(1)
+
+    version_number = sys.argv[1]
+
+    if not version_number.startswith("v"):
+        print(
+            f"Version number should start with 'v': {version_number}",
+            file=sys.stderr
+        )
+        sys.exit(1)
+
+    main(version_number)
