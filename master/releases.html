@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Release History &mdash; Happi 1.13.0+101.g38500d7 documentation</title>
+  <title>Release History &mdash; Happi 1.13.0+104.g415cf31 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.13.0+101.g38500d7
+                1.13.0+104.g415cf31
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -263,6 +263,9 @@ manually by way of
 <li><p>Significant performance increase for JSON-backed happi clients.</p></li>
 <li><p>Makes <code class="docutils literal notranslate"><span class="pre">SearchResult</span></code> hashable</p></li>
 <li><p>Uses hashable <code class="docutils literal notranslate"><span class="pre">SearchResult</span></code> in happi search cli command</p></li>
+<li><p>JSON database paths may now be relative to the configuration file.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">happi</span> <span class="pre">benchmark</span></code> for identifying which items are slow to load.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">happi</span> <span class="pre">profile</span></code> for identifying why particular items are slow to load.</p></li>
 </ul>
 </section>
 <section id="bugfixes">
@@ -292,11 +295,13 @@ deprecated methods and naming.</p></li>
 <li><p>Clean up fixture usage and separate <code class="docutils literal notranslate"><span class="pre">three_valves</span></code> fixture into <code class="docutils literal notranslate"><span class="pre">three_valves</span></code> and <code class="docutils literal notranslate"><span class="pre">client_with_three_valves</span></code></p></li>
 <li><p>add pre-release notes scripts</p></li>
 <li><p>More documentation about the happi container registry was added.</p></li>
+<li><p>Refactored CLI slightly to re-use searching logic.</p></li>
 </ul>
 </section>
 <section id="contributors">
 <h3>Contributors<a class="headerlink" href="#contributors" title="Permalink to this heading"></a></h3>
 <ul class="simple">
+<li><p>JJL772</p></li>
 <li><p>klauer</p></li>
 <li><p>tangkong</p></li>
 <li><p>zllentz</p></li>
