@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using the Client &mdash; Happi 1.14.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Command Line Interface" href="cli.html" />
+    <link rel="prev" title="Containers" href="containers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Happi
+          </a>
+              <div class="version">
+                1.14.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using the Client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-new-entry">Creating a New Entry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#searching-the-database">Searching the Database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-the-searchresult">Working with the SearchResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-for-items-on-a-beamline">Searching for items on a beamline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-a-range">Searching a range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searching-with-regular-expressions">Searching with regular expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#editing-item-information">Editing Item Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selecting-a-backend">Selecting a Backend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Happi API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming_changes.html">Upcoming Changes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Happi</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Using the Client</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/client.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-the-client">
+<span id="client-label"></span><h1>Using the Client<a class="headerlink" href="#using-the-client" title="Permalink to this heading"></a></h1>
+<p>Users will interact with the database by using the <a class="reference internal" href="api.html#happi.Client" title="happi.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">happi.Client</span></code></a>, this
+will handle the authentication, and methods for adding, editing and removing
+items.</p>
+<p>Happi is incredibly flexible, allowing us to put arbitrary key-value pair
+information into the database. While this will make adding functionality easy in
+the future, it also means that any rules on the structure of the data we allow
+will need to be performed by the <a class="reference internal" href="api.html#happi.Client" title="happi.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> itself. To make this
+intuitive, the Client deals primarily with <a class="reference internal" href="containers.html#containers"><span class="std std-ref">Containers</span></a>, which are objects
+that hold and specify these rules.</p>
+<section id="creating-a-new-entry">
+<span id="entry-code"></span><h2>Creating a New Entry<a class="headerlink" href="#creating-a-new-entry" title="Permalink to this heading"></a></h2>
+<p>A new item must be a subclass of the basic <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a> container.
+While you are free to use the initialized object wherever you see fit, the client
+has a hook to create new items.</p>
+<p>Before we can create our first client, we need to create a backend for our item
+information to be stored.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi.backends.json_db</span> <span class="kn">import</span> <span class="n">JSONBackend</span>
+
+<span class="gp">In [2]: </span><span class="n">db</span> <span class="o">=</span> <span class="n">JSONBackend</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;doc_test.json&#39;</span><span class="p">,</span> <span class="n">initialize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you are connecting to an existing database you can pass the information
+directly into the <a class="reference internal" href="api.html#happi.Client" title="happi.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">Client</span></code></a> itself at <code class="docutils literal notranslate"><span class="pre">__init__</span></code>. See <a class="reference internal" href="#db-choice"><span class="std std-ref">Selecting a Backend</span></a>
+about how to configure your default backend choice.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [3]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">HappiItem</span>
+
+<span class="gp">In [4]: </span><span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;doc_test.json&#39;</span><span class="p">)</span>
+
+<span class="gp">In [5]: </span><span class="n">item</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_item</span><span class="p">(</span>
+<span class="gp">   ...: </span>    <span class="s2">&quot;HappiItem&quot;</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_device&quot;</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;types.SimpleNamespace&quot;</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">args</span><span class="o">=</span><span class="p">[],</span>
+<span class="gp">   ...: </span>    <span class="n">kwargs</span><span class="o">=</span><span class="p">{},</span>
+<span class="gp">   ...: </span>    <span class="n">position</span><span class="o">=</span><span class="mf">345.5</span><span class="p">,</span>   <span class="c1"># &lt;- this is an extra field which happi allows</span>
+<span class="gp">   ...: </span><span class="p">)</span>
+<span class="gp">   ...: </span>
+
+<span class="gp">In [6]: </span><span class="n">item</span>
+<span class="gh">Out[6]: </span><span class="go">HappiItem (name=my_device)</span>
+
+<span class="gp">In [7]: </span><span class="n">item</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For this example, we have added an “extraneous” field to the item called
+“position”.  This is something that happi allows for.  If you wish to make
+this a recognized field of an eforced type (e.g., don’t allow the user to
+make position a string value instead of a floating point value), please
+see the documentation on making your own container class.</p>
+<p>Alternatively, you can create the item separately and add it explicitly using
+<a class="reference internal" href="api.html#happi.HappiItem.save" title="happi.HappiItem.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HappiItem.save()</span></code></a></p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [8]: </span><span class="n">item</span> <span class="o">=</span> <span class="n">HappiItem</span><span class="p">(</span>
+<span class="gp">   ...: </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_device2&quot;</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;types.SimpleNamespace&quot;</span><span class="p">,</span>
+<span class="gp">   ...: </span>    <span class="n">position</span><span class="o">=</span><span class="mf">355.5</span><span class="p">,</span>   <span class="c1"># &lt;- this is an extra field which happi allows</span>
+<span class="gp">   ...: </span><span class="p">)</span>
+<span class="gp">   ...: </span>
+
+<span class="gp">In [9]: </span><span class="n">item</span>
+<span class="gh">Out[9]: </span><span class="go">HappiItem (name=my_device2)</span>
+
+<span class="gp">In [10]: </span><span class="n">client</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="gh">Out[10]: </span><span class="go">&#39;my_device2&#39;</span>
+</pre></div>
+</div>
+<p>The main advantage of the first method is that all of the container classes are
+already managed by the client so they can be easily accessed with a string.
+Keep in mind, that either way, all of the mandatory information needs to be
+given to the item before it can be loaded into the database.</p>
+</section>
+<section id="searching-the-database">
+<h2>Searching the Database<a class="headerlink" href="#searching-the-database" title="Permalink to this heading"></a></h2>
+<p>There are several ways to load information from the database
+<a class="reference internal" href="api.html#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a>, <a class="reference internal" href="api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a>, and dictionary-like access.</p>
+<p><a class="reference internal" href="api.html#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a> is intended to only load one item at at a time. Both
+accept criteria in the from of keyword-value pairs to find the item or items
+you desire.</p>
+<p>You can quickly query the client by item name and get a <code class="docutils literal notranslate"><span class="pre">SearchResult</span></code> that
+can be used to introspect metadata or even instantiate the corresponding item
+instance.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="s2">&quot;my_device&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The client acts as a Python mapping, so you may inspect it as you would a
+dictionary. For example:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="go"># All of the item names:</span>
+<span class="gp">In [12]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="gh">Out[12]: </span><span class="go">[&#39;my_device&#39;, &#39;my_device2&#39;]</span>
+
+<span class="go"># All of the database entries as SearchResults:</span>
+<span class="gp">In [13]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+<span class="gh">Out[13]: </span><span class="go"></span>
+<span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;}),</span>
+<span class="go"> SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+
+<span class="go"># Pairs of (name, SearchResult):</span>
+<span class="gp">In [14]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="gh">Out[14]: </span><span class="go"></span>
+<span class="go">[(&#39;my_device&#39;,</span>
+<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})),</span>
+<span class="go"> (&#39;my_device2&#39;,</span>
+<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;}))]</span>
+</pre></div>
+</div>
+<p>You could, for example, grab the first key by name and access it using
+<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [15]: </span><span class="n">key_0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="gp">In [16]: </span><span class="n">key_0</span>
+<span class="gh">Out[16]: </span><span class="go">&#39;my_device&#39;</span>
+
+<span class="gp">In [17]: </span><span class="n">client</span><span class="p">[</span><span class="n">key_0</span><span class="p">]</span>
+<span class="gh">Out[17]: </span><span class="go">SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})</span>
+</pre></div>
+</div>
+<p>Or see how many entries are in the database:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="nb">len</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="gh">Out[18]: </span><span class="go">2</span>
+</pre></div>
+</div>
+<p>Here’s a search that gets all the items of type generic <code class="docutils literal notranslate"><span class="pre">HappiItem</span></code>:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="n">results</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;HappiItem&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="working-with-the-searchresult">
+<h3>Working with the SearchResult<a class="headerlink" href="#working-with-the-searchresult" title="Permalink to this heading"></a></h3>
+<p>Representing a single search result from <code class="docutils literal notranslate"><span class="pre">Client.search</span></code> and its variants, a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SearchResult</span></code> can be used in multiple ways.</p>
+<p>This result can be keyed for metadata as in:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [20]: </span><span class="n">result</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="gp">In [21]: </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+<span class="gh">Out[21]: </span><span class="go">&#39;my_device&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code> can be readily retrieved:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [22]: </span><span class="n">result</span><span class="o">.</span><span class="n">item</span>
+<span class="gh">Out[22]: </span><span class="go">HappiItem (name=my_device)</span>
+
+<span class="gp">In [23]: </span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">item</span><span class="p">)</span>
+<span class="gh">Out[23]: </span><span class="go">happi.item.HappiItem</span>
+</pre></div>
+</div>
+<p>Or the object may be instantiated:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [24]: </span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="gh">Out[24]: </span><span class="go">namespace(md=HappiItem (name=my_device))</span>
+</pre></div>
+</div>
+<p>See that <a class="reference internal" href="api.html#happi.SearchResult.get" title="happi.SearchResult.get"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SearchResult.get()</span></code></a> returns the class we expect, based on the
+<a class="reference internal" href="api.html#happi.HappiItem.device_class" title="happi.HappiItem.device_class"><code class="xref any py py-attr docutils literal notranslate"><span class="pre">device_class</span></code></a>.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [25]: </span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;device_class&#39;</span><span class="p">]</span>
+<span class="gh">Out[25]: </span><span class="go">&#39;types.SimpleNamespace&#39;</span>
+
+<span class="gp">In [26]: </span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+<span class="gh">Out[26]: </span><span class="go">types.SimpleNamespace</span>
+</pre></div>
+</div>
+<p>There are also some more advance methods to search specific areas of the
+beamline or use programmer-friendly regular expressions, described in the
+upcoming sections.</p>
+</section>
+<section id="searching-for-items-on-a-beamline">
+<h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Permalink to this heading"></a></h3>
+<p>To search for items on a beamline such as ‘MFX’, one would use the following:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [27]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;HappiItem&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
+<span class="gh">Out[27]: </span><span class="go">[]</span>
+</pre></div>
+</div>
+</section>
+<section id="searching-a-range">
+<h3>Searching a range<a class="headerlink" href="#searching-a-range" title="Permalink to this heading"></a></h3>
+<p>In this example, we have added an extraneous field <code class="docutils literal notranslate"><span class="pre">position</span></code> that is not
+present normally in the <code class="docutils literal notranslate"><span class="pre">HappiItem</span></code> container.</p>
+<p>We can search a range of values with any arbitrary key using
+<a class="reference internal" href="api.html#happi.Client.search_range" title="happi.Client.search_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_range()</span></code></a>. For example:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [28]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_range</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">)</span>
+<span class="gh">Out[28]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+</pre></div>
+</div>
+<p>This would return all items between positions 314.4 and 348.6.</p>
+<p>Any numeric key can be filtered in the same way, replacing <code class="docutils literal notranslate"><span class="pre">'position'</span></code> with
+the key name.</p>
+</section>
+<section id="searching-with-regular-expressions">
+<h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this heading"></a></h3>
+<p>Any key can use a regular expression for searching by using <a class="reference internal" href="api.html#happi.Client.search_regex" title="happi.Client.search_regex"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_regex()</span></code></a></p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_regex</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device[2345]&#39;</span><span class="p">)</span>
+<span class="gh">Out[29]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f93f8719c70&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;last_edit&#39;: &#39;Wed Jul  6 16:07:55 2022&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="editing-item-information">
+<h2>Editing Item Information<a class="headerlink" href="#editing-item-information" title="Permalink to this heading"></a></h2>
+<p>The workflow for editing an item looks very similar to the code within
+<a class="reference internal" href="#entry-code"><span class="std std-ref">Creating a New Entry</span></a>, but instead of instantiating the item you use either
+<a class="reference internal" href="api.html#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a> or <a class="reference internal" href="api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a>. When the item is retrieved
+this way the class method <a class="reference internal" href="api.html#happi.HappiItem.save" title="happi.HappiItem.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HappiItem.save()</span></code></a> is overwritten, simply call
+this when you are done editing.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [30]: </span><span class="n">my_motor</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_item</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_device&quot;</span><span class="p">)</span>
+
+<span class="gp">In [31]: </span><span class="n">my_motor</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="mf">425.4</span>
+
+<span class="gp">In [32]: </span><span class="n">my_motor</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="gh">Out[32]: </span><span class="go">&#39;my_device&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because the database uses the <code class="docutils literal notranslate"><span class="pre">name</span></code> key as an item’s identification you
+can not edit this information in the same way. Instead you must explicitly
+remove the item and then use <a class="reference internal" href="api.html#happi.Client.add_item" title="happi.Client.add_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.add_item()</span></code></a> to create a new
+entry.</p>
+</div>
+<p>Finally, lets clean up our example objects by using
+<a class="reference internal" href="api.html#happi.Client.remove_item" title="happi.Client.remove_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.remove_item()</span></code></a> to clean them from the database</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [33]: </span><span class="n">item_1</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_item</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">)</span>
+
+<span class="gp">In [34]: </span><span class="n">item_2</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">find_item</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device2&#39;</span><span class="p">)</span>
+
+<span class="gp">In [35]: </span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">item_1</span><span class="p">,</span> <span class="n">item_2</span><span class="p">):</span>
+<span class="gp">   ....: </span>    <span class="n">client</span><span class="o">.</span><span class="n">remove_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+</pre></div>
+</div>
+</section>
+<section id="selecting-a-backend">
+<span id="db-choice"></span><h2>Selecting a Backend<a class="headerlink" href="#selecting-a-backend" title="Permalink to this heading"></a></h2>
+<p>Happi supports both JSON and MongoDB backends. You can always import your
+chosen backend directly, but in order to save time you can create an
+environment variable <code class="docutils literal notranslate"><span class="pre">HAPPI_BACKEND</span></code> and set this to <code class="docutils literal notranslate"><span class="pre">&quot;mongodb&quot;</span></code>. This well
+tell the library to assume you want to use the <a class="reference internal" href="generated/happi.backends.mongo_db.MongoBackend.html#happi.backends.mongo_db.MongoBackend" title="happi.backends.mongo_db.MongoBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">MongoBackend</span></code></a>.
+Otherwise, the library uses the <a class="reference internal" href="generated/happi.backends.json_db.JSONBackend.html#happi.backends.json_db.JSONBackend" title="happi.backends.json_db.JSONBackend"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONBackend</span></code></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="containers.html" class="btn btn-neutral float-left" title="Containers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cli.html" class="btn btn-neutral float-right" title="Command Line Interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, SLAC National Accelerator Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
