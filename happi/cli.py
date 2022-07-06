@@ -22,6 +22,7 @@ import coloredlogs
 import prettytable
 
 import happi
+from happi.errors import SearchError
 
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
@@ -154,11 +155,9 @@ def search_parser(
                 criteria = 'name'
                 value = user_arg
             if criteria in client_args:
-                logger.error(
-                    'Received duplicate search criteria %s=%r (was %r)',
-                    criteria, value, client_args[criteria]
+                raise click.ClickException(
+                     f"Received duplicate search criteria {criteria}={value!r} (was {client_args[criteria]!r})"
                 )
-                raise click.Abort()
 
             if is_a_range(value):
                 start, stop = value.split(',')
@@ -167,8 +166,7 @@ def search_parser(
                 if start < stop:
                     new_range_list = client.search_range(criteria, start, stop)
                 else:
-                    logger.error('Invalid range, make sure start < stop')
-                    raise click.Abort()
+                    raise click.ClickException('Invalid range, make sure start < stop')
 
                 if not range_found:
                     # if first range, just replace
@@ -257,8 +255,7 @@ def add(ctx, clone: str):
         logger.debug(ctnr_prompt)
         response = click.prompt(ctnr_prompt, default='OphydItem')
         if response and response not in registry:
-            logger.info(f'Invalid item container {response}')
-            return
+            raise click.ClickException(f'Invalid item container {response}')
 
     container = registry[response]
     logger.debug(f'Contaner selected: {container.__name__}')
@@ -297,10 +294,13 @@ def edit(ctx, name: str, edits: List[str]):
     client = ctx.obj
 
     logger.debug('Starting edit block')
-    item = client.find_item(name=name)
+    try:
+        item = client.find_item(name=name)
+    except SearchError as e:
+        raise click.ClickException(f'Could not find item {name!r}: {e}')
+
     if len(edits) < 1:
-        click.echo('No edits provided, aborting')
-        raise click.Abort()
+        raise click.ClickException('No edits provided')
 
     for edit in edits:
         field, value = edit.split('=', 1)
@@ -308,8 +308,7 @@ def edit(ctx, name: str, edits: List[str]):
         try:
             field = is_valid_identifier_not_keyword(field)
         except ValueError:
-            logger.error(f'field ({field}) is not a valid keyword')
-            raise click.Abort()
+            raise click.ClickException(f'field {field!r} is not a valid identifier')
 
         # validate field depending on enforce type
         if item._info_attrs[field].enforce in (dict, list):
@@ -317,16 +316,14 @@ def edit(ctx, name: str, edits: List[str]):
             try:
                 value = ast.literal_eval(value)
             except (ValueError, SyntaxError) as e:
-                logger.error(f'Could not interpret edit ({edit}), {e}\n'
-                             'Remember to escape your quotes '
-                             '(e.g. {\\"key\\":\\"value\\"})')
-                raise click.Abort()
+                raise click.ClickException(f'Could not interpret edit ({edit}), {e}\n'
+                                           'Remember to escape your quotes '
+                                           '(e.g. {\\"key\\":\\"value\\"})')
         else:
             try:
                 value = item._info_attrs[field].enforce_value(value)
             except ValueError:
-                logger.error(f'Error enforcing type for value: {value}')
-                raise click.Abort()
+                raise click.ClickException(f'Error enforcing type in field {field!r} for value: {value!r}')
 
         # set field
         try:
@@ -334,8 +331,7 @@ def edit(ctx, name: str, edits: List[str]):
             logger.info(f'Setting {name}.{field}: {value}')
             setattr(item, field, value)
         except Exception as e:
-            logger.error(f'Could not edit {name}.{field}: {e}')
-            raise click.Abort()
+            raise click.ClickException(f'Could not set {name}.{field} to {value!r}: {e}')
 
     item.show_info()
     if click.confirm('Please confirm the item info is correct'):
@@ -355,15 +351,18 @@ def load(ctx, item_names: List[str]):
     # retrieve client
     client = ctx.obj
 
-    logger.info(f'Creating shell with devices {item_names}')
     devices = {}
     names = " ".join(item_names)
     names = names.split()
     if len(names) < 1:
-        raise click.Abort()
+        raise click.BadArgumentUsage('No item names given')
+    logger.info(f'Creating shell with devices {item_names}')
 
     for name in names:
-        devices[name] = client.load_device(name=name)
+        try:
+            devices[name] = client.load_device(name=name)
+        except SearchError as e:
+            raise click.ClickException(f'Could not load device {name!r}: {e}')
 
     from IPython import start_ipython  # noqa
     start_ipython(argv=['--quick'], user_ns=devices)
@@ -377,10 +376,9 @@ def load(ctx, item_names: List[str]):
 def update(ctx, json_data: str):
     """Update happi db with JSON_DATA payload"""
     # retrieve client
-    print(json_data)
     client = ctx.obj
     if len(json_data) < 1:
-        raise click.Abort()
+        raise click.BadArgumentUsage('No json data given')
 
     # parse input
     input_ = " ".join(json_data).strip()
@@ -419,15 +417,17 @@ def transfer(ctx, name: str, target: str):
     # retrive client
     client = ctx.obj
     # verify name and target both exist and are valid
-    item = client.find_item(name=name)
+    try:
+        item = client.find_item(name=name)
+    except SearchError as e:
+        raise click.ClickException(str(e))
     registry = happi.containers.registry
     # This is slow if dictionary is large
     target_match = [k for k, _ in registry.items() if target in k]
     if len(target_match) > 1 and name in target_match:
         target_match = [name]
     elif len(target_match) != 1:
-        print(f'Target container name ({target}) not specific enough')
-        raise click.Abort()
+        raise click.ClickException(f'Target container name ({target}) not specific enough. Possible matches: {target_match}')
 
     target = happi.containers.registry._registry[target_match[0]]
     # transfer item and prompt for fixes
