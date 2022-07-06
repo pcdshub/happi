@@ -26,7 +26,7 @@ def _looks_like_database(obj):
     return (isinstance(obj, _Backend) or
             all(
                 hasattr(obj, attr) for attr in (
-                    'find', 'all_devices', 'delete', 'save')
+                    'find', 'all_items', 'delete', 'save')
                 )
             )
 
