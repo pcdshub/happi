@@ -4,7 +4,6 @@ from typing import ClassVar, Dict, Generator, Optional, Tuple, Type
 
 import entrypoints
 
-from .device import Device
 from .item import HappiItem, OphydItem
 
 logger = logging.getLogger(__name__)
@@ -12,9 +11,7 @@ logger = logging.getLogger(__name__)
 HAPPI_ENTRY_POINT_KEY = "happi.containers"
 
 
-DEFAULT_REGISTRY = {'Device': Device,
-                    'OphydItem': OphydItem,
-                    'HappiItem': HappiItem}
+DEFAULT_REGISTRY = {"OphydItem": OphydItem, "HappiItem": HappiItem}
 
 
 class HappiRegistry:
