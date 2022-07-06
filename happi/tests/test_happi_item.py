@@ -154,12 +154,3 @@ def test_add_and_save(valve: OphydItem, happi_client: Client):
     valve.save()
 
     assert not happi_client[valve.name].item.active
-
-
-def test_add_and_save_deprecated(valve: OphydItem, happi_client: Client):
-    valve.active = True
-    happi_client.add_device(valve)  # intentionally raise DeprecationWarning
-    valve.active = False
-    valve.save()
-
-    assert not happi_client[valve.name].item.active
