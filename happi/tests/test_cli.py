@@ -125,12 +125,16 @@ def trim_split_output(strings: str, delim: str = '\n'):
 
 def assert_match_expected(
     result: click.testing.Result,
-    expected_output: Iterable[str]
+    expected_output: Iterable[str],
+    expected_return: int = 0
 ):
-    """standard checks for a cli result, confirms output matches expected"""
+    """
+    standard checks for a cli result, confirms output matches expected
+    SystemExit exception is acceptable if the expected return code is some failure code
+    """
     logger.debug(result.output)
-    assert result.exit_code == 0
-    assert not result.exception
+    assert result.exit_code == expected_return
+    assert not result.exception or (isinstance(result.exception, SystemExit) and expected_return != 0)
 
     trimmed_output = trim_split_output(result.output)
     for message, expected in zip(trimmed_output, expected_output):
@@ -139,12 +143,16 @@ def assert_match_expected(
 
 def assert_in_expected(
     result: click.testing.Result,
-    expected_inclusion: str
+    expected_inclusion: str,
+    expected_return: int = 0
 ):
-    """standard checks for a cli result, confirms output includes expected"""
+    """
+    standard checks for a cli result, confirms output matches expected
+    SystemExit exception is acceptable if the expected return code is some failure code
+    """
     logger.debug(result.output)
-    assert result.exit_code == 0
-    assert not result.exception
+    assert result.exit_code == expected_return
+    assert not result.exception or (isinstance(result.exception, SystemExit) and expected_return != 0)
     assert expected_inclusion in result.output
 
 
@@ -317,7 +325,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
     assert_match_expected(result, expected_output.split('\n'))
 
 
-@pytest.mark.parametrize("from_user, expected_output", [
+@pytest.mark.parametrize("from_user, expected_output, expected_return", [
     # Test add item - succeeding
     pytest.param('\n'.join(['HappiItem', 'happi_nname', 'device_class',
                             '', '', 'Y', 'docs', 'y']), (
@@ -345,6 +353,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         ' - INFO -  Adding / Modifying information for happi_nname ...',
         ' - INFO -  HappiItem HappiItem (name=happi_nname) has been '
         'succesfully added to the database'),
+        0
     ),
     # Test add item - aborting
     pytest.param('\n'.join(['HappiItem', 'happi_name2', 'device_class',
@@ -371,13 +380,15 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         'Selecting value: docs',
         'Please confirm the item info is correct [y/N]: N',
         ' - INFO -  Aborting'),
+        0
     ),
     # Test add item - invalid container
     pytest.param('HappiInvalidItem', (
         'Please select a container, or press enter for generic '
         'Ophyd Device container: ', 'OphydItem', 'HappiItem', '',
         'Selection [OphydItem]: HappiInvalidItem',
-        ' - INFO -  Invalid item container HappiInvalidItem'),
+        'Error: Invalid item container HappiInvalidItem'),
+        1
     ),
     # Test add item - no reponse, not an optional field,
     # invalid value, add OphydItem
@@ -415,18 +426,20 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         ' - INFO -  HappiItem OphydItem (name=ophyd_name) has been '
         'succesfully added to the database'
          ),
+         0
     ),
     ], ids=["add_succeeding", "add_aborting",
             "add_invalid_container", "add_not_optional_field"])
 def test_add_cli(
     from_user: str,
     expected_output: Tuple[str, ...],
+    expected_return: int,
     happi_cfg: str,
     runner: CliRunner
 ):
     result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
                            input=from_user)
-    assert_match_expected(result, expected_output)
+    assert_match_expected(result, expected_output, expected_return)
 
 
 @pytest.mark.parametrize("from_user, expected_output", [
