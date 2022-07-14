@@ -17,7 +17,6 @@ from .backends.core import _Backend
 from .errors import DatabaseError, EntryError, SearchError, TransferError
 from .item import HappiItem
 from .loader import from_container
-from .utils import deprecated
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,7 @@ def _looks_like_database(obj):
     return (isinstance(obj, _Backend) or
             all(
                 hasattr(obj, attr) for attr in (
-                    'find', 'all_devices', 'delete', 'save')
+                    'find', 'all_items', 'delete', 'save')
                 )
             )
 
@@ -60,11 +59,6 @@ class SearchResult(collections.abc.Mapping):
         self._instantiated = None
         self.client = client
         self.metadata = item.post()
-
-    @property
-    @deprecated("Use .item")
-    def device(self):
-        return self.item
 
     @property
     def item(self):
@@ -258,10 +252,6 @@ class Client(collections.abc.Mapping):
         item.save = save_item
         return item
 
-    @deprecated("use .create_item")
-    def create_device(self, device_cls, **kwargs):
-        return self.create_item(device_cls, **kwargs)
-
     def add_item(self, item):
         """
         Add an item into the database.
@@ -296,10 +286,6 @@ class Client(collections.abc.Mapping):
 
         item.save = save_item
         return _id
-
-    @deprecated("use .add_item")
-    def add_device(self, *args, **kwargs):
-        return self.add_item(*args, **kwargs)
 
     def _get_item_from_document(self, doc: Dict[str, Any]) -> HappiItem:
         """
@@ -351,10 +337,6 @@ class Client(collections.abc.Mapping):
             A HappiItem instance for the document.
         """
         return self._get_item_from_document(self.find_document(**post))
-
-    @deprecated("use .find_item")
-    def find_device(self, **kwargs):
-        return self.find_item(**kwargs)
 
     def load_device(self, use_cache=True, **post):
         """
@@ -497,12 +479,6 @@ class Client(collections.abc.Mapping):
             else:
                 logger.debug('Successfully validated %s', _id)
         return bad
-
-    @property
-    @deprecated("use .all_items")
-    def all_devices(self):
-        """A list of all contained devices."""
-        return self.all_items
 
     @property
     def all_items(self):
@@ -696,10 +672,6 @@ class Client(collections.abc.Mapping):
         # Check that item is in the database
         _id = getattr(item, self._id_key)
         self.backend.delete(_id)
-
-    @deprecated("use .remove_item")
-    def remove_device(self, device):
-        return self.remove_item(device)
 
     def _validate_item(self, item):
         """Validate that an item has all of the mandatory information."""
