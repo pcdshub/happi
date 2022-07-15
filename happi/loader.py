@@ -177,8 +177,10 @@ def from_container(
     args = [create_arg(arg) for arg in item.args]
     kwargs = dict((key, create_arg(val))
                   for key, val in item.kwargs.items())
+    # filter out null kwargs
+    new_kwargs = {k: v for k, v in kwargs.items() if v is not None}
     # Return the instantiated item
-    obj = cls(*args, **kwargs)
+    obj = cls(*args, **new_kwargs)
     # Attach the metadata to the object
     if attach_md:
         try:
