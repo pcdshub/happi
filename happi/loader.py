@@ -177,10 +177,13 @@ def from_container(
     args = [create_arg(arg) for arg in item.args]
     kwargs = dict((key, create_arg(val))
                   for key, val in item.kwargs.items())
-    # filter out null kwargs
-    new_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    # maybe filter out null kwargs
+    if item._info_attrs['kwargs'].filter_none:
+        new_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        kwargs = new_kwargs
     # Return the instantiated item
-    obj = cls(*args, **new_kwargs)
+    print(kwargs)
+    obj = cls(*args, **kwargs)
     # Attach the metadata to the object
     if attach_md:
         try:

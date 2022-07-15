@@ -66,11 +66,12 @@ class EntryInfo:
     """
 
     def __init__(self, doc=None, optional=True, enforce=None,
-                 default=None, enforce_doc=None):
+                 default=None, enforce_doc=None, filter_none=False):
         self.key = None  # Set later by parent class
         self.doc = doc
         self.enforce = enforce
         self.optional = optional
+        self.filter_none = filter_none
         self.enforce_doc = str(enforce_doc or '')
 
         # Explicitly set default to None b/c this is how we ensure mandatory
