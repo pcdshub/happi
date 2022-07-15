@@ -182,7 +182,6 @@ def from_container(
         new_kwargs = {k: v for k, v in kwargs.items() if v is not None}
         kwargs = new_kwargs
     # Return the instantiated item
-    print(kwargs)
     obj = cls(*args, **kwargs)
     # Attach the metadata to the object
     if attach_md:
