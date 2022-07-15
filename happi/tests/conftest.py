@@ -80,6 +80,44 @@ def item(item_info: Dict[str, Any]) -> OphydItem:
     return OphydItem(**item_info)
 
 
+class JinjaItem(OphydItem):
+    blank_list = EntryInfo('to be set to None', enforce=list)
+    blank_str = EntryInfo('to be set to None', enforce=str)
+    blank_bool = EntryInfo('to be set to None', enforce=bool)
+
+
+@pytest.fixture(scope='function')
+def item_info_jinja() -> Dict[str, Any]:
+    return {'name': 'alias',
+            'z': 400,
+            '_id': 'alias',
+            'prefix': 'BASE:PV',
+            'beamline': 'LCLS',
+            'type': 'OphydItem',
+            'device_class': 'types.SimpleNamespace',
+            'args': list(),
+            'kwargs': {
+                'hi': 'oh hello',
+                'loc': '{{location_group}}',
+                'blank_list': '{{blank_list}}',
+                'blank_str': '{{blank_str}}',
+                'blank_bool': '{{blank_bool}}',
+                'blank': '{{blank}}'
+            },
+            'location_group': 'LOC',
+            'functional_group': 'FUNC',
+            'blank_list': None,
+            'blank_str': None,
+            'blank_bool': None,
+            'blank': None
+            }
+
+
+@pytest.fixture(scope='function')
+def item_jinja(item_info_jinja: Dict[str, Any]) -> OphydItem:
+    return JinjaItem(**item_info_jinja)
+
+
 @pytest.fixture(scope='function')
 def valve_info() -> Dict[str, Any]:
     return {'name': 'name',

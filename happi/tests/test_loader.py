@@ -122,3 +122,27 @@ def test_load_devices(threaded: bool, post_load: Any, include_load_time: bool):
     import datetime
     assert space.test_1 == datetime.timedelta(days=10, seconds=30)
     assert isinstance(space.bad, ImportError)
+
+
+def test_filter_kwargs(item_jinja: OphydItem):
+    blanks = ['blank_bool', 'blank_list', 'blank_str']
+
+    item_jinja._info_attrs['kwargs'].filter_none = False
+    dev = from_container(item_jinja, use_cache=False)
+
+    # basic jinja template filling test.
+    # only kwargs get attrs in SimpleNamespace
+    assert dev.loc == 'LOC'
+
+    # if there is no correspoding EntryInfo, this is a piece of metadata
+    # type cannot be matched and value will be returned as string
+    assert dev.blank == 'None'
+    for bl in blanks:
+        assert getattr(dev, bl, 'DNE') is None
+
+    item_jinja._info_attrs['kwargs'].filter_none = True
+    filtered_dev = from_container(item_jinja, use_cache=False)
+
+    assert dev.blank == 'None'
+    for bl in blanks:
+        assert getattr(filtered_dev, bl, 'DNE') == 'DNE'
