@@ -110,15 +110,15 @@ def trim_split_output(strings: str, delim: str = '\n'):
     """
     date_pattern = r"\[(\d{4})[-](0[1-9]|1[012])[-].*\]"
 
-    bad_substrs = [r"^pcdsdevices"]
+    ok_substrs = [r"happi.item."]
 
     # remove registry items
     new_out = [
         st for st in strings.split(delim)
-        if not any([re.search(substr, st) for substr in bad_substrs])
+        if any([re.search(substr, st) for substr in ok_substrs])
     ]
 
-    # string date-time from logging messages
+    # strip date-time from logging messages
     new_out = [re.sub(date_pattern, '', st) for st in new_out]
     return new_out
 
