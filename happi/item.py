@@ -3,6 +3,7 @@ import copy
 import logging
 import sys
 from collections import OrderedDict
+from typing import Any, Optional
 
 from prettytable import PrettyTable
 
@@ -65,13 +66,20 @@ class EntryInfo:
                                  enforce_doc='This must be a number')
     """
 
-    def __init__(self, doc=None, optional=True, enforce=None,
-                 default=None, enforce_doc=None, filter_none=False):
+    def __init__(
+        self,
+        doc: Optional[str] = None,
+        optional: Optional[bool] = True,
+        enforce: Optional[Any] = None,
+        default: Optional[Any] = None,
+        enforce_doc: Optional[str] = None,
+        include_default_as_kwarg: Optional[bool] = True
+    ):
         self.key = None  # Set later by parent class
         self.doc = doc
         self.enforce = enforce
         self.optional = optional
-        self.filter_none = filter_none
+        self.include_default_as_kwarg = include_default_as_kwarg
         self.enforce_doc = str(enforce_doc or '')
 
         # Explicitly set default to None b/c this is how we ensure mandatory

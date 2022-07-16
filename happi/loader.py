@@ -178,8 +178,12 @@ def from_container(
     kwargs = dict((key, create_arg(val))
                   for key, val in item.kwargs.items())
     # maybe filter out null kwargs
-    if item._info_attrs['kwargs'].filter_none:
-        new_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    if not item._info_attrs['kwargs'].include_default_as_kwarg:
+        new_kwargs = {}
+        for k, v in kwargs.items():
+            einfo = item._info_attrs.get(k, False)
+            if not einfo or not einfo.default == v:
+                new_kwargs[k] = v
         kwargs = new_kwargs
     # Return the instantiated item
     obj = cls(*args, **kwargs)
