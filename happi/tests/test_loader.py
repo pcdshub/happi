@@ -125,9 +125,9 @@ def test_load_devices(threaded: bool, post_load: Any, include_load_time: bool):
 
 
 def test_filter_kwargs(item_jinja: OphydItem):
-    blanks = ['blank_bool', 'blank_list', 'blank_str']
+    blanks = ['blank_bool', 'blank_list', 'blank_str', 'blank_none']
 
-    item_jinja._info_attrs['kwargs'].filter_none = False
+    item_jinja._info_attrs['kwargs'].include_default_as_kwarg = True
     dev = from_container(item_jinja, use_cache=False)
 
     # basic jinja template filling test.
@@ -138,9 +138,9 @@ def test_filter_kwargs(item_jinja: OphydItem):
     # type cannot be matched and value will be returned as string
     assert dev.blank == 'None'
     for bl in blanks:
-        assert getattr(dev, bl, 'DNE') is None
+        assert getattr(dev, bl, 'DNE') == item_jinja._info_attrs[bl].default
 
-    item_jinja._info_attrs['kwargs'].filter_none = True
+    item_jinja._info_attrs['kwargs'].include_default_as_kwarg = False
     filtered_dev = from_container(item_jinja, use_cache=False)
 
     assert dev.blank == 'None'

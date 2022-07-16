@@ -81,9 +81,10 @@ def item(item_info: Dict[str, Any]) -> OphydItem:
 
 
 class JinjaItem(OphydItem):
-    blank_list = EntryInfo('to be set to None', enforce=list)
-    blank_str = EntryInfo('to be set to None', enforce=str)
-    blank_bool = EntryInfo('to be set to None', enforce=bool)
+    blank_list = EntryInfo('a list', enforce=list, default=[1, 2, 3])
+    blank_str = EntryInfo('a string', enforce=str, default='blank')
+    blank_bool = EntryInfo('a bool', enforce=bool, default=True)
+    blank_none = EntryInfo('default is None')
 
 
 @pytest.fixture(scope='function')
@@ -102,13 +103,15 @@ def item_info_jinja() -> Dict[str, Any]:
                 'blank_list': '{{blank_list}}',
                 'blank_str': '{{blank_str}}',
                 'blank_bool': '{{blank_bool}}',
+                'blank_none': '{{blank_none}}',
                 'blank': '{{blank}}'
             },
             'location_group': 'LOC',
             'functional_group': 'FUNC',
-            'blank_list': None,
-            'blank_str': None,
-            'blank_bool': None,
+            'blank_list': [1, 2, 3],
+            'blank_str': 'blank',
+            'blank_bool': True,
+            'blank_none': None,
             'blank': None
             }
 
