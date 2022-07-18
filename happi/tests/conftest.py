@@ -84,6 +84,9 @@ class JinjaItem(OphydItem):
     blank_list = EntryInfo('a list', enforce=list, default=[1, 2, 3])
     blank_str = EntryInfo('a string', enforce=str, default='blank')
     blank_bool = EntryInfo('a bool', enforce=bool, default=True)
+    blank_exclude = EntryInfo('omitted if default',
+                              default='default',
+                              include_default_as_kwarg=False)
     blank_none = EntryInfo('default is None')
 
 
@@ -104,6 +107,7 @@ def item_info_jinja() -> Dict[str, Any]:
                 'blank_str': '{{blank_str}}',
                 'blank_bool': '{{blank_bool}}',
                 'blank_none': '{{blank_none}}',
+                'blank_exclude': '{{blank_exclude}}',
                 'blank': '{{blank}}'
             },
             'location_group': 'LOC',
@@ -112,6 +116,7 @@ def item_info_jinja() -> Dict[str, Any]:
             'blank_str': 'blank',
             'blank_bool': True,
             'blank_none': None,
+            'blank_exclude': 'default',
             'blank': None
             }
 

@@ -127,6 +127,7 @@ def test_load_devices(threaded: bool, post_load: Any, include_load_time: bool):
 def test_filter_kwargs(item_jinja: OphydItem):
     blanks = ['blank_bool', 'blank_list', 'blank_str', 'blank_none']
 
+    # default behavior, allow individuals to decide
     item_jinja._info_attrs['kwargs'].include_default_as_kwarg = True
     dev = from_container(item_jinja, use_cache=False)
 
@@ -137,12 +138,14 @@ def test_filter_kwargs(item_jinja: OphydItem):
     # if there is no correspoding EntryInfo, this is a piece of metadata
     # type cannot be matched and value will be returned as string
     assert dev.blank == 'None'
+    assert getattr(dev, 'blank_exclude', 'DNE') == 'DNE'
     for bl in blanks:
         assert getattr(dev, bl, 'DNE') == item_jinja._info_attrs[bl].default
 
     item_jinja._info_attrs['kwargs'].include_default_as_kwarg = False
     filtered_dev = from_container(item_jinja, use_cache=False)
 
-    assert dev.blank == 'None'
+    assert filtered_dev.blank == 'None'
+    assert getattr(filtered_dev, 'blank_exclude', 'DNE') == 'DNE'
     for bl in blanks:
         assert getattr(filtered_dev, bl, 'DNE') == 'DNE'
