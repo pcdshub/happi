@@ -7,9 +7,11 @@ API Changes
 
 Features
 --------
-- adds flag ``include_default_as_kwarg``.  If False on a kwargs EntryInfo,
-  any values that match the default on the corresponding EntryInfo will be
-  omitted from the kwarg dictionary.
+- Add `EntryInfo` keyword argument ``include_default_as_kwarg``.  If set to ``False``,
+  any keys that are included in an item's ``kwargs`` that match the default of their
+  corresponding `EntryInfo` will be omitted from the keyword arguments passed to
+  ``device_class`` when instantiating (loading) the item as in ``happi.loader.load_device`` or
+  ``SearchResult.get()``.
   The default value is True, retaining the original behavior.
 
 Bugfixes
