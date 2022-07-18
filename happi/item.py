@@ -81,7 +81,7 @@ class EntryInfo:
         enforce: Optional[Any] = None,
         default: Optional[Any] = None,
         enforce_doc: Optional[str] = None,
-        include_default_as_kwarg: Optional[bool] = True
+        include_default_as_kwarg: bool = True
     ):
         self.key = None  # Set later by parent class
         self.doc = doc
