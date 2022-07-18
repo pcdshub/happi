@@ -50,7 +50,7 @@ class EntryInfo:
         if the entered information does not follow the ``enforce`` type
     include_default_as_kwarg : bool, optional
         Defaults to True.  If a kwargs EntryInfo sets this to False, all kwargs
-        will be compared to their corresponding Entries in the item. and
+        will be compared to their corresponding Entries in the item and
         omitted from the kwargs dictionary if their value matches the Entry's
         default.
         This can also be set on an individual Entry basis.  The setting on
