@@ -48,6 +48,14 @@ class EntryInfo:
     enforce_doc : str, optional
         A human-readable explanation of the enforce field.  Will be printed
         if the entered information does not follow the ``enforce`` type
+    include_default_as_kwarg : bool, optional
+        Defaults to True.  If a kwargs EntryInfo sets this to False, all kwargs
+        will be compared to their corresponding Entries in the item. and
+        omitted from the kwargs dictionary if their value matches the Entry's
+        default.
+        This can also be set on an individual Entry basis.  The setting on
+        an individual entry will only be taken into consideration if the
+        kwarg EntryInfo has this set to True (default).
 
     Raises
     ------

@@ -178,13 +178,21 @@ def from_container(
     kwargs = dict((key, create_arg(val))
                   for key, val in item.kwargs.items())
     # maybe filter out null kwargs
-    if not item._info_attrs['kwargs'].include_default_as_kwarg:
-        new_kwargs = {}
-        for entry, value in kwargs.items():
-            einfo = item._info_attrs.get(entry, False)
-            if not einfo or not einfo.default == value:
+    new_kwargs = {}
+    kwarg_include = item._info_attrs['kwargs'].include_default_as_kwarg
+    for entry, value in kwargs.items():
+        einfo = item._info_attrs.get(entry, False)
+        # if kwargs are marked as include, let individual entries veto
+        if kwarg_include:
+            if (not einfo or einfo.include_default_as_kwarg or
+                    not einfo.default == value):
                 new_kwargs[entry] = value
-        kwargs = new_kwargs
+        # if kwargs are marked to exclude, ignore individual entry setting
+        else:
+            if (not einfo or not einfo.default == value):
+                new_kwargs[entry] = value
+    kwargs = new_kwargs
+
     # Return the instantiated item
     obj = cls(*args, **kwargs)
     # Attach the metadata to the object
