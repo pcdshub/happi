@@ -3,6 +3,7 @@ import copy
 import logging
 import sys
 from collections import OrderedDict
+from typing import Any, Optional
 
 from prettytable import PrettyTable
 
@@ -47,6 +48,14 @@ class EntryInfo:
     enforce_doc : str, optional
         A human-readable explanation of the enforce field.  Will be printed
         if the entered information does not follow the ``enforce`` type
+    include_default_as_kwarg : bool, optional
+        Defaults to True.  If a kwargs EntryInfo sets this to False, all kwargs
+        will be compared to their corresponding Entries in the item and
+        omitted from the kwargs dictionary if their value matches the Entry's
+        default.
+        This can also be set on an individual Entry basis.  The setting on
+        an individual entry will only be taken into consideration if the
+        kwarg EntryInfo has this set to True (default).
 
     Raises
     ------
@@ -65,12 +74,20 @@ class EntryInfo:
                                  enforce_doc='This must be a number')
     """
 
-    def __init__(self, doc=None, optional=True, enforce=None,
-                 default=None, enforce_doc=None):
+    def __init__(
+        self,
+        doc: Optional[str] = None,
+        optional: Optional[bool] = True,
+        enforce: Optional[Any] = None,
+        default: Optional[Any] = None,
+        enforce_doc: Optional[str] = None,
+        include_default_as_kwarg: bool = True
+    ):
         self.key = None  # Set later by parent class
         self.doc = doc
         self.enforce = enforce
         self.optional = optional
+        self.include_default_as_kwarg = include_default_as_kwarg
         self.enforce_doc = str(enforce_doc or '')
 
         # Explicitly set default to None b/c this is how we ensure mandatory

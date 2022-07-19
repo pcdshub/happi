@@ -80,6 +80,52 @@ def item(item_info: Dict[str, Any]) -> OphydItem:
     return OphydItem(**item_info)
 
 
+class JinjaItem(OphydItem):
+    blank_list = EntryInfo('a list', enforce=list, default=[1, 2, 3])
+    blank_str = EntryInfo('a string', enforce=str, default='blank')
+    blank_bool = EntryInfo('a bool', enforce=bool, default=True)
+    blank_exclude = EntryInfo('omitted if default',
+                              default='default',
+                              include_default_as_kwarg=False)
+    blank_none = EntryInfo('default is None')
+
+
+@pytest.fixture(scope='function')
+def item_info_jinja() -> Dict[str, Any]:
+    return {'name': 'alias',
+            'z': 400,
+            '_id': 'alias',
+            'prefix': 'BASE:PV',
+            'beamline': 'LCLS',
+            'type': 'OphydItem',
+            'device_class': 'types.SimpleNamespace',
+            'args': list(),
+            'kwargs': {
+                'hi': 'oh hello',
+                'loc': '{{location_group}}',
+                'blank_list': '{{blank_list}}',
+                'blank_str': '{{blank_str}}',
+                'blank_bool': '{{blank_bool}}',
+                'blank_none': '{{blank_none}}',
+                'blank_exclude': '{{blank_exclude}}',
+                'blank': '{{blank}}'
+            },
+            'location_group': 'LOC',
+            'functional_group': 'FUNC',
+            'blank_list': [1, 2, 3],
+            'blank_str': 'blank',
+            'blank_bool': True,
+            'blank_none': None,
+            'blank_exclude': 'default',
+            'blank': None
+            }
+
+
+@pytest.fixture(scope='function')
+def item_jinja(item_info_jinja: Dict[str, Any]) -> OphydItem:
+    return JinjaItem(**item_info_jinja)
+
+
 @pytest.fixture(scope='function')
 def valve_info() -> Dict[str, Any]:
     return {'name': 'name',
