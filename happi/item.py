@@ -1,6 +1,7 @@
 import collections
 import copy
 import logging
+import os
 import sys
 from collections import OrderedDict
 from typing import Any, Optional
@@ -335,7 +336,6 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         """
 
         pt = PrettyTable(['EntryInfo', 'Value'])
-        pt._max_width = {'Value': 60}
         pt.align = 'r'
         pt.align['EntryInfo'] = 'l'
         pt.align['Value'] = 'l'
@@ -348,6 +348,15 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
                               if not key.startswith('_')])
         for key in public_keys:
             pt.add_row([key, show_info[key]])
+
+        # initialize table so we can grab widths
+        _ = pt.get_string()
+
+        # set width of Value column dynamically
+        # set width(Value) = terminal width - width(EntryInfo column)
+        entry_info_width = pt._widths[0] + 10  # account for padding
+        term_width = os.get_terminal_size()[0]
+        pt._max_width = {'Value': max(60, term_width - entry_info_width)}
 
         print(pt, file=handle)
 
