@@ -335,6 +335,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         """
 
         pt = PrettyTable(['EntryInfo', 'Value'])
+        pt._max_width = {'Value': 60}
         pt.align = 'r'
         pt.align['EntryInfo'] = 'l'
         pt.align['Value'] = 'l'
