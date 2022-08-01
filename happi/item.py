@@ -355,7 +355,11 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         # set width of Value column dynamically
         # set width(Value) = terminal width - width(EntryInfo column)
         entry_info_width = pt._widths[0] + 10  # account for padding
-        term_width = os.get_terminal_size()[0]
+        try:
+            term_width = os.get_terminal_size()[0]
+        except OSError:
+            term_width = 0
+
         pt._max_width = {'Value': max(60, term_width - entry_info_width)}
 
         print(pt, file=handle)
