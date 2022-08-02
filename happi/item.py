@@ -357,10 +357,10 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         entry_info_width = pt._widths[0] + 10  # account for padding
         try:
             term_width = os.get_terminal_size()[0]
+            pt._max_width = {'Value': max(60, term_width - entry_info_width)}
         except OSError:
-            term_width = 0
-
-        pt._max_width = {'Value': max(60, term_width - entry_info_width)}
+            # non-interactive mode (piping results). No max width
+            pass
 
         print(pt, file=handle)
 
