@@ -8,6 +8,7 @@ master/_sources/generated/happi.backends.qs_db.QSBackend.rst.txt
 master/_sources/index.rst.txt
 master/_sources/releases.rst.txt
 master/_sources/upcoming_changes.rst.txt
+master/_sources/upcoming_release_notes/259-Fall_back_to_normal_Python_REPL_if_IPython_is_not_available.rst.txt
 master/_sources/upcoming_release_notes/276-remove_device_methods.rst.txt
 master/_sources/upcoming_release_notes/278-Improve_error_handling_and_logging_in_the_happi_cli.rst.txt
 master/_sources/upcoming_release_notes/282-enh_filter_default_kwargs.rst.txt
@@ -63,6 +64,7 @@ master/releases.html
 master/search.html
 master/searchindex.js
 master/upcoming_changes.html
+master/upcoming_release_notes/259-Fall_back_to_normal_Python_REPL_if_IPython_is_not_available.html
 master/upcoming_release_notes/276-remove_device_methods.html
 master/upcoming_release_notes/278-Improve_error_handling_and_logging_in_the_happi_cli.html
 master/upcoming_release_notes/282-enh_filter_default_kwargs.html
