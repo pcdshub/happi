@@ -364,8 +364,16 @@ def load(ctx, item_names: List[str]):
         except SearchError as e:
             raise click.ClickException(f'Could not load device {name!r}: {e}')
 
-    from IPython import start_ipython  # noqa
-    start_ipython(argv=['--quick'], user_ns=devices)
+    try:
+        from IPython import start_ipython  # noqa
+        start_ipython(argv=['--quick'], user_ns=devices)
+    except ImportError:
+        # Fall back to normal Python REPL if IPython is not available
+        import code
+        vars = globals().copy()
+        vars.update(devices)
+        shell = code.InteractiveConsole(vars)
+        shell.interact()
 
 
 # TODO: FIgure out how to deal with json and click.  list of args doesn't
