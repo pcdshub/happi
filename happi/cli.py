@@ -6,6 +6,8 @@ from __future__ import annotations
 import ast
 import dataclasses
 import fnmatch
+import inspect
+import io
 import json
 import logging
 import os
@@ -13,9 +15,9 @@ import os
 import readline  # noqa
 import sys
 import time
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from cProfile import Profile
-from typing import List
+from typing import List, Union
 
 import click
 import coloredlogs
@@ -871,6 +873,94 @@ def pyepics_cleanup():
                     cache_item.access_event_callback.clear()
                 except AttributeError:
                     print(cache_item)
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option('-l', '--list', 'list_checks', is_flag=True,
+              help='List the available validation checks')
+@click.option('-c', '--check', 'check_choices', multiple=True, default=[],
+              help='name of the check to include')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='Use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.argument('search_criteria', nargs=-1)
+def audit(
+    ctx,
+    list_checks: bool,
+    check_choices: List[Union[int, str]],
+    use_glob: bool,
+    search_criteria: List[str]
+):
+    """
+    Audit the current happi database to make sure entries are valid.
+
+    Various validation options exist, and can be viewed with the list
+    (-l, --list) option
+
+    To-Do:
+    - add failure-only flag
+    - organize for table output
+    - names only?
+    - allow stdout/err?
+    """
+    logger.debug('Starting audit block')
+    from .audit import checks, verify_result
+
+    # List checks subcommand
+    if list_checks:
+        check_pt = prettytable.PrettyTable(field_names=['name',
+                                                        'description'])
+        check_pt.hrules = prettytable.ALL
+        check_pt.align['description'] = 'l'
+        for name, fn in checks.items():
+            check_pt.add_row([name, inspect.cleandoc(fn.__doc__)])
+        print(check_pt)
+        return
+
+    # gather checks
+    if check_choices:
+        check_list = []
+        for check_name in check_choices:
+            check_list.append(checks[check_name])
+    else:
+        # take all checks
+        check_list = list(checks.values())
+
+    client: happi.Client = ctx.obj
+
+    results = search_parser(client, use_glob, search_criteria)
+    click.echo(f'found {len(results)} items to verify')
+    click.echo(f'running checks: {[f.__name__ for f in check_list]}')
+
+    test_results = {'name': [], 'success': [], 'msg': []}
+    f = io.StringIO()
+    for i, res in enumerate(results):
+        print(f'checking device #: {i}', end='\r')
+        # Capture stdout, stderr for this audit
+        with redirect_stderr(f), redirect_stdout(f):
+            success, msg = verify_result(res, check_list)
+            test_results['name'].append(res.item.name)
+            test_results['success'].append(success)
+            test_results['msg'].append(msg)
+
+    # print outs
+    pt = prettytable.PrettyTable(field_names=['name', 'success', 'msg'])
+    for name, success, msg in zip(test_results['name'],
+                                  test_results['success'],
+                                  test_results['msg']):
+        if not success:
+            pt.add_row([name, success, msg])
+
+    # msg_width = pt._widths[] + 40  # account for padding
+    try:
+        term_width = os.get_terminal_size()[0]
+        pt._max_width = {'msg': max(60, term_width - 40)}
+    except OSError:
+        # non-interactive mode (piping results). No max width
+        pass
+    click.echo(pt)
+    click.echo(f'# devices failed: {len(pt.rows)}')
 
 
 def main():
