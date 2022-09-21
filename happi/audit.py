@@ -12,7 +12,6 @@ Features to include:
 Eventually want to discover checks via entrypoints?
 let users specify checks via index?
 """
-
 from typing import Callable, List, Optional, Tuple
 
 from happi import SearchResult
@@ -82,15 +81,23 @@ def check_lightpath_valid(result: SearchResult) -> None:
     - verifying device.get_lightpath_state() runs
     - received LightpathState is valid
     """
-    # try:
     dev = result.get()
+
     state = dev.get_lightpath_state()
 
     assert isinstance(state.inserted, bool), 'inserted is not a bool'
     assert isinstance(state.removed, bool), 'removed is not a bool'
-    assert (0 <= state.transmission) and (state.transmission <= 1), (
-           'transmission not in range [0, 1]')
-    assert isinstance(state.output_branch, str), 'output branch not a str'
+    assert isinstance(state.output, dict), 'ouptut is not a dict'
+
+
+def check_name_match_id(result: SearchResult) -> None:
+    """
+    Check if the item's ``_id`` field matches its ``name``.
+    This is a convention we have held for a while, making searching
+    in either direction easier.
+    """
+
+    assert result.metadata.get('_id') == result.metadata.get('name')
 
 
 def verify_result(
@@ -124,8 +131,7 @@ def verify_result(
             check(result)
     except Exception as ex:
         success = False
-        msg = (f"Result (id: {result.metadata.get('_id')}) failed "
-               f"check ({check.__name__}) for reason: {str(ex)}")
+        msg = (f"Failed check ({check.__name__}): {str(ex)}")
 
     return success, msg
 
@@ -133,5 +139,6 @@ def verify_result(
 checks = {
     'check_instantiation': check_instantiation,
     'check_extra_info': check_extra_info,
-    'check_lightpath_valid': check_lightpath_valid
+    'check_lightpath_valid': check_lightpath_valid,
+    'check_name_match_id': check_name_match_id
 }
