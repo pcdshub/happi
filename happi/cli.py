@@ -11,6 +11,7 @@ import io
 import json
 import logging
 import os
+import re
 # on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
@@ -945,22 +946,24 @@ def audit(
             test_results['msg'].append(msg)
 
     # print outs
-    pt = prettytable.PrettyTable(field_names=['name', 'success', 'msg'])
+    pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
     for name, success, msg in zip(test_results['name'],
                                   test_results['success'],
                                   test_results['msg']):
         if not success:
-            pt.add_row([name, success, msg])
+            check_text, error = msg.split(': ', 1)
+            check_name = re.search(r'\((.*)\)', check_text)[1]
+            pt.add_row([name, check_name, error])
 
-    # msg_width = pt._widths[] + 40  # account for padding
     try:
         term_width = os.get_terminal_size()[0]
         pt._max_width = {'msg': max(60, term_width - 40)}
     except OSError:
         # non-interactive mode (piping results). No max width
         pass
-    click.echo(pt)
-    click.echo(f'# devices failed: {len(pt.rows)}')
+    if len(pt.rows) > 0:
+        click.echo(pt)
+    click.echo(f'# devices failed: {len(pt.rows)} / {len(results)}')
 
 
 def main():
