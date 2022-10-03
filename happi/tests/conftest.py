@@ -8,6 +8,7 @@ import pytest
 import simplejson
 from click.testing import CliRunner
 
+import happi.cli
 from happi import Client, EntryInfo, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
 
@@ -517,3 +518,13 @@ path={bad_db}
 @pytest.fixture(scope='function')
 def runner():
     return CliRunner()
+
+
+@pytest.fixture(autouse=True)
+def skip_cleanup(monkeypatch):
+    """ Monkeypatch happi_cli to skip ophyd cleanup """
+    def no_op(*args, **kwargs):
+        return
+
+    monkeypatch.setattr(happi.cli, 'ophyd_cleanup', no_op)
+    monkeypatch.setattr(happi.cli, 'pyepics_cleanup', no_op)
