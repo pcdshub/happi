@@ -18,7 +18,7 @@ import sys
 import time
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from cProfile import Profile
-from typing import List, Union
+from typing import List
 
 import click
 import coloredlogs
@@ -881,16 +881,20 @@ def pyepics_cleanup():
 @click.option('-l', '--list', 'list_checks', is_flag=True,
               help='List the available validation checks')
 @click.option('-c', '--check', 'check_choices', multiple=True, default=[],
-              help='name of the check to include')
+              help='Name of the check to include.  '
+                   'Can also provide a substring')
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.option('--names', '-n', 'names_only', is_flag=True,
+              help='Only display names of failed entries')
 @click.argument('search_criteria', nargs=-1)
 def audit(
     ctx,
     list_checks: bool,
-    check_choices: List[Union[int, str]],
+    check_choices: List[str],
     use_glob: bool,
+    names_only: bool,
     search_criteria: List[str]
 ):
     """
@@ -900,9 +904,6 @@ def audit(
     (-l, --list) option
 
     To-Do:
-    - add failure-only flag
-    - organize for table output
-    - names only?
     - allow stdout/err?
     """
     logger.debug('Starting audit block')
@@ -923,7 +924,11 @@ def audit(
     if check_choices:
         check_list = []
         for check_name in check_choices:
-            check_list.append(checks[check_name])
+            name_matches = [name for name in checks if check_name in name]
+            if len(name_matches) > 1:
+                raise ValueError(f'provided check name ({check_name})'
+                                 ' matches multiple checks')
+            check_list.append(checks[name_matches[0]])
     else:
         # take all checks
         check_list = list(checks.values())
@@ -946,24 +951,29 @@ def audit(
             test_results['msg'].append(msg)
 
     # print outs
-    pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
-    for name, success, msg in zip(test_results['name'],
-                                  test_results['success'],
-                                  test_results['msg']):
-        if not success:
-            check_text, error = msg.split(': ', 1)
-            check_name = re.search(r'\((.*)\)', check_text)[1]
-            pt.add_row([name, check_name, error])
+    if names_only:
+        click.echo('\n')
+        click.echo(' '.join(test_results['name']))
+    else:
+        pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
+        for name, success, msg in zip(test_results['name'],
+                                      test_results['success'],
+                                      test_results['msg']):
+            if not success:
+                check_text, error = msg.split(': ', 1)
+                check_name = re.search(r'\((.*)\)', check_text)[1]
+                pt.add_row([name, check_name, error])
 
-    try:
-        term_width = os.get_terminal_size()[0]
-        pt._max_width = {'msg': max(60, term_width - 40)}
-    except OSError:
-        # non-interactive mode (piping results). No max width
-        pass
-    if len(pt.rows) > 0:
-        click.echo(pt)
-    click.echo(f'# devices failed: {len(pt.rows)} / {len(results)}')
+        try:
+            term_width = os.get_terminal_size()[0]
+            pt._max_width = {'error': max(60, term_width - 40)}
+        except OSError:
+            # non-interactive mode (piping results). No max width
+            pass
+
+        if len(pt.rows) > 0:
+            click.echo(pt)
+        click.echo(f'# devices failed: {len(pt.rows)} / {len(results)}')
 
 
 def main():
