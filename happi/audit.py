@@ -1,16 +1,8 @@
 """
-Functions and helpers for auditing the happi database
-Features to include:
-- Search for subset -> function takes List[SearchResult]
-- checks
-    - instantiation check
-    - run method check (get_lightpath_state)
-    - Extra information check
-    - check all are enforced?
-- Return warnings based on function
-
-Eventually want to discover checks via entrypoints?
-let users specify checks via index?
+This module contains functions and helpers for auditing the happi database.
+Checks are simple functions that take a happi.SearchResult and return None.
+When a check fails, it should throw an Exception with a helpful error message.
+These exception messages will be caught and organized by the cli audit tool.
 """
 from typing import Callable, List, Optional, Tuple
 
@@ -21,15 +13,11 @@ CLIENT_KEYS = ['_id', 'type', 'creation', 'last_edit']
 
 def check_instantiation(result: SearchResult) -> None:
     """
-    attempts to get the instantiated device from the happi.SearchResult
-    Allow any exceptions to be bubbled up to the validator
+    Check if the device can be instantiated
+    Simply attempts to get the device from the happi.SearchResult
 
-    How do we catch subscription callback exceptions?.....
-
-    Parameters
-    ----------
-    result : SearchResult
-        happi entry to be validated
+    Subscription callback exceptions are silenced in ophyd, and will
+    not cause this check to fail.
     """
     _ = result.get()
 
@@ -47,8 +35,6 @@ def check_extra_info(
     - type
     - creation
     - last_edit
-
-    TODO: make a new exception?
     """
     if ignore_keys is None:
         ignore_keys = CLIENT_KEYS
