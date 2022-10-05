@@ -3,16 +3,12 @@ Backend implementation that combines multiple backends.
 """
 import functools
 import logging
-import os
 import re
-from typing import Any, Dict, Generator, List, Union
+from typing import Any, Dict, List, Optional, Union
 
-from .core import _Backend
+from .core import ItemMeta, ItemMetaGen, _Backend
 
 logger = logging.getLogger(__name__)
-
-PathLike = Union[str, bytes, os.PathLike]
-ItemMeta = Dict[str, Any]
 
 
 def prevent_duplicate_ids(fn):
@@ -73,12 +69,7 @@ class MultiBackend(_Backend):
             bknd.clear_cache()
 
     @prevent_duplicate_ids
-    def find(
-        self,
-        *args,
-        multiples=False,
-        **kwargs
-    ) -> Generator[ItemMeta, None, None]:
+    def find(self, *args, multiples=False, **kwargs) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria.
 
@@ -101,11 +92,16 @@ class MultiBackend(_Backend):
         """The current implementation of this backend is read-only."""
         raise NotImplementedError("The Questionnaire backend is read-only")
 
-    def get_by_id(self, id_) -> ItemMeta:
+    def get_by_id(self, id_: str) -> ItemMeta:
         """
         Get an document by ID if it exists, or return None.
 
         Returns the first match, in config priority
+
+        Parameters
+        ----------
+        id_ : str
+            id to search for
         """
         for bknd in self.backends:
             doc = bknd.get_by_id(id_)
@@ -115,33 +111,55 @@ class MultiBackend(_Backend):
         return
 
     @prevent_duplicate_ids
-    def find_range(self, key, *, start, stop=None, to_match) -> Generator[ItemMeta, None, None]:
+    def find_range(
+        self,
+        key: str,
+        *,
+        start: Union[int, float],
+        stop: Optional[Union[int, float]] = None,
+        to_match: Dict[str, Any]
+    ) -> ItemMetaGen:
         """
         Find instances that match the search criteria, such that
         ``start <= entry[key] < stop``.
 
-        Should check for duplicates
-
+        Reports the document in the highest priority backend in the
+        case of duplicates
         Parameters
         ----------
-        key : _type_
-            _description_
-        start : _type_
-            _description_
-        to_match : _type_
-            _description_
-        stop : _type_, optional
-            _description_, by default None
+        key : str
+            The database key to search
+        start : Union[int, float]
+            Inclusive minimum value to filter ``key`` on.
+        to_match : Dict[str, Any]
+            Exclusive maximum value to filter ``key`` on.
+        stop : Union[int, float], optional
+            Requested information, where the values must match exactly.
 
         Yields
         ------
-        Generator[ItemMeta, None, None]
-            _description_
+        ItemMetaGen
+            A generator of metadata documents
         """
         for bknd in self.backends:
-            yield from bknd.find_range(key, start=start, stop=stop, to_match=to_match)
+            yield from bknd.find_range(key, start=start, stop=stop,
+                                       to_match=to_match)
 
     @prevent_duplicate_ids
-    def find_regex(self, to_match, *, flags=re.IGNORECASE):
+    def find_regex(
+        self,
+        to_match: Dict[str, Any],
+        *,
+        flags=re.IGNORECASE
+    ) -> ItemMetaGen:
+        """
+        Find an instance or instances that matches the search criteria,
+        using regular expressions.
+
+        Parameters
+        ----------
+        to_match : dict
+            Requested information, where the values are regular expressions.
+        """
         for bknd in self.backends:
             yield from bknd.find_regex(to_match, flags=flags)

@@ -3,13 +3,14 @@ MongoDB Backend Implementation using the ``PyMongo`` package.
 """
 import logging
 import re
+from typing import Any, Dict, List, Optional, Union
 
 import bson.regex
 from pymongo import MongoClient
 from pymongo.errors import OperationFailure, ServerSelectionTimeoutError
 
 from ..errors import DatabaseError, DuplicateError, SearchError
-from .core import _Backend
+from .core import ItemMeta, ItemMetaGen, _Backend
 
 logger = logging.getLogger(__name__)
 
@@ -66,11 +67,11 @@ class MongoBackend(_Backend):
                                 'port specified at startup')
 
     @property
-    def all_items(self):
+    def all_items(self) -> List[ItemMeta]:
         """List of all item sub-dictionaries."""
-        return self._collection.find()
+        return list(self._collection.find())
 
-    def find(self, to_match):
+    def find(self, to_match: Dict[str, Any]) -> ItemMetaGen:
         """
         Yield all instances that match the given search criteria.
 
@@ -82,7 +83,14 @@ class MongoBackend(_Backend):
 
         yield from self._collection.find(to_match)
 
-    def find_range(self, key, *, start, stop=None, to_match):
+    def find_range(
+        self,
+        key: str,
+        *,
+        start: Union[int, float],
+        stop: Optional[Union[int, float]] = None,
+        to_match: Dict[str, Any]
+    ) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria, such
         that ``start <= entry[key] < stop``.
@@ -112,7 +120,7 @@ class MongoBackend(_Backend):
         match.update(**to_match)
         yield from self._collection.find(match)
 
-    def get_by_id(self, _id):
+    def get_by_id(self, _id: str) -> ItemMeta:
         """
         Get an item by ID if it exists, or return None.
 
@@ -121,11 +129,15 @@ class MongoBackend(_Backend):
         _id : str
             The item ID.
         """
-
         for item in self._collection.find({'_id': _id}):
             return item
 
-    def find_regex(self, to_match, *, flags=re.IGNORECASE):
+    def find_regex(
+        self,
+        to_match: Dict[str, Any],
+        *,
+        flags=re.IGNORECASE
+    ) -> ItemMetaGen:
         """
         Yield all instances that match the given search criteria.
 
@@ -146,7 +158,12 @@ class MongoBackend(_Backend):
 
         yield from self._collection.find(regexes)
 
-    def save(self, _id, post, insert=True):
+    def save(
+        self,
+        _id: str,
+        post: Dict[str, Any],
+        insert: bool = True
+    ) -> None:
         """
         Save information to the database.
 
@@ -198,7 +215,7 @@ class MongoBackend(_Backend):
                 "correct".format(_id)
             )
 
-    def delete(self, _id):
+    def delete(self, _id: str) -> None:
         """
         Delete an item instance from the database.
 

@@ -7,13 +7,13 @@ import math
 import os
 import os.path
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import simplejson as json
 
 from .. import utils
 from ..errors import DuplicateError, SearchError
-from .core import _Backend
+from .core import ItemMeta, ItemMetaGen, _Backend
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +54,13 @@ class JSONBackend(_Backend):
         Path to the happi config.
     """
 
-    def __init__(self, path: str, initialize: bool = False, cfg_path: Optional[str] = None):
-        self._load_cache = None
+    def __init__(
+        self,
+        path: str,
+        initialize: bool = False,
+        cfg_path: Optional[str] = None
+    ) -> None:
+        self._load_cache: Dict[str, ItemMeta] = None
         # Determine the cfg dir and build path to json db based on that unless we're initted w/o a config
         if cfg_path is not None:
             cfg_dir = os.path.dirname(cfg_path)
@@ -70,7 +75,7 @@ class JSONBackend(_Backend):
         """Clear the loaded cache."""
         self._load_cache = None
 
-    def _load_or_initialize(self):
+    def _load_or_initialize(self) -> Optional[Dict[str, ItemMeta]]:
         """Load an existing database or initialize a new one."""
         if self._load_cache is None:
             try:
@@ -83,7 +88,7 @@ class JSONBackend(_Backend):
         return self._load_cache
 
     @property
-    def all_items(self):
+    def all_items(self) -> List[ItemMeta]:
         """All of the items in the database."""
         json = self._load_or_initialize()
         return list(json.values())
@@ -111,7 +116,7 @@ class JSONBackend(_Backend):
         # Dump an empty dictionary
         self.store({})
 
-    def load(self):
+    def load(self) -> Dict[str, ItemMeta]:
         """Load the JSON database."""
         with open(self.path, 'r') as f:
             raw_json = f.read()
@@ -119,7 +124,7 @@ class JSONBackend(_Backend):
         # Allow for empty files to be considered valid databases:
         return json.loads(raw_json) if raw_json else {}
 
-    def store(self, db):
+    def store(self, db: Dict[str, ItemMeta]) -> None:
         """
         Stash the database in the JSON file.
 
@@ -147,13 +152,13 @@ class JSONBackend(_Backend):
                     # Release lock in filesystem
                     fcntl.flock(f, fcntl.LOCK_UN)
 
-    def _iterative_compare(self, comparison):
+    def _iterative_compare(self, comparison: Callable) -> ItemMetaGen:
         """
         Yields documents in which ``comparison(name, doc)`` returns `True`.
 
         Parameters
         ----------
-        comparison : callable
+        comparison : Callable
             A comparison function with a signature of (item_id, doc).
         """
 
@@ -168,12 +173,12 @@ class JSONBackend(_Backend):
             except Exception as ex:
                 logger.debug('Comparison method failed: %s', ex, exc_info=ex)
 
-    def get_by_id(self, id_):
+    def get_by_id(self, _id: str) -> ItemMeta:
         """Get an item by ID if it exists, or return None."""
         db = self._load_or_initialize()
-        return db.get(id_)
+        return db.get(_id)
 
-    def find(self, to_match):
+    def find(self, to_match: Dict[str, Any]) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria.
 
@@ -191,7 +196,14 @@ class JSONBackend(_Backend):
 
         yield from self._iterative_compare(comparison)
 
-    def find_range(self, key, *, start, stop=None, to_match):
+    def find_range(
+        self,
+        key: str,
+        *,
+        start: Union[int, float],
+        stop: Optional[Union[int, float]] = None,
+        to_match: Dict[str, Any]
+    ) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria, such
         that ``start <= entry[key] < stop``.
@@ -227,7 +239,12 @@ class JSONBackend(_Backend):
 
         yield from self._iterative_compare(comparison)
 
-    def find_regex(self, to_match, *, flags=re.IGNORECASE):
+    def find_regex(
+        self,
+        to_match: Dict[str, Any],
+        *,
+        flags=re.IGNORECASE
+    ) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria,
         using regular expressions.
@@ -249,7 +266,12 @@ class JSONBackend(_Backend):
 
         yield from self._iterative_compare(comparison)
 
-    def save(self, _id: str, post: Dict[str, Any], insert: bool = True):
+    def save(
+        self,
+        _id: str,
+        post: Dict[str, Any],
+        insert: bool = True
+    ) -> None:
         """
         Save information to the database.
 
@@ -291,7 +313,7 @@ class JSONBackend(_Backend):
                 except KeyError:
                     raise SearchError("No item found {}".format(_id))
 
-    def delete(self, _id: str):
+    def delete(self, _id: str) -> None:
         """
         Delete an item instance from the database.
 
