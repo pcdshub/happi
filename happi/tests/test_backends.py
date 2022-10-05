@@ -9,6 +9,7 @@ import simplejson
 
 from happi import Client
 from happi.backends.json_db import JSONBackend
+from happi.backends.multi_db import MultiBackend
 from happi.errors import DuplicateError, SearchError
 from happi.loader import load_devices
 
@@ -30,6 +31,34 @@ def mockjson(item_info: Dict[str, Any], valve_info: Dict[str, Any]):
         handle.flush()
         # Return handle name
         yield JSONBackend(handle.name)
+
+
+@pytest.fixture(scope='function')
+def mockmulti(mockjson, mockmongo, valve_info, item_info):
+    """ Create a multi-backend database with a mongo and json backend """
+    # modify json backend to have group = 'JSON'
+    json_docs = mockjson.all_items
+    for doc in json_docs:
+        mockjson.delete(doc[Client._id_key])
+        doc['group'] = 'JSON'
+        mockjson.save(doc[Client._id_key], doc, insert=True)
+    # add extra device to json backend
+    mockjson.save(valve_info[Client._id_key], valve_info, insert=True)
+
+    # modify mongo backend to have group = 'MONGO'
+    mongo_docs = mockmongo.all_items
+    for doc in mongo_docs:
+        mockmongo.delete(doc[Client._id_key])
+        doc['group'] = 'JSON'
+        mockmongo.save(doc[Client._id_key], doc, insert=True)
+    # add extra device to mongo backend
+    extra_info = item_info.copy()
+    extra_info['name'] = 'mongo_alias'
+    extra_info['_id'] = 'mongo_alias'
+    mockmongo.save(extra_info[Client._id_key], extra_info, insert=True)
+
+    # json takes priority over mongo
+    return MultiBackend(backends=[mockjson, mockmongo])
 
 
 @requires_mongo
@@ -219,3 +248,29 @@ def test_beckoff_axis_device_class(mockqsbackend):
     sam_x = d.get('sam_x')
     assert vh_y.__class__.__name__ == 'BeckhoffAxis'
     assert sam_x.__class__.__name__ == 'IMS'
+
+
+def test_multi_backend(mockmulti, item_info, valve_info):
+    mm = mockmulti
+    assert len(mm.all_items) == 3
+    assert len(mm.backends[0].all_items) == 2
+    assert len(mm.backends[1].all_items) == 2
+
+    # duplicate name/id in both backends
+    assert len(list(mm.backends[0].find({'_id': item_info['_id']})))
+    assert len(list(mm.backends[1].find({'_id': item_info['_id']})))
+    # JSON backend takes priority
+    assert list(mm.find({'_id': item_info['_id']}))[0]['group'] == 'JSON'
+
+    # get_id works similarly
+    assert mm.backends[0].get_by_id(item_info['_id'])
+    assert mm.backends[1].get_by_id(item_info['_id'])
+
+    assert mm.get_by_id(item_info['_id'])['group'] == 'JSON'
+
+    # extra items in backend
+    assert mm.get_by_id(valve_info['_id'])
+    assert mm.find({'_id': valve_info['_id']})
+
+    assert mm.get_by_id('mongo_alias')
+    assert mm.find({'_id': 'mongo_alias'})
