@@ -801,10 +801,32 @@ class Client(collections.abc.Mapping):
         cfg_parser = configparser.ConfigParser()
         cfg_file = cfg_parser.read(cfg)
         logger.debug("Loading configuration file at %r", cfg_file)
-        db_kwargs = cfg_parser['DEFAULT']
+        if len(cfg_parser.keys()) > 1:
+            # multi backend configuration have multiple sections
+            multi_backend = BACKENDS['multi']
+            sub_backends = []
+            for section in cfg_parser.keys():
+                bknd = cls._get_backend_from_config(cfg_parser[section], cfg)
+                sub_backends.append(bknd)
+            # move DEFAULT from index 0 to -1
+            default_backend = sub_backends.pop(0)
+            sub_backends.append(default_backend)
+            # return client with multi_backend
+            db = multi_backend(backends=sub_backends)
+            return cls(database=db)
+        else:
+            # return single backend
+            db = cls._get_backend_from_config(cfg_parser['DEFAULT'], cfg)
+            return cls(database=db)
+
+    @staticmethod
+    def _get_backend_from_config(
+        cfg_section: configparser.SectionProxy,
+        cfg: str
+    ) -> _Backend:
         # If a backend is specified use it, otherwise default
-        if 'backend' in db_kwargs:
-            db_str = db_kwargs.pop('backend')
+        if 'backend' in cfg_section:
+            db_str = cfg_section.pop('backend')
             try:
                 backend = BACKENDS[db_str]
             except KeyError:
@@ -816,19 +838,19 @@ class Client(collections.abc.Mapping):
 
         logger.debug(
             "Using Happi backend %r with kwargs %s",
-            backend, db_kwargs
+            backend, cfg_section
         )
 
         # Create our database with provided kwargs
         try:
-            database = backend(**db_kwargs, cfg_path=cfg)
-            return cls(database=database)
+            database = backend(**cfg_section, cfg_path=cfg)
+            return database
         except Exception as ex:
             raise RuntimeError(
                 f'Unable to instantiate the client. Please verify that '
                 f'your HAPPI_CFG points to the correct file and has '
                 f'the required configuration settings. In {cfg!r}, found '
-                f'settings: {dict(db_kwargs)}.'
+                f'settings: {dict(cfg_section)}.'
             ) from ex
 
     @staticmethod
