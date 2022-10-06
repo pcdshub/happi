@@ -2,8 +2,13 @@
 Base backend database options.
 """
 import logging
+from typing import Any, Dict, Generator, List
 
 logger = logging.getLogger(__name__)
+
+
+ItemMeta = Dict[str, Any]
+ItemMetaGen = Generator[ItemMeta, None, None]
 
 
 class _Backend:
@@ -15,7 +20,7 @@ class _Backend:
     """
 
     @property
-    def all_items(self):
+    def all_items(self) -> List[ItemMeta]:
         """
         List of all items in the database.
 
@@ -31,7 +36,7 @@ class _Backend:
         Optional implementation may be customized in subclass.
         """
 
-    def find(self, multiples=False, **kwargs):
+    def find(self, multiples: bool = False, **kwargs) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria.
 
@@ -48,7 +53,12 @@ class _Backend:
         """
         raise NotImplementedError
 
-    def save(self, _id, post, insert=True):
+    def save(
+        self,
+        _id: str,
+        post: Dict[str, Any],
+        insert: bool = True
+    ) -> None:
         """
         Save information to the database.
 
@@ -77,7 +87,7 @@ class _Backend:
         """
         raise NotImplementedError
 
-    def delete(self, _id):
+    def delete(self, _id: str) -> None:
         """
         Delete a device instance from the database.
 

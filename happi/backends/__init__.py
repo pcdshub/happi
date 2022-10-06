@@ -15,6 +15,9 @@ def _get_backend(backend):
     if backend == 'qs':
         from .qs_db import QSBackend
         return QSBackend
+    if backend == 'multi':
+        from .multi_db import MultiBackend
+        return MultiBackend
     raise ValueError(f'Unknown backend {backend!r}')
 
 
@@ -35,6 +38,11 @@ def _get_backends():
         backends['qs'] = _get_backend('qs')
     except ImportError as ex:
         logger.debug('Questionnaire backend unavailable: %s', ex)
+
+    try:
+        backends['multi'] = _get_backend('multi')
+    except ImportError as ex:
+        logger.debug('Multi backend unavailable: %s', ex)
 
     return backends
 
