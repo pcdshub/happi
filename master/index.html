@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi 1.14.0+35.ga93837c documentation</title>
+  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi 1.14.0+45.gdc37705 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +31,7 @@
             <a href="#" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                1.14.0+35.ga93837c
+                1.14.0+45.gdc37705
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -115,7 +116,10 @@ from the library ophyd.</p></li>
 <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="containers.html#entryinfo">EntryInfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#entryinfo">EntryInfo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#happi.EntryInfo"><code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="containers.html#happiitem">HappiItem</a></li>
 <li class="toctree-l2"><a class="reference internal" href="containers.html#example-container">Example Container</a></li>
 <li class="toctree-l2"><a class="reference internal" href="containers.html#loading-your-object">Loading your Object</a></li>
@@ -163,8 +167,13 @@ from the library ophyd.</p></li>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Happi API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#client">Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#client">Client</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#happi.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#happi.SearchResult"><code class="docutils literal notranslate"><span class="pre">SearchResult</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#backends">Backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#happi.backends.core._Backend"><code class="docutils literal notranslate"><span class="pre">_Backend</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.mongo_db.MongoBackend.html">happi.backends.mongo_db.MongoBackend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.json_db.JSONBackend.html">happi.backends.json_db.JSONBackend</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.qs_db.QSBackend.html">happi.backends.qs_db.QSBackend</a></li>
@@ -221,6 +230,7 @@ from the library ophyd.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="upcoming_release_notes/278-Improve_error_handling_and_logging_in_the_happi_cli.html">278 Improve error handling and logging in the happi cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upcoming_release_notes/282-enh_filter_default_kwargs.html">282 enh_filter_default_kwargs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="upcoming_release_notes/284-mnt_max_table_width.html">284 mnt_max_table_width</a></li>
+<li class="toctree-l2"><a class="reference internal" href="upcoming_release_notes/287-enh_multi_backend.html">287 enh_multi_backend</a></li>
 </ul>
 </li>
 </ul>
