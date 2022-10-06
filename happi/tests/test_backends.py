@@ -36,21 +36,17 @@ def mockjson(item_info: Dict[str, Any], valve_info: Dict[str, Any]):
 @pytest.fixture(scope='function')
 def mockmulti(mockjson, mockmongo, valve_info, item_info):
     """ Create a multi-backend database with a mongo and json backend """
-    # modify json backend to have group = 'JSON'
-    json_docs = mockjson.all_items
-    for doc in json_docs:
-        mockjson.delete(doc[Client._id_key])
-        doc['group'] = 'JSON'
-        mockjson.save(doc[Client._id_key], doc, insert=True)
+    # modify json backend to have group = 'JSON', mongo to have group='MONGO'
+    for backend, group_name in zip([mockjson, mockmongo], ['JSON', 'MONGO']):
+        all_docs = backend.all_items
+        for doc in all_docs:
+            backend.delete(doc[Client._id_key])
+            doc['group'] = group_name
+            backend.save(doc[Client._id_key], doc, insert=True)
+
     # add extra device to json backend
     mockjson.save(valve_info[Client._id_key], valve_info, insert=True)
 
-    # modify mongo backend to have group = 'MONGO'
-    mongo_docs = mockmongo.all_items
-    for doc in mongo_docs:
-        mockmongo.delete(doc[Client._id_key])
-        doc['group'] = 'JSON'
-        mockmongo.save(doc[Client._id_key], doc, insert=True)
     # add extra device to mongo backend
     extra_info = item_info.copy()
     extra_info['name'] = 'mongo_alias'
@@ -265,12 +261,16 @@ def test_multi_backend(mockmulti, item_info, valve_info):
     # get_id works similarly
     assert mm.backends[0].get_by_id(item_info['_id'])
     assert mm.backends[1].get_by_id(item_info['_id'])
+    assert mm.backends[1].get_by_id(item_info['_id'])['group'] == 'MONGO'
 
     assert mm.get_by_id(item_info['_id'])['group'] == 'JSON'
 
+    dev = list(mm.find_regex({'_id': item_info['_id']}))[0]
+    assert mm.get_by_id(item_info['_id']) == dev
+
     # extra items in backend
     assert mm.get_by_id(valve_info['_id'])
-    assert mm.find({'_id': valve_info['_id']})
+    assert list(mm.find({'_id': valve_info['_id']}))
 
     assert mm.get_by_id('mongo_alias')
-    assert mm.find({'_id': 'mongo_alias'})
+    assert list(mm.find({'_id': 'mongo_alias'}))
