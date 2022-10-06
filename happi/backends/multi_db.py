@@ -15,6 +15,8 @@ def prevent_duplicate_ids(fn):
     """
     Decorator that remembers which document _id's have been yielded and
     prevents subsequent documents with matching _id's from being yielded
+
+    Expects the wrapped function to yield ItemMeta documents
     """
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
@@ -34,10 +36,13 @@ class MultiBackend(_Backend):
     Combines multiple backends, prioritizing database files in order
     of appearance.
 
+    Parameters
+    ----------
+    backends : List[_Backend]
+        A list of instantiated backends in order of priority.
+        The backend at index 0 will have the highest priority.
     """
     def __init__(self, backends: List[_Backend]):
-        self._load_cache = None
-
         self.backends = backends
 
     @property
@@ -47,6 +52,11 @@ class MultiBackend(_Backend):
 
         In the case of duplicate items, the item in the first backend
         takes priority.
+
+        Returns
+        -------
+        List[ItemMeta]
+            A list of all metadata documents
         """
         items = []
         unique_ids = set()
@@ -80,6 +90,11 @@ class MultiBackend(_Backend):
             information.
         kwargs
             Requested information.
+
+        Yields
+        ------
+        ItemMetaGen
+            A generator of metadata documents
         """
         for bknd in self.backends:
             yield from bknd.find(*args, **kwargs)
@@ -102,6 +117,11 @@ class MultiBackend(_Backend):
         ----------
         id_ : str
             id to search for
+
+        Returns
+        -------
+        ItemMeta
+            The requested metadata document
         """
         for bknd in self.backends:
             doc = bknd.get_by_id(id_)
@@ -125,6 +145,7 @@ class MultiBackend(_Backend):
 
         Reports the document in the highest priority backend in the
         case of duplicates
+
         Parameters
         ----------
         key : str
@@ -160,6 +181,13 @@ class MultiBackend(_Backend):
         ----------
         to_match : dict
             Requested information, where the values are regular expressions.
+        flags : RegexFlag
+            flags to modify regex pattern parsing
+
+        Yields
+        ------
+        ItemMetaGen
+            A generator of metadata documents
         """
         for bknd in self.backends:
             yield from bknd.find_regex(to_match, flags=flags)
