@@ -31,7 +31,7 @@ def prevent_duplicate_ids(fn):
 
 class MultiBackend(_Backend):
     """
-    Multi-file backend.
+    Multi-backend backend.
 
     Combines multiple backends, prioritizing database files in order
     of appearance.
@@ -93,7 +93,7 @@ class MultiBackend(_Backend):
 
         Yields
         ------
-        ItemMetaGen
+        Dict[str, Any]
             A generator of metadata documents
         """
         for bknd in self.backends:
@@ -101,13 +101,13 @@ class MultiBackend(_Backend):
 
     def save(self, _id, post, insert=True):
         """The current implementation of this backend is read-only."""
-        raise NotImplementedError("The Questionnaire backend is read-only")
+        raise NotImplementedError("The Multi-backend backend is read-only")
 
     def delete(self, _id):
         """The current implementation of this backend is read-only."""
-        raise NotImplementedError("The Questionnaire backend is read-only")
+        raise NotImplementedError("The Multi-backend backend is read-only")
 
-    def get_by_id(self, id_: str) -> ItemMeta:
+    def get_by_id(self, id_: str) -> Optional[ItemMeta]:
         """
         Get an document by ID if it exists, or return None.
 
@@ -120,7 +120,7 @@ class MultiBackend(_Backend):
 
         Returns
         -------
-        ItemMeta
+        Dict[str, Any] or None
             The requested metadata document
         """
         for bknd in self.backends:
@@ -159,8 +159,8 @@ class MultiBackend(_Backend):
 
         Yields
         ------
-        ItemMetaGen
-            A generator of metadata documents
+        Dict[str, Any]
+            metadata documents matching the provided range
         """
         for bknd in self.backends:
             yield from bknd.find_range(key, start=start, stop=stop,
@@ -186,8 +186,8 @@ class MultiBackend(_Backend):
 
         Yields
         ------
-        ItemMetaGen
-            A generator of metadata documents
+        Dict[str, Any]
+            matching metadata documents
         """
         for bknd in self.backends:
             yield from bknd.find_regex(to_match, flags=flags)

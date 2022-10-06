@@ -173,10 +173,10 @@ class JSONBackend(_Backend):
             except Exception as ex:
                 logger.debug('Comparison method failed: %s', ex, exc_info=ex)
 
-    def get_by_id(self, _id: str) -> ItemMeta:
+    def get_by_id(self, id_: str) -> ItemMeta:
         """Get an item by ID if it exists, or return None."""
         db = self._load_or_initialize()
-        return db.get(_id)
+        return db.get(id_)
 
     def find(self, to_match: Dict[str, Any]) -> ItemMetaGen:
         """
