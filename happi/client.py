@@ -801,22 +801,30 @@ class Client(collections.abc.Mapping):
         cfg_parser = configparser.ConfigParser()
         cfg_file = cfg_parser.read(cfg)
         logger.debug("Loading configuration file at %r", cfg_file)
-        if len(cfg_parser.keys()) > 1:
+
+        # Gather the backend from each section
+        sub_backends = []
+        for section in cfg_parser.keys():
+            bknd = cls._get_backend_from_config(cfg_parser[section], cfg)
+            if bknd:
+                sub_backends.append(bknd)
+
+        if len(sub_backends) == 0:
+            raise RuntimeError('No valid backends loaded')
+        elif len(sub_backends) == 1:
+            # return single backend client
+            return cls(database=sub_backends[0])
+        else:
             # multi backend configuration have multiple sections
             multi_backend = BACKENDS['multi']
-            sub_backends = []
-            for section in cfg_parser.keys():
-                bknd = cls._get_backend_from_config(cfg_parser[section], cfg)
-                sub_backends.append(bknd)
-            # move DEFAULT from index 0 to -1
-            default_backend = sub_backends.pop(0)
-            sub_backends.append(default_backend)
+
+            # move DEFAULT from index 0 to -1, if it exists
+            if dict(cfg_parser['DEFAULT']):
+                default_backend = sub_backends.pop(0)
+                sub_backends.append(default_backend)
+
             # return client with multi_backend
             db = multi_backend(backends=sub_backends)
-            return cls(database=db)
-        else:
-            # return single backend
-            db = cls._get_backend_from_config(cfg_parser['DEFAULT'], cfg)
             return cls(database=db)
 
     @staticmethod
@@ -840,6 +848,10 @@ class Client(collections.abc.Mapping):
             "Using Happi backend %r with kwargs %s",
             backend, cfg_section
         )
+
+        if not dict(cfg_section):
+            # section is empty, skip
+            return
 
         # Create our database with provided kwargs
         try:
