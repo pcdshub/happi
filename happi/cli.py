@@ -77,7 +77,7 @@ def happi_cli(ctx, path, verbose):
 
 
 @happi_cli.command()
-@click.option('--show_json', '-j', is_flag=True,
+@click.option('--show_json', '--json', '-j', is_flag=True,
               help='Show results in JSON format.')
 @click.option('--names', is_flag=True,
               help='Return results as whitespace-separated names.')
