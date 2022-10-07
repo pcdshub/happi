@@ -914,7 +914,9 @@ def audit(
 
     Runs checks on the devices matching the provided SEARCH_CRITERIA.
     Checks are simple functions that raise exceptions on failure,
-    whether naturally or via assert calls.
+    whether naturally or via assert calls.  These functions take a single
+    happi.SearchResult as an positional argument and returns None if
+    successful.
 
     To import additional checks, provide a file with your check function
     and a list named ``checks`` containing the desired functions.
@@ -948,10 +950,10 @@ def audit(
         for check_name in check_choices:
             # check if provided check name is a substring of any checks
             matches = [fn for fn in checks if check_name in fn.__name__]
-            if len(matches) > 1:
+            if len(matches) != 1:
                 raise click.BadParameter(
-                    f'provided check name ({check_name}) matches multiple '
-                    f'checks: ({[ch.__name__ for ch in matches]})'
+                    f'provided check name ({check_name}) must match only'
+                    f'one check.  Matches: ({[ch.__name__ for ch in matches]})'
                 )
             check_list.append(matches[0])
     else:

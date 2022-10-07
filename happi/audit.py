@@ -1,9 +1,11 @@
 """
 This module contains functions and helpers for auditing the happi database.
-Checks are simple functions that take a happi.SearchResult and return None.
-When a check fails, it should throw an Exception with a helpful error message.
+Checks are simple functions that take a happi.SearchResult as its only
+positional argument and returns None when successful.  When a check fails, it
+should throw an Exception with a helpful error message.
 These exception messages will be caught and organized by the cli audit tool.
 """
+import inspect
 from typing import Callable, List, Optional, Tuple
 
 from happi import SearchResult
@@ -24,6 +26,7 @@ def check_instantiation(result: SearchResult) -> None:
 
 def check_extra_info(
     result: SearchResult,
+    *,
     ignore_keys: Optional[List[str]] = None
 ) -> None:
     """
@@ -83,6 +86,12 @@ def verify_result(
         to fix.  Empty string if validation is successful
     """
     success, msg = True, ""
+    # verify checks have the correct signature, as much as is reasonable
+    for check in checks:
+        if len(inspect.getfullargspec(check).args) != 1:
+            raise ValueError(
+                'check function must take exactly one positional argument'
+            )
 
     try:
         for check in checks:
