@@ -37,12 +37,14 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.group(
-    help=('commands available: search, add, edit, load, update, '
-          'container-registry, transfer'),
+    help=('The happi command-line interface, used to view and manipulate '
+          'device databases'),
     context_settings=CONTEXT_SETTINGS
 )
 @click.option('--path', type=click.Path(exists=True),
-              help='Provide the path to happi configuration file.')
+              help='Provide the path to happi configuration file. '
+                   'Will default to the file stored in the HAPPI_CFG '
+                   'environment variable.')
 @click.option('--verbose', '-v', is_flag=True,
               help='Show the debug logging stream.')
 @click.version_option(None, '--version', '-V', message=version_msg)
@@ -290,8 +292,9 @@ def add(ctx, clone: str):
 @click.pass_context
 def edit(ctx, name: str, edits: List[str]):
     """
-    Change an existing entry by applying EDITS of the form: field=value
-    to the item of name NAME.
+    Change an existing entry.
+
+    Applies EDITS of the form: field=value to the item of name NAME.
     """
     # retrieve client
     client = ctx.obj
@@ -423,7 +426,11 @@ def container_registry():
 @click.argument("name", type=str, nargs=1)
 @click.argument("target", type=str, nargs=1)
 def transfer(ctx, name: str, target: str):
-    """Change the container of an item (NAME) to a new container (TARGET)"""
+    """
+    Change the container of an item.
+
+    Transfers item (NAME) to a new container (TARGET)
+    """
     logger.debug('Starting transfer block')
     # retrive client
     client = ctx.obj
