@@ -937,23 +937,26 @@ def audit(
                                                         'description'])
         check_pt.hrules = prettytable.ALL
         check_pt.align['description'] = 'l'
-        for name, fn in checks.items():
-            check_pt.add_row([name, inspect.cleandoc(fn.__doc__)])
+        for chk in checks:
+            check_pt.add_row([chk.__name__, inspect.cleandoc(chk.__doc__)])
         print(check_pt)
         return
 
-    # gather checks
+    # gather selected checks
     if check_choices:
         check_list = []
         for check_name in check_choices:
-            name_matches = [name for name in checks if check_name in name]
-            if len(name_matches) > 1:
-                raise ValueError(f'provided check name ({check_name})'
-                                 ' matches multiple checks')
-            check_list.append(checks[name_matches[0]])
+            # check if provided check name is a substring of any checks
+            matches = [fn for fn in checks if check_name in fn.__name__]
+            if len(matches) > 1:
+                raise click.BadParameter(
+                    f'provided check name ({check_name}) matches multiple '
+                    f'checks: ({[ch.__name__ for ch in matches]})'
+                )
+            check_list.append(matches[0])
     else:
         # take all checks
-        check_list = list(checks.values())
+        check_list = checks
 
     client: happi.Client = ctx.obj
 

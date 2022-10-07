@@ -47,43 +47,15 @@ def check_extra_info(
     # present with entry info but not enforced?
 
 
-def check_valid_info(result: SearchResult) -> None:
-    """
-    Check if the entry info that exists on the container is valid, as
-    specified by the EntryInfo.enforce()
-
-    May not be necessary, happi will skip the entry if enforce fails.
-    Upon creation of the item and setting of entry info, will throw a
-    warning and escape
-    """
-    it = result.item
-    for einfo in it.entry_info:
-        einfo.enforce_value(getattr(it, einfo.key))
-
-
-def check_lightpath_valid(result: SearchResult) -> None:
-    """
-    Check if the desired device is lightpath-valid by:
-    - verifying device.get_lightpath_state() runs
-    - received LightpathState is valid
-    """
-    dev = result.get()
-
-    state = dev.get_lightpath_state()
-
-    assert isinstance(state.inserted, bool), 'inserted is not a bool'
-    assert isinstance(state.removed, bool), 'removed is not a bool'
-    assert isinstance(state.output, dict), 'ouptut is not a dict'
-
-
 def check_name_match_id(result: SearchResult) -> None:
     """
     Check if the item's ``_id`` field matches its ``name``.
     This is a convention we have held for a while, making searching
     in either direction easier.
     """
-
-    assert result.metadata.get('_id') == result.metadata.get('name')
+    id_field = result.metadata.get('_id')
+    name_field = result.metadata.get('name')
+    assert id_field == name_field, f'id: {id_field} != name: {name_field}'
 
 
 def verify_result(
@@ -122,9 +94,4 @@ def verify_result(
     return success, msg
 
 
-checks = {
-    'check_instantiation': check_instantiation,
-    'check_extra_info': check_extra_info,
-    'check_lightpath_valid': check_lightpath_valid,
-    'check_name_match_id': check_name_match_id
-}
+checks = [check_instantiation, check_extra_info, check_name_match_id]
