@@ -18,7 +18,8 @@ import sys
 import time
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from cProfile import Profile
-from typing import List
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 import click
 import coloredlogs
@@ -885,6 +886,9 @@ def pyepics_cleanup():
 
 @happi_cli.command()
 @click.pass_context
+@click.option('-f', '--file', 'ext_file',
+              type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+              help='File to import additional checks from.')
 @click.option('-l', '--list', 'list_checks', is_flag=True,
               help='List the available validation checks')
 @click.option('-c', '--check', 'check_choices', multiple=True, default=[],
@@ -899,22 +903,33 @@ def pyepics_cleanup():
 def audit(
     ctx,
     list_checks: bool,
+    ext_file: Optional[str],
     check_choices: List[str],
     use_glob: bool,
     names_only: bool,
-    search_criteria: List[str]
+    search_criteria: Tuple[str, ...]
 ):
     """
-    Audit the current happi database to make sure entries are valid.
+    Audit the current happi database.
 
-    Various validation options exist, and can be viewed with the list
-    (-l, --list) option
+    Runs checks on the devices matching the provided SEARCH_CRITERIA.
+    Checks are simple functions that raise exceptions on failure,
+    whether naturally or via assert calls.
 
-    To-Do:
-    - allow stdout/err?
+    To import additional checks, provide a file with your check function
+    and a list named ``checks`` containing the desired functions.
     """
     logger.debug('Starting audit block')
     from .audit import checks, verify_result
+
+    # if a file is provided, make its functions available
+    if ext_file:
+        fp = Path(ext_file)
+        sys.path.insert(1, str(fp.parent))
+        import importlib
+        ext_module = importlib.import_module(fp.stem)
+        ext_checks = getattr(ext_module, 'checks')
+        checks.extend(ext_checks)
 
     # List checks subcommand
     if list_checks:
