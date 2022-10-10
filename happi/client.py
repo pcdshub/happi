@@ -801,10 +801,40 @@ class Client(collections.abc.Mapping):
         cfg_parser = configparser.ConfigParser()
         cfg_file = cfg_parser.read(cfg)
         logger.debug("Loading configuration file at %r", cfg_file)
-        db_kwargs = cfg_parser['DEFAULT']
+
+        # Gather the backend from each section
+        sub_backends = []
+        for section in cfg_parser.keys():
+            bknd = cls._get_backend_from_config(cfg_parser[section], cfg)
+            if bknd:
+                sub_backends.append(bknd)
+
+        if len(sub_backends) == 0:
+            raise RuntimeError('No valid backends loaded')
+        elif len(sub_backends) == 1:
+            # return single backend client
+            return cls(database=sub_backends[0])
+        else:
+            # multi backend configuration have multiple sections
+            multi_backend = BACKENDS['multi']
+
+            # move DEFAULT from index 0 to -1, if it exists
+            if dict(cfg_parser['DEFAULT']):
+                default_backend = sub_backends.pop(0)
+                sub_backends.append(default_backend)
+
+            # return client with multi_backend
+            db = multi_backend(backends=sub_backends)
+            return cls(database=db)
+
+    @staticmethod
+    def _get_backend_from_config(
+        cfg_section: configparser.SectionProxy,
+        cfg: str
+    ) -> _Backend:
         # If a backend is specified use it, otherwise default
-        if 'backend' in db_kwargs:
-            db_str = db_kwargs.pop('backend')
+        if 'backend' in cfg_section:
+            db_str = cfg_section.pop('backend')
             try:
                 backend = BACKENDS[db_str]
             except KeyError:
@@ -816,19 +846,23 @@ class Client(collections.abc.Mapping):
 
         logger.debug(
             "Using Happi backend %r with kwargs %s",
-            backend, db_kwargs
+            backend, cfg_section
         )
+
+        if not dict(cfg_section):
+            # section is empty, skip
+            return
 
         # Create our database with provided kwargs
         try:
-            database = backend(**db_kwargs, cfg_path=cfg)
-            return cls(database=database)
+            database = backend(**cfg_section, cfg_path=cfg)
+            return database
         except Exception as ex:
             raise RuntimeError(
                 f'Unable to instantiate the client. Please verify that '
                 f'your HAPPI_CFG points to the correct file and has '
                 f'the required configuration settings. In {cfg!r}, found '
-                f'settings: {dict(db_kwargs)}.'
+                f'settings: {dict(cfg_section)}.'
             ) from ex
 
     @staticmethod
