@@ -21,7 +21,7 @@ def check_instantiation(result: SearchResult) -> None:
     Subscription callback exceptions are silenced in ophyd, and will
     not cause this check to fail.
     """
-    _ = result.get()
+    result.get()
 
 
 def check_extra_info(
