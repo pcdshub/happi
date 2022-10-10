@@ -88,10 +88,7 @@ def verify_result(
     success, msg = True, ""
     # verify checks have the correct signature, as much as is reasonable
     for check in checks:
-        if len(inspect.getfullargspec(check).args) != 1:
-            raise ValueError(
-                'check function must take exactly one positional argument'
-            )
+        validate_check_signature(check)
 
     try:
         for check in checks:
@@ -101,6 +98,42 @@ def verify_result(
         msg = (f"Failed check ({check.__name__}): {str(ex)}")
 
     return success, msg
+
+
+def validate_check_signature(fn: Callable) -> None:
+    """
+    Validate the signature of the provided function.
+
+    Valid check functions:
+    - must take a single argument, the happi.SearchResult to check
+    - may specify any number of other arguments with defaults provided
+    - should return None, as return values are ignored (unchecked)
+
+    Parameters
+    ----------
+    fn : Callable
+        Check function to be validated
+
+    Raises
+    -------
+    RuntimeError
+        if function cannot be used to audit happi SearchResult's
+    """
+
+    if not callable(fn):
+        raise RuntimeError('requested check function is not callable')
+
+    sig = inspect.getfullargspec(fn)
+
+    if len(sig.args) == 0:
+        raise RuntimeError('check function must take at least one argument '
+                           '(a happi.SearchResult)')
+    if len(sig.args) > 1 and ((len(sig.args) - len(sig.defaults)) != 1):
+        raise RuntimeError('check function must take only one argument '
+                           'without a default value')
+    if sig.kwonlyargs and len(sig.kwonlyargs) != len(sig.kwonlydefaults):
+        raise RuntimeError('check function cannot have keyword-only '
+                           'arguments without default values')
 
 
 checks = [check_instantiation, check_extra_info, check_name_match_id]
