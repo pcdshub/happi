@@ -34,9 +34,8 @@ def test_audit_cli(
     n_fails: int,
     check: str
 ):
-    res = runner.invoke(happi_cli, ['--path', bad_happi_cfg, 'audit',
-                        '-c', check, '*'])
-    # print(runner.invoke(happi_cli, ['--path', bad_happi_cfg, 'search', '*']).ouptut)
+    res = runner.invoke(happi_cli,
+                        ['--path', bad_happi_cfg, 'audit', '-c', check, '*'])
     # check that device failed
     print(res.output)
     assert number_failed_devices(res.output) == n_fails

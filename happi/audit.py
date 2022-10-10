@@ -1,9 +1,9 @@
 """
 This module contains functions and helpers for auditing the happi database.
-Checks are simple functions that take a happi.SearchResult as its only
-positional argument and returns None when successful.  When a check fails, it
-should throw an Exception with a helpful error message.
-These exception messages will be caught and organized by the cli audit tool.
+Checks are simple functions that take a happi.SearchResult a positional
+argument and returns None when successful.  When a check fails, it should throw
+an Exception with a helpful error message.  These exception messages will be
+caught and organized by the cli audit tool.
 """
 import inspect
 from typing import Callable, List, Optional, Tuple
@@ -26,14 +26,13 @@ def check_instantiation(result: SearchResult) -> None:
 
 def check_extra_info(
     result: SearchResult,
-    *,
     ignore_keys: Optional[List[str]] = None
 ) -> None:
     """
     Check if there is any extra info in the result that does not
-    match the container.
+    have a corresponding EntryInfo on the container.
 
-    Ignores the presence of client-side metadata
+    Ignores the presence of client-side metadata keys
     - id
     - type
     - creation
@@ -47,7 +46,6 @@ def check_extra_info(
         extra.pop(key)
     if len(extra) != 0:
         raise ValueError(f'Un-enforced metadata found: {list(extra.keys())}')
-    # present with entry info but not enforced?
 
 
 def check_name_match_id(result: SearchResult) -> None:
