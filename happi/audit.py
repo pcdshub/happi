@@ -62,7 +62,7 @@ def check_name_match_id(result: SearchResult) -> None:
 def verify_result(
     result: SearchResult,
     checks: List[Callable[[SearchResult], None]]
-) -> Tuple[bool, str]:
+) -> Tuple[bool, str, str]:
     """
     Validate device against the provided checks
 
@@ -80,10 +80,12 @@ def verify_result(
     bool
         whether or not the device passed the checks
     str
+        name of check that failed, if any
+    str
         error message describing reason for failure and possible steps
         to fix.  Empty string if validation is successful
     """
-    success, msg = True, ""
+    success, check, msg = True, "", ""
     # verify checks have the correct signature, as much as is reasonable
     for check in checks:
         validate_check_signature(check)
@@ -93,9 +95,10 @@ def verify_result(
             check(result)
     except Exception as ex:
         success = False
-        msg = (f"Failed check ({check.__name__}): {str(ex)}")
+        check = check.__name__
+        msg = str(ex)
 
-    return success, msg
+    return success, check, msg
 
 
 def validate_check_signature(fn: Callable) -> None:

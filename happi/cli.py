@@ -11,7 +11,6 @@ import io
 import json
 import logging
 import os
-import re
 # on import allows arrow key navigation in prompt
 import readline  # noqa
 import sys
@@ -966,15 +965,16 @@ def audit(
     click.echo(f'found {len(results)} items to verify')
     click.echo(f'running checks: {[f.__name__ for f in check_list]}')
 
-    test_results = {'name': [], 'success': [], 'msg': []}
+    test_results = {'name': [], 'success': [], 'check': [], 'msg': []}
     f = io.StringIO()
     for i, res in enumerate(results):
         print(f'checking device #: {i}', end='\r')
         # Capture stdout, stderr for this audit
         with redirect_stderr(f), redirect_stdout(f):
-            success, msg = verify_result(res, check_list)
+            success, check, msg = verify_result(res, check_list)
             test_results['name'].append(res.item.name)
             test_results['success'].append(success)
+            test_results['check'].append(check)
             test_results['msg'].append(msg)
 
     # print outs
@@ -983,13 +983,12 @@ def audit(
         click.echo(' '.join(test_results['name']))
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
-        for name, success, msg in zip(test_results['name'],
-                                      test_results['success'],
-                                      test_results['msg']):
+        for name, success, check, msg in zip(test_results['name'],
+                                             test_results['success'],
+                                             test_results['check'],
+                                             test_results['msg']):
             if not success:
-                check_text, error = msg.split(': ', 1)
-                check_name = re.search(r'\((.*)\)', check_text)[1]
-                pt.add_row([name, check_name, error])
+                pt.add_row([name, check, msg])
 
         try:
             term_width = os.get_terminal_size()[0]
