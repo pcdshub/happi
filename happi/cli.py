@@ -900,6 +900,8 @@ def pyepics_cleanup():
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
 @click.option('--names', '-n', 'names_only', is_flag=True,
               help='Only display names of failed entries')
+@click.option('--json', '-j', 'show_json', is_flag=True,
+              help='output results in json format')
 @click.argument('search_criteria', nargs=-1)
 def audit(
     ctx,
@@ -908,6 +910,7 @@ def audit(
     check_choices: List[str],
     use_glob: bool,
     names_only: bool,
+    show_json: bool,
     search_criteria: Tuple[str, ...]
 ):
     """
@@ -968,7 +971,7 @@ def audit(
     test_results = {'name': [], 'success': [], 'check': [], 'msg': []}
     f = io.StringIO()
     for i, res in enumerate(results):
-        if not names_only:
+        if not (names_only or show_json):
             print(f'checking device #: {i}', end='\r')
         # Capture stdout, stderr for this audit
         with redirect_stderr(f), redirect_stdout(f):
@@ -979,12 +982,28 @@ def audit(
                 test_results['check'].append(check)
                 test_results['msg'].append(msg)
 
-    unique_names = set(test_results['name'][i]
+    unique_fails = set(test_results['name'][i]
                        for i in range(len(test_results['name']))
                        if not test_results['success'][i])
     # print outs
     if names_only:
-        click.echo(' '.join(unique_names))
+        click.echo(' '.join(unique_fails))
+    elif show_json:
+        final_dict = {'audited': len(results),
+                      'falures': len(unique_fails)}
+        item_info = {name: {'failed_check': [], 'audit_errors': []}
+                     for name in [res.item.name for res in results]}
+        for name, success, check, msg in zip(test_results['name'],
+                                             test_results['success'],
+                                             test_results['check'],
+                                             test_results['msg']):
+            if not success:
+                item_info[name]['failed_check'].append(check)
+                item_info[name]['audit_errors'].append(msg)
+
+        final_dict['items'] = item_info
+        # print(final_dict)
+        json.dump(final_dict, indent=2, fp=sys.stdout)
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
         last_name = ''
@@ -1008,7 +1027,7 @@ def audit(
 
         if len(pt.rows) > 0:
             click.echo(pt)
-        click.echo(f'# devices failed: {len(unique_names)} / {len(results)}')
+        click.echo(f'# devices failed: {len(unique_fails)} / {len(results)}')
 
 
 def main():
