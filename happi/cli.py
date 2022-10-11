@@ -6,6 +6,7 @@ from __future__ import annotations
 import ast
 import dataclasses
 import fnmatch
+import importlib
 import inspect
 import io
 import json
@@ -27,6 +28,7 @@ import prettytable
 import happi
 from happi.errors import SearchError
 
+from .audit import checks, verify_result
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
@@ -921,13 +923,11 @@ def audit(
     and a list named ``checks`` containing the desired functions.
     """
     logger.debug('Starting audit block')
-    from .audit import checks, verify_result
 
     # if a file is provided, make its functions available
     if ext_file:
         fp = Path(ext_file)
         sys.path.insert(1, str(fp.parent))
-        import importlib
         ext_module = importlib.import_module(fp.stem)
         ext_checks = getattr(ext_module, 'checks')
         checks.extend(ext_checks)
@@ -971,24 +971,33 @@ def audit(
         print(f'checking device #: {i}', end='\r')
         # Capture stdout, stderr for this audit
         with redirect_stderr(f), redirect_stdout(f):
-            success, check, msg = verify_result(res, check_list)
-            test_results['name'].append(res.item.name)
-            test_results['success'].append(success)
-            test_results['check'].append(check)
-            test_results['msg'].append(msg)
+            for check_fn in check_list:
+                success, check, msg = verify_result(res, check_fn)
+                test_results['name'].append(res.item.name)
+                test_results['success'].append(success)
+                test_results['check'].append(check)
+                test_results['msg'].append(msg)
 
+    unique_names = set(test_results['name'][i]
+                       for i in range(len(test_results['name']))
+                       if not test_results['success'][i])
     # print outs
     if names_only:
         click.echo('\n')
-        click.echo(' '.join(test_results['name']))
+        click.echo(' '.join(unique_names))
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
+        last_name = ''
         for name, success, check, msg in zip(test_results['name'],
                                              test_results['success'],
                                              test_results['check'],
                                              test_results['msg']):
             if not success:
-                pt.add_row([name, check, msg])
+                if name != last_name:
+                    pt.add_row([name, check, msg])
+                else:
+                    pt.add_row(['', check, msg])
+            last_name = name
 
         try:
             term_width = os.get_terminal_size()[0]
@@ -999,7 +1008,7 @@ def audit(
 
         if len(pt.rows) > 0:
             click.echo(pt)
-        click.echo(f'# devices failed: {len(pt.rows)} / {len(results)}')
+        click.echo(f'# devices failed: {len(unique_names)} / {len(results)}')
 
 
 def main():

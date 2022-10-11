@@ -61,18 +61,18 @@ def check_name_match_id(result: SearchResult) -> None:
 
 def verify_result(
     result: SearchResult,
-    checks: List[Callable[[SearchResult], None]]
+    check: Callable[[SearchResult], None]
 ) -> Tuple[bool, str, str]:
     """
-    Validate device against the provided checks
+    Validate device against the provided check
 
     Parameters
     ----------
     result : happi.SearchResult
         result to be verified
 
-    checks : List[Callable[[SearchResult], None]]
-        a list of verification functions that raise exceptions if
+    check : Callable[[SearchResult], None]
+        a verification function that raise exceptions if
         verification fails.
 
     Returns
@@ -85,56 +85,18 @@ def verify_result(
         error message describing reason for failure and possible steps
         to fix.  Empty string if validation is successful
     """
-    success, check, msg = True, "", ""
+    success, msg = True, ""
     # verify checks have the correct signature, as much as is reasonable
-    for check in checks:
-        validate_check_signature(check)
+    sig = inspect.signature(check)
+    sig.bind(result)
 
     try:
-        for check in checks:
-            check(result)
+        check(result)
     except Exception as ex:
         success = False
-        check = check.__name__
         msg = str(ex)
 
-    return success, check, msg
-
-
-def validate_check_signature(fn: Callable) -> None:
-    """
-    Validate the signature of the provided function.
-
-    Valid check functions:
-    - must take a single argument, the happi.SearchResult to check
-    - may specify any number of other arguments with defaults provided
-    - should return None, as return values are ignored (unchecked)
-
-    Parameters
-    ----------
-    fn : Callable
-        Check function to be validated
-
-    Raises
-    -------
-    RuntimeError
-        if function cannot be used to audit happi SearchResult's
-    """
-
-    if not callable(fn):
-        raise RuntimeError('requested check function is not callable')
-
-    sig = inspect.getfullargspec(fn)
-
-    if len(sig.args) == 0:
-        raise RuntimeError('check function must take at least one argument '
-                           '(a happi.SearchResult)')
-    if len(sig.args) > 1 and ((len(sig.args) - len(sig.defaults)) != 1):
-        raise RuntimeError('check function must take only one argument '
-                           'without a default value')
-    if sig.kwonlyargs and len(sig.kwonlyargs) != len(sig.kwonlydefaults):
-        raise RuntimeError('check function cannot have keyword-only '
-                           'arguments without default values')
+    return success, check.__name__, msg
 
 
 checks = [check_instantiation, check_extra_info, check_name_match_id]
