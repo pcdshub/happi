@@ -962,13 +962,14 @@ def audit(
     client: happi.Client = ctx.obj
 
     results = search_parser(client, use_glob, search_criteria)
-    click.echo(f'found {len(results)} items to verify')
-    click.echo(f'running checks: {[f.__name__ for f in check_list]}')
+    logger.info(f'found {len(results)} items to verify')
+    logger.info(f'running checks: {[f.__name__ for f in check_list]}')
 
     test_results = {'name': [], 'success': [], 'check': [], 'msg': []}
     f = io.StringIO()
     for i, res in enumerate(results):
-        print(f'checking device #: {i}', end='\r')
+        if not names_only:
+            print(f'checking device #: {i}', end='\r')
         # Capture stdout, stderr for this audit
         with redirect_stderr(f), redirect_stdout(f):
             for check_fn in check_list:
@@ -983,7 +984,6 @@ def audit(
                        if not test_results['success'][i])
     # print outs
     if names_only:
-        click.echo('\n')
         click.echo(' '.join(unique_names))
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
