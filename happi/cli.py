@@ -990,7 +990,7 @@ def audit(
         click.echo(' '.join(unique_fails))
     elif show_json:
         final_dict = {'audited': len(results),
-                      'falures': len(unique_fails)}
+                      'failures': len(unique_fails)}
         item_info = {name: {'failed_check': [], 'audit_errors': []}
                      for name in [res.item.name for res in results]}
         for name, success, check, msg in zip(test_results['name'],
