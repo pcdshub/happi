@@ -6,6 +6,9 @@ from __future__ import annotations
 import ast
 import dataclasses
 import fnmatch
+import importlib
+import inspect
+import io
 import json
 import logging
 import os
@@ -13,9 +16,10 @@ import os
 import readline  # noqa
 import sys
 import time
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from cProfile import Profile
-from typing import List
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 import click
 import coloredlogs
@@ -24,6 +28,7 @@ import prettytable
 import happi
 from happi.errors import SearchError
 
+from .audit import checks, verify_result
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
@@ -34,12 +39,14 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.group(
-    help=('commands available: search, add, edit, load, update, '
-          'container-registry, transfer'),
+    help=('The happi command-line interface, used to view and manipulate '
+          'device databases'),
     context_settings=CONTEXT_SETTINGS
 )
 @click.option('--path', type=click.Path(exists=True),
-              help='Provide the path to happi configuration file.')
+              help='Provide the path to happi configuration file. '
+                   'Will default to the file stored in the HAPPI_CFG '
+                   'environment variable.')
 @click.option('--verbose', '-v', is_flag=True,
               help='Show the debug logging stream.')
 @click.version_option(None, '--version', '-V', message=version_msg)
@@ -74,7 +81,7 @@ def happi_cli(ctx, path, verbose):
 
 
 @happi_cli.command()
-@click.option('--show_json', '-j', is_flag=True,
+@click.option('--show_json', '--json', '-j', is_flag=True,
               help='Show results in JSON format.')
 @click.option('--names', is_flag=True,
               help='Return results as whitespace-separated names.')
@@ -287,8 +294,9 @@ def add(ctx, clone: str):
 @click.pass_context
 def edit(ctx, name: str, edits: List[str]):
     """
-    Change an existing entry by applying EDITS of the form: field=value
-    to the item of name NAME.
+    Change an existing entry.
+
+    Applies EDITS of the form: field=value to the item of name NAME.
     """
     # retrieve client
     client = ctx.obj
@@ -420,7 +428,11 @@ def container_registry():
 @click.argument("name", type=str, nargs=1)
 @click.argument("target", type=str, nargs=1)
 def transfer(ctx, name: str, target: str):
-    """Change the container of an item (NAME) to a new container (TARGET)"""
+    """
+    Change the container of an item.
+
+    Transfers item (NAME) to a new container (TARGET)
+    """
     logger.debug('Starting transfer block')
     # retrive client
     client = ctx.obj
@@ -871,6 +883,151 @@ def pyepics_cleanup():
                     cache_item.access_event_callback.clear()
                 except AttributeError:
                     print(cache_item)
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option('-f', '--file', 'ext_file',
+              type=click.Path(exists=True, dir_okay=False, resolve_path=True),
+              help='File to import additional checks from.')
+@click.option('-l', '--list', 'list_checks', is_flag=True,
+              help='List the available validation checks')
+@click.option('-c', '--check', 'check_choices', multiple=True, default=[],
+              help='Name of the check to include.  '
+                   'Can also provide a substring')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='Use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.option('--names', '-n', 'names_only', is_flag=True,
+              help='Only display names of failed entries')
+@click.option('--json', '-j', 'show_json', is_flag=True,
+              help='output results in json format')
+@click.argument('search_criteria', nargs=-1)
+def audit(
+    ctx,
+    list_checks: bool,
+    ext_file: Optional[str],
+    check_choices: List[str],
+    use_glob: bool,
+    names_only: bool,
+    show_json: bool,
+    search_criteria: Tuple[str, ...]
+):
+    """
+    Audit the current happi database.
+
+    Runs checks on the devices matching the provided SEARCH_CRITERIA.
+    Checks are simple functions that raise exceptions on failure,
+    whether naturally or via assert calls.  These functions take a single
+    happi.SearchResult as an positional argument and returns None if
+    successful.
+
+    To import additional checks, provide a file with your check function
+    and a list named ``checks`` containing the desired functions.
+    """
+    logger.debug('Starting audit block')
+
+    # if a file is provided, make its functions available
+    if ext_file:
+        fp = Path(ext_file)
+        sys.path.insert(1, str(fp.parent))
+        ext_module = importlib.import_module(fp.stem)
+        ext_checks = getattr(ext_module, 'checks')
+        checks.extend(ext_checks)
+
+    # List checks subcommand
+    if list_checks:
+        check_pt = prettytable.PrettyTable(field_names=['name',
+                                                        'description'])
+        check_pt.hrules = prettytable.ALL
+        check_pt.align['description'] = 'l'
+        for chk in checks:
+            check_pt.add_row([chk.__name__, inspect.cleandoc(chk.__doc__)])
+        print(check_pt)
+        return
+
+    # gather selected checks
+    if check_choices:
+        check_list = []
+        for check_name in check_choices:
+            # check if provided check name is a substring of any checks
+            matches = [fn for fn in checks if check_name in fn.__name__]
+            if len(matches) != 1:
+                raise click.BadParameter(
+                    f'provided check name ({check_name}) must match only'
+                    f'one check.  Matches: ({[ch.__name__ for ch in matches]})'
+                )
+            check_list.append(matches[0])
+    else:
+        # take all checks
+        check_list = checks
+
+    client: happi.Client = ctx.obj
+
+    results = search_parser(client, use_glob, search_criteria)
+    logger.info(f'found {len(results)} items to verify')
+    logger.info(f'running checks: {[f.__name__ for f in check_list]}')
+
+    test_results = {'name': [], 'success': [], 'check': [], 'msg': []}
+    f = io.StringIO()
+    for i, res in enumerate(results):
+        if not (names_only or show_json):
+            print(f'checking device #: {i}', end='\r')
+        # Capture stdout, stderr for this audit
+        with redirect_stderr(f), redirect_stdout(f):
+            for check_fn in check_list:
+                success, check, msg = verify_result(res, check_fn)
+                test_results['name'].append(res.item.name)
+                test_results['success'].append(success)
+                test_results['check'].append(check)
+                test_results['msg'].append(msg)
+
+    unique_fails = set(test_results['name'][i]
+                       for i in range(len(test_results['name']))
+                       if not test_results['success'][i])
+    # print outs
+    if names_only:
+        click.echo(' '.join(unique_fails))
+    elif show_json:
+        final_dict = {'audited': len(results),
+                      'failures': len(unique_fails)}
+        item_info = {name: {'failed_check': [], 'audit_errors': []}
+                     for name in [res.item.name for res in results]}
+        for name, success, check, msg in zip(test_results['name'],
+                                             test_results['success'],
+                                             test_results['check'],
+                                             test_results['msg']):
+            if not success:
+                item_info[name]['failed_check'].append(check)
+                item_info[name]['audit_errors'].append(msg)
+
+        final_dict['items'] = item_info
+        # print(final_dict)
+        json.dump(final_dict, indent=2, fp=sys.stdout)
+    else:
+        pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
+        last_name = ''
+        for name, success, check, msg in zip(test_results['name'],
+                                             test_results['success'],
+                                             test_results['check'],
+                                             test_results['msg']):
+            if not success:
+                if name != last_name:
+                    pt.add_row([name, check, msg])
+                else:
+                    pt.add_row(['', check, msg])
+            last_name = name
+
+        try:
+            term_width = os.get_terminal_size()[0]
+            pt._max_width = {'error': max(60, term_width - 40)}
+        except OSError:
+            # non-interactive mode (piping results). No max width
+            pass
+
+        if len(pt.rows) > 0:
+            click.echo(pt)
+        click.echo(f'# devices failed: {len(unique_fails)} / {len(results)}')
 
 
 def main():

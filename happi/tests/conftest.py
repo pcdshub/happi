@@ -8,6 +8,7 @@ import pytest
 import simplejson
 from click.testing import CliRunner
 
+import happi.cli
 from happi import Client, EntryInfo, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
 
@@ -403,5 +404,127 @@ def client_with_three_valves(happi_client, three_valves):
 
 
 @pytest.fixture(scope='function')
+def db(tmp_path):
+    json_path = tmp_path / 'db.json'
+    json_path.write_text("""\
+{
+    "TST_BASE_PIM": {
+        "_id": "TST_BASE_PIM",
+        "active": true,
+        "beamline": "TST",
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "macros": null,
+        "name": "tst_base_pim",
+        "parent": null,
+        "prefix": "TST:BASE:PIM",
+        "screen": null,
+        "stand": "BAS",
+        "system": "diagnostic",
+        "type": "HappiItem",
+        "z": 3.0,
+        "y": 40.0
+    },
+    "TST_BASE_PIM2": {
+        "_id": "TST_BASE_PIM2",
+        "active": true,
+        "args": [
+            "{{prefix}}"
+        ],
+        "beamline": "TST",
+        "creation": "Wed Jan 30 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Fri Apr 13 14:40:08 2018",
+        "macros": null,
+        "name": "tst_base_pim2",
+        "parent": null,
+        "prefix": "TST:BASE:PIM2",
+        "screen": null,
+        "stand": "BAS",
+        "system": "diagnostic",
+        "type": "HappiItem",
+        "z": 6.0,
+        "y": 10.0
+    }
+}
+""")
+    return str(json_path.absolute())
+
+
+@pytest.fixture(scope='function')
+def happi_cfg(tmp_path, db):
+    happi_cfg_path = tmp_path / 'happi.cfg'
+    happi_cfg_path.write_text(f"""\
+[DEFAULT]'
+backend=json
+path={db}
+""")
+    return str(happi_cfg_path.absolute())
+
+
+@pytest.fixture(scope='function')
+def bad_db(tmp_path):
+    json_path = tmp_path / 'db.json'
+    json_path.write_text("""\
+{
+    "tst_id": {
+        "_id": "tst_id",
+        "active": true,
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "name": "tst_name",
+        "type": "HappiItem"
+    },
+    "tst_inst": {
+        "_id": "tst_inst",
+        "active": true,
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "invalidclassname",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "name": "tst_inst",
+        "type": "HappiItem"
+    },
+    "tst_extra_info": {
+        "_id": "tst_extra_info",
+        "active": true,
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "extra_info": "extra_info_here",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "name": "tst_extra_info",
+        "type": "HappiItem"
+    }
+}
+""")
+    return str(json_path.absolute())
+
+
+@pytest.fixture(scope='function')
+def bad_happi_cfg(tmp_path, bad_db):
+    happi_cfg_path = tmp_path / 'happi.cfg'
+    happi_cfg_path.write_text(f"""\
+[DEFAULT]'
+backend=json
+path={bad_db}
+""")
+    return str(happi_cfg_path.absolute())
+
+
+@pytest.fixture(scope='function')
 def runner():
     return CliRunner()
+
+
+@pytest.fixture(autouse=True)
+def skip_cleanup(monkeypatch):
+    """ Monkeypatch happi_cli to skip ophyd cleanup """
+    def no_op(*args, **kwargs):
+        return
+
+    monkeypatch.setattr(happi.cli, 'ophyd_cleanup', no_op)
+    monkeypatch.setattr(happi.cli, 'pyepics_cleanup', no_op)
