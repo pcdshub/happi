@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>284 mnt_max_table_width &mdash; Happi 1.14.0+68.gd822eb5 documentation</title>
+  <title>286 enh_audit &mdash; Happi 1.14.0+68.gd822eb5 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -20,8 +20,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="286 enh_audit" href="286-enh_audit.html" />
-    <link rel="prev" title="282 enh_filter_default_kwargs" href="282-enh_filter_default_kwargs.html" /> 
+    <link rel="next" title="287 enh_multi_backend" href="287-enh_multi_backend.html" />
+    <link rel="prev" title="284 mnt_max_table_width" href="284-mnt_max_table_width.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -60,7 +60,8 @@
 <li class="toctree-l2"><a class="reference internal" href="276-remove_device_methods.html">276 remove_device_methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="278-Improve_error_handling_and_logging_in_the_happi_cli.html">278 Improve error handling and logging in the happi cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="282-enh_filter_default_kwargs.html">282 enh_filter_default_kwargs</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">284 mnt_max_table_width</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="284-mnt_max_table_width.html">284 mnt_max_table_width</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">286 enh_audit</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#api-changes">API Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
@@ -68,7 +69,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#contributors">Contributors</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="286-enh_audit.html">286 enh_audit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="287-enh_multi_backend.html">287 enh_multi_backend</a></li>
 </ul>
 </li>
@@ -89,9 +89,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../upcoming_changes.html">Upcoming Changes</a> &raquo;</li>
-      <li>284 mnt_max_table_width</li>
+      <li>286 enh_audit</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/upcoming_release_notes/284-mnt_max_table_width.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/upcoming_release_notes/286-enh_audit.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -99,18 +99,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="mnt-max-table-width">
-<h1>284 mnt_max_table_width<a class="headerlink" href="#mnt-max-table-width" title="Permalink to this heading"></a></h1>
+  <section id="enh-audit">
+<h1>286 enh_audit<a class="headerlink" href="#enh-audit" title="Permalink to this heading"></a></h1>
 <section id="api-changes">
 <h2>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>restores –json option for <code class="docutils literal notranslate"><span class="pre">happi</span> <span class="pre">search</span></code></p></li>
 </ul>
 </section>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>calculates a max width for the table based on the current terminal size</p></li>
+<li><p>adds <code class="docutils literal notranslate"><span class="pre">happi</span> <span class="pre">audit</span></code> function for running checks on happi database items</p></li>
 </ul>
 </section>
 <section id="bugfixes">
@@ -122,7 +122,7 @@
 <section id="maintenance">
 <h2>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>N/A</p></li>
+<li><p>prevents ophyd / pyepics teardown during test suite</p></li>
 </ul>
 </section>
 <section id="contributors">
@@ -137,8 +137,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="282-enh_filter_default_kwargs.html" class="btn btn-neutral float-left" title="282 enh_filter_default_kwargs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="286-enh_audit.html" class="btn btn-neutral float-right" title="286 enh_audit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="284-mnt_max_table_width.html" class="btn btn-neutral float-left" title="284 mnt_max_table_width" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="287-enh_multi_backend.html" class="btn btn-neutral float-right" title="287 enh_multi_backend" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

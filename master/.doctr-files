@@ -13,6 +13,7 @@ master/_sources/upcoming_release_notes/276-remove_device_methods.rst.txt
 master/_sources/upcoming_release_notes/278-Improve_error_handling_and_logging_in_the_happi_cli.rst.txt
 master/_sources/upcoming_release_notes/282-enh_filter_default_kwargs.rst.txt
 master/_sources/upcoming_release_notes/284-mnt_max_table_width.rst.txt
+master/_sources/upcoming_release_notes/286-enh_audit.rst.txt
 master/_sources/upcoming_release_notes/287-enh_multi_backend.rst.txt
 master/_static/_sphinx_javascript_frameworks_compat.js
 master/_static/basic.css
@@ -71,4 +72,5 @@ master/upcoming_release_notes/276-remove_device_methods.html
 master/upcoming_release_notes/278-Improve_error_handling_and_logging_in_the_happi_cli.html
 master/upcoming_release_notes/282-enh_filter_default_kwargs.html
 master/upcoming_release_notes/284-mnt_max_table_width.html
+master/upcoming_release_notes/286-enh_audit.html
 master/upcoming_release_notes/287-enh_multi_backend.html
