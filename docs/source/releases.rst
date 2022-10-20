@@ -7,7 +7,6 @@ v2.0.0 (2022-10-20)
 
 API Changes
 -----------
-- restores --json option for ``happi search``
 - Removed deprecated ``happi.containers.Device`` container.
 - Removed deprecated methods:
     * ``happi.Client.create_device``
@@ -19,7 +18,7 @@ API Changes
 
 Features
 --------
-- Add ``EntryInfo`` keyword argument ``include_default_as_kwarg``.  If set to ``False``,
+- Added ``EntryInfo`` keyword argument ``include_default_as_kwarg``.  If set to ``False``,
   any keys that are included in an item's ``kwargs`` that match the default of their
   corresponding ``EntryInfo`` will be omitted from the keyword arguments passed to
   ``device_class`` when instantiating (loading) the item as in ``happi.loader.load_device`` or
@@ -30,21 +29,22 @@ Features
   If the ``kwargs`` EntryInfo sets ``include_default_as_kwarg = False``,
   the setting on corresponding ``EntryInfo`` will be ignored.
   The default value is True on all EntryInfo instances, retaining the original behavior.
-- Fall back to Python REPL if IPython is not available.
-- Improved error logging in happi CLI to be more consistent
-- calculates a max width for the table based on the current terminal size
-- Adds MultiBackend, which allows a happi Client to serve information
+- For happi load, fall back to Python REPL if IPython is not available.
+- Improved error logging in happi CLI to be more consistent.
+- Calculate a max width for shown tables based on the current terminal size.
+- Added MultiBackend, which allows a happi Client to serve information
   from multiple databases simultaneously.  Updates config parsing logic
   to match.
-- adds ``happi audit`` function for running checks on happi database items
+- Added ``happi audit`` function for running checks on happi database items.
+- Restored --json option for ``happi search``.
 
 Bugfixes
 --------
-- Removed extraneous extraneous print in `happi load`
+- Removed extraneous extraneous print in `happi load`.
 
 Maintenance
 -----------
-- prevents ophyd / pyepics teardown during test suite
+- Prevent ophyd / pyepics teardown during test suite.
 
 Contributors
 ------------
