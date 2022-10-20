@@ -38,7 +38,7 @@ Features
 
 Bugfixes
 --------
-- Removed extraneous extraneous print in `happi load`.
+- Removed extraneous extraneous print in ``happi load``.
 - Calculate a max width for shown tables based on the current terminal size
   to prevent bad line wrapping.
 
