@@ -30,8 +30,6 @@ Features
   the setting on corresponding ``EntryInfo`` will be ignored.
   The default value is True on all EntryInfo instances, retaining the original behavior.
 - For happi load, fall back to Python REPL if IPython is not available.
-- Improved error logging in happi CLI to be more consistent.
-- Calculate a max width for shown tables based on the current terminal size.
 - Added MultiBackend, which allows a happi Client to serve information
   from multiple databases simultaneously.  Updates config parsing logic
   to match.
@@ -41,10 +39,13 @@ Features
 Bugfixes
 --------
 - Removed extraneous extraneous print in `happi load`.
+- Calculate a max width for shown tables based on the current terminal size
+  to prevent bad line wrapping.
 
 Maintenance
 -----------
 - Prevent ophyd / pyepics teardown during test suite.
+- Improved error logging in happi CLI to be more consistent.
 
 Contributors
 ------------
