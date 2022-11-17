@@ -237,7 +237,7 @@ def search_parser(
               'Provide the name of the item to clone.')
 @click.pass_context
 def add(ctx, clone: str):
-    """Add new entries interactively."""
+    """Add new entries interactively. Copy entries with --clone."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
     client = ctx.obj
@@ -284,6 +284,28 @@ def add(ctx, clone: str):
     if click.confirm('Please confirm the item info is correct'):
         logger.info('Adding item')
         item.save()
+    else:
+        logger.info('Aborting')
+
+
+@happi_cli.command()
+@click.argument('name', type=str)
+@click.pass_context
+def delete(ctx, name: str):
+    """
+    Delete an existing entry.  Only accepts exact names
+    """
+    client = ctx.obj
+    try:
+        item = client.find_item(name=name)
+    except SearchError as e:
+        raise click.ClickException(f'Could not find item ({name}): {e}')
+
+    item.show_info()
+    if click.confirm('Are you sure you want to delete this entry?'):
+        logger.info('Deleting item')
+        client.remove_item(item)
+        click.echo(f'Entry {name} removed')
     else:
         logger.info('Aborting')
 
