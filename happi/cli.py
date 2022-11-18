@@ -291,6 +291,18 @@ def add(ctx, clone: str):
 @happi_cli.command()
 @click.argument('name', type=str)
 @click.pass_context
+def copy(ctx, name):
+    """
+    Copy the item NAME.
+
+    Simply wraps ``happi add --clone``
+    """
+    ctx.invoke(add, clone=name)
+
+
+@happi_cli.command()
+@click.argument('name', type=str)
+@click.pass_context
 def delete(ctx, name: str):
     """
     Delete an existing entry.  Only accepts exact names
@@ -302,7 +314,9 @@ def delete(ctx, name: str):
         raise click.ClickException(f'Could not find item ({name}): {e}')
 
     item.show_info()
-    if click.confirm('Are you sure you want to delete this entry?'):
+    if click.confirm('Are you sure you want to delete this entry? \n'
+                     'Remember you can mark an entry as inactive with \n'
+                     '"happi edit my_device_name active=false"'):
         logger.info('Deleting item')
         client.remove_item(item)
         click.echo(f'Entry {name} removed')
