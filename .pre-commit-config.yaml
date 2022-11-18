@@ -17,7 +17,7 @@ repos:
         exclude: '^(conda-recipe/meta.yaml)$'
     -   id: debug-statements
 
--   repo: https://gitlab.com/pycqa/flake8.git
+-   repo: https://github.com/pycqa/flake8.git
     rev: 3.9.2
     hooks:
     -   id: flake8
