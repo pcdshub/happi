@@ -237,7 +237,7 @@ def search_parser(
               'Provide the name of the item to clone.')
 @click.pass_context
 def add(ctx, clone: str):
-    """Add new entries interactively. Copy entries with --clone."""
+    """Add new entries or copy existing entries."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
     client = ctx.obj
@@ -375,7 +375,7 @@ def edit(ctx, name: str, edits: List[str]):
 @click.argument('item_names', nargs=-1)
 @click.pass_context
 def load(ctx, item_names: List[str]):
-    """Open IPython terminal with ITEM_NAMES loaded"""
+    """Open IPython terminal with ITEM_NAMES loaded."""
 
     logger.debug('Starting load block')
     # retrieve client
@@ -406,13 +406,13 @@ def load(ctx, item_names: List[str]):
         shell.interact()
 
 
-# TODO: FIgure out how to deal with json and click.  list of args doesn't
+# TODO: Figure out how to deal with json and click.  list of args doesn't
 # translate exactly
 @happi_cli.command()
 @click.argument("json_data", nargs=-1)
 @click.pass_context
 def update(ctx, json_data: str):
-    """Update happi db with JSON_DATA payload"""
+    """Update happi db with JSON_DATA payload."""
     # retrieve client
     client = ctx.obj
     if len(json_data) < 1:
