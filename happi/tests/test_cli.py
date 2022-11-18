@@ -566,7 +566,7 @@ def test_load(
 
 def test_update(happi_cfg: str, runner: CliRunner):
     new = """[ {
-        "_id": "TST_BASE_PIM2",
+        "_id": "tst_base_pim2",
         "active": true,
         "args": [
             "{{prefix}}"
