@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Command Line Interface &mdash; Happi 2.0.0 documentation</title>
+  <title>Command Line Interface &mdash; Happi 2.0.0+11.gdf44baa documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -32,7 +32,7 @@
             <a href="index.html" class="icon icon-home"> Happi
           </a>
               <div class="version">
-                2.0.0
+                2.0.0+11.gdf44baa
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,6 +52,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#happi-audit">audit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-benchmark">benchmark</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-container-registry">container-registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#happi-copy">copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#happi-delete">delete</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-edit">edit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-load">load</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-profile">profile</a></li>
@@ -86,8 +88,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Command Line Interface</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Command Line Interface</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -126,7 +128,7 @@
 
 <section id="happi-add">
 <h3>add<a class="headerlink" href="#happi-add" title="Permalink to this heading"></a></h3>
-<p>Add new entries interactively.</p>
+<p>Add new entries or copy existing entries.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi add <span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
@@ -264,6 +266,35 @@ cli function. A blank search term means to load all the devices.</p>
 </pre></div>
 </div>
 </section>
+<section id="happi-copy">
+<h3>copy<a class="headerlink" href="#happi-copy" title="Permalink to this heading"></a></h3>
+<p>Copy the item NAME.</p>
+<p>Simply wraps <code class="docutils literal notranslate"><span class="pre">happi</span> <span class="pre">add</span> <span class="pre">--clone</span></code></p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi copy <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-copy-arg-NAME">
+<span id="cmdoption-happi-copy-arg-name"></span><span class="sig-name descname"><span class="pre">NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-copy-arg-NAME" title="Permalink to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="happi-delete">
+<h3>delete<a class="headerlink" href="#happi-delete" title="Permalink to this heading"></a></h3>
+<p>Delete an existing entry.  Only accepts exact names</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi delete <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-delete-arg-NAME">
+<span id="cmdoption-happi-delete-arg-name"></span><span class="sig-name descname"><span class="pre">NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-delete-arg-NAME" title="Permalink to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
 <section id="happi-edit">
 <h3>edit<a class="headerlink" href="#happi-edit" title="Permalink to this heading"></a></h3>
 <p>Change an existing entry.</p>
@@ -287,7 +318,7 @@ cli function. A blank search term means to load all the devices.</p>
 </section>
 <section id="happi-load">
 <h3>load<a class="headerlink" href="#happi-load" title="Permalink to this heading"></a></h3>
-<p>Open IPython terminal with ITEM_NAMES loaded</p>
+<p>Open IPython terminal with ITEM_NAMES loaded.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi load <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>ITEM_NAMES<span class="o">]</span>...
 </pre></div>
 </div>
@@ -424,7 +455,7 @@ be combined with ANDs.</p>
 </section>
 <section id="happi-update">
 <h3>update<a class="headerlink" href="#happi-update" title="Permalink to this heading"></a></h3>
-<p>Update happi db with JSON_DATA payload</p>
+<p>Update happi db with JSON_DATA payload.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi update <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>JSON_DATA<span class="o">]</span>...
 </pre></div>
 </div>
