@@ -1042,6 +1042,7 @@ def audit(
         json.dump(final_dict, indent=2, fp=sys.stdout)
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
+        pt.align['error'] = 'l'
         last_name = ''
         for name, success, check, msg in zip(test_results['name'],
                                              test_results['success'],

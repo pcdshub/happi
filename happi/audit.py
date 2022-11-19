@@ -6,6 +6,7 @@ an Exception with a helpful error message.  These exception messages will be
 caught and organized by the cli audit tool.
 """
 import inspect
+import re
 from typing import Callable, List, Optional, Tuple
 
 from happi import SearchResult
@@ -43,7 +44,8 @@ def check_extra_info(
 
     extra = result.item.extraneous.copy()
     for key in ignore_keys:
-        extra.pop(key)
+        if key in extra:
+            extra.pop(key)
     if len(extra) != 0:
         raise ValueError(f'Un-enforced metadata found: {list(extra.keys())}')
 
@@ -57,6 +59,55 @@ def check_name_match_id(result: SearchResult) -> None:
     id_field = result.metadata.get('_id')
     name_field = result.metadata.get('name')
     assert id_field == name_field, f'id: {id_field} != name: {name_field}'
+
+
+def check_wait_connection(result: SearchResult) -> None:
+    """
+    Check if all the signals on the device can connect to their PV's
+
+    This can take a long time, consider filtering your query before running
+    """
+    dev = result.get()
+
+    try:
+        dev.wait_for_connection(timeout=5)
+    except TimeoutError as te:
+        # If we encounter a timeout error, gather some more details stats
+        if hasattr(dev, "walk_signals"):
+            sigs = list(sig.item for sig in dev.walk_signals())
+            conn_sigs = sum(sig.connected for sig in sigs)
+
+        raise ValueError(f'{conn_sigs}/{len(sigs)} signals connected. \n'
+                         f'original error: {te}')
+
+
+def check_args_kwargs_match(result: SearchResult) -> None:
+    """
+    Check that arguments that request information from the container
+    have information in those entries.
+
+    i.e.: makes sure there is information in the entry named "extra"
+          if the kwargs = {'extra': '{{extra}}'}
+    """
+    # Happi fills in values when search result is created, must pull
+    # raw document from client level
+    cl = result.client
+    doc = cl.find_document(**{cl._id_key: result[cl._id_key]})
+    # pick out any jinja-like template
+    jinja_pattern = re.compile(r'^\{\{([a-zA-Z][a-zA-Z0-9_]*)\}\}$')
+
+    for arg in doc.get('args', []):
+        patt_result = jinja_pattern.findall(arg)
+        if patt_result:
+            assert patt_result[0] in doc, \
+                   (f'{patt_result[0]} not found in item to fill args: '
+                    f'{doc["args"]}')
+
+    for kw_key, kw_value in doc.get('kwargs', {}).items():
+        if jinja_pattern.findall(kw_value):
+            assert kw_key in doc, \
+                   (f'{kw_key} not found in item to fill kwargs: '
+                    f'{doc["kwargs"]}')
 
 
 def verify_result(
@@ -99,4 +150,5 @@ def verify_result(
     return success, check.__name__, msg
 
 
-checks = [check_instantiation, check_extra_info, check_name_match_id]
+checks = [check_instantiation, check_extra_info, check_name_match_id,
+          check_wait_connection, check_args_kwargs_match]
