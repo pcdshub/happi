@@ -408,8 +408,8 @@ def db(tmp_path):
     json_path = tmp_path / 'db.json'
     json_path.write_text("""\
 {
-    "TST_BASE_PIM": {
-        "_id": "TST_BASE_PIM",
+    "tst_base_pim": {
+        "_id": "tst_base_pim",
         "active": true,
         "beamline": "TST",
         "creation": "Tue Jan 29 09:46:00 2019",
@@ -426,8 +426,8 @@ def db(tmp_path):
         "z": 3.0,
         "y": 40.0
     },
-    "TST_BASE_PIM2": {
-        "_id": "TST_BASE_PIM2",
+    "tst_base_pim2": {
+        "_id": "tst_base_pim2",
         "active": true,
         "args": [
             "{{prefix}}"

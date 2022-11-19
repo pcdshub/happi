@@ -237,7 +237,7 @@ def search_parser(
               'Provide the name of the item to clone.')
 @click.pass_context
 def add(ctx, clone: str):
-    """Add new entries interactively."""
+    """Add new entries or copy existing entries."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
     client = ctx.obj
@@ -284,6 +284,42 @@ def add(ctx, clone: str):
     if click.confirm('Please confirm the item info is correct'):
         logger.info('Adding item')
         item.save()
+    else:
+        logger.info('Aborting')
+
+
+@happi_cli.command()
+@click.argument('name', type=str)
+@click.pass_context
+def copy(ctx, name):
+    """
+    Copy the item NAME.
+
+    Simply wraps ``happi add --clone``
+    """
+    ctx.invoke(add, clone=name)
+
+
+@happi_cli.command()
+@click.argument('name', type=str)
+@click.pass_context
+def delete(ctx, name: str):
+    """
+    Delete an existing entry.  Only accepts exact names
+    """
+    client = ctx.obj
+    try:
+        item = client.find_item(name=name)
+    except SearchError as e:
+        raise click.ClickException(f'Could not find item ({name}): {e}')
+
+    item.show_info()
+    if click.confirm('Are you sure you want to delete this entry? \n'
+                     'Remember you can mark an entry as inactive with \n'
+                     '"happi edit my_device_name active=false"'):
+        logger.info('Deleting item')
+        client.remove_item(item)
+        click.echo(f'Entry {name} removed')
     else:
         logger.info('Aborting')
 
@@ -353,7 +389,7 @@ def edit(ctx, name: str, edits: List[str]):
 @click.argument('item_names', nargs=-1)
 @click.pass_context
 def load(ctx, item_names: List[str]):
-    """Open IPython terminal with ITEM_NAMES loaded"""
+    """Open IPython terminal with ITEM_NAMES loaded."""
 
     logger.debug('Starting load block')
     # retrieve client
@@ -384,13 +420,13 @@ def load(ctx, item_names: List[str]):
         shell.interact()
 
 
-# TODO: FIgure out how to deal with json and click.  list of args doesn't
+# TODO: Figure out how to deal with json and click.  list of args doesn't
 # translate exactly
 @happi_cli.command()
 @click.argument("json_data", nargs=-1)
 @click.pass_context
 def update(ctx, json_data: str):
-    """Update happi db with JSON_DATA payload"""
+    """Update happi db with JSON_DATA payload."""
     # retrieve client
     client = ctx.obj
     if len(json_data) < 1:

@@ -373,6 +373,24 @@ def test_add_cli(
     assert_match_expected(result, expected_output, expected_return)
 
 
+def test_delete_cli(
+    happi_cfg: str,
+    runner: CliRunner
+):
+    delete_result = runner.invoke(
+        happi_cli,
+        ['--path', happi_cfg, 'delete', 'tst_base_pim'],
+        input='y\n'
+    )
+    assert delete_result.exit_code == 0
+
+    # confirm item is gone
+    search_result = runner.invoke(
+        happi_cli, ['--path', happi_cfg, 'search', 'tst_base_pim']
+    )
+    assert_in_expected(search_result, 'No items found', 0)
+
+
 @pytest.mark.parametrize("from_user, expected_output", [
     # Test add --clone item - succeeding
     pytest.param('\n'.join(['happi_new_name', 'device_class',
@@ -548,7 +566,7 @@ def test_load(
 
 def test_update(happi_cfg: str, runner: CliRunner):
     new = """[ {
-        "_id": "TST_BASE_PIM2",
+        "_id": "tst_base_pim2",
         "active": true,
         "args": [
             "{{prefix}}"

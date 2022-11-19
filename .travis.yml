@@ -23,11 +23,11 @@ env:
 
     # Extra dependencies needed to run the tests which are not included
     # at the recipe and dev-requirements.txt. E.g. PyQt
-    - CONDA_EXTRAS="pcdsdevices pcdsutils line_profiler"
+    - CONDA_EXTRAS="pcdsdevices pcdsutils line_profiler<4.0.0"
 
     # Extra dependencies needed to run the test with Pip (similar to
     # CONDA_EXTRAS) but for pip
-    - PIP_EXTRAS="pcdsdevices pcdsutils line-profiler"
+    - PIP_EXTRAS="pcdsdevices pcdsutils line-profiler<4.0.0"
 
 import:
   - pcdshub/pcds-ci-helpers:travis/shared_configs/setup-env-ui.yml
