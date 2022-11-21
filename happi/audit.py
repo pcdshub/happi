@@ -69,6 +69,11 @@ def check_wait_connection(result: SearchResult) -> None:
     """
     dev = result.get()
 
+    assert (hasattr(dev, 'wait_for_connection') and
+            callable(getattr(dev, 'wait_for_connection'))), \
+           ('device has no wait_for_connection method, and is likely '
+            'not an ophyd device')
+
     try:
         dev.wait_for_connection(timeout=5)
     except TimeoutError as te:
