@@ -6,8 +6,9 @@ an Exception with a helpful error message.  These exception messages will be
 caught and organized by the cli audit tool.
 """
 import inspect
-import re
 from typing import Callable, List, Optional, Tuple
+
+from jinja2 import DebugUndefined, Environment, meta
 
 from happi import SearchResult
 
@@ -44,8 +45,7 @@ def check_extra_info(
 
     extra = result.item.extraneous.copy()
     for key in ignore_keys:
-        if key in extra:
-            extra.pop(key)
+        extra.pop(key, None)
     if len(extra) != 0:
         raise ValueError(f'Un-enforced metadata found: {list(extra.keys())}')
 
@@ -72,15 +72,14 @@ def check_wait_connection(result: SearchResult) -> None:
     assert (hasattr(dev, 'wait_for_connection') and
             callable(getattr(dev, 'wait_for_connection'))), \
            ('device has no wait_for_connection method, and is likely '
-            'not an ophyd device')
+            'not an ophyd v1 device')
 
     try:
         dev.wait_for_connection(timeout=5)
     except TimeoutError as te:
-        # If we encounter a timeout error, gather some more details stats
-        if hasattr(dev, "walk_signals"):
-            sigs = list(sig.item for sig in dev.walk_signals())
-            conn_sigs = sum(sig.connected for sig in sigs)
+        # If we encounter a timeout error, gather some more detailed stats
+        sigs = list(sig.item for sig in dev.walk_signals())
+        conn_sigs = sum(sig.connected for sig in sigs)
 
         raise ValueError(f'{conn_sigs}/{len(sigs)} signals connected. \n'
                          f'original error: {te}')
@@ -99,20 +98,15 @@ def check_args_kwargs_match(result: SearchResult) -> None:
     cl = result.client
     doc = cl.find_document(**{cl._id_key: result[cl._id_key]})
     # pick out any jinja-like template
-    jinja_pattern = re.compile(r'^\{\{([a-zA-Z][a-zA-Z0-9_]*)\}\}$')
+    env = Environment(undefined=DebugUndefined)
 
-    for arg in doc.get('args', []):
-        patt_result = jinja_pattern.findall(arg)
-        if patt_result:
-            assert patt_result[0] in doc, \
-                   (f'{patt_result[0]} not found in item to fill args: '
-                    f'{doc["args"]}')
+    # render template and check if any variables were undefined
+    template = env.from_string(str(doc))
+    rendered = template.render(**doc)
+    undefined = meta.find_undeclared_variables(env.parse(rendered))
 
-    for kw_key, kw_value in doc.get('kwargs', {}).items():
-        if jinja_pattern.findall(kw_value):
-            assert kw_key in doc, \
-                   (f'{kw_key} not found in item to fill kwargs: '
-                    f'{doc["kwargs"]}')
+    assert len(undefined) == 0, \
+           f'undefined variables found in document: {undefined}'
 
 
 def verify_result(
