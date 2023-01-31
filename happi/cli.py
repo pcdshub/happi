@@ -931,6 +931,8 @@ def pyepics_cleanup():
 @click.option('-c', '--check', 'check_choices', multiple=True, default=[],
               help='Name of the check to include.  '
                    'Can also provide a substring')
+@click.option('-d', '--details', 'details',
+              help='Show the details of the specified audit function(s)')
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
@@ -944,6 +946,7 @@ def audit(
     list_checks: bool,
     ext_file: Optional[str],
     check_choices: List[str],
+    details: str,
     use_glob: bool,
     names_only: bool,
     show_json: bool,
@@ -980,6 +983,13 @@ def audit(
         for chk in checks:
             check_pt.add_row([chk.__name__, inspect.cleandoc(chk.__doc__)])
         print(check_pt)
+        return
+
+    if details:
+        check_fns = [fn for fn in checks if details in fn.__name__]
+        for fn in check_fns:
+            click.echo(inspect.getsource(fn))
+
         return
 
     # gather selected checks
@@ -1042,6 +1052,7 @@ def audit(
         json.dump(final_dict, indent=2, fp=sys.stdout)
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
+        pt.align['error'] = 'l'
         last_name = ''
         for name, success, check, msg in zip(test_results['name'],
                                              test_results['success'],

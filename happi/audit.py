@@ -8,6 +8,8 @@ caught and organized by the cli audit tool.
 import inspect
 from typing import Callable, List, Optional, Tuple
 
+from jinja2 import DebugUndefined, Environment, meta
+
 from happi import SearchResult
 
 CLIENT_KEYS = ['_id', 'type', 'creation', 'last_edit']
@@ -43,7 +45,7 @@ def check_extra_info(
 
     extra = result.item.extraneous.copy()
     for key in ignore_keys:
-        extra.pop(key)
+        extra.pop(key, None)
     if len(extra) != 0:
         raise ValueError(f'Un-enforced metadata found: {list(extra.keys())}')
 
@@ -57,6 +59,54 @@ def check_name_match_id(result: SearchResult) -> None:
     id_field = result.metadata.get('_id')
     name_field = result.metadata.get('name')
     assert id_field == name_field, f'id: {id_field} != name: {name_field}'
+
+
+def check_wait_connection(result: SearchResult) -> None:
+    """
+    Check if all the signals on the device can connect to their PV's
+
+    This can take a long time, consider filtering your query before running
+    """
+    dev = result.get()
+
+    assert (hasattr(dev, 'wait_for_connection') and
+            callable(getattr(dev, 'wait_for_connection'))), \
+           ('device has no wait_for_connection method, and is likely '
+            'not an ophyd v1 device')
+
+    try:
+        dev.wait_for_connection(timeout=5)
+    except TimeoutError as te:
+        # If we encounter a timeout error, gather some more detailed stats
+        sigs = list(sig.item for sig in dev.walk_signals())
+        conn_sigs = sum(sig.connected for sig in sigs)
+
+        raise ValueError(f'{conn_sigs}/{len(sigs)} signals connected. \n'
+                         f'original error: {te}')
+
+
+def check_args_kwargs_match(result: SearchResult) -> None:
+    """
+    Check that arguments that request information from the container
+    have information in those entries.
+
+    i.e.: makes sure there is information in the entry named "extra"
+          if the kwargs = {'extra': '{{extra}}'}
+    """
+    # Happi fills in values when search result is created, must pull
+    # raw document from client level
+    cl = result.client
+    doc = cl.find_document(**{cl._id_key: result[cl._id_key]})
+    # pick out any jinja-like template
+    env = Environment(undefined=DebugUndefined)
+
+    # render template and check if any variables were undefined
+    template = env.from_string(str(doc))
+    rendered = template.render(**doc)
+    undefined = meta.find_undeclared_variables(env.parse(rendered))
+
+    assert len(undefined) == 0, \
+           f'undefined variables found in document: {undefined}'
 
 
 def verify_result(
@@ -99,4 +149,5 @@ def verify_result(
     return success, check.__name__, msg
 
 
-checks = [check_instantiation, check_extra_info, check_name_match_id]
+checks = [check_instantiation, check_extra_info, check_name_match_id,
+          check_wait_connection, check_args_kwargs_match]

@@ -498,6 +498,25 @@ def bad_db(tmp_path):
         "last_edit": "Thu Apr 12 14:40:08 2018",
         "name": "tst_extra_info",
         "type": "HappiItem"
+    },
+    "tst_arg_mismatch": {
+        "_id": "tst_arg_mismatch",
+        "args": ["{{active}}"],
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "name": "tst_arg_mismatch",
+        "type": "HappiItem"
+    },
+    "tst_kwarg_mismatch": {
+        "_id": "tst_kwarg_mismatch",
+        "active": true,
+        "args": ["{{active}}"],
+        "device_class": "types.SimpleNamespace",
+        "kwargs": {"creation": "{{creation}}"},
+        "name": "tst_kwarg_mismatch",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "type": "HappiItem"
     }
 }
 """)
