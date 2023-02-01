@@ -1,47 +1,55 @@
-{% set data = load_setup_py_data() %}
-{% set name = "happi" %}
+{% set package_name = "happi" %}
+{% set import_name = "happi" %}
+{% set version = load_file_regex(load_file=os.path.join(import_name, "_version.py"), regex_pattern=".*version = '(\S+)'").group(1) %}
 
 package:
-    name: {{ name }}
-    version: {{ data.get('version') }}
-
-build:
-  noarch: python
-  number: 0
+  name: {{ package_name }}
+  version: {{ version }}
 
 source:
-    path: ..
+  path: ..
+
+build:
+  number: 0
+  noarch: python
+  script: {{ PYTHON }} -m pip install . -vv
+
+
 
 requirements:
-    build:
-      - python >=3.6
-      - pip
-    run:
-      - python >=3.6
-      - click
-      - coloredlogs
-      - entrypoints
-      - jinja2
-      - prettytable
-      - simplejson
-    run-constrained:
-      - psdm_qs_cli >=0.3.1
-      - pymongo >=4.0.2
+  build:
+  - python >=3.6
+  - pip
+  - setuptools_scm
+  run:
+  - python >=3.6
+  - click
+  - coloredlogs
+  - entrypoints
+  - jinja2
+  - prettytable
+  - simplejson
+  run-constrained:
+  - psdm_qs_cli >=0.3.1
+  - pymongo >=4.0.2
+
+
 
 test:
-    imports:
-      - happi
-    commands:
-      - happi --help
+  commands:
+  - happi --help
+  imports:
+  - happi
+  requires:
+  - pytest
+  - ipython
 
-    requires:
-      - pytest
-      - ipython
+
 
 about:
-  home: https://github.com/pcdshub/happi/
-  doc_url: https://pcdshub.github.io/happi/
   dev_url: https://github.com/pcdshub/happi/
+  doc_url: https://pcdshub.github.io/happi/
+  home: https://github.com/pcdshub/happi/
   license: LicenseRef-BSD-3-Clause-SLAC
   license_family: BSD
   license_file: LICENSE.md
