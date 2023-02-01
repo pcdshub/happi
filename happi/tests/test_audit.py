@@ -23,12 +23,11 @@ def number_failed_devices(output: str):
 
 
 @pytest.mark.parametrize("n_fails, check", [
-   (1, "check_name_match_id"),
-   (3, "check_instantiation"),  # simplenamespace does not take args
-   (1, "check_extra_info"),
-   (2, "check_args_kwargs_match")
-   ]
-)
+    (1, "check_name_match_id"),
+    (3, "check_instantiation"),  # simplenamespace does not take args
+    (1, "check_extra_info"),
+    (2, "check_args_kwargs_match")
+])
 def test_audit_cli(
     runner: CliRunner,
     bad_happi_cfg: str,

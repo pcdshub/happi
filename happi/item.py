@@ -211,7 +211,7 @@ class _HappiItemBase:
             '_id', '_info_attrs',
             'creation', 'entry_info', 'info_names', 'last_edit',
             'mandatory_info', 'post', 'save',
-            ]
+        ]
 
         # Create dict to hold information
         cls._info_attrs = OrderedDict()

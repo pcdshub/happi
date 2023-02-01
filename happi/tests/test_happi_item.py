@@ -90,7 +90,7 @@ def test_enforce(item: OphydItem):
 def test_container_error():
     with pytest.raises(ContainerError):
         class MyDevice(HappiItem):
-            fault = EntryInfo(enforce=int,  default='not-int')
+            fault = EntryInfo(enforce=int, default='not-int')
 
 
 def test_mandatory_info(item: OphydItem):

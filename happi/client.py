@@ -24,10 +24,8 @@ logger = logging.getLogger(__name__)
 def _looks_like_database(obj):
     """Returns True if obj is a `Backend` or has certain Backend attributes."""
     return (isinstance(obj, _Backend) or
-            all(
-                hasattr(obj, attr) for attr in (
-                    'find', 'all_items', 'delete', 'save')
-                )
+            all(hasattr(obj, attr) for attr in
+                ('find', 'all_items', 'delete', 'save'))
             )
 
 

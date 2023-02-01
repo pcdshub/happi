@@ -355,12 +355,11 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         ' - INFO -  Storing item OphydItem (name=ophyd_name) ...',
         ' - INFO -  Adding / Modifying information for ophyd_name ...',
         ' - INFO -  HappiItem OphydItem (name=ophyd_name) has been '
-        'succesfully added to the database'
-         ),
-         0
-    ),
-    ], ids=["add_succeeding", "add_aborting",
-            "add_invalid_container", "add_not_optional_field"])
+        'succesfully added to the database'),
+        0
+    )
+], ids=["add_succeeding", "add_aborting",
+        "add_invalid_container", "add_not_optional_field"])
 def test_add_cli(
     from_user: str,
     expected_output: Tuple[str, ...],
@@ -465,8 +464,7 @@ def test_add_clone_item_not_found(happi_cfg: str, runner: CliRunner):
     # change multiple entries
     (["active=False", "documentation=yes"], ['active', 'documentation'],
      [False, 'yes'])
-    ]
-)
+])
 def test_edit(
     from_user: List[str],
     fields: List[str],
@@ -649,7 +647,7 @@ def arg_variants(variants: Tuple[Tuple[Tuple[str]]]):
         yield functools.reduce(
             lambda x, y: x+y,
             arg_set,
-            )
+        )
 
 
 benchmark_arg_variants = (

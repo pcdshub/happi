@@ -180,7 +180,7 @@ class HappiRegistry:
         def valid_entry(klass):
             # Avoid happi internal classes due to imports
             return inspect.isclass(klass) and issubclass(klass, HappiItem) \
-                   and not klass.__module__.startswith('happi.')
+                and not klass.__module__.startswith('happi.')
 
         for name, klass in DEFAULT_REGISTRY.items():
             if name not in self._registry:

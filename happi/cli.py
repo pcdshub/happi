@@ -163,7 +163,8 @@ def search_parser(
                 value = user_arg
             if criteria in client_args:
                 raise click.ClickException(
-                     f"Received duplicate search criteria {criteria}={value!r} (was {client_args[criteria]!r})"
+                    f"Received duplicate search criteria {criteria}={value!r} "
+                    f"(was {client_args[criteria]!r})"
                 )
 
             if is_a_range(value):
@@ -511,10 +512,8 @@ benchmark_sort_keys = [
 @click.option("-t", "--tracebacks", is_flag=True,
               help="Show tracebacks from failing device loads.")
 @click.option("-s", "--sort-key", type=str, default="avg_time",
-              help=(
-                "Sort the output table. Valid options are "
-                f"{', '.join(benchmark_sort_keys)}"
-              ))
+              help=("Sort the output table. Valid options are "
+                    f"{', '.join(benchmark_sort_keys)}"))
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')

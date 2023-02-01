@@ -26,7 +26,7 @@ import sphinx_rtd_theme  # noqa
 module_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../")
 sys.path.insert(0, module_path)
 
-import happi  # isort: skip
+import happi  # isort: skip # noqa: E402
 
 
 # -- General configuration ------------------------------------------------

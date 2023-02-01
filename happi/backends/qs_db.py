@@ -79,16 +79,16 @@ def create_entry(name, beamline, prefix, kwargs, container,
     """
 
     entry = {
-            '_id': name,
-            'active': True,
-            'args': ['{{prefix}}'],
-            'beamline': beamline,
-            'kwargs': kwargs,
-            'lightpath': False,
-            'name': name,
-            'prefix': prefix,
-            'type': container,
-            **info,
+        '_id': name,
+        'active': True,
+        'args': ['{{prefix}}'],
+        'beamline': beamline,
+        'kwargs': kwargs,
+        'lightpath': False,
+        'name': name,
+        'prefix': prefix,
+        'type': container,
+        **info,
     }
     if class_name is not None:
         entry['device_class'] = class_name
