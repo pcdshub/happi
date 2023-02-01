@@ -8,7 +8,7 @@ mongomock >=3.22.0
 sphinx
 sphinx_rtd_theme
 # Removed temporarily, pip installations fail lacking gssapi libs
-# psdm_qs_cli
+psdm_qs_cli
 sphinx-click
 # PyPI's 2020 resolver can be problematic with these
 # dependencies-of-dependencies.  Constrain them here:
