@@ -12,3 +12,4 @@ sphinx-click
 # PyPI's 2020 resolver can be problematic with these
 # dependencies-of-dependencies.  Constrain them here:
 six >=1.10.0
+sphinxcontrib-jquery
