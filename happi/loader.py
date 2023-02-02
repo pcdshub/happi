@@ -175,8 +175,7 @@ def from_container(
 
     # Treat all our args and kwargs as templates
     args = [create_arg(arg) for arg in item.args]
-    kwargs = {key: create_arg(val)
-                  for key, val in item.kwargs.items()}
+    kwargs = {key: create_arg(val) for key, val in item.kwargs.items()}
     # maybe filter out null kwargs
     new_kwargs = {}
     kwarg_include = item._info_attrs['kwargs'].include_default_as_kwarg
