@@ -30,7 +30,7 @@ exclude = "docs/*,versioneer.py"
 
 [tool.setuptools.packages.find]
 where = [ ".",]
-include = [ "happi",]
+include = [ "happi*",]
 namespaces = false
 
 [tool.setuptools.dynamic.readme]
