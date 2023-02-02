@@ -6,7 +6,7 @@ an Exception with a helpful error message.  These exception messages will be
 caught and organized by the cli audit tool.
 """
 import inspect
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional
 
 from jinja2 import DebugUndefined, Environment, meta
 

@@ -4,8 +4,8 @@ import functools
 import itertools
 import logging
 import re
-from typing import Any, List, Tuple
 from collections.abc import Iterable
+from typing import Any
 from unittest import mock
 
 import click

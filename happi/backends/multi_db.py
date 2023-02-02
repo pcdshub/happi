@@ -4,7 +4,7 @@ Backend implementation that combines multiple backends.
 import functools
 import logging
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from .core import ItemMeta, ItemMetaGen, _Backend
 

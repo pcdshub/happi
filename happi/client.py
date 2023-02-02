@@ -9,8 +9,8 @@ import os
 import re
 import sys
 import time as ttime
-from typing import Any, Dict, List, Optional, Type
 from collections.abc import Sequence
+from typing import Any, Optional
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -903,8 +903,7 @@ class Client(collections.abc.Mapping):
                     logger.debug("Found configuration file at %r", full_path)
                     return full_path
         # If found nothing
-        raise OSError("No happi configuration file found. "
-                               "Check HAPPI_CFG.")
+        raise OSError("No happi configuration file found. Check HAPPI_CFG.")
 
     def choices_for_field(self, field):
         """

@@ -19,7 +19,6 @@ import time
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from cProfile import Profile
 from pathlib import Path
-from typing import List, Optional, Tuple
 
 import click
 import coloredlogs
@@ -1028,8 +1027,8 @@ def audit(
                 test_results['msg'].append(msg)
 
     unique_fails = {test_results['name'][i]
-                       for i in range(len(test_results['name']))
-                       if not test_results['success'][i]}
+                    for i in range(len(test_results['name']))
+                    if not test_results['success'][i]}
     # print outs
     if names_only:
         click.echo(' '.join(unique_fails))

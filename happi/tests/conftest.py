@@ -1,7 +1,7 @@
 import logging
 import sys
 import tempfile
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import patch
 
 import pytest

@@ -2,7 +2,7 @@ import fcntl
 import os
 import os.path
 import tempfile
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 import simplejson

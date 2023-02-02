@@ -3,7 +3,7 @@ import os
 import re
 import tempfile
 import types
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 

@@ -3,7 +3,7 @@ MongoDB Backend Implementation using the ``PyMongo`` package.
 """
 import logging
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 import bson.regex
 from pymongo import MongoClient
