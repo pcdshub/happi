@@ -1,6 +1,7 @@
 import inspect
 import logging
-from typing import ClassVar, Dict, Generator, Optional, Tuple, Type
+from typing import ClassVar, Dict, Optional, Tuple, Type
+from collections.abc import Generator
 
 import entrypoints
 
@@ -66,9 +67,9 @@ class HappiRegistry:
     #: Has the registry been initialized once?
     _loaded: bool
     #: Registry of happi container name to class
-    _registry: Dict[str, Type[HappiItem]]
+    _registry: dict[str, type[HappiItem]]
     #: Registry of happi container class to name
-    _reverse_registry: Dict[Type[HappiItem], str]
+    _reverse_registry: dict[type[HappiItem], str]
 
     def __init__(self):
         if self.__initialized:
@@ -86,12 +87,12 @@ class HappiRegistry:
             cls.__instance.__initialized = False
         return cls.__instance
 
-    def __getitem__(self, item: str) -> Optional[Type[HappiItem]]:
+    def __getitem__(self, item: str) -> Optional[type[HappiItem]]:
         if not self._loaded or item not in self._registry:
             self.load()
         return self._registry.get(item)
 
-    def __setitem__(self, item: str, klass: Type[HappiItem]) -> None:
+    def __setitem__(self, item: str, klass: type[HappiItem]) -> None:
         self._safe_add(item, klass)
 
     def __contains__(self, item: str) -> bool:
@@ -99,13 +100,13 @@ class HappiRegistry:
             self.load()
         return item in self._registry
 
-    def items(self) -> Generator[Tuple[str, Type[HappiItem]], None, None]:
+    def items(self) -> Generator[tuple[str, type[HappiItem]], None, None]:
         """All (item_name, item_class) entries in the registry."""
         if not self._loaded:
             self.load()
         yield from self._registry.items()
 
-    def entry_for_class(self, klass: Type[HappiItem]) -> Optional[str]:
+    def entry_for_class(self, klass: type[HappiItem]) -> Optional[str]:
         """
         Get the happi item container name given its class.
 
@@ -123,7 +124,7 @@ class HappiRegistry:
             self.load()
         return self._reverse_registry.get(klass)
 
-    def _safe_add(self, entry_name: str, klass: Type[HappiItem]):
+    def _safe_add(self, entry_name: str, klass: type[HappiItem]):
         """
         Add and entry into the registry and raise RuntimeError in case a
         duplicated entry is found.

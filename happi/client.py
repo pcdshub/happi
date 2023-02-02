@@ -9,7 +9,8 @@ import os
 import re
 import sys
 import time as ttime
-from typing import Any, Dict, List, Optional, Sequence, Type
+from typing import Any, Dict, List, Optional, Type
+from collections.abc import Sequence
 
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
@@ -285,7 +286,7 @@ class Client(collections.abc.Mapping):
         item.save = save_item
         return _id
 
-    def _get_item_from_document(self, doc: Dict[str, Any]) -> HappiItem:
+    def _get_item_from_document(self, doc: dict[str, Any]) -> HappiItem:
         """
         Create a HappiItem given its backend-provided document.
 
@@ -368,10 +369,10 @@ class Client(collections.abc.Mapping):
     def change_container(
         self,
         item: HappiItem,
-        target: Type[HappiItem],
-        edits: Optional[Dict[str, Any]] = None,
+        target: type[HappiItem],
+        edits: Optional[dict[str, Any]] = None,
         how: str = 'right'
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Return the kwargs necessary to transfer the information from
         ``item`` into a container ``target``.  Checks are performed to ensure
@@ -505,8 +506,8 @@ class Client(collections.abc.Mapping):
             self.backend.clear_cache()
 
     def _get_search_results(
-        self, docs: Sequence[Dict[str, Any]], *, wrap_cls: Optional[type] = None
-    ) -> List[SearchResult]:
+        self, docs: Sequence[dict[str, Any]], *, wrap_cls: Optional[type] = None
+    ) -> list[SearchResult]:
         """
         Return search results to the user, optionally wrapping with a class.
         """
@@ -531,7 +532,7 @@ class Client(collections.abc.Mapping):
 
     def search_range(
         self, key: str, start: float, end: Optional[float] = None, **kwargs
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """
         Search the database for an item or items using a numerical range.
 
@@ -594,7 +595,7 @@ class Client(collections.abc.Mapping):
 
     def search_regex(
         self, flags=re.IGNORECASE, **kwargs
-    ) -> List[SearchResult]:
+    ) -> list[SearchResult]:
         """
         Search the database for items(s).
 
@@ -902,7 +903,7 @@ class Client(collections.abc.Mapping):
                     logger.debug("Found configuration file at %r", full_path)
                     return full_path
         # If found nothing
-        raise EnvironmentError("No happi configuration file found. "
+        raise OSError("No happi configuration file found. "
                                "Check HAPPI_CFG.")
 
     def choices_for_field(self, field):

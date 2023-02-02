@@ -4,7 +4,8 @@ import functools
 import itertools
 import logging
 import re
-from typing import Any, Iterable, List, Tuple
+from typing import Any, List, Tuple
+from collections.abc import Iterable
 from unittest import mock
 
 import click
@@ -362,7 +363,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
         "add_invalid_container", "add_not_optional_field"])
 def test_add_cli(
     from_user: str,
-    expected_output: Tuple[str, ...],
+    expected_output: tuple[str, ...],
     expected_return: int,
     happi_cfg: str,
     runner: CliRunner
@@ -416,7 +417,7 @@ def test_delete_cli(
     )])
 def test_add_clone(
     from_user: str,
-    expected_output: Tuple[str, ...],
+    expected_output: tuple[str, ...],
     happi_cfg: str,
     runner: CliRunner
 ):
@@ -466,9 +467,9 @@ def test_add_clone_item_not_found(happi_cfg: str, runner: CliRunner):
      [False, 'yes'])
 ])
 def test_edit(
-    from_user: List[str],
-    fields: List[str],
-    values: List[Any],
+    from_user: list[str],
+    fields: list[str],
+    values: list[Any],
     client: happi.client.Client,
     happi_cfg: str,
     runner: CliRunner
@@ -516,7 +517,7 @@ def test_edit(
     ["name=2"],  # bad value for name
     ["kwargs={\'str\':\'beh\'}"],  # bad key in kwarg
 ])
-def test_bad_edit(edit_args: List[str], happi_cfg: str, runner: CliRunner):
+def test_bad_edit(edit_args: list[str], happi_cfg: str, runner: CliRunner):
     # Test invalid field, note the name is changed to new_name
     bad_edit_result = runner.invoke(
         happi_cli,
@@ -630,7 +631,7 @@ def test_update(happi_cfg: str, runner: CliRunner):
     )])
 def test_transfer_cli(
     from_user: str,
-    expected_output: List[str],
+    expected_output: list[str],
     happi_cfg: str,
     runner: CliRunner
 ):
@@ -639,7 +640,7 @@ def test_transfer_cli(
     assert_match_expected(results, expected_output)
 
 
-def arg_variants(variants: Tuple[Tuple[Tuple[str]]]):
+def arg_variants(variants: tuple[tuple[tuple[str]]]):
     """
     Collapse argument variants into all possible combinations.
     """
@@ -662,7 +663,7 @@ benchmark_arg_variants = (
 @pytest.mark.parametrize(
     "args", tuple(arg_variants(benchmark_arg_variants))
 )
-def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: Tuple[str]):
+def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
     # Make sure the benchmark can complete in some form with valid inputs
     result = runner.invoke(
         happi_cli,
@@ -685,7 +686,7 @@ profile_arg_variants = (
 @pytest.mark.parametrize(
     "args", tuple(arg_variants(profile_arg_variants))
 )
-def test_profile_cli(runner: CliRunner, happi_cfg: str, args: Tuple[str]):
+def test_profile_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
     # Make sure the profile can complete in some form with valid inputs
     if 'pcdsutils' in args and not test_line_prof:
         pytest.skip('Missing pcdsutils or line_profiler.')

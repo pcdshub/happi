@@ -12,7 +12,7 @@ class HappiDeviceExplorer(QtWidgets.QFrame):
                    'Device Class': 'device_class'}
 
     def __init__(self, parent=None):
-        super(HappiDeviceExplorer, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.view = happi.qt.model.HappiDeviceTreeView(self)
         self.view.groups = [v for _, v in self._GROUP_KEYS.items()]

@@ -175,7 +175,7 @@ class EntryInfo:
         if self.doc is not None:
             return self.doc
 
-        doc = ['{} attribute'.format(self.__class__.__name__),
+        doc = [f'{self.__class__.__name__} attribute',
                '::',
                '',
                ]
@@ -375,7 +375,7 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
         """
 
         # Grab all the specified information
-        post = dict([(key, getattr(self, key)) for key in self.info_names])
+        post = {key: getattr(self, key) for key in self.info_names}
 
         # Add additional metadata
         if self.extraneous:

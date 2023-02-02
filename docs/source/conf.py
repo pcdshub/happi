@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # Happi documentation build configuration file, created by sphinx-quickstart on
 # Thu Jan 26 10:44:17 2017.

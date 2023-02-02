@@ -159,7 +159,7 @@ class QuestionnaireHelper:
         run_number = self.experiment[-2:]
         return f'run{run_number}'
 
-    @functools.lru_cache()
+    @functools.lru_cache
     def get_proposal_list(self) -> dict:
         """
         Get the proposal list (a dict, really) for the configured experiment.
@@ -205,7 +205,7 @@ class QuestionnaireHelper:
         proposals = self.get_proposal_list()
         return proposals[self.proposal]['Instrument']
 
-    @functools.lru_cache()
+    @functools.lru_cache
     def get_run_details(self) -> dict:
         """Get details of the run in a raw dictionary."""
         return self._client.getProposalDetailsForRun(

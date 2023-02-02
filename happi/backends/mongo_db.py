@@ -67,11 +67,11 @@ class MongoBackend(_Backend):
                                 'port specified at startup')
 
     @property
-    def all_items(self) -> List[ItemMeta]:
+    def all_items(self) -> list[ItemMeta]:
         """List of all item sub-dictionaries."""
         return list(self._collection.find())
 
-    def find(self, to_match: Dict[str, Any]) -> ItemMetaGen:
+    def find(self, to_match: dict[str, Any]) -> ItemMetaGen:
         """
         Yield all instances that match the given search criteria.
 
@@ -89,7 +89,7 @@ class MongoBackend(_Backend):
         *,
         start: Union[int, float],
         stop: Optional[Union[int, float]] = None,
-        to_match: Dict[str, Any]
+        to_match: dict[str, Any]
     ) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria, such
@@ -134,7 +134,7 @@ class MongoBackend(_Backend):
 
     def find_regex(
         self,
-        to_match: Dict[str, Any],
+        to_match: dict[str, Any],
         *,
         flags=re.IGNORECASE
     ) -> ItemMetaGen:
@@ -161,7 +161,7 @@ class MongoBackend(_Backend):
     def save(
         self,
         _id: str,
-        post: Dict[str, Any],
+        post: dict[str, Any],
         insert: bool = True
     ) -> None:
         """

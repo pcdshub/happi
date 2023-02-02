@@ -2,12 +2,13 @@
 Base backend database options.
 """
 import logging
-from typing import Any, Dict, Generator, List
+from typing import Any, Dict, List
+from collections.abc import Generator
 
 logger = logging.getLogger(__name__)
 
 
-ItemMeta = Dict[str, Any]
+ItemMeta = dict[str, Any]
 ItemMetaGen = Generator[ItemMeta, None, None]
 
 
@@ -20,7 +21,7 @@ class _Backend:
     """
 
     @property
-    def all_items(self) -> List[ItemMeta]:
+    def all_items(self) -> list[ItemMeta]:
         """
         List of all items in the database.
 
@@ -56,7 +57,7 @@ class _Backend:
     def save(
         self,
         _id: str,
-        post: Dict[str, Any],
+        post: dict[str, Any],
         insert: bool = True
     ) -> None:
         """
