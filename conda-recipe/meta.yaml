@@ -43,6 +43,7 @@ test:
   requires:
   - pytest
   - ipython
+  - line-profiler <4.0.0
 
 
 

@@ -17,8 +17,8 @@ jobs:
       # Extras that will be installed for both conda/pip:
       testing-extras: "pcdsdevices pcdsutils"
       # Extras to be installed only for conda-based testing:
-      conda-testing-extras: "line_profiler<4.0.0"
+      conda-testing-extras: ""
       # Extras to be installed only for pip-based testing:
-      pip-testing-extras: "line-profiler<4.0.0 wheel"
+      pip-testing-extras: "wheel"
       # Set if using setuptools-scm for the conda-build workflow
       use-setuptools-scm: true

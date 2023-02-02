@@ -14,3 +14,5 @@ sphinx-click
 # dependencies-of-dependencies.  Constrain them here:
 six >=1.10.0
 sphinxcontrib-jquery
+# Lineprofiler >=4.0.0 incompatible with happi, but needed for py3.11
+line-profiler <4.0.0
