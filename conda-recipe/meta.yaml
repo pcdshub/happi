@@ -18,11 +18,11 @@ build:
 
 requirements:
   build:
-  - python >=3.6
+  - python >=3.9
   - pip
   - setuptools_scm
   run:
-  - python >=3.6
+  - python >=3.9
   - click
   - coloredlogs
   - entrypoints
