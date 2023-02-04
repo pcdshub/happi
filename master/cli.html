@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Command Line Interface &mdash; Happi 2.0.0+11.gdf44baa documentation</title>
+  <title>Command Line Interface &mdash; Happi 2.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,14 +28,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> Happi
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Happi
           </a>
               <div class="version">
-                2.0.0+11.gdf44baa
+                2.1.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +60,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#happi-edit">edit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-load">load</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-profile">profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#happi-repair">repair</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-search">search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-transfer">transfer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#happi-update">update</a></li>
@@ -88,7 +92,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Command Line Interface</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/cli.rst.txt" rel="nofollow"> View page source</a>
@@ -104,7 +108,7 @@
 <section id="happi">
 <h2>happi<a class="headerlink" href="#happi" title="Permalink to this heading"></a></h2>
 <p>The happi command-line interface, used to view and manipulate device databases</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi <span class="o">[</span>OPTIONS<span class="o">]</span> COMMAND <span class="o">[</span>ARGS<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -129,7 +133,7 @@
 <section id="happi-add">
 <h3>add<a class="headerlink" href="#happi-add" title="Permalink to this heading"></a></h3>
 <p>Add new entries or copy existing entries.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi add <span class="o">[</span>OPTIONS<span class="o">]</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>add<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -150,7 +154,7 @@ happi.SearchResult as an positional argument and returns None if
 successful.</p>
 <p>To import additional checks, provide a file with your check function
 and a list named <code class="docutils literal notranslate"><span class="pre">checks</span></code> containing the desired functions.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi audit <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>audit<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -170,6 +174,12 @@ and a list named <code class="docutils literal notranslate"><span class="pre">ch
 <dt class="sig sig-object std" id="cmdoption-happi-audit-c">
 <span id="cmdoption-happi-audit-check"></span><span class="sig-name descname"><span class="pre">-c</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--check</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;check_choices&gt;</span></span><a class="headerlink" href="#cmdoption-happi-audit-c" title="Permalink to this definition"></a></dt>
 <dd><p>Name of the check to include.  Can also provide a substring</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-audit-d">
+<span id="cmdoption-happi-audit-details"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--details</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;details&gt;</span></span><a class="headerlink" href="#cmdoption-happi-audit-d" title="Permalink to this definition"></a></dt>
+<dd><p>Show the details of the specified audit function(s)</p>
 </dd></dl>
 
 <dl class="std option">
@@ -211,7 +221,7 @@ iteration), showing stats and averages.</p>
 to go, presuming the device has a wait_for_connection method.</p>
 <p>Search terms are standard as in the same search terms as the search
 cli function. A blank search term means to load all the devices.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi benchmark <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>benchmark<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -262,7 +272,7 @@ cli function. A blank search term means to load all the devices.</p>
 <section id="happi-container-registry">
 <h3>container-registry<a class="headerlink" href="#happi-container-registry" title="Permalink to this heading"></a></h3>
 <p>Print container registry</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi container-registry <span class="o">[</span>OPTIONS<span class="o">]</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>container-registry<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
 </section>
@@ -270,7 +280,7 @@ cli function. A blank search term means to load all the devices.</p>
 <h3>copy<a class="headerlink" href="#happi-copy" title="Permalink to this heading"></a></h3>
 <p>Copy the item NAME.</p>
 <p>Simply wraps <code class="docutils literal notranslate"><span class="pre">happi</span> <span class="pre">add</span> <span class="pre">--clone</span></code></p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi copy <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>copy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>NAME
 </pre></div>
 </div>
 <p class="rubric">Arguments</p>
@@ -284,7 +294,7 @@ cli function. A blank search term means to load all the devices.</p>
 <section id="happi-delete">
 <h3>delete<a class="headerlink" href="#happi-delete" title="Permalink to this heading"></a></h3>
 <p>Delete an existing entry.  Only accepts exact names</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi delete <span class="o">[</span>OPTIONS<span class="o">]</span> NAME
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>NAME
 </pre></div>
 </div>
 <p class="rubric">Arguments</p>
@@ -299,7 +309,7 @@ cli function. A blank search term means to load all the devices.</p>
 <h3>edit<a class="headerlink" href="#happi-edit" title="Permalink to this heading"></a></h3>
 <p>Change an existing entry.</p>
 <p>Applies EDITS of the form: field=value to the item of name NAME.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi edit <span class="o">[</span>OPTIONS<span class="o">]</span> NAME <span class="o">[</span>EDITS<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>edit<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>NAME<span class="w"> </span><span class="o">[</span>EDITS<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Arguments</p>
@@ -319,7 +329,7 @@ cli function. A blank search term means to load all the devices.</p>
 <section id="happi-load">
 <h3>load<a class="headerlink" href="#happi-load" title="Permalink to this heading"></a></h3>
 <p>Open IPython terminal with ITEM_NAMES loaded.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi load <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>ITEM_NAMES<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>load<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>ITEM_NAMES<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Arguments</p>
@@ -348,7 +358,7 @@ The priority order is, first, the pcdsutils line_profiler wrapper
 (–profiler cprofile). More options may be added later.</p>
 <p>Search terms are standard as in the same search terms as the search
 cli function. A blank search term means to load all the devices.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi profile <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>profile<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -396,13 +406,41 @@ cli function. A blank search term means to load all the devices.</p>
 </dd></dl>
 
 </section>
+<section id="happi-repair">
+<h3>repair<a class="headerlink" href="#happi-repair" title="Permalink to this heading"></a></h3>
+<p>Repair the database.</p>
+<p>Repairs all entries matching SEARCH_CRITERIA, repairs entire database otherwise.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>repair<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-repair-fix-optional">
+<span id="cmdoption-happi-repair-ignore-optional"></span><span class="sig-name descname"><span class="pre">--fix-optional</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ignore-optional</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-repair-fix-optional" title="Permalink to this definition"></a></dt>
+<dd><p>Also prompt for user input on optional information</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-repair-glob">
+<span id="cmdoption-happi-repair-regex"></span><span class="sig-name descname"><span class="pre">--glob</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-repair-glob" title="Permalink to this definition"></a></dt>
+<dd><p>Use glob (default) or regex style search terms. Only relevant if search_criteria are provided.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-happi-repair-arg-SEARCH_CRITERIA">
+<span id="cmdoption-happi-repair-arg-search-criteria"></span><span class="sig-name descname"><span class="pre">SEARCH_CRITERIA</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-happi-repair-arg-SEARCH_CRITERIA" title="Permalink to this definition"></a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
 <section id="happi-search">
 <h3>search<a class="headerlink" href="#happi-search" title="Permalink to this heading"></a></h3>
 <p>Search the happi database.  SEARCH_CRITERIA take the form: field=value.
 If ‘field=’ is omitted, it will assumed to be ‘name’.
 You may include as many search criteria as you like; these will
 be combined with ANDs.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi search <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>search<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>SEARCH_CRITERIA<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Options</p>
@@ -436,7 +474,7 @@ be combined with ANDs.</p>
 <h3>transfer<a class="headerlink" href="#happi-transfer" title="Permalink to this heading"></a></h3>
 <p>Change the container of an item.</p>
 <p>Transfers item (NAME) to a new container (TARGET)</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi transfer <span class="o">[</span>OPTIONS<span class="o">]</span> NAME TARGET
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>transfer<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>NAME<span class="w"> </span>TARGET
 </pre></div>
 </div>
 <p class="rubric">Arguments</p>
@@ -456,7 +494,7 @@ be combined with ANDs.</p>
 <section id="happi-update">
 <h3>update<a class="headerlink" href="#happi-update" title="Permalink to this heading"></a></h3>
 <p>Update happi db with JSON_DATA payload.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi update <span class="o">[</span>OPTIONS<span class="o">]</span> <span class="o">[</span>JSON_DATA<span class="o">]</span>...
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>happi<span class="w"> </span>update<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>JSON_DATA<span class="o">]</span>...
 </pre></div>
 </div>
 <p class="rubric">Arguments</p>
