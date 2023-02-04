@@ -8,7 +8,7 @@ from ..utils import get_happi_entry_value
 logger = logging.getLogger(__name__)
 
 
-class HappiViewMixin(object):
+class HappiViewMixin:
     """Base class to be used for View widgets."""
     def __init__(self, client=None, **kwargs):
         super().__init__(**kwargs)

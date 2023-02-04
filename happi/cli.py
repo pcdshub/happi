@@ -19,7 +19,6 @@ import time
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from cProfile import Profile
 from pathlib import Path
-from typing import List, Optional, Tuple
 
 import click
 import coloredlogs
@@ -95,7 +94,7 @@ def search(
     show_json: bool,
     names: bool,
     use_glob: bool,
-    search_criteria: List[str]
+    search_criteria: list[str]
 ):
     """
     Search the happi database.  SEARCH_CRITERIA take the form: field=value.
@@ -130,8 +129,8 @@ def search(
 def search_parser(
     client: happi.Client,
     use_glob: bool,
-    search_criteria: List[str],
-) -> List[happi.SearchResult]:
+    search_criteria: list[str],
+) -> list[happi.SearchResult]:
     """
     Parse the user's search criteria and return the search results.
 
@@ -163,7 +162,8 @@ def search_parser(
                 value = user_arg
             if criteria in client_args:
                 raise click.ClickException(
-                     f"Received duplicate search criteria {criteria}={value!r} (was {client_args[criteria]!r})"
+                    f"Received duplicate search criteria {criteria}={value!r} "
+                    f"(was {client_args[criteria]!r})"
                 )
 
             if is_a_range(value):
@@ -328,7 +328,7 @@ def delete(ctx, name: str):
 @click.argument('name')
 @click.argument('edits', nargs=-1, type=str)
 @click.pass_context
-def edit(ctx, name: str, edits: List[str]):
+def edit(ctx, name: str, edits: list[str]):
     """
     Change an existing entry.
 
@@ -388,7 +388,7 @@ def edit(ctx, name: str, edits: List[str]):
 @happi_cli.command()
 @click.argument('item_names', nargs=-1)
 @click.pass_context
-def load(ctx, item_names: List[str]):
+def load(ctx, item_names: list[str]):
     """Open IPython terminal with ITEM_NAMES loaded."""
 
     logger.debug('Starting load block')
@@ -511,10 +511,8 @@ benchmark_sort_keys = [
 @click.option("-t", "--tracebacks", is_flag=True,
               help="Show tracebacks from failing device loads.")
 @click.option("-s", "--sort-key", type=str, default="avg_time",
-              help=(
-                "Sort the output table. Valid options are "
-                f"{', '.join(benchmark_sort_keys)}"
-              ))
+              help=("Sort the output table. Valid options are "
+                    f"{', '.join(benchmark_sort_keys)}"))
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob style (default) or regex style search terms. '
               r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
@@ -527,7 +525,7 @@ def benchmark(
     tracebacks: bool,
     sort_key: str,
     use_glob: bool,
-    search_criteria: List[str],
+    search_criteria: list[str],
 ):
     """
     Compare happi device startup times.
@@ -626,7 +624,7 @@ class Stats:
                 max_time=0,
                 import_time=0,
             )
-        raw_stats: List[float] = []
+        raw_stats: list[float] = []
         import_time = cls.import_benchmark(result)
         counter = 0
         start = time.monotonic()
@@ -710,7 +708,7 @@ def profile(
     profile_all: bool,
     profiler: str,
     use_glob: bool,
-    search_criteria: List[str],
+    search_criteria: list[str],
 ):
     """
     Per-function startup speed diagnostic.
@@ -838,7 +836,7 @@ def profile(
         return output_profile()
 
     # Check which modules to focus on for line profiler
-    module_names = set(('happi',))
+    module_names = {'happi'}
     for instance_class in classes:
         try:
             parents = instance_class.mro()
@@ -944,13 +942,13 @@ def pyepics_cleanup():
 def audit(
     ctx,
     list_checks: bool,
-    ext_file: Optional[str],
-    check_choices: List[str],
+    ext_file: str | None,
+    check_choices: list[str],
     details: str,
     use_glob: bool,
     names_only: bool,
     show_json: bool,
-    search_criteria: Tuple[str, ...]
+    search_criteria: tuple[str, ...]
 ):
     """
     Audit the current happi database.
@@ -1028,9 +1026,9 @@ def audit(
                 test_results['check'].append(check)
                 test_results['msg'].append(msg)
 
-    unique_fails = set(test_results['name'][i]
-                       for i in range(len(test_results['name']))
-                       if not test_results['success'][i])
+    unique_fails = {test_results['name'][i]
+                    for i in range(len(test_results['name']))
+                    if not test_results['success'][i]}
     # print outs
     if names_only:
         click.echo(' '.join(unique_fails))

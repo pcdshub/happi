@@ -6,7 +6,7 @@ an Exception with a helpful error message.  These exception messages will be
 caught and organized by the cli audit tool.
 """
 import inspect
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional
 
 from jinja2 import DebugUndefined, Environment, meta
 
@@ -28,7 +28,7 @@ def check_instantiation(result: SearchResult) -> None:
 
 def check_extra_info(
     result: SearchResult,
-    ignore_keys: Optional[List[str]] = None
+    ignore_keys: Optional[list[str]] = None
 ) -> None:
     """
     Check if there is any extra info in the result that does not
@@ -112,7 +112,7 @@ def check_args_kwargs_match(result: SearchResult) -> None:
 def verify_result(
     result: SearchResult,
     check: Callable[[SearchResult], None]
-) -> Tuple[bool, str, str]:
+) -> tuple[bool, str, str]:
     """
     Validate device against the provided check
 

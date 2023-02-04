@@ -8,7 +8,7 @@ import happi.qt
 
 class HappiDeviceExplorer(QtWidgets.QFrame):
     def __init__(self, parent=None):
-        super(HappiDeviceExplorer, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.filter_label = QtWidgets.QLabel("&Filter")
         self.filter_edit = QtWidgets.QLineEdit()

@@ -79,16 +79,16 @@ def create_entry(name, beamline, prefix, kwargs, container,
     """
 
     entry = {
-            '_id': name,
-            'active': True,
-            'args': ['{{prefix}}'],
-            'beamline': beamline,
-            'kwargs': kwargs,
-            'lightpath': False,
-            'name': name,
-            'prefix': prefix,
-            'type': container,
-            **info,
+        '_id': name,
+        'active': True,
+        'args': ['{{prefix}}'],
+        'beamline': beamline,
+        'kwargs': kwargs,
+        'lightpath': False,
+        'name': name,
+        'prefix': prefix,
+        'type': container,
+        **info,
     }
     if class_name is not None:
         entry['device_class'] = class_name
@@ -159,7 +159,7 @@ class QuestionnaireHelper:
         run_number = self.experiment[-2:]
         return f'run{run_number}'
 
-    @functools.lru_cache()
+    @functools.lru_cache
     def get_proposal_list(self) -> dict:
         """
         Get the proposal list (a dict, really) for the configured experiment.
@@ -205,7 +205,7 @@ class QuestionnaireHelper:
         proposals = self.get_proposal_list()
         return proposals[self.proposal]['Instrument']
 
-    @functools.lru_cache()
+    @functools.lru_cache
     def get_run_details(self) -> dict:
         """Get details of the run in a raw dictionary."""
         return self._client.getProposalDetailsForRun(

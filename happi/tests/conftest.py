@@ -1,7 +1,7 @@
 import logging
 import sys
 import tempfile
-from typing import Any, Dict
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -61,7 +61,7 @@ requires_py39 = pytest.mark.skipif(
 
 
 @pytest.fixture(scope='function')
-def item_info() -> Dict[str, Any]:
+def item_info() -> dict[str, Any]:
     return {'name': 'alias',
             'z': 400,
             '_id': 'alias',
@@ -77,7 +77,7 @@ def item_info() -> Dict[str, Any]:
 
 
 @pytest.fixture(scope='function')
-def item(item_info: Dict[str, Any]) -> OphydItem:
+def item(item_info: dict[str, Any]) -> OphydItem:
     return OphydItem(**item_info)
 
 
@@ -92,7 +92,7 @@ class JinjaItem(OphydItem):
 
 
 @pytest.fixture(scope='function')
-def item_info_jinja() -> Dict[str, Any]:
+def item_info_jinja() -> dict[str, Any]:
     return {'name': 'alias',
             'z': 400,
             '_id': 'alias',
@@ -123,12 +123,12 @@ def item_info_jinja() -> Dict[str, Any]:
 
 
 @pytest.fixture(scope='function')
-def item_jinja(item_info_jinja: Dict[str, Any]) -> OphydItem:
+def item_jinja(item_info_jinja: dict[str, Any]) -> OphydItem:
     return JinjaItem(**item_info_jinja)
 
 
 @pytest.fixture(scope='function')
-def valve_info() -> Dict[str, Any]:
+def valve_info() -> dict[str, Any]:
     return {'name': 'name',
             'z': 300,
             'prefix': 'BASE:VGC:PV',
@@ -141,7 +141,7 @@ def valve_info() -> Dict[str, Any]:
 
 
 @pytest.fixture(scope='function')
-def valve(valve_info: Dict[str, Any]) -> OphydItem:
+def valve(valve_info: dict[str, Any]) -> OphydItem:
     return OphydItem(**valve_info)
 
 
@@ -188,7 +188,7 @@ def item2_dev(Item2):
 
 
 @pytest.fixture(scope='function')
-def mockjsonclient(item_info: Dict[str, Any]):
+def mockjsonclient(item_info: dict[str, Any]):
     # Write underlying database
     with tempfile.NamedTemporaryFile(mode='w') as handle:
         simplejson.dump({item_info['name']: item_info},
@@ -202,7 +202,7 @@ def mockjsonclient(item_info: Dict[str, Any]):
 
 @pytest.fixture(scope='function')
 @requires_mongo
-def mockmongoclient(item_info: Dict[str, Any]):
+def mockmongoclient(item_info: dict[str, Any]):
     with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
         mc = MongoClient()
         mc['test_db'].create_collection('test_collect')

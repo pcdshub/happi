@@ -3,7 +3,7 @@ import os
 import re
 import tempfile
 import types
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -67,7 +67,7 @@ path=/var/run/db.json
     os.environ["XDG_CONFIG_HOME"] = xdg_cfg
 
 
-def test_find_document(happi_client: Client, item_info: Dict[str, Any]):
+def test_find_document(happi_client: Client, item_info: dict[str, Any]):
     doc = happi_client.find_document(**item_info)
     assert doc.pop('prefix') == item_info['prefix']
     assert doc.pop('name') == item_info['name']
@@ -82,7 +82,7 @@ def test_find_document(happi_client: Client, item_info: Dict[str, Any]):
         doc = happi_client.find_document(prefix='Does not Exist')
 
 
-def test_create_item(happi_client: Client, item_info: Dict[str, Any]):
+def test_create_item(happi_client: Client, item_info: dict[str, Any]):
     item = happi_client.create_item(OphydItem, **item_info)
     assert item.prefix == item_info['prefix']
     assert item.name == item_info['name']
@@ -109,7 +109,7 @@ def test_add_item(happi_client: Client, valve: OphydItem):
 def test_add_and_find_item(
     happi_client: Client,
     valve: OphydItem,
-    valve_info: Dict[str, Any]
+    valve_info: dict[str, Any]
 ):
     happi_client.add_item(valve)
     loaded_item = happi_client.find_item(**valve_info)
@@ -117,7 +117,7 @@ def test_add_and_find_item(
     assert loaded_item.name == valve.name
 
 
-def test_find_item(happi_client: Client, item_info: Dict[str, Any]):
+def test_find_item(happi_client: Client, item_info: dict[str, Any]):
     item = happi_client.find_item(**item_info)
     assert isinstance(item, OphydItem)
     assert item.prefix == item_info['prefix']
@@ -135,7 +135,7 @@ def test_find_item(happi_client: Client, item_info: Dict[str, Any]):
         happi_client.find_item(**bad)
 
 
-def test_change_item_name(happi_client: Client, item_info: Dict[str, Any]):
+def test_change_item_name(happi_client: Client, item_info: dict[str, Any]):
     item = happi_client.find_item(**item_info)
     assert item.name != 'new_name'
     item.name = 'new_name'
@@ -163,7 +163,7 @@ def test_validate(happi_client: Client):
 def test_search(
     happi_client: Client,
     valve: OphydItem,
-    item_info: Dict[str, Any]
+    item_info: dict[str, Any]
 ):
     happi_client.add_item(valve)
     res = happi_client.search(name=item_info['name'])
@@ -226,7 +226,7 @@ def test_search_regex(
 def test_get_by_id(
     happi_client: Client,
     valve: OphydItem,
-    valve_info: Dict[str, Any]
+    valve_info: dict[str, Any]
 ):
     happi_client.add_item(valve)
     name = valve_info['name']
@@ -238,7 +238,7 @@ def test_remove_item(
     happi_client: Client,
     item: OphydItem,
     valve: OphydItem,
-    item_info: Dict[str, Any]
+    item_info: dict[str, Any]
 ):
     happi_client.remove_item(item)
     assert list(happi_client.backend.find(item_info)) == []
@@ -257,7 +257,7 @@ def test_export(happi_client: Client, valve: OphydItem):
     happi_client.export(open(temp_path, 'w+'),
                         sep=',',
                         attrs=['name', 'prefix'])
-    exp = open(temp_path, 'r').read()
+    exp = open(temp_path).read()
     assert "alias,BASE:PV" in exp
     assert "name,BASE:VGC:PV" in exp
     # Cleanup
@@ -378,7 +378,7 @@ def test_hashable_searchresults(client_with_three_valves: Client):
 
 def test_client_mapping(
     client_with_three_valves: Client,
-    three_valves: Dict[str, Dict[str, Any]]
+    three_valves: dict[str, dict[str, Any]]
 ):
     client = client_with_three_valves
     assert len(client) == 3

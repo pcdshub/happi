@@ -1,7 +1,7 @@
 import copy
 import io
 import re
-from typing import Any, Dict, Type
+from typing import Any
 
 import pytest
 
@@ -10,11 +10,11 @@ from ..errors import ContainerError
 from ..item import EntryInfo, HappiItem, OphydItem
 
 
-def test_get(item: OphydItem, item_info: Dict[str, Any]):
+def test_get(item: OphydItem, item_info: dict[str, Any]):
     assert item.name == item_info['name']
 
 
-def test_init(item: OphydItem, item_info: Dict[str, Any]):
+def test_init(item: OphydItem, item_info: dict[str, Any]):
     assert item.prefix == item_info['prefix']
     assert item.name == item_info['name']
 
@@ -57,7 +57,7 @@ def test_regex_enforce():
                           (str, 'hat', 'hat'), (str, 5, '5'),
                           (bool, True, True), (bool, 0, False),
                           (bool, 'true', True), (bool, 'NO', False)])
-def test_type_enforce_ok(type_spec: Type, value: Any, expected: Any):
+def test_type_enforce_ok(type_spec: type, value: Any, expected: Any):
     entry = EntryInfo(enforce=type_spec)
     assert entry.enforce_value(value) == expected
 
@@ -65,7 +65,7 @@ def test_type_enforce_ok(type_spec: Type, value: Any, expected: Any):
 @pytest.mark.parametrize('type_spec, value',
                          [(int, 'cats'),
                           (bool, '24'), (bool, 'catastrophe')])
-def test_type_enforce_exceptions(type_spec: Type, value: Any):
+def test_type_enforce_exceptions(type_spec: type, value: Any):
     entry = EntryInfo(enforce=type_spec, enforce_doc='bad type')
     with pytest.raises(ValueError) as excinfo:
         entry.enforce_value(value)
@@ -90,7 +90,7 @@ def test_enforce(item: OphydItem):
 def test_container_error():
     with pytest.raises(ContainerError):
         class MyDevice(HappiItem):
-            fault = EntryInfo(enforce=int,  default='not-int')
+            fault = EntryInfo(enforce=int, default='not-int')
 
 
 def test_mandatory_info(item: OphydItem):
@@ -104,13 +104,13 @@ def test_restricted_attr():
             info_names = EntryInfo()
 
 
-def test_post(item: OphydItem, item_info: Dict[str, Any]):
+def test_post(item: OphydItem, item_info: dict[str, Any]):
     post = item.post()
     assert post['prefix'] == item_info['prefix']
     assert post['name'] == item_info['name']
 
 
-def test_show_info(item: OphydItem, item_info: Dict[str, Any]):
+def test_show_info(item: OphydItem, item_info: dict[str, Any]):
     f = io.StringIO()
     item.show_info(handle=f)
     f.seek(0)

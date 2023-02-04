@@ -4,7 +4,7 @@ Backend implementation that combines multiple backends.
 import functools
 import logging
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from .core import ItemMeta, ItemMetaGen, _Backend
 
@@ -42,11 +42,11 @@ class MultiBackend(_Backend):
         A list of instantiated backends in order of priority.
         The backend at index 0 will have the highest priority.
     """
-    def __init__(self, backends: List[_Backend]):
+    def __init__(self, backends: list[_Backend]):
         self.backends = backends
 
     @property
-    def all_items(self) -> List[ItemMeta]:
+    def all_items(self) -> list[ItemMeta]:
         """
         List of all items in all backends.
 
@@ -137,7 +137,7 @@ class MultiBackend(_Backend):
         *,
         start: Union[int, float],
         stop: Optional[Union[int, float]] = None,
-        to_match: Dict[str, Any]
+        to_match: dict[str, Any]
     ) -> ItemMetaGen:
         """
         Find instances that match the search criteria, such that
@@ -169,7 +169,7 @@ class MultiBackend(_Backend):
     @prevent_duplicate_ids
     def find_regex(
         self,
-        to_match: Dict[str, Any],
+        to_match: dict[str, Any],
         *,
         flags=re.IGNORECASE
     ) -> ItemMetaGen:

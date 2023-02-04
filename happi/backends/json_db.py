@@ -7,7 +7,7 @@ import math
 import os
 import os.path
 import re
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 import simplejson as json
 
@@ -60,7 +60,7 @@ class JSONBackend(_Backend):
         initialize: bool = False,
         cfg_path: Optional[str] = None
     ) -> None:
-        self._load_cache: Dict[str, ItemMeta] = None
+        self._load_cache: dict[str, ItemMeta] = None
         # Determine the cfg dir and build path to json db based on that unless we're initted w/o a config
         if cfg_path is not None:
             cfg_dir = os.path.dirname(cfg_path)
@@ -75,7 +75,7 @@ class JSONBackend(_Backend):
         """Clear the loaded cache."""
         self._load_cache = None
 
-    def _load_or_initialize(self) -> Optional[Dict[str, ItemMeta]]:
+    def _load_or_initialize(self) -> Optional[dict[str, ItemMeta]]:
         """Load an existing database or initialize a new one."""
         if self._load_cache is None:
             try:
@@ -88,7 +88,7 @@ class JSONBackend(_Backend):
         return self._load_cache
 
     @property
-    def all_items(self) -> List[ItemMeta]:
+    def all_items(self) -> list[ItemMeta]:
         """All of the items in the database."""
         json = self._load_or_initialize()
         return list(json.values())
@@ -116,15 +116,15 @@ class JSONBackend(_Backend):
         # Dump an empty dictionary
         self.store({})
 
-    def load(self) -> Dict[str, ItemMeta]:
+    def load(self) -> dict[str, ItemMeta]:
         """Load the JSON database."""
-        with open(self.path, 'r') as f:
+        with open(self.path) as f:
             raw_json = f.read()
 
         # Allow for empty files to be considered valid databases:
         return json.loads(raw_json) if raw_json else {}
 
-    def store(self, db: Dict[str, ItemMeta]) -> None:
+    def store(self, db: dict[str, ItemMeta]) -> None:
         """
         Stash the database in the JSON file.
 
@@ -178,7 +178,7 @@ class JSONBackend(_Backend):
         db = self._load_or_initialize()
         return db.get(id_)
 
-    def find(self, to_match: Dict[str, Any]) -> ItemMetaGen:
+    def find(self, to_match: dict[str, Any]) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria.
 
@@ -202,7 +202,7 @@ class JSONBackend(_Backend):
         *,
         start: Union[int, float],
         stop: Optional[Union[int, float]] = None,
-        to_match: Dict[str, Any]
+        to_match: dict[str, Any]
     ) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria, such
@@ -241,7 +241,7 @@ class JSONBackend(_Backend):
 
     def find_regex(
         self,
-        to_match: Dict[str, Any],
+        to_match: dict[str, Any],
         *,
         flags=re.IGNORECASE
     ) -> ItemMetaGen:
@@ -269,7 +269,7 @@ class JSONBackend(_Backend):
     def save(
         self,
         _id: str,
-        post: Dict[str, Any],
+        post: dict[str, Any],
         insert: bool = True
     ) -> None:
         """
@@ -311,7 +311,7 @@ class JSONBackend(_Backend):
                 try:
                     db[_id].update(post)
                 except KeyError:
-                    raise SearchError("No item found {}".format(_id))
+                    raise SearchError(f"No item found {_id}")
 
     def delete(self, _id: str) -> None:
         """

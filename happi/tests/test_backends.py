@@ -2,7 +2,7 @@ import fcntl
 import os
 import os.path
 import tempfile
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 import simplejson
@@ -23,7 +23,7 @@ def mockmongo(mockmongoclient):
 
 
 @pytest.fixture(scope='function')
-def mockjson(item_info: Dict[str, Any], valve_info: Dict[str, Any]):
+def mockjson(item_info: dict[str, Any], valve_info: dict[str, Any]):
     # Write underlying database
     with tempfile.NamedTemporaryFile(mode='w') as handle:
         simplejson.dump({item_info['_id']: item_info},
@@ -59,8 +59,8 @@ def mockmulti(mockjson, mockmongo, valve_info, item_info):
 
 @requires_mongo
 def test_mongo_find(
-    valve_info: Dict[str, Any],
-    item_info: Dict[str, Any],
+    valve_info: dict[str, Any],
+    item_info: dict[str, Any],
     mockmongo
 ):
     mm = mockmongo
@@ -88,8 +88,8 @@ def test_mongo_find(
 @requires_mongo
 def test_mongo_save(
     mockmongo,
-    item_info: Dict[str, Any],
-    valve_info: Dict[str, Any]
+    item_info: dict[str, Any],
+    valve_info: dict[str, Any]
 ):
     # Duplicate item
     with pytest.raises(DuplicateError):
@@ -105,14 +105,14 @@ def test_mongo_save(
 
 
 @requires_mongo
-def test_mongo_delete(mockmongo, item_info: Dict[str, Any]):
+def test_mongo_delete(mockmongo, item_info: dict[str, Any]):
     mockmongo.delete(item_info[Client._id_key])
     assert mockmongo._collection.find_one(item_info) is None
 
 
 def test_json_find(
-    valve_info: Dict[str, Any],
-    item_info: Dict[str, Any],
+    valve_info: dict[str, Any],
+    item_info: dict[str, Any],
     mockjson
 ):
     mm = mockjson
@@ -159,12 +159,12 @@ def test_find_regex(client_with_three_valves, three_valves):
     assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
 
 
-def test_json_delete(mockjson, item_info: Dict[str, Any]):
+def test_json_delete(mockjson, item_info: dict[str, Any]):
     mockjson.delete(item_info[Client._id_key])
     assert item_info not in mockjson.all_items
 
 
-def test_json_save(mockjson, item_info: Dict[str, Any], valve_info):
+def test_json_save(mockjson, item_info: dict[str, Any], valve_info):
     # Duplicate item
     with pytest.raises(DuplicateError):
         mockjson.save(item_info[Client._id_key], item_info, insert=True)
