@@ -119,6 +119,19 @@ def find_unfilled_mandatory_info(
             if getattr(result.item, info) is None]
 
 
+def find_unfilled_optional_info(
+    result: SearchResult
+) -> list[str]:
+    """
+    Return all optional fields that are missing a value
+    """
+    # cannot getattr for extraneous info, shortcircuit conditional
+    return [info for info in list(result.item.keys())
+            if info not in result.item.mandatory_info
+            and info not in result.item.extraneous.keys()
+            and getattr(result.item, info) is None]
+
+
 def check_unfilled_mandatory_info(result: SearchResult) -> None:
     """
     Check that all mandatory EntryInfo have a value.

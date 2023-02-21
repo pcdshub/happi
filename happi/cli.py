@@ -9,6 +9,7 @@ import fnmatch
 import importlib
 import inspect
 import io
+import itertools
 import json
 import logging
 import os
@@ -25,9 +26,10 @@ import coloredlogs
 import prettytable
 
 import happi
-from happi.errors import EnforceError, SearchError
+from happi.errors import SearchError
 
-from .audit import checks, find_unfilled_mandatory_info, verify_result
+from .audit import (checks, find_unfilled_mandatory_info,
+                    find_unfilled_optional_info, verify_result)
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
@@ -1077,12 +1079,15 @@ def audit(
 
 @happi_cli.command()
 @click.pass_context
+@click.option('--fix-optional/--ignore-optinal', 'fix_optional', default=False,
+              help='Also prompt for user input on optional information')
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob (default) or regex style search terms. '
               'Only relevant if search_criteria are provided.')
 @click.argument('search_criteria', nargs=-1)
 def repair(
     ctx,
+    fix_optional: bool,
     use_glob: bool,
     search_criteria: tuple[str, ...]
 ):
@@ -1103,6 +1108,11 @@ def repair(
     for res in results:
         # fix mandatory info with missing defaults
         req_info = (info for info in find_unfilled_mandatory_info(res))
+
+        if fix_optional:
+            empty_opt = find_unfilled_optional_info(res)
+            req_info = itertools.chain(req_info, empty_opt)
+
         try:
             req_field = next(req_info)
         except StopIteration:
@@ -1111,23 +1121,14 @@ def repair(
         res_name = res['_id']
 
         # fix each mandatory field
-        logger.debug(f'repairing ({res_name})')
+        logger.info(f'repairing ({res_name})...')
         while req_field:
-            req_value = click.prompt(
-                f'Required value for ({res_name}.{req_field}) '
-                'missing, please provide new value'
-            )
+            info = res.item._info_attrs[req_field]
+            req_value = prompt_for_entry(info)
+            info.enforce_value(req_value)
+            setattr(res.item, req_field, req_value)
             try:
-                setattr(res.item, req_field, req_value)
                 req_field = next(req_info)
-            except EnforceError:
-                # retry info entry for this item
-                logger.warning(
-                    f'Provided value for ({res_name}.{req_field}) '
-                    'is incompatible with required type '
-                    f'({res.item._info_attrs[req_field].enforce}), '
-                    'cannot repair.'
-                )
             except StopIteration:
                 break
 
