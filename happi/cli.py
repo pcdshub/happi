@@ -1086,20 +1086,32 @@ def repair(
     use_glob: bool,
     search_criteria: tuple[str, ...]
 ):
+    """
+    Repair the database.
+
+    Repairs all entries matching SEARCH_CRITERIA, repairs entire database otherwise.
+    """
+    logger.debug('starting repair block')
+
     client: happi.Client = ctx.obj
     if search_criteria:
         results = search_parser(client, use_glob, search_criteria)
     else:
-        # run repair on all the devices
+        # run repair on all items
         results = search_parser(client, True, '*')
 
     for res in results:
         # fix mandatory info with missing defaults
-        # TODO: deal with missing name?
         req_items = (item for item in res.item.mandatory_info)
-        req_field = next(req_items)
+        try:
+            req_field = next(req_items)
+        except StopIteration:
+            req_field = False
 
         res_name = res['_id']
+
+        # fix each mandatory field
+        logger.debug(f'repairing ({res_name})')
         while req_field:
             if getattr(res.item, req_field) is None:
                 default = res.item._info_attrs[req_field].default
@@ -1112,7 +1124,7 @@ def repair(
                     setattr(res.item, req_field, req_value)
                     req_field = next(req_items)
                 except EnforceError:
-                    # retry prompt for this item
+                    # retry info entry for this item
                     logger.warning(
                         f'Provided value for ({res_name}.{req_field}) '
                         'is incompatible with required type '
@@ -1122,7 +1134,10 @@ def repair(
                 except StopIteration:
                     break
             else:
-                req_field = next(req_items)
+                try:
+                    req_field = next(req_items)
+                except StopIteration:
+                    break
 
         # re-save after creating container
         try:
