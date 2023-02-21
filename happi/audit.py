@@ -109,6 +109,29 @@ def check_args_kwargs_match(result: SearchResult) -> None:
            f'undefined variables found in document: {undefined}'
 
 
+def find_unfilled_mandatory_info(
+    result: SearchResult
+) -> list[str]:
+    """
+    Return all mandatory fields that are missing a value
+    """
+    return [info for info in result.item.mandatory_info
+            if getattr(result.item, info) is None]
+
+
+def check_unfilled_mandatory_info(result: SearchResult) -> None:
+    """
+    Check that all mandatory EntryInfo have a value.
+
+    This identifies problems originating from a mismatch between
+    an item's backend representation and desired container.
+    This may arise from manual editing of the backend database.
+    """
+    unfilled_info = find_unfilled_mandatory_info(result)
+    assert len(unfilled_info) == 0, \
+           f'unfilled mandatory information found: {unfilled_info}'
+
+
 def verify_result(
     result: SearchResult,
     check: Callable[[SearchResult], None]
@@ -150,4 +173,5 @@ def verify_result(
 
 
 checks = [check_instantiation, check_extra_info, check_name_match_id,
-          check_wait_connection, check_args_kwargs_match]
+          check_wait_connection, check_args_kwargs_match,
+          check_unfilled_mandatory_info]

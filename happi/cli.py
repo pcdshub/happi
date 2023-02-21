@@ -27,7 +27,7 @@ import prettytable
 import happi
 from happi.errors import EnforceError, SearchError
 
-from .audit import checks, verify_result
+from .audit import checks, find_unfilled_mandatory_info, verify_result
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
@@ -1102,9 +1102,9 @@ def repair(
 
     for res in results:
         # fix mandatory info with missing defaults
-        req_items = (item for item in res.item.mandatory_info)
+        req_info = (info for info in find_unfilled_mandatory_info(res))
         try:
-            req_field = next(req_items)
+            req_field = next(req_info)
         except StopIteration:
             req_field = False
 
@@ -1113,29 +1113,23 @@ def repair(
         # fix each mandatory field
         logger.debug(f'repairing ({res_name})')
         while req_field:
-            if getattr(res.item, req_field) is None:
-                req_value = click.prompt(
-                    f'Required value for ({res_name}.{req_field}) '
-                    'missing, please provide new value'
+            req_value = click.prompt(
+                f'Required value for ({res_name}.{req_field}) '
+                'missing, please provide new value'
+            )
+            try:
+                setattr(res.item, req_field, req_value)
+                req_field = next(req_info)
+            except EnforceError:
+                # retry info entry for this item
+                logger.warning(
+                    f'Provided value for ({res_name}.{req_field}) '
+                    'is incompatible with required type '
+                    f'({res.item._info_attrs[req_field].enforce}), '
+                    'cannot repair.'
                 )
-                try:
-                    setattr(res.item, req_field, req_value)
-                    req_field = next(req_items)
-                except EnforceError:
-                    # retry info entry for this item
-                    logger.warning(
-                        f'Provided value for ({res_name}.{req_field}) '
-                        'is incompatible with required type '
-                        f'({res.item._info_attrs[req_field].enforce}), '
-                        'cannot repair.'
-                    )
-                except StopIteration:
-                    break
-            else:
-                try:
-                    req_field = next(req_items)
-                except StopIteration:
-                    break
+            except StopIteration:
+                break
 
         # re-save after creating container
         try:
