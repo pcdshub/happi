@@ -1114,11 +1114,9 @@ def repair(
         logger.debug(f'repairing ({res_name})')
         while req_field:
             if getattr(res.item, req_field) is None:
-                default = res.item._info_attrs[req_field].default
                 req_value = click.prompt(
                     f'Required value for ({res_name}.{req_field}) '
-                    'missing, please provide new value',
-                    default=default
+                    'missing, please provide new value'
                 )
                 try:
                     setattr(res.item, req_field, req_value)
