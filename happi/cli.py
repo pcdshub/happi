@@ -25,7 +25,7 @@ import coloredlogs
 import prettytable
 
 import happi
-from happi.errors import SearchError
+from happi.errors import EnforceError, SearchError
 
 from .audit import checks, verify_result
 from .prompt import prompt_for_entry, transfer_container
@@ -1073,6 +1073,67 @@ def audit(
         if len(pt.rows) > 0:
             click.echo(pt)
         click.echo(f'# devices failed: {len(unique_fails)} / {len(results)}')
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='Use glob (default) or regex style search terms. '
+              'Only relevant if search_criteria are provided.')
+@click.argument('search_criteria', nargs=-1)
+def repair(
+    ctx,
+    use_glob: bool,
+    search_criteria: tuple[str, ...]
+):
+    client: happi.Client = ctx.obj
+    if search_criteria:
+        results = search_parser(client, use_glob, search_criteria)
+    else:
+        # run repair on all the devices
+        results = search_parser(client, True, '*')
+
+    for res in results:
+        # fix mandatory info with missing defaults
+        # TODO: deal with missing name?
+        req_items = (item for item in res.item.mandatory_info)
+        req_field = next(req_items)
+
+        res_name = res['_id']
+        while req_field:
+            if getattr(res.item, req_field) is None:
+                default = res.item._info_attrs[req_field].default
+                req_value = click.prompt(
+                    f'Required value for ({res_name}.{req_field}) '
+                    'missing, please provide new value',
+                    default=default
+                )
+                try:
+                    setattr(res.item, req_field, req_value)
+                    req_field = next(req_items)
+                except EnforceError:
+                    # retry prompt for this item
+                    logger.warning(
+                        f'Provided value for ({res_name}.{req_field}) '
+                        'is incompatible with required type '
+                        f'({res.item._info_attrs[req_field].enforce}), '
+                        'cannot repair.'
+                    )
+                except StopIteration:
+                    break
+            else:
+                req_field = next(req_items)
+
+        # re-save after creating container
+        try:
+            # will save optional data with defaults
+            # optional data without defaults saved as null
+            res.item.save()
+        except KeyboardInterrupt:
+            # Finish the current save if interrupted
+            logger.warning('caught keboard interrupt, finishing')
+            res.item.save()
+            break
 
 
 def main():
