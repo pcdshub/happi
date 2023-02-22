@@ -517,6 +517,17 @@ def bad_db(tmp_path):
         "name": "tst_kwarg_mismatch",
         "last_edit": "Thu Apr 12 14:40:08 2018",
         "type": "HappiItem"
+    },
+    "tst_missing_mandatory": {
+        "_id": "tst_missing_mandatory",
+        "active": true,
+        "args": ["{{active}}"],
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "kwargs": {"creation": "{{creation}}"},
+        "name": "tst_missing_mandatory",
+        "last_edit": "Thu Apr 12 14:40:08 2018",
+        "type": "OphydItem"
     }
 }
 """)
