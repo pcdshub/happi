@@ -27,7 +27,8 @@ import prettytable
 import happi
 from happi.errors import SearchError
 
-from .audit import checks, verify_result
+from .audit import (checks, find_unfilled_mandatory_info,
+                    find_unfilled_optional_info, verify_result)
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
@@ -1073,6 +1074,63 @@ def audit(
         if len(pt.rows) > 0:
             click.echo(pt)
         click.echo(f'# devices failed: {len(unique_fails)} / {len(results)}')
+
+
+@happi_cli.command()
+@click.pass_context
+@click.option('--fix-optional/--ignore-optional', 'fix_optional', default=False,
+              help='Also prompt for user input on optional information')
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='Use glob (default) or regex style search terms. '
+              'Only relevant if search_criteria are provided.')
+@click.argument('search_criteria', nargs=-1)
+def repair(
+    ctx,
+    fix_optional: bool,
+    use_glob: bool,
+    search_criteria: tuple[str, ...]
+):
+    """
+    Repair the database.
+
+    Repairs all entries matching SEARCH_CRITERIA, repairs entire database otherwise.
+    """
+    logger.debug('starting repair block')
+
+    client: happi.Client = ctx.obj
+    if search_criteria:
+        results = search_parser(client, use_glob, search_criteria)
+    else:
+        # run repair on all items
+        results = search_parser(client, True, '*')
+
+    for res in results:
+        # fix mandatory info with missing defaults
+        req_info = find_unfilled_mandatory_info(res)
+
+        if fix_optional:
+            req_info.extend(find_unfilled_optional_info(res))
+
+        res_name = res['_id']
+
+        # fix each mandatory field
+        logger.info(f'repairing ({res_name})...')
+        for req_field in req_info:
+            info = res.item._info_attrs[req_field]
+            req_value = prompt_for_entry(info)
+            info.enforce_value(req_value)
+            setattr(res.item, req_field, req_value)
+
+        # re-save after creating container
+        try:
+            # will save optional data with defaults
+            # optional data without defaults saved as null
+            res.item.save()
+        except KeyboardInterrupt:
+            # Finish the current save if interrupted
+            logger.warning('caught keyboard interrupt, finishing')
+            res.item.save()
+            break
 
 
 def main():
