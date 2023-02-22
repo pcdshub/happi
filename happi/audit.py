@@ -58,7 +58,8 @@ def check_name_match_id(result: SearchResult) -> None:
     """
     id_field = result.metadata.get('_id')
     name_field = result.metadata.get('name')
-    assert id_field == name_field, f'id: {id_field} != name: {name_field}'
+    if id_field != name_field:
+        raise ValueError(f'id: {id_field} != name: {name_field}')
 
 
 def check_wait_connection(result: SearchResult) -> None:
@@ -69,10 +70,10 @@ def check_wait_connection(result: SearchResult) -> None:
     """
     dev = result.get()
 
-    assert (hasattr(dev, 'wait_for_connection') and
-            callable(getattr(dev, 'wait_for_connection'))), \
-           ('device has no wait_for_connection method, and is likely '
-            'not an ophyd v1 device')
+    if not (hasattr(dev, 'wait_for_connection') and
+            callable(getattr(dev, 'wait_for_connection'))):
+        raise ValueError('device has no wait_for_connection method, '
+                         'and is likely not an ophyd v1 device')
 
     try:
         dev.wait_for_connection(timeout=5)
@@ -105,8 +106,8 @@ def check_args_kwargs_match(result: SearchResult) -> None:
     rendered = template.render(**doc)
     undefined = meta.find_undeclared_variables(env.parse(rendered))
 
-    assert len(undefined) == 0, \
-           f'undefined variables found in document: {undefined}'
+    if len(undefined) != 0:
+        raise ValueError(f'undefined variables found in document: {undefined}')
 
 
 def find_unfilled_mandatory_info(
@@ -141,8 +142,8 @@ def check_unfilled_mandatory_info(result: SearchResult) -> None:
     This may arise from manual editing of the backend database.
     """
     unfilled_info = find_unfilled_mandatory_info(result)
-    assert len(unfilled_info) == 0, \
-           f'unfilled mandatory information found: {unfilled_info}'
+    if len(unfilled_info) != 0:
+        raise ValueError(f'unfilled mandatory information found: {unfilled_info}')
 
 
 def verify_result(
