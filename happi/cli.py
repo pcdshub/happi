@@ -9,7 +9,6 @@ import fnmatch
 import importlib
 import inspect
 import io
-import itertools
 import json
 import logging
 import os
@@ -1107,30 +1106,20 @@ def repair(
 
     for res in results:
         # fix mandatory info with missing defaults
-        req_info = (info for info in find_unfilled_mandatory_info(res))
+        req_info = find_unfilled_mandatory_info(res)
 
         if fix_optional:
-            empty_opt = find_unfilled_optional_info(res)
-            req_info = itertools.chain(req_info, empty_opt)
-
-        try:
-            req_field = next(req_info)
-        except StopIteration:
-            req_field = False
+            req_info.extend(find_unfilled_optional_info(res))
 
         res_name = res['_id']
 
         # fix each mandatory field
         logger.info(f'repairing ({res_name})...')
-        while req_field:
+        for req_field in req_info:
             info = res.item._info_attrs[req_field]
             req_value = prompt_for_entry(info)
             info.enforce_value(req_value)
             setattr(res.item, req_field, req_value)
-            try:
-                req_field = next(req_info)
-            except StopIteration:
-                break
 
         # re-save after creating container
         try:
