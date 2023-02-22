@@ -1079,7 +1079,7 @@ def audit(
 
 @happi_cli.command()
 @click.pass_context
-@click.option('--fix-optional/--ignore-optinal', 'fix_optional', default=False,
+@click.option('--fix-optional/--ignore-optional', 'fix_optional', default=False,
               help='Also prompt for user input on optional information')
 @click.option('--glob/--regex', 'use_glob', default=True,
               help='Use glob (default) or regex style search terms. '
@@ -1139,7 +1139,7 @@ def repair(
             res.item.save()
         except KeyboardInterrupt:
             # Finish the current save if interrupted
-            logger.warning('caught keboard interrupt, finishing')
+            logger.warning('caught keyboard interrupt, finishing')
             res.item.save()
             break
 
