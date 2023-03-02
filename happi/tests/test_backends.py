@@ -190,6 +190,19 @@ def test_json_initialize():
     os.remove("testing.json")
 
 
+def test_json_tempfile_location():
+    jb = JSONBackend("testing.json", initialize=False)
+    assert os.path.dirname(jb.path) == os.path.dirname(jb._temp_path())
+
+
+def test_json_tempfile_uniqueness():
+    jb = JSONBackend("testing.json", initialize=False)
+    tempfiles = []
+    for _ in range(100):
+        tempfiles.append(jb._temp_path())
+    assert len(set(tempfiles)) == len(tempfiles)
+
+
 @requires_questionnaire
 def test_qs_find(mockqsbackend):
     assert len(list(mockqsbackend.find(dict(beamline='TST')))) == 14
