@@ -24,6 +24,6 @@
 - [ ] Code contains descriptive docstrings, including context and API
 - [ ] New/changed functions and methods are covered in the test suite where possible
 - [ ] Test suite passes locally
-- [ ] Test suite passes on continuous integration (Travis CI)
+- [ ] Test suite passes on GitHub Actions
 - [ ] Ran ``docs/pre-release-notes.sh`` and created a pre-release documentation page
 - [ ] Pre-release docs include context, functional descriptions, and contributors as appropriate

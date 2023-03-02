@@ -12,15 +12,6 @@
   <a href="https://pcdshub.github.io/happi/">Documentation</a>
 </p>
 
-<div align="center">
-  <!-- Build Status -->
-  <a href="https://travis-ci.org/pcdshub/happi">
-    <img
-src="https://img.shields.io/travis/pcdshub/happi/master.svg?style=flat-square"
-      alt="Build Status" />
-  </a>
-</div>
-
 ## Motivation
 LCLS endstations deal with dynamic sets of instrumentation. Information like
 ports, triggers and aliases are all important for operation, but hard to manage
