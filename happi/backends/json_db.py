@@ -142,7 +142,8 @@ class JSONBackend(_Backend):
         with open(temp_path, 'w') as fd:
             json.dump(db, fd, sort_keys=True, indent=4)
 
-        shutil.copymode(self.path, temp_path)
+        if os.path.exists(self.path):
+            shutil.copymode(self.path, temp_path)
         shutil.move(temp_path, self.path)
 
     def _temp_path(self) -> str:
