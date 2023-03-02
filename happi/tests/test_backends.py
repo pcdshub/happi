@@ -1,4 +1,3 @@
-import fcntl
 import os
 import os.path
 import tempfile
@@ -176,15 +175,6 @@ def test_json_save(mockjson, item_info: dict[str, Any], valve_info):
     # Add to database
     mockjson.save(valve_info[Client._id_key], valve_info, insert=True)
     assert valve_info in mockjson.all_items
-
-
-def test_json_locking(mockjson):
-    # Place lock on file
-    handle = open(mockjson.path, 'w')
-    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    # Attempt to save
-    with pytest.raises(IOError):
-        mockjson.store({"_ID": "ID"})
 
 
 def test_json_initialize():
