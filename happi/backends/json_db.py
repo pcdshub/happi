@@ -2,11 +2,15 @@
 Backend implemenation using the ``simplejson`` package.
 """
 import contextlib
+import getpass
 import logging
 import math
 import os
 import os.path
 import re
+import shutil
+import time
+import uuid
 from typing import Any, Callable, Optional, Union
 
 import simplejson as json
@@ -16,14 +20,6 @@ from ..errors import DuplicateError, SearchError
 from .core import ItemMeta, ItemMetaGen, _Backend
 
 logger = logging.getLogger(__name__)
-
-
-try:
-    import fcntl
-except ImportError:
-    logger.debug("Unable to import 'fcntl'. Will be unable to lock files")
-    fcntl = None
-
 
 # A sentinel for keys that are missing for comparisons below.
 _MISSING = object()
@@ -128,29 +124,45 @@ class JSONBackend(_Backend):
         """
         Stash the database in the JSON file.
 
+        This is a two-step process:
+
+        1. Write the database out to a temporary file
+        2. Move the temporary file over the previous database.
+
+        Step 2 is an atomic operation, ensuring that the database
+        does not get corrupted by an interrupted json.dump.
+
         Parameters
         ----------
         db : dict
             Dictionary to store in JSON.
-
-        Raises
-        ------
-        BlockingIOError
-            If the file is already being used by another happi operation.
         """
+        temp_path = self._temp_path()
 
-        with open(self.path, 'w+') as f:
-            # Create lock in filesystem
-            if fcntl is not None:
-                fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            # Dump to file
-            try:
-                json.dump(db, f, sort_keys=True, indent=4)
+        with open(temp_path, 'w') as fd:
+            json.dump(db, fd, sort_keys=True, indent=4)
 
-            finally:
-                if fcntl is not None:
-                    # Release lock in filesystem
-                    fcntl.flock(f, fcntl.LOCK_UN)
+        if os.path.exists(self.path):
+            shutil.copymode(self.path, temp_path)
+        shutil.move(temp_path, self.path)
+
+    def _temp_path(self) -> str:
+        """
+        Return a temporary path to write the json file to during "store".
+
+        Includes a username and a timestamp for sorting
+        (in the cases where the temp file isn't cleaned up)
+        and a hash for uniqueness
+        (in the cases where multiple temp files are written at once).
+        """
+        directory = os.path.dirname(self.path)
+        filename = (
+            f".{getpass.getuser()}"
+            f"_{int(time.time())}"
+            f"_{str(uuid.uuid4())[:8]}"
+            f"_{os.path.basename(self.path)}"
+        )
+        return os.path.join(directory, filename)
 
     def _iterative_compare(self, comparison: Callable) -> ItemMetaGen:
         """

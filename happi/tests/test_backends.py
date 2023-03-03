@@ -1,4 +1,3 @@
-import fcntl
 import os
 import os.path
 import tempfile
@@ -178,15 +177,6 @@ def test_json_save(mockjson, item_info: dict[str, Any], valve_info):
     assert valve_info in mockjson.all_items
 
 
-def test_json_locking(mockjson):
-    # Place lock on file
-    handle = open(mockjson.path, 'w')
-    fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    # Attempt to save
-    with pytest.raises(IOError):
-        mockjson.store({"_ID": "ID"})
-
-
 def test_json_initialize():
     jb = JSONBackend("testing.json", initialize=True)
     # Check that the file was made
@@ -198,6 +188,19 @@ def test_json_initialize():
         JSONBackend("testing.json", initialize=True)
     # Cleanup
     os.remove("testing.json")
+
+
+def test_json_tempfile_location():
+    jb = JSONBackend("testing.json", initialize=False)
+    assert os.path.dirname(jb.path) == os.path.dirname(jb._temp_path())
+
+
+def test_json_tempfile_uniqueness():
+    jb = JSONBackend("testing.json", initialize=False)
+    tempfiles = []
+    for _ in range(100):
+        tempfiles.append(jb._temp_path())
+    assert len(set(tempfiles)) == len(tempfiles)
 
 
 @requires_questionnaire
