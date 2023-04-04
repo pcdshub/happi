@@ -2,6 +2,41 @@ Release History
 ###############
 
 
+v2.1.0 (2023-04-03)
+===================
+
+Features
+--------
+- Adds ``happi repair`` command, for synchronizing backend database with fields expected by container.  Adds a corresponding audit function
+- adds audit functions that check the connection status of all signals in an
+  ophyd device (``check_wait_connection``) and verify any fields requested by
+  args/kwargs exist in the database (``check_args_kwargs_match``).
+- adds ``happi audit -d/--details`` option to print the source of a requested
+  audit function
+- adds delete cli command
+
+Bugfixes
+--------
+- Fix an issue where an ill-timed interrupt of the json backend's
+  ``store`` operation could truncate the data file. This also removes
+  the implicit/optional dependency on ``fcntl``.
+
+Maintenance
+-----------
+- Remove some lingering references to Travis CI
+- Migrates from travis ci to github actions for continuous integration testing, and documentation deployment
+- Updates happi to use setuptools-scm, replacing versioneer, as its version-string management tool of choice
+- Syntax has been updated to Python 3.9+ via ``pyupgrade``
+- happi has migrated to modern ``pyproject.toml``, replacing ``setup.py``
+- Sphinx 6.0 now supported for documentation building
+
+Contributors
+------------
+- tangkong
+- zllentz
+
+
+
 v2.0.0 (2022-10-20)
 ===================
 
