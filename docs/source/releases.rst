@@ -14,7 +14,7 @@ Features
   args/kwargs exist in the database (``check_args_kwargs_match``).
 - Adds ``happi audit -d/--details`` option to print the source of a requested
   audit function.
-- Adds delete cli command.
+- Adds the ``happi delete`` CLI tool for deleting entries from the happi database.
 
 Bugfixes
 --------
@@ -24,7 +24,7 @@ Bugfixes
 
 Maintenance
 -----------
-- Migrates from travis ci to github actions for continuous integration testing, and documentation deployment.
+- Migrates from Travis CI to GitHub Actions for continuous integration testing, and documentation deployment.
 - Updates happi to use setuptools-scm, replacing versioneer, as its version-string management tool of choice.
 - Syntax has been updated to Python 3.9+ via ``pyupgrade``.
 - happi has migrated to modern ``pyproject.toml``, replacing ``setup.py``.
