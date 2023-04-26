@@ -123,6 +123,9 @@ def from_container(
         The item to load.
     attach_md : bool, optional
         Attach the container to the instantiated object as ``md``.
+    run_post_attach_hook : bool, optional
+        Run ``post_happi_md`` method on the device after attaching the container
+        if possible.
     use_cache : bool, optional
         When devices are loaded they are stored in the ``happi.cache``
         dictionary. This means that repeated attempts to load the device will
