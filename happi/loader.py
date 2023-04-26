@@ -91,6 +91,7 @@ def fill_template(
 def from_container(
     item: HappiItem,
     attach_md: bool = True,
+    run_post_attach_hook: bool = True,
     use_cache: bool = True,
     threaded: bool = False,
 ) -> Any:
@@ -200,6 +201,12 @@ def from_container(
             setattr(obj, 'md', item)
         except Exception:
             logger.warning("Unable to attach metadata dictionary to device")
+
+        if run_post_attach_hook and hasattr(obj, 'post_happi_md'):
+            try:
+                obj.post_happi_md()
+            except Exception as ex:
+                logger.warning(f"Unable to run {obj}.post_happi_md: {ex}")
 
     # Store the device in the cache
     cache[item.name] = obj
