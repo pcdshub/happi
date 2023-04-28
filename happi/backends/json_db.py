@@ -44,7 +44,7 @@ class JSONBackend(_Backend):
     ----------
     path : str
         Path to JSON file.
-    initialze : bool, optional
+    initialize : bool, optional
         Initialize a new empty JSON file to begin filling.
     cfg_path : str, optional
         Path to the happi config.
