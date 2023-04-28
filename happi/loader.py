@@ -91,6 +91,7 @@ def fill_template(
 def from_container(
     item: HappiItem,
     attach_md: bool = True,
+    run_post_attach_hook: bool = True,
     use_cache: bool = True,
     threaded: bool = False,
 ) -> Any:
@@ -122,6 +123,9 @@ def from_container(
         The item to load.
     attach_md : bool, optional
         Attach the container to the instantiated object as ``md``.
+    run_post_attach_hook : bool, optional
+        Run ``post_happi_md`` method on the device after attaching the container
+        if possible.
     use_cache : bool, optional
         When devices are loaded they are stored in the ``happi.cache``
         dictionary. This means that repeated attempts to load the device will
@@ -200,6 +204,12 @@ def from_container(
             setattr(obj, 'md', item)
         except Exception:
             logger.warning("Unable to attach metadata dictionary to device")
+
+        if run_post_attach_hook and hasattr(obj, 'post_happi_md'):
+            try:
+                obj.post_happi_md()
+            except Exception as ex:
+                logger.warning(f"Unable to run {obj}.post_happi_md: {ex}")
 
     # Store the device in the cache
     cache[item.name] = obj
