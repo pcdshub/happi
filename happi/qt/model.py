@@ -170,10 +170,12 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
                 field_val = get_happi_entry_value(entry.item, field)
                 entry_group[field_val].append(entry.item)
             except ValueError:
-                logger.exception(
+                logger.debug(
                     'Could not retrieve value for field %s at entry %s',
                     field, entry
                 )
+                field_val = '[KEY NOT FOUND]'
+                entry_group[field_val].append(entry.item)
 
         for idx, (key_value, entries) in enumerate(entry_group.items()):
             root = QtGui.QStandardItem(key_value)
