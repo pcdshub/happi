@@ -7,11 +7,17 @@ v2.2.0 (2023-05-08)
 
 Features
 --------
-- Adds a hook in happi.loader.from_container that runs the method ``post_happi_md`` on an instantiated object after the metadata container has been attached.  This allows a clear method for objects to interact with happi metadata if desired.
+- Adds a hook in happi.loader.from_container that runs the method
+  ``post_happi_md`` on an instantiated object after the metadata
+  container has been attached.
+  This allows a clear method for objects to interact with
+  happi metadata if desired.
 
 Maintenance
 -----------
-- Makes HappiDeviceTreeView more tolerant of items with missing metadata keys. items missing the key used to group the tree view will be organized into a catch-all "[KEY NOT FOUND]" group
+- Makes HappiDeviceTreeView more tolerant of items with missing metadata keys.
+  items missing the key used to group the tree view will be organized
+  into a catch-all "[KEY NOT FOUND]" group.
 
 Contributors
 ------------
