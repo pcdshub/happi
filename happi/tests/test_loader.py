@@ -1,4 +1,5 @@
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 
@@ -149,3 +150,28 @@ def test_filter_kwargs(item_jinja: OphydItem):
     assert getattr(filtered_dev, 'blank_exclude', 'DNE') == 'DNE'
     for bl in blanks:
         assert getattr(filtered_dev, bl, 'DNE') == 'DNE'
+
+
+class PostDevice:
+    def post_happi_md(self):
+        print('post_happi_md hook run')
+
+
+@pytest.fixture
+def item_post_md_hook():
+    item = HappiItem(name='post_test',
+                     device_class='happi.tests.test_loader.PostDevice')
+    return item
+
+
+def test_post_happi_md(item_post_md_hook: HappiItem):
+    with patch('happi.tests.test_loader.PostDevice.post_happi_md') as mock:
+        dev = from_container(item_post_md_hook, use_cache=False)
+        assert isinstance(dev, PostDevice)
+        mock.assert_called_once()
+
+    with patch('happi.tests.test_loader.PostDevice.post_happi_md') as mock:
+        dev = from_container(item_post_md_hook, run_post_attach_hook=False,
+                             use_cache=False)
+        assert isinstance(dev, PostDevice)
+        mock.assert_not_called()
