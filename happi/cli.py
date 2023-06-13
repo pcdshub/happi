@@ -14,6 +14,7 @@ import logging
 import os
 # on import allows arrow key navigation in prompt
 import readline  # noqa
+import subprocess
 import sys
 import time
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
@@ -1131,6 +1132,17 @@ def repair(
             logger.warning('caught keyboard interrupt, finishing')
             res.item.save()
             break
+
+
+@happi_cli.command()
+def edit_config():
+    config_filepath = happi.client.Client.find_config()
+    if sys.platform.startswith("win32"):
+        import shutil
+        editor = shutil.which(os.environ.get("EDITOR", "notepad.exe"))
+        subprocess.run([editor, config_filepath])
+    else:
+        subprocess.run([os.environ.get("EDITOR", "vi"), config_filepath])
 
 
 def main():
