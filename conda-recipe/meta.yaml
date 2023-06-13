@@ -27,6 +27,7 @@ requirements:
   - coloredlogs
   - entrypoints
   - jinja2
+  - platformdirs
   - prettytable
   - simplejson
   run-constrained:

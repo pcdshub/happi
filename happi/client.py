@@ -12,6 +12,8 @@ import time as ttime
 from collections.abc import Sequence
 from typing import Any, Optional
 
+import platformdirs
+
 from . import containers
 from .backends import BACKENDS, DEFAULT_BACKEND
 from .backends.core import _Backend
@@ -894,14 +896,17 @@ class Client(collections.abc.Mapping):
             return happi_cfg
         # Search in the current directory and home directory
         else:
-            config_dir = (os.environ.get('XDG_CONFIG_HOME')
-                          or os.path.expanduser('~/.config'))
-            logger.debug('Searching for Happi config in %s', config_dir)
-            for path in ('.happi.cfg', 'happi.cfg'):
-                full_path = os.path.join(config_dir, path)
-                if os.path.exists(full_path):
-                    logger.debug("Found configuration file at %r", full_path)
-                    return full_path
+            config_dirs = [os.environ.get('XDG_CONFIG_HOME', "."),
+                           os.path.expanduser('~/.config'),
+                           platformdirs.user_config_dir("happi")]
+            for directory in config_dirs:
+                logger.debug('Searching for Happi config in %s', directory)
+                for path in ('.happi.cfg', 'happi.cfg'):
+                    full_path = os.path.join(directory, path)
+
+                    if os.path.exists(full_path):
+                        logger.debug("Found configuration file at %r", full_path)
+                        return full_path
         # If found nothing
         raise OSError("No happi configuration file found. Check HAPPI_CFG.")
 
