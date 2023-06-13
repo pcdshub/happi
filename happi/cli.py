@@ -1136,6 +1136,7 @@ def repair(
 
 @happi_cli.command()
 def edit_config():
+    """Open happi configuration file for editing."""
     config_filepath = happi.client.Client.find_config()
     if sys.platform.startswith("win32"):
         import shutil
