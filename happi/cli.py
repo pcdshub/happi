@@ -23,6 +23,7 @@ from pathlib import Path
 
 import click
 import coloredlogs
+import platformdirs
 import prettytable
 
 import happi
@@ -1145,6 +1146,46 @@ def edit_config():
     else:
         subprocess.run([os.environ.get("EDITOR", "vi"), config_filepath])
 
+
+@happi_cli.command()
+@click.option("--overwrite/--no-overwrite", "overwrite", default=False,
+              help="Overwrite existing config.")
+def init(overwrite):
+    """Create configuration file with default options."""
+
+    # find config_filepath
+    try:
+        config_filepath = Path(happi.client.Client.find_config())
+        if not overwrite:
+            click.echo("Found existing config file at:")
+            click.echo(f"  {config_filepath}")
+            click.echo("Stopping! Use --overwrite to destroy this config file.")
+            return
+    except OSError:
+        config_filepath = platformdirs.user_config_dir("happi")
+    click.echo("Creating new config file at:")
+    click.echo(f"  {config_filepath}")
+
+    # find database_filepath
+    database_filepath = Path(platformdirs.user_data_dir("happi")) / "db.json"
+    if database_filepath.exists():
+        click.echo("Using existing database file at:")
+    else:
+        click.echo("Creating new database file at:")
+
+    click.echo(f"  {database_filepath}")
+
+    # create config file
+    config_filepath.parent.mkdir(parents=True, exist_ok=True)
+    with open(config_filepath, "w") as f:
+        f.write("[DEFAULT]\n")
+        f.write(f"path={database_filepath}\n")
+
+    # create database file
+    database_filepath.parent.mkdir(parents=True, exist_ok=True)
+    database_filepath.touch(exist_ok=True)
+
+    click.echo("Done!")
 
 def main():
     """Execute the ``happi_cli`` with command line arguments"""
