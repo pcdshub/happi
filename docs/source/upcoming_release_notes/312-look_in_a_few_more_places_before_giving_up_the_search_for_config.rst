@@ -15,7 +15,7 @@ Bugfixes
 
 Maintenance
 -----------
-- add dependency on appdirs
+- add dependency on platformdirs
 
 Contributors
 ------------
