@@ -1,6 +1,7 @@
 click
 jinja2
 simplejson
+platformdirs
 prettytable
 coloredlogs
 entrypoints
