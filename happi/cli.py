@@ -1187,6 +1187,7 @@ def init(overwrite):
 
     click.echo("Done!")
 
+
 def main():
     """Execute the ``happi_cli`` with command line arguments"""
     happi_cli()
