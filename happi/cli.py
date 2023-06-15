@@ -23,6 +23,7 @@ from pathlib import Path
 
 import click
 import coloredlogs
+import platformdirs
 import prettytable
 
 import happi
@@ -66,13 +67,15 @@ def happi_cli(ctx, path, verbose):
     logger.debug("Set logging level of %r to %r", shown_logger.name, level)
 
     # gather client
-    client = happi.client.Client.from_config(cfg=path)
-    logger.debug("Happi client: %r" % client)
-
-    # insert items into context to be passed to subcommands
-    # User objects must be assigned to ctx.obj, which will be passed
-    # through to new context objects
-    ctx.obj = client
+    try:
+        client = happi.client.Client.from_config(cfg=path)
+        logger.debug("Happi client: %r" % client)
+        # insert items into context to be passed to subcommands
+        # User objects must be assigned to ctx.obj, which will be passed
+        # through to new context objects
+        ctx.obj = client
+    except OSError:
+        logger.debug("Happi configuration not found.")
 
     # Cleanup tasks related to loaded devices
     @ctx.call_on_close
@@ -1134,7 +1137,12 @@ def repair(
             break
 
 
-@happi_cli.command()
+@click.group(help="Commands related to the happi config file.")
+def config():
+    pass
+
+
+@config.command(name="edit")
 def edit_config():
     """Open happi configuration file for editing."""
     config_filepath = happi.client.Client.find_config()
@@ -1146,6 +1154,60 @@ def edit_config():
         subprocess.run([os.environ.get("EDITOR", "vi"), config_filepath])
 
 
+@config.command()
+@click.option("--overwrite/--no-overwrite", "overwrite", default=False,
+              help="Overwrite existing config.")
+def init(overwrite):
+    """Create configuration file with default options."""
+
+    # find config_filepath
+    try:
+        config_filepath = Path(happi.client.Client.find_config())
+        if not overwrite:
+            click.echo("Found existing config file at:")
+            click.echo(f"  {config_filepath}")
+            click.echo("Stopping! Use --overwrite to destroy this config file.")
+            return
+    except OSError:
+        config_filepath = Path(platformdirs.user_config_dir("happi")) / "happi.cfg"
+    click.echo("Creating new config file at:")
+    click.echo(f"  {config_filepath}")
+
+    # find database_filepath
+    database_filepath = Path(platformdirs.user_data_dir("happi")) / "db.json"
+    if database_filepath.exists():
+        click.echo("Using existing database file at:")
+    else:
+        click.echo("Creating new database file at:")
+
+    click.echo(f"  {database_filepath}")
+
+    # create config file
+    config_filepath.parent.mkdir(parents=True, exist_ok=True)
+    with open(config_filepath, "w") as f:
+        f.write("[DEFAULT]\n")
+        f.write(f"path={database_filepath}\n")
+
+    # create database file
+    database_filepath.parent.mkdir(parents=True, exist_ok=True)
+    database_filepath.touch(exist_ok=True)
+
+    click.echo("Done!")
+
+
+@config.command()
+def show():
+    """Show configuration file in current state."""
+    config_filepath = Path(happi.client.Client.find_config())
+    click.echo(f"File: {config_filepath}")
+    click.echo("-"*79)
+    with open(config_filepath, "r") as f:
+        for line in f:
+            click.echo(line.strip())
+    click.echo("-"*79)
+
+
 def main():
     """Execute the ``happi_cli`` with command line arguments"""
+    happi_cli.add_command(config)
     happi_cli()
