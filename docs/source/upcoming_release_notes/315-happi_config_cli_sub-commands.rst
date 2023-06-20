@@ -7,9 +7,9 @@ API Changes
 
 Features
 --------
-- happi config edit - open config file in $EDITOR
-- happi config init - create new config file with default options
-- happi config show - show location & contents of config file
+- CLI command ``happi config edit`` - open config file in $EDITOR
+- CLI command ``happi config init`` - create new config file with default options
+- CLI command ``happi config show`` - show location & contents of config file
 
 Bugfixes
 --------
