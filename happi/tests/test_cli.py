@@ -97,10 +97,10 @@ def test_cli_no_argument(runner: CliRunner):
     assert 'Commands:' in result.output
 
 
-def test_search(client: happi.client.Client):
+def test_search(client: happi.client.Client, happi_cfg: str):
     res = client.search_regex(beamline="TST")
 
-    with search.make_context('search', ['beamline=TST'], obj=client) as ctx:
+    with search.make_context('search', ['beamline=TST'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
     assert [r.item for r in res] == [r.item for r in res_cli]
@@ -113,7 +113,7 @@ def test_search_with_name(
 ):
     res = client.search_regex(name='TST_BASE_PIM2')
 
-    with search.make_context('search', ['TST_BASE_PIM2'], obj=client) as ctx:
+    with search.make_context('search', ['TST_BASE_PIM2'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
     assert [r.item for r in res] == [r.item for r in res_cli]
@@ -136,9 +136,9 @@ def test_search_glob_regex(runner: CliRunner, happi_cfg: str):
     assert glob_result.output == regex_result.output
 
 
-def test_search_z(client: happi.client.Client):
+def test_search_z(happi_cfg: str, client: happi.client.Client):
     res = client.search_regex(z="6.0")
-    with search.make_context('search', ['z=6.0'], obj=client) as ctx:
+    with search.make_context('search', ['z=6.0'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
     assert [r.item for r in res] == [r.item for r in res_cli]
@@ -151,7 +151,7 @@ def test_search_z_range(
 ):
     res = client.search_range('z', 3.0, 6.0)
 
-    with search.make_context('search', ['z=3.0,6.0'], obj=client) as ctx:
+    with search.make_context('search', ['z=3.0,6.0'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
     assert [r.item for r in res] == [r.item for r in res_cli]
@@ -208,13 +208,13 @@ def test_search_int_float(runner: CliRunner, happi_cfg: str):
     # assert float_result.output == ''
 
 
-def test_both_range_and_regex_search(client: happi.client.Client):
+def test_both_range_and_regex_search(happi_cfg: str, client: happi.client.Client):
     # we're only interested in getting this entry (TST_BASE_PIM2)
     res = client.search_regex(z='6.0')
     # we're going to search for z=3,7 name=TST_BASE_PIM2
     # we should only get in return one entry, even though the z value found 2
     with search.make_context('search', ['name=TST_BASE_PIM2', 'z=3.0,7.0'],
-                             obj=client) as ctx:
+                             obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
     assert [r.item for r in res] == [r.item for r in res_cli]

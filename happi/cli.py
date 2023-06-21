@@ -23,6 +23,7 @@ from pathlib import Path
 
 import click
 import coloredlogs
+import platformdirs
 import prettytable
 
 import happi
@@ -37,6 +38,19 @@ logger = logging.getLogger(__name__)
 
 version_msg = f'Happi: Version {happi.__version__} from {happi.__file__}'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+def get_happi_client_from_config(path):
+    # gather client
+    try:
+        client = happi.client.Client.from_config(path)
+        logger.debug("Happi client: %r" % client)
+        # insert items into context to be passed to subcommands
+        # User objects must be assigned to ctx.obj, which will be passed
+        # through to new context objects
+        return client
+    except OSError:
+        logger.debug("Happi configuration not found.")
 
 
 @click.group(
@@ -65,14 +79,7 @@ def happi_cli(ctx, path, verbose):
                         fmt='[%(asctime)s] - %(levelname)s -  %(message)s')
     logger.debug("Set logging level of %r to %r", shown_logger.name, level)
 
-    # gather client
-    client = happi.client.Client.from_config(cfg=path)
-    logger.debug("Happi client: %r" % client)
-
-    # insert items into context to be passed to subcommands
-    # User objects must be assigned to ctx.obj, which will be passed
-    # through to new context objects
-    ctx.obj = client
+    ctx.obj = path
 
     # Cleanup tasks related to loaded devices
     @ctx.call_on_close
@@ -107,7 +114,7 @@ def search(
     logger.debug("We're in the search block")
 
     final_results = search_parser(
-        client=ctx.obj,
+        client=get_happi_client_from_config(ctx.obj),
         use_glob=use_glob,
         search_criteria=search_criteria,
     )
@@ -242,7 +249,7 @@ def add(ctx, clone: str):
     """Add new entries or copy existing entries."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
 
     registry = happi.containers.registry
     if clone:
@@ -309,7 +316,7 @@ def delete(ctx, name: str):
     """
     Delete an existing entry.  Only accepts exact names
     """
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
     try:
         item = client.find_item(name=name)
     except SearchError as e:
@@ -337,7 +344,7 @@ def edit(ctx, name: str, edits: list[str]):
     Applies EDITS of the form: field=value to the item of name NAME.
     """
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
 
     logger.debug('Starting edit block')
     try:
@@ -395,7 +402,7 @@ def load(ctx, item_names: list[str]):
 
     logger.debug('Starting load block')
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
     names = " ".join(item_names)
@@ -430,7 +437,7 @@ def load(ctx, item_names: list[str]):
 def update(ctx, json_data: str):
     """Update happi db with JSON_DATA payload."""
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
     if len(json_data) < 1:
         raise click.BadArgumentUsage('No json data given')
 
@@ -473,7 +480,7 @@ def transfer(ctx, name: str, target: str):
     """
     logger.debug('Starting transfer block')
     # retrive client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
     # verify name and target both exist and are valid
     try:
         item = client.find_item(name=name)
@@ -547,7 +554,7 @@ def benchmark(
     cli function. A blank search term means to load all the devices.
     """
     logger.debug('Starting benchmark block')
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
     full_stats = []
     logger.info('Collecting happi items...')
     start = time.monotonic()
@@ -737,7 +744,7 @@ def profile(
     logger.debug('Starting profile block')
     if profiler not in ('auto', 'pcdsutils', 'cprofile'):
         raise RuntimeError(f'Invalid profiler selection {profiler}')
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
     if profile_all:
         profile_database = True
         profile_import = True
@@ -1008,7 +1015,7 @@ def audit(
         # take all checks
         check_list = checks
 
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
 
     results = search_parser(client, use_glob, search_criteria)
     logger.info(f'found {len(results)} items to verify')
@@ -1098,7 +1105,7 @@ def repair(
     """
     logger.debug('starting repair block')
 
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
     if search_criteria:
         results = search_parser(client, use_glob, search_criteria)
     else:
@@ -1134,7 +1141,12 @@ def repair(
             break
 
 
-@happi_cli.command()
+@click.group(help="Commands related to the happi config file.")
+def config():
+    pass
+
+
+@config.command(name="edit")
 def edit_config():
     """Open happi configuration file for editing."""
     config_filepath = happi.client.Client.find_config()
@@ -1146,6 +1158,70 @@ def edit_config():
         subprocess.run([os.environ.get("EDITOR", "vi"), config_filepath])
 
 
+@config.command()
+@click.option("--overwrite/--no-overwrite", "overwrite", default=False,
+              help="Overwrite existing config.")
+@click.option("--backend", type=click.Choice(["json"], case_sensitive=False), default="json")
+def init(overwrite, backend):
+    """Create configuration file with default options."""
+
+    # find config_filepath
+    try:
+        config_filepath = Path(happi.client.Client.find_config())
+    except OSError:
+        config_filepath = Path(platformdirs.user_config_dir("happi")) / "happi.cfg"
+    else:
+        if not overwrite:
+            click.echo("Found existing config file at:")
+            click.echo(f"  {config_filepath}")
+            click.echo("Stopping! Use --overwrite to destroy this config file.")
+            return
+    click.echo("Creating new config file at:")
+    click.echo(f"  {config_filepath}")
+
+    # find database_filepath
+    database_filepath = Path(platformdirs.user_data_dir("happi")) / "db.json"
+    if database_filepath.exists():
+        click.echo("Using existing database file at:")
+    else:
+        click.echo("Creating new database file at:")
+
+    click.echo(f"  {database_filepath}")
+
+    # create config file
+    config_filepath.parent.mkdir(parents=True, exist_ok=True)
+    with open(config_filepath, "w") as f:
+        f.write("[DEFAULT]\n")
+        f.write(f"path={database_filepath}\n")
+
+    # create database file
+    database_filepath.parent.mkdir(parents=True, exist_ok=True)
+    database_filepath.touch(exist_ok=True)
+
+    click.echo("Done!")
+
+
+@config.command()
+def show():
+    """Show configuration file in current state."""
+    config_filepath = Path(happi.client.Client.find_config())
+    click.echo(f"File: {config_filepath}")
+
+    def draw_line():
+        try:
+            click.echo("-"*os.get_terminal_size()[0])
+        except OSError:
+            # non-interactive mode (piping results). No max width
+            click.echo("-"*79)
+
+    draw_line()
+    with open(config_filepath, "r") as f:
+        for line in f:
+            click.echo(line.strip())
+    draw_line()
+
+
 def main():
     """Execute the ``happi_cli`` with command line arguments"""
+    happi_cli.add_command(config)
     happi_cli()
