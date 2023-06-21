@@ -1202,11 +1202,19 @@ def show():
     """Show configuration file in current state."""
     config_filepath = Path(happi.client.Client.find_config())
     click.echo(f"File: {config_filepath}")
-    click.echo("-"*79)
+
+    def draw_line():
+        try:
+             click.echo("-"*os.get_terminal_size()[0])
+        except OSError:
+             # non-interactive mode (piping results). No max width
+            click.echo("-"*79)
+
+    draw_line()
     with open(config_filepath, "r") as f:
         for line in f:
             click.echo(line.strip())
-    click.echo("-"*79)
+    draw_line()
 
 
 def main():
