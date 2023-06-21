@@ -1163,13 +1163,14 @@ def init(overwrite):
     # find config_filepath
     try:
         config_filepath = Path(happi.client.Client.find_config())
+    except OSError:
+        config_filepath = Path(platformdirs.user_config_dir("happi")) / "happi.cfg"
+    else:
         if not overwrite:
             click.echo("Found existing config file at:")
             click.echo(f"  {config_filepath}")
             click.echo("Stopping! Use --overwrite to destroy this config file.")
             return
-    except OSError:
-        config_filepath = Path(platformdirs.user_config_dir("happi")) / "happi.cfg"
     click.echo("Creating new config file at:")
     click.echo(f"  {config_filepath}")
 
