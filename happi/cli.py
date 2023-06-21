@@ -40,6 +40,19 @@ version_msg = f'Happi: Version {happi.__version__} from {happi.__file__}'
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
+def get_happi_client_from_config(path):
+    # gather client
+    try:
+        client = happi.client.Client.from_config(path)
+        logger.debug("Happi client: %r" % client)
+        # insert items into context to be passed to subcommands
+        # User objects must be assigned to ctx.obj, which will be passed
+        # through to new context objects
+        return client
+    except OSError:
+        logger.debug("Happi configuration not found.")
+
+
 @click.group(
     help=('The happi command-line interface, used to view and manipulate '
           'device databases'),
@@ -66,16 +79,7 @@ def happi_cli(ctx, path, verbose):
                         fmt='[%(asctime)s] - %(levelname)s -  %(message)s')
     logger.debug("Set logging level of %r to %r", shown_logger.name, level)
 
-    # gather client
-    try:
-        client = happi.client.Client.from_config(cfg=path)
-        logger.debug("Happi client: %r" % client)
-        # insert items into context to be passed to subcommands
-        # User objects must be assigned to ctx.obj, which will be passed
-        # through to new context objects
-        ctx.obj = client
-    except OSError:
-        logger.debug("Happi configuration not found.")
+    ctx.obj = path
 
     # Cleanup tasks related to loaded devices
     @ctx.call_on_close
@@ -110,7 +114,7 @@ def search(
     logger.debug("We're in the search block")
 
     final_results = search_parser(
-        client=ctx.obj,
+        client=get_happi_client_from_config(ctx.obj),
         use_glob=use_glob,
         search_criteria=search_criteria,
     )
@@ -245,7 +249,7 @@ def add(ctx, clone: str):
     """Add new entries or copy existing entries."""
     logger.debug(f'Starting interactive add, {clone}')
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
 
     registry = happi.containers.registry
     if clone:
@@ -312,7 +316,7 @@ def delete(ctx, name: str):
     """
     Delete an existing entry.  Only accepts exact names
     """
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
     try:
         item = client.find_item(name=name)
     except SearchError as e:
@@ -340,7 +344,7 @@ def edit(ctx, name: str, edits: list[str]):
     Applies EDITS of the form: field=value to the item of name NAME.
     """
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
 
     logger.debug('Starting edit block')
     try:
@@ -433,7 +437,7 @@ def load(ctx, item_names: list[str]):
 def update(ctx, json_data: str):
     """Update happi db with JSON_DATA payload."""
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
     if len(json_data) < 1:
         raise click.BadArgumentUsage('No json data given')
 
@@ -476,7 +480,7 @@ def transfer(ctx, name: str, target: str):
     """
     logger.debug('Starting transfer block')
     # retrive client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
     # verify name and target both exist and are valid
     try:
         item = client.find_item(name=name)
@@ -550,7 +554,7 @@ def benchmark(
     cli function. A blank search term means to load all the devices.
     """
     logger.debug('Starting benchmark block')
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
     full_stats = []
     logger.info('Collecting happi items...')
     start = time.monotonic()
@@ -740,7 +744,7 @@ def profile(
     logger.debug('Starting profile block')
     if profiler not in ('auto', 'pcdsutils', 'cprofile'):
         raise RuntimeError(f'Invalid profiler selection {profiler}')
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
     if profile_all:
         profile_database = True
         profile_import = True
@@ -1011,7 +1015,7 @@ def audit(
         # take all checks
         check_list = checks
 
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
 
     results = search_parser(client, use_glob, search_criteria)
     logger.info(f'found {len(results)} items to verify')
@@ -1101,7 +1105,7 @@ def repair(
     """
     logger.debug('starting repair block')
 
-    client: happi.Client = ctx.obj
+    client: happi.Client = get_happi_client_from_config(ctx.obj)
     if search_criteria:
         results = search_parser(client, use_glob, search_criteria)
     else:
