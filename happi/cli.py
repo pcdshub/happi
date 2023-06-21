@@ -1157,7 +1157,8 @@ def edit_config():
 @config.command()
 @click.option("--overwrite/--no-overwrite", "overwrite", default=False,
               help="Overwrite existing config.")
-def init(overwrite):
+@click.option("--backend", type=click.Choice(["json"], case_sensitive=False), default="json")
+def init(overwrite, backend):
     """Create configuration file with default options."""
 
     # find config_filepath
