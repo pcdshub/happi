@@ -402,7 +402,7 @@ def load(ctx, item_names: list[str]):
 
     logger.debug('Starting load block')
     # retrieve client
-    client = ctx.obj
+    client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
     names = " ".join(item_names)
@@ -1209,9 +1209,9 @@ def show():
 
     def draw_line():
         try:
-             click.echo("-"*os.get_terminal_size()[0])
+            click.echo("-"*os.get_terminal_size()[0])
         except OSError:
-             # non-interactive mode (piping results). No max width
+            # non-interactive mode (piping results). No max width
             click.echo("-"*79)
 
     draw_line()
