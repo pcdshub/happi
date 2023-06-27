@@ -7,8 +7,5 @@ pymongo
 mongomock >=3.22.0
 # Removed temporarily, pip installations fail lacking gssapi libs
 # psdm_qs_cli
-# PyPI's 2020 resolver can be problematic with these
-# dependencies-of-dependencies.  Constrain them here:
-six >=1.10.0
 # Lineprofiler >=4.0.0 incompatible with happi, but needed for py3.11
 line-profiler <4.0.0
