@@ -48,4 +48,3 @@ file = "docs-requirements.txt"
 
 [tool.pytest.ini_options]
 addopts = "--cov=."
-
