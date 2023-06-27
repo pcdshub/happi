@@ -1,0 +1,8 @@
+# These are required for developing the package (building the documentation)
+# but not necessarily required for _using_ it.
+docs-versions-menu
+doctr
+sphinx
+sphinx_rtd_theme>=1.2.0
+sphinx-click
+sphinxcontrib-jquery
