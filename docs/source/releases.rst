@@ -7,15 +7,21 @@ v2.3.0 (2023-06-29)
 
 Features
 --------
-- look in a few more places before giving up the search for config
-- new CLI command edit-config, opens happi configuration file for quick editing
 - CLI command ``happi config edit`` - open config file in $EDITOR
 - CLI command ``happi config init`` - create new config file with default options
 - CLI command ``happi config show`` - show location & contents of config file
+- Extend the config searching mechanism to check the platformdirs config directory.
+  The happi config file path is taken from the ``HAPPI_CFG`` environment variable,
+  but if the variable is not set then the following locations are searched in order
+  for files named ``.happi.cfg`` or ``happi.cfg``:
+
+  - The location specified by the ``XDG_CONFIG_HOME`` environment variable
+  - ``~/.config``
+  - (**new**) The location specified by ``platformdirs.user_config_dir("happi")``
 
 Maintenance
 -----------
-- add dependency on platformdirs
+- Add dependency on `platformdirs <https://pypi.org/project/platformdirs/>`.
 - Update build requirements to use pip-provided extras for documentation and test builds
 
 Contributors
@@ -490,7 +496,7 @@ v1.6.0 (2020-04-30)
 
 -  LCLS-specific containers are moved out of happi, and into
    `pcdsdevices <https://github.com/pcdshub/pcdsdevices/tree/master/pcdsdevices/happi>`__
--  ``OphydItem`` is now the preferred “basic” ``ophyd.Device``
+-  ``OphydItem`` is now the preferred basic ``ophyd.Device``
    container, with the intention of fully deprecating ``Device`` to
    avoid naming confusion
 -  Minor internal fixes
@@ -531,13 +537,13 @@ v1.4.0 (2020-03-13)
 Enhancements
 ------------
 
--  Add an add command for cli, e.g. happi add to start an interactive
+-  Add an add command for cli, e.g.ï¿½happi add to start an interactive
    device adder
--  Add an edit command for cli, e.g. happi edit im3l0 location=750
+-  Add an edit command for cli, e.g.ï¿½happi edit im3l0 location=750
    prefix=IM3L0:PPM
 -  Change search command syntax to be simpler (more like edit)
--  Add a load command for cli, e.g. happi load im3l0 im1l1 -> IPython
-   session plus other changes made in dev to “get it working”
+-  Add a load command for cli, e.g.ï¿½happi load im3l0 im1l1 -> IPython
+   session plus other changes made in dev to ï¿½get it workingï¿½
 -  Add two new Happi-aware Qt widgets: HappiDeviceListView &
    HappiDeviceTreeView
 
