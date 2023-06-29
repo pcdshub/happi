@@ -537,13 +537,13 @@ v1.4.0 (2020-03-13)
 Enhancements
 ------------
 
--  Add an add command for cli, e.g.�happi add to start an interactive
+-  Add an add command for cli, e.g. ``happi add`` to start an interactive
    device adder
--  Add an edit command for cli, e.g.�happi edit im3l0 location=750
+-  Add an edit command for cli, e.g. ``happi edit im3l0 location=750``
    prefix=IM3L0:PPM
 -  Change search command syntax to be simpler (more like edit)
--  Add a load command for cli, e.g.�happi load im3l0 im1l1 -> IPython
-   session plus other changes made in dev to �get it working�
+-  Add a load command for cli, e.g. ``happi load im3l0 im1l1`` -> IPython
+   session plus other changes made in dev to get it working
 -  Add two new Happi-aware Qt widgets: HappiDeviceListView &
    HappiDeviceTreeView
 
