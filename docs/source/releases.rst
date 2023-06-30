@@ -21,7 +21,7 @@ Features
 
 Maintenance
 -----------
-- Add dependency on `platformdirs <https://pypi.org/project/platformdirs/>`.
+- Add dependency on `platformdirs <https://pypi.org/project/platformdirs/>`_.
 - Update build requirements to use pip-provided extras for documentation and test builds
 
 Contributors
