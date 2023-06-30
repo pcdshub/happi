@@ -7,7 +7,7 @@ v2.3.0 (2023-06-30)
 
 Features
 --------
-- CLI command ``happi config edit`` - open config file in $EDITOR
+- CLI command ``happi config edit`` - open config file in ``$EDITOR``
 - CLI command ``happi config init`` - create new config file with default options
 - CLI command ``happi config show`` - show location & contents of config file
 - Extend the config searching mechanism to check the platformdirs config directory.
