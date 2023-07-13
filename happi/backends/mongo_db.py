@@ -21,35 +21,51 @@ class MongoBackend(_Backend):
 
     Parameters
     ----------
-    host : str, optional
+    host : str
         Hostname for MongoDB.
-    user : str, optional
+    user : str
         Username for MongoDB instance.
-    pw : str, optional
+    pw : str
         Password for given username.
-    host : str, optional
-        Host of the MongoDB instance.
-    db : str, optional
+    db : str
         Database name within the MongoDB instance.
+    collection : str
+        MongoDB colleciton name
     timeout : float, optional
         Time to wait for connection attempt.
-    cfg_path : str, optional
-        Path to the happi config.
+    port : str, optional
+        Port of the MongoDB instance.  Will be cast to int.  Defaults to 27017
+        (mongo default) if no value is supplied
+    auth_source : str, optional
+        AuthenticationSource for MongoDB instance, defaults to defaultauthdb if
+        no value is supplied
     """
 
     _timeout = 5
     _conn_str = 'mongodb://{user}:{pw}@{host}/{db}'  # String for login
 
-    def __init__(self, host=None, user=None,
-                 pw=None, db=None, collection=None,
-                 timeout=None, cfg_path=None):
+    def __init__(
+        self,
+        host: str,
+        user: str,
+        pw: str,
+        db: str,
+        collection: str,
+        timeout: Optional[str] = None,
+        port: Optional[str] = None,
+        auth_source: Optional[str] = None,
+        **kwargs
+    ) -> None:
         # Default timeout
         timeout = timeout or self._timeout
         # Format connection string
         conn_str = self._conn_str.format(user=user, pw=pw,
                                          host=host, db=db)
-        logging.debug('Attempting connection using %s ', conn_str)
-        self._client = MongoClient(conn_str, serverSelectionTimeoutMS=timeout)
+        if auth_source:
+            conn_str = conn_str + f'?authSource={auth_source}'
+        logging.debug(f'Attempting connection using mongodb://<user>:<pw>@{host}/{db}')
+        self._client = MongoClient(conn_str, port=int(port),
+                                   serverSelectionTimeoutMS=timeout)
         self._db = self._client[db]
         # Load collection
         try:
