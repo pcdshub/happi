@@ -61,6 +61,9 @@ class MongoBackend(_Backend):
         # Format connection string
         if auth_source:
             conn_str = self._conn_str + f'?authSource={auth_source}'
+        else:
+            conn_str = self._conn_str
+
         clean_conn_str = conn_str.format(user=user, pw='...', host=host, db=db)
         conn_str = conn_str.format(user=user, pw=pw, host=host, db=db)
         logging.debug('Attempting connection using %s', clean_conn_str)

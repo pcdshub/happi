@@ -208,7 +208,7 @@ def mockmongoclient(item_info: dict[str, Any]):
         mc['test_db'].create_collection('test_collect')
         mock_mongo.return_value = mc
         # Client
-        backend = MongoBackend(db='test_db',
+        backend = MongoBackend(db='test_db', pw='test_pw', user='user', host='host',
                                collection='test_collect')
         client = Client(database=backend)
         # Insert a single device
