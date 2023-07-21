@@ -4,18 +4,18 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using the Client &mdash; Happi 2.2.1.dev36+gee68d81 documentation</title>
+  <title>Using the Client &mdash; Happi 2.4.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4d935f96"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,7 +35,7 @@
             Happi
           </a>
               <div class="version">
-                2.2.1.dev36+gee68d81
+                2.4.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -98,7 +98,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-client">
-<span id="client-label"></span><h1>Using the Client<a class="headerlink" href="#using-the-client" title="Permalink to this heading"></a></h1>
+<span id="client-label"></span><h1>Using the Client<a class="headerlink" href="#using-the-client" title="Link to this heading"></a></h1>
 <p>Users will interact with the database by using the <a class="reference internal" href="api.html#happi.Client" title="happi.Client"><code class="xref py py-class docutils literal notranslate"><span class="pre">happi.Client</span></code></a>, this
 will handle the authentication, and methods for adding, editing and removing
 items.</p>
@@ -109,7 +109,7 @@ will need to be performed by the <a class="reference internal" href="api.html#ha
 intuitive, the Client deals primarily with <a class="reference internal" href="containers.html#containers"><span class="std std-ref">Containers</span></a>, which are objects
 that hold and specify these rules.</p>
 <section id="creating-a-new-entry">
-<span id="entry-code"></span><h2>Creating a New Entry<a class="headerlink" href="#creating-a-new-entry" title="Permalink to this heading"></a></h2>
+<span id="entry-code"></span><h2>Creating a New Entry<a class="headerlink" href="#creating-a-new-entry" title="Link to this heading"></a></h2>
 <p>A new item must be a subclass of the basic <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a> container.
 While you are free to use the initialized object wherever you see fit, the client
 has a hook to create new items.</p>
@@ -170,7 +170,7 @@ Keep in mind, that either way, all of the mandatory information needs to be
 given to the item before it can be loaded into the database.</p>
 </section>
 <section id="searching-the-database">
-<h2>Searching the Database<a class="headerlink" href="#searching-the-database" title="Permalink to this heading"></a></h2>
+<h2>Searching the Database<a class="headerlink" href="#searching-the-database" title="Link to this heading"></a></h2>
 <p>There are several ways to load information from the database
 <a class="reference internal" href="api.html#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a>, <a class="reference internal" href="api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a>, and dictionary-like access.</p>
 <p><a class="reference internal" href="api.html#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a> is intended to only load one item at at a time. Both
@@ -191,16 +191,16 @@ dictionary. For example:</p>
 <span class="go"># All of the database entries as SearchResults:</span>
 <span class="gp">In [13]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 <span class="gh">Out[13]: </span>
-<span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;}),</span>
-<span class="go"> SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+<span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;}),</span>
+<span class="go"> SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
 
 <span class="go"># Pairs of (name, SearchResult):</span>
 <span class="gp">In [14]: </span><span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 <span class="gh">Out[14]: </span>
 <span class="go">[(&#39;my_device&#39;,</span>
-<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})),</span>
+<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})),</span>
 <span class="go"> (&#39;my_device2&#39;,</span>
-<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;}))]</span>
+<span class="go">  SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;}))]</span>
 </pre></div>
 </div>
 <p>You could, for example, grab the first key by name and access it using
@@ -211,7 +211,7 @@ dictionary. For example:</p>
 <span class="gh">Out[16]: </span><span class="go">&#39;my_device&#39;</span>
 
 <span class="gp">In [17]: </span><span class="n">client</span><span class="p">[</span><span class="n">key_0</span><span class="p">]</span>
-<span class="gh">Out[17]: </span><span class="go">SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})</span>
+<span class="gh">Out[17]: </span><span class="go">SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})</span>
 </pre></div>
 </div>
 <p>Or see how many entries are in the database:</p>
@@ -224,7 +224,7 @@ dictionary. For example:</p>
 </pre></div>
 </div>
 <section id="working-with-the-searchresult">
-<h3>Working with the SearchResult<a class="headerlink" href="#working-with-the-searchresult" title="Permalink to this heading"></a></h3>
+<h3>Working with the SearchResult<a class="headerlink" href="#working-with-the-searchresult" title="Link to this heading"></a></h3>
 <p>Representing a single search result from <code class="docutils literal notranslate"><span class="pre">Client.search</span></code> and its variants, a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">SearchResult</span></code> can be used in multiple ways.</p>
 <p>This result can be keyed for metadata as in:</p>
@@ -261,7 +261,7 @@ beamline or use programmer-friendly regular expressions, described in the
 upcoming sections.</p>
 </section>
 <section id="searching-for-items-on-a-beamline">
-<h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Permalink to this heading"></a></h3>
+<h3>Searching for items on a beamline<a class="headerlink" href="#searching-for-items-on-a-beamline" title="Link to this heading"></a></h3>
 <p>To search for items on a beamline such as ‘MFX’, one would use the following:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [27]: </span><span class="n">client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;HappiItem&#39;</span><span class="p">,</span> <span class="n">beamline</span><span class="o">=</span><span class="s1">&#39;MFX&#39;</span><span class="p">)</span>
 <span class="gh">Out[27]: </span><span class="go">[]</span>
@@ -269,13 +269,13 @@ upcoming sections.</p>
 </div>
 </section>
 <section id="searching-a-range">
-<h3>Searching a range<a class="headerlink" href="#searching-a-range" title="Permalink to this heading"></a></h3>
+<h3>Searching a range<a class="headerlink" href="#searching-a-range" title="Link to this heading"></a></h3>
 <p>In this example, we have added an extraneous field <code class="docutils literal notranslate"><span class="pre">position</span></code> that is not
 present normally in the <code class="docutils literal notranslate"><span class="pre">HappiItem</span></code> container.</p>
 <p>We can search a range of values with any arbitrary key using
 <a class="reference internal" href="api.html#happi.Client.search_range" title="happi.Client.search_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_range()</span></code></a>. For example:</p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [28]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_range</span><span class="p">(</span><span class="s2">&quot;position&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mf">314.4</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mf">348.6</span><span class="p">)</span>
-<span class="gh">Out[28]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+<span class="gh">Out[28]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 345.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
 </pre></div>
 </div>
 <p>This would return all items between positions 314.4 and 348.6.</p>
@@ -283,16 +283,16 @@ present normally in the <code class="docutils literal notranslate"><span class="
 the key name.</p>
 </section>
 <section id="searching-with-regular-expressions">
-<h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Permalink to this heading"></a></h3>
+<h3>Searching with regular expressions<a class="headerlink" href="#searching-with-regular-expressions" title="Link to this heading"></a></h3>
 <p>Any key can use a regular expression for searching by using <a class="reference internal" href="api.html#happi.Client.search_regex" title="happi.Client.search_regex"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search_regex()</span></code></a></p>
 <div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">client</span><span class="o">.</span><span class="n">search_regex</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device[2345]&#39;</span><span class="p">)</span>
-<span class="gh">Out[29]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f8be1252100&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;last_edit&#39;: &#39;Fri Jun 30 20:49:52 2023&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
+<span class="gh">Out[29]: </span><span class="go">[SearchResult(client=&lt;happi.client.Client object at 0x7f90fbb82a60&gt;, metadata={&#39;name&#39;: &#39;my_device2&#39;, &#39;device_class&#39;: &#39;types.SimpleNamespace&#39;, &#39;args&#39;: [], &#39;kwargs&#39;: {}, &#39;active&#39;: True, &#39;documentation&#39;: None, &#39;_id&#39;: &#39;my_device2&#39;, &#39;creation&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;last_edit&#39;: &#39;Wed Sep 27 22:56:12 2023&#39;, &#39;position&#39;: 355.5, &#39;type&#39;: &#39;HappiItem&#39;})]</span>
 </pre></div>
 </div>
 </section>
 </section>
 <section id="editing-item-information">
-<h2>Editing Item Information<a class="headerlink" href="#editing-item-information" title="Permalink to this heading"></a></h2>
+<h2>Editing Item Information<a class="headerlink" href="#editing-item-information" title="Link to this heading"></a></h2>
 <p>The workflow for editing an item looks very similar to the code within
 <a class="reference internal" href="#entry-code"><span class="std std-ref">Creating a New Entry</span></a>, but instead of instantiating the item you use either
 <a class="reference internal" href="api.html#happi.Client.find_item" title="happi.Client.find_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.find_item()</span></code></a> or <a class="reference internal" href="api.html#happi.Client.search" title="happi.Client.search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Client.search()</span></code></a>. When the item is retrieved
@@ -326,7 +326,7 @@ entry.</p>
 </div>
 </section>
 <section id="selecting-a-backend">
-<span id="db-choice"></span><h2>Selecting a Backend<a class="headerlink" href="#selecting-a-backend" title="Permalink to this heading"></a></h2>
+<span id="db-choice"></span><h2>Selecting a Backend<a class="headerlink" href="#selecting-a-backend" title="Link to this heading"></a></h2>
 <p>Happi supports both JSON and MongoDB backends. You can always import your
 chosen backend directly, but in order to save time you can create an
 environment variable <code class="docutils literal notranslate"><span class="pre">HAPPI_BACKEND</span></code> and set this to <code class="docutils literal notranslate"><span class="pre">&quot;mongodb&quot;</span></code>. This well

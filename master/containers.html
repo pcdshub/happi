@@ -4,18 +4,18 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Containers &mdash; Happi 2.2.1.dev36+gee68d81 documentation</title>
+  <title>Containers &mdash; Happi 2.4.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=4d935f96"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,7 +35,7 @@
             Happi
           </a>
               <div class="version">
-                2.2.1.dev36+gee68d81
+                2.4.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -105,7 +105,7 @@
            <div itemprop="articleBody">
              
   <section id="containers">
-<span id="id1"></span><h1>Containers<a class="headerlink" href="#containers" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>Containers<a class="headerlink" href="#containers" title="Link to this heading"></a></h1>
 <p>In order to regulate and template the information that gets entered into the
 Happi database, we use the concept of containers. Containers serve two primary
 roles:</p>
@@ -120,7 +120,7 @@ fields or “entries” of type <a class="reference internal" href="#happi.Entry
 specify fields that are essential to every instance of a specific container
 type.</p>
 <section id="entryinfo">
-<h2>EntryInfo<a class="headerlink" href="#entryinfo" title="Permalink to this heading"></a></h2>
+<h2>EntryInfo<a class="headerlink" href="#entryinfo" title="Link to this heading"></a></h2>
 <p>These fields are specified using an instance of <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>. This class
 provides several primary features:</p>
 <ul class="simple">
@@ -130,7 +130,7 @@ provides several primary features:</p>
 </ul>
 <dl class="py class">
 <dt class="sig sig-object py" id="happi.EntryInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">EntryInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_default_as_kwarg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.EntryInfo" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">EntryInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_default_as_kwarg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.EntryInfo" title="Link to this definition"></a></dt>
 <dd><p>A piece of information related to a specific device.</p>
 <p>These are entered as class attributes for a given device container. They
 help control the information entered into a device.</p>
@@ -176,7 +176,7 @@ kwarg EntryInfo has this set to True (default).</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="happi.EntryInfo.enforce_value">
-<span class="sig-name descname"><span class="pre">enforce_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.EntryInfo.enforce_value" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">enforce_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.EntryInfo.enforce_value" title="Link to this definition"></a></dt>
 <dd><p>Enforce the rules of the EntryInfo.</p>
 <p>Accepts a <code class="docutils literal notranslate"><span class="pre">value</span></code>, verifies that it meets the criteria specified in
 the <code class="docutils literal notranslate"><span class="pre">enforce</span></code> attribute, and returns the same value, except that it
@@ -193,7 +193,7 @@ will be converted to the correct type if <code class="docutils literal notransla
 
 </section>
 <section id="happiitem">
-<h2>HappiItem<a class="headerlink" href="#happiitem" title="Permalink to this heading"></a></h2>
+<h2>HappiItem<a class="headerlink" href="#happiitem" title="Link to this heading"></a></h2>
 <p>In order to ensure that information is entered into the database in an
 organized fashion, the client will only accept classes that inherit from
 <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>. Each item will have the key information represented as
@@ -214,7 +214,7 @@ conflicting with <code class="xref py py-class docutils literal notranslate"><sp
 </div>
 </section>
 <section id="example-container">
-<h2>Example Container<a class="headerlink" href="#example-container" title="Permalink to this heading"></a></h2>
+<h2>Example Container<a class="headerlink" href="#example-container" title="Link to this heading"></a></h2>
 <p>In order to show the flexibility of the <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> class, we’ll put
 together a new example container. The class can be invoked in the same way you
 would usually handle class inheritance, the only difference is that you specify
@@ -296,7 +296,7 @@ optional and mandatory <a class="reference internal" href="#happi.EntryInfo" tit
 reject the item if these fields do not have the requisite values set.</p>
 </section>
 <section id="loading-your-object">
-<h2>Loading your Object<a class="headerlink" href="#loading-your-object" title="Permalink to this heading"></a></h2>
+<h2>Loading your Object<a class="headerlink" href="#loading-your-object" title="Link to this heading"></a></h2>
 <p>A container’s primary role is containing the information necessary to load the
 Python representation of an object.</p>
 <p>Internally, happi keeps track of all containers by way of its registry, the
@@ -332,12 +332,12 @@ attribute alone, the type will also be converted.</p>
 <span class="gp">In [11]: </span><span class="n">obj</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">attach_md</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="gp">In [12]: </span><span class="n">obj</span>
-<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1688158192.9853163)</span>
+<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1695855373.304084)</span>
 </pre></div>
 </div>
 </section>
 <section id="integrating-with-your-package">
-<h2>Integrating with your package<a class="headerlink" href="#integrating-with-your-package" title="Permalink to this heading"></a></h2>
+<h2>Integrating with your package<a class="headerlink" href="#integrating-with-your-package" title="Link to this heading"></a></h2>
 <p>Happi provides some containers for your convenience, but intentionally does
 not support all use cases or control systems in a monolithic fashion.</p>
 <p>The suggested method for supporting your new package would be to make your
@@ -351,12 +351,12 @@ Example entry points can be found <a class="reference external" href="https://gi
 and making them available throughout the library.</p>
 </section>
 <section id="built-in-container-conventions">
-<span id="convention-label"></span><h2>Built-in Container Conventions<a class="headerlink" href="#built-in-container-conventions" title="Permalink to this heading"></a></h2>
+<span id="convention-label"></span><h2>Built-in Container Conventions<a class="headerlink" href="#built-in-container-conventions" title="Link to this heading"></a></h2>
 <p>In order for the database to be as easy to parse as possible we need to
 establish conventions on how information is entered. Please read through this
 before entering any information into the database.</p>
 <section id="happiitem-entries">
-<h3>HappiItem Entries<a class="headerlink" href="#happiitem-entries" title="Permalink to this heading"></a></h3>
+<h3>HappiItem Entries<a class="headerlink" href="#happiitem-entries" title="Link to this heading"></a></h3>
 <p>These are fields that are common to all Happi items.</p>
 <blockquote>
 <div><p><strong>name</strong></p>
@@ -384,7 +384,7 @@ templated macros such as <code class="docutils literal notranslate"><span class=
 </div></blockquote>
 </section>
 <section id="ophyditem-entries">
-<h3>OphydItem entries<a class="headerlink" href="#ophyditem-entries" title="Permalink to this heading"></a></h3>
+<h3>OphydItem entries<a class="headerlink" href="#ophyditem-entries" title="Link to this heading"></a></h3>
 <p><a class="reference external" href="blueskyproject.io/ophyd/">ophyd</a> has first-class support in happi - but
 not much is required on top of the base HappiItem to support it.</p>
 <blockquote>
@@ -394,7 +394,7 @@ does not matter if this is an invalid record by itself.</p>
 </div></blockquote>
 </section>
 <section id="lclsitem-entries">
-<h3>LCLSItem entries<a class="headerlink" href="#lclsitem-entries" title="Permalink to this heading"></a></h3>
+<h3>LCLSItem entries<a class="headerlink" href="#lclsitem-entries" title="Link to this heading"></a></h3>
 <p>This class is now part of <a class="reference external" href="https://github.com/pcdshub/pcdsdevices">pcdsdevices</a>.  It remains documented here as
 PCDS is the original developer and primary user of happi as of the time of
 writing. If you intend to use the same metadata that we do, please copy and
