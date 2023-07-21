@@ -33,7 +33,7 @@ class MongoBackend(_Backend):
         MongoDB colleciton name
     timeout : float, optional
         Time to wait for connection attempt.
-    port : str, optional
+    port : str or int, optional
         Port of the MongoDB instance.  Will be cast to int.  Defaults to 27017
         (mongo default) if no value is supplied
     auth_source : str, optional
@@ -52,18 +52,19 @@ class MongoBackend(_Backend):
         db: str,
         collection: str,
         timeout: Optional[str] = None,
-        port: Optional[str] = None,
+        port: Union[str, int] = 27017,
         auth_source: Optional[str] = None,
         **kwargs
     ) -> None:
         # Default timeout
         timeout = timeout or self._timeout
         # Format connection string
-        conn_str = self._conn_str.format(user=user, pw=pw,
-                                         host=host, db=db)
         if auth_source:
-            conn_str = conn_str + f'?authSource={auth_source}'
-        logging.debug(f'Attempting connection using mongodb://<user>:<pw>@{host}/{db}')
+            conn_str = self._conn_str + f'?authSource={auth_source}'
+        clean_conn_str = conn_str.format(user=user, pw='...', host=host, db=db)
+        conn_str = conn_str.format(user=user, pw=pw, host=host, db=db)
+        logging.debug('Attempting connection using %s', clean_conn_str)
+
         self._client = MongoClient(conn_str, port=int(port),
                                    serverSelectionTimeoutMS=timeout)
         self._db = self._client[db]
