@@ -438,9 +438,9 @@ def update(ctx, json_data: str):
     """
     Update happi db with JSON_DATA payload.
 
-    To use, either use command substitution to enclose your JSON in quotes:
+    To use, either use command substitution:
 
-        $ happi update "$(cat my.json)"
+        $ happi update $(cat my.json)
 
     Or pipe the JSON payload with `-` as an argument:
 
