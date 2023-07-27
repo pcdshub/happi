@@ -435,7 +435,38 @@ def load(ctx, item_names: list[str]):
 @click.argument("json_data", nargs=-1)
 @click.pass_context
 def update(ctx, json_data: str):
-    """Update happi db with JSON_DATA payload."""
+    """
+    Update happi db with JSON_DATA payload.
+
+    To use, either use command substitution:
+
+        $ happi update $(cat my.json)
+
+    Or pipe the JSON payload with `-` as an argument:
+
+        $ cat my.json | happi update -
+
+    JSON payloads should be a list of items (dictionaries), with at least the
+    "_id" and "type" keys.  eg:
+
+    \b
+        [{
+            "_id": "my_device",
+            <...>
+            "type": "mydevicelibrary.MyDevice"
+        }]
+
+    Or a valid happi json database.  eg:
+
+    \b
+        {
+            "my_device": {
+                "_id": "my_device",
+                <...>
+                "type": "mydevicelibrary.MyDevice"
+            }
+        }
+    """
     # retrieve client
     client = get_happi_client_from_config(ctx.obj)
     if len(json_data) < 1:
@@ -443,12 +474,15 @@ def update(ctx, json_data: str):
 
     # parse input
     input_ = " ".join(json_data).strip()
-    print(json_data)
     if input_ == "-":
         items_input = json.load(sys.stdin)
     else:
         items_input = json.loads(input_)
+
     # insert
+    if isinstance(items_input, dict):
+        items_input = items_input.values()
+
     for item in items_input:
         item = client.create_item(item["type"], **item)
         exists = item["_id"] in [c["_id"] for c in client.all_items]
