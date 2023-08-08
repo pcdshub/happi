@@ -32,7 +32,7 @@ data entry where required.
 
 Install the most recent tagged build: `conda install happi -c pcds-tag -c conda-forge`
 
-Install the most recent development build: `conda install happi -c pcds-dev - conda-forge`
+Install the most recent development build: `conda install happi -c pcds-dev -c conda-forge`
 
 ## Basic Usage
 
