@@ -5,14 +5,42 @@ argument and returns None when successful.  When a check fails, it should throw
 an Exception with a helpful error message.  These exception messages will be
 caught and organized by the cli audit tool.
 """
+from __future__ import annotations
+
+import contextlib
 import inspect
-from typing import Callable, Optional
+import io
+from typing import Callable, Optional, TypedDict
 
 from jinja2 import DebugUndefined, Environment, meta
 
-from happi import SearchResult
+from . import SearchResult
 
 CLIENT_KEYS = ['_id', 'type', 'creation', 'last_edit']
+
+
+class CheckResults(TypedDict):
+    name: list[str]
+    success: list[bool]
+    check: list[str]
+    msg: list[str]
+
+
+class ItemAuditInfo(TypedDict):
+    failed_check: list[str]
+    audit_errors: list[str]
+
+
+class AuditResults(TypedDict):
+    test_results: CheckResults
+    audited: int
+    failures: int
+    failed_names: list[str]
+    items: dict[str, ItemAuditInfo]
+
+
+Check = Callable[[SearchResult], None]
+CheckList = list[Check]
 
 
 def check_instantiation(result: SearchResult) -> None:
@@ -184,6 +212,87 @@ def verify_result(
         msg = str(ex)
 
     return success, check.__name__, msg
+
+
+def audit(
+    results: list[SearchResult],
+    redirect: bool = True,
+    verbose: bool = False,
+    check_list: Optional[CheckList] = None,
+) -> AuditResults:
+    if check_list is None:
+        # If unspecified, use all checks
+        check_list = list(checks)
+
+    test_results: CheckResults = {
+        "name": [],
+        "success": [],
+        "check": [],
+        "msg": [],
+    }
+
+    @contextlib.contextmanager
+    def maybe_redirect():
+        if redirect:
+            f = io.StringIO()
+            with contextlib.redirect_stderr(f), contextlib.redirect_stdout(f):
+                yield
+        else:
+            yield
+
+    try:
+        for i, res in enumerate(results):
+            if verbose:
+                print(f"checking device #: {i}", end="\r")
+
+            # Capture stdout, stderr for this audit
+            with maybe_redirect():
+                for check_fn in check_list:
+                    try:
+                        success, check, msg = verify_result(res, check_fn)
+                    except KeyboardInterrupt:
+                        test_results["name"].append(res.item.name)
+                        test_results["success"].append(False)
+                        test_results["check"].append("")
+                        test_results["msg"].append("Interrupted by user")
+                        raise
+                    else:
+                        test_results["name"].append(res.item.name)
+                        test_results["success"].append(success)
+                        test_results["check"].append(check)
+                        test_results["msg"].append(msg)
+    except KeyboardInterrupt:
+        if verbose:
+            print("Caught KeyboardInterrupt; exiting early...")
+
+    unique_fails = {
+        test_results["name"][i]
+        for i in range(len(test_results["name"]))
+        if not test_results["success"][i]
+    }
+
+    audit_results: AuditResults = {
+        "test_results": test_results,
+        "audited": len(results),
+        "failures": len(unique_fails),
+        "failed_names": sorted(unique_fails),
+        "items": {
+            name: {"failed_check": [], "audit_errors": []}
+            for name in [res.item.name for res in results]
+        },
+    }
+    item_info = audit_results["items"]
+    for name, success, check, msg in zip(
+        test_results["name"],
+        test_results["success"],
+        test_results["check"],
+        test_results["msg"],
+    ):
+        if not success:
+            item_info[name]['failed_check'].append(check)
+            item_info[name]['audit_errors'].append(msg)
+
+    return audit_results
 
 
 checks = [check_instantiation, check_extra_info, check_name_match_id,
