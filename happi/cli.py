@@ -779,6 +779,7 @@ def profile(
     logger.debug('Starting profile block')
     if profiler not in ('auto', 'pcdsutils', 'cprofile'):
         raise RuntimeError(f'Invalid profiler selection {profiler}')
+
     client: happi.Client = get_happi_client_from_config(ctx.obj)
     if profile_all:
         profile_database = True

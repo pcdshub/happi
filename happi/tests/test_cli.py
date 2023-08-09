@@ -1,8 +1,10 @@
 # test_cli.py
 
+import cProfile
 import functools
 import itertools
 import logging
+import pstats
 import re
 from collections.abc import Iterable
 from typing import Any
@@ -10,6 +12,7 @@ from unittest import mock
 
 import click
 import IPython
+import pcdsutils
 import pytest
 from click.testing import CliRunner
 
@@ -685,11 +688,13 @@ def arg_variants(variants: tuple[tuple[tuple[str]]]):
     """
     Collapse argument variants into all possible combinations.
     """
-    for arg_set in itertools.product(*variants):
-        yield functools.reduce(
+    for idx, arg_set in enumerate(itertools.product(*variants), 1):
+        item = functools.reduce(
             lambda x, y: x+y,
             arg_set,
         )
+        summary = f"args{idx}_" + ",".join(item)
+        yield pytest.param(item, id=summary)
 
 
 benchmark_arg_variants = (
@@ -706,6 +711,10 @@ benchmark_arg_variants = (
 )
 def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
     # Make sure the benchmark can complete in some form with valid inputs
+    if "--iterations" not in args:
+        # Keep the number of overall iterations reasonable
+        args = (*args, "--iterations", "100")
+
     result = runner.invoke(
         happi_cli,
         ['--path', happi_cfg, 'benchmark'] + list(args),
@@ -729,12 +738,22 @@ profile_arg_variants = (
 )
 def test_profile_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
     # Make sure the profile can complete in some form with valid inputs
-    if 'pcdsutils' in args and not test_line_prof:
-        pytest.skip('Missing pcdsutils or line_profiler.')
-    result = runner.invoke(
-        happi_cli,
-        ['--path', happi_cfg, 'profile'] + list(args),
-    )
+    if "pcdsutils" in args:
+        if not test_line_prof:
+            pytest.skip("Missing pcdsutils or line_profiler.")
+
+    if test_line_prof:
+        print("Resetting the line profiler...")
+        pcdsutils.profile.reset_profiler()
+
+    with cProfile.Profile() as pr:
+        result = runner.invoke(
+            happi_cli,
+            ['--path', happi_cfg, 'profile'] + list(args),
+        )
+
+    st = pstats.Stats(pr).strip_dirs().sort_stats("tottime")
+    st.print_stats(20)
     assert_in_expected(
         result,
         'Profile completed successfully'
