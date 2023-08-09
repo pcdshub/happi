@@ -219,7 +219,30 @@ def audit(
     redirect: bool = True,
     verbose: bool = False,
     check_list: Optional[CheckList] = None,
+    catch_keyboard_interrupt: bool = True,
 ) -> AuditResults:
+    """
+    Audit the given ``SearchResult`` items.
+
+    Parameters
+    ----------
+    results : list[SearchResult]
+        The search results from the happi client to audit.
+    redirect : bool
+        During the audit process, capture standard output and standard error to
+        avoid connection and error-related spam.
+    verbose : bool
+        Output status messages during the audit process.
+    check_list : list[Check]
+        The callable checks to perform.
+    catch_keyboard_interrupt : bool, optional
+        Catch and record when the user attempts to cancel the audit process.
+
+    Returns
+    -------
+    AuditResults
+        The summarized results of the audit.
+    """
     if check_list is None:
         # If unspecified, use all checks
         check_list = list(checks)
@@ -262,6 +285,8 @@ def audit(
                         test_results["check"].append(check)
                         test_results["msg"].append(msg)
     except KeyboardInterrupt:
+        if not catch_keyboard_interrupt:
+            raise
         if verbose:
             print("Caught KeyboardInterrupt; exiting early...")
 
