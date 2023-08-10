@@ -8,7 +8,6 @@ import dataclasses
 import fnmatch
 import importlib
 import inspect
-import io
 import json
 import logging
 import os
@@ -17,9 +16,10 @@ import readline  # noqa
 import subprocess
 import sys
 import time
-from contextlib import contextmanager, redirect_stderr, redirect_stdout
+from contextlib import contextmanager
 from cProfile import Profile
 from pathlib import Path
+from typing import Optional
 
 import click
 import coloredlogs
@@ -29,8 +29,9 @@ import prettytable
 import happi
 from happi.errors import SearchError
 
+from .audit import audit as run_audit
 from .audit import (checks, find_unfilled_mandatory_info,
-                    find_unfilled_optional_info, verify_result)
+                    find_unfilled_optional_info)
 from .prompt import prompt_for_entry, transfer_container
 from .utils import is_a_range, is_number, is_valid_identifier_not_keyword
 
@@ -1049,47 +1050,26 @@ def audit(
         # take all checks
         check_list = checks
 
-    client: happi.Client = get_happi_client_from_config(ctx.obj)
+    client: Optional[happi.Client] = get_happi_client_from_config(ctx.obj)
+    if client is None:
+        raise click.ClickException("Failed to create happi client")
 
-    results = search_parser(client, use_glob, search_criteria)
+    results = search_parser(client, use_glob, list(search_criteria))
     logger.info(f'found {len(results)} items to verify')
     logger.info(f'running checks: {[f.__name__ for f in check_list]}')
 
-    test_results = {'name': [], 'success': [], 'check': [], 'msg': []}
-    f = io.StringIO()
-    for i, res in enumerate(results):
-        if not (names_only or show_json):
-            print(f'checking device #: {i}', end='\r')
-        # Capture stdout, stderr for this audit
-        with redirect_stderr(f), redirect_stdout(f):
-            for check_fn in check_list:
-                success, check, msg = verify_result(res, check_fn)
-                test_results['name'].append(res.item.name)
-                test_results['success'].append(success)
-                test_results['check'].append(check)
-                test_results['msg'].append(msg)
+    final_dict = run_audit(
+        results,
+        redirect=True,
+        verbose=not (names_only or show_json),
+        check_list=check_list,
+    )
+    test_results = final_dict["test_results"]
 
-    unique_fails = {test_results['name'][i]
-                    for i in range(len(test_results['name']))
-                    if not test_results['success'][i]}
     # print outs
     if names_only:
-        click.echo(' '.join(unique_fails))
+        click.echo(' '.join(final_dict["failed_names"]))
     elif show_json:
-        final_dict = {'audited': len(results),
-                      'failures': len(unique_fails)}
-        item_info = {name: {'failed_check': [], 'audit_errors': []}
-                     for name in [res.item.name for res in results]}
-        for name, success, check, msg in zip(test_results['name'],
-                                             test_results['success'],
-                                             test_results['check'],
-                                             test_results['msg']):
-            if not success:
-                item_info[name]['failed_check'].append(check)
-                item_info[name]['audit_errors'].append(msg)
-
-        final_dict['items'] = item_info
-        # print(final_dict)
         json.dump(final_dict, indent=2, fp=sys.stdout)
     else:
         pt = prettytable.PrettyTable(field_names=['name', 'check', 'error'])
@@ -1115,7 +1095,9 @@ def audit(
 
         if len(pt.rows) > 0:
             click.echo(pt)
-        click.echo(f'# devices failed: {len(unique_fails)} / {len(results)}')
+
+        num_failures = final_dict["failures"]
+        click.echo(f'# devices failed: {num_failures} / {len(results)}')
 
 
 @happi_cli.command()
