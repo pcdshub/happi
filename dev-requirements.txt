@@ -7,5 +7,4 @@ pymongo
 mongomock >=3.22.0
 # Removed temporarily, pip installations fail lacking gssapi libs
 # psdm_qs_cli
-# Lineprofiler >=4.0.0 incompatible with happi, but needed for py3.11
-line-profiler <4.0.0
+line-profiler
