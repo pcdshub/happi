@@ -97,6 +97,23 @@ def test_cli_no_argument(runner: CliRunner):
     assert 'Commands:' in result.output
 
 
+def test_repair_name(runner: CliRunner, bad_happi_cfg: str):
+    search_string = '_id=tst_id'
+
+    # make sure the name and id are different
+    with search.make_context('search', [search_string], obj=bad_happi_cfg) as ctx:
+        res = search.invoke(ctx)
+    assert all([r['_id'] != r['name'] for r in res])
+
+    # run repair
+    runner.invoke(happi_cli, ['--path', bad_happi_cfg, 'repair', search_string])
+
+    # make sure the name and id are the same
+    with search.make_context('search', [search_string], obj=bad_happi_cfg) as ctx:
+        res = search.invoke(ctx)
+    assert all([r['_id'] == r['name'] for r in res])
+
+
 def test_search(client: happi.client.Client, happi_cfg: str):
     res = client.search_regex(beamline="TST")
 

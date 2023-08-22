@@ -1153,15 +1153,20 @@ def repair(
         if fix_optional:
             req_info.extend(find_unfilled_optional_info(res))
 
-        res_name = res['_id']
+        res_id = res['_id']
 
         # fix each mandatory field
-        logger.info(f'repairing ({res_name})...')
+        logger.info(f'repairing ({res_id})...')
         for req_field in req_info:
             info = res.item._info_attrs[req_field]
             req_value = prompt_for_entry(info)
             info.enforce_value(req_value)
             setattr(res.item, req_field, req_value)
+
+        # check name and id parity
+        if res['name'] != res_id:
+            # set name to match id
+            setattr(res.item, 'name', res_id)
 
         # re-save after creating container
         try:
