@@ -11,7 +11,7 @@ Features
 
 Bugfixes
 --------
-- Issue 302: Add functionality to happi 'repair' that ensures that the name and id fields of a device are the same. 
+- Issue 302: Add functionality to happi 'repair' that ensures that the name and id fields of a device are the same.
 
 Maintenance
 -----------

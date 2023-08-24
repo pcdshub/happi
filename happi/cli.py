@@ -1149,7 +1149,7 @@ def repair(
         # check name and id parity
         if res['name'] != res_id:
             # set name to match id
-            setattr(res.item, 'name', res_id)
+            res.item.name = res_id
 
         # re-save after creating container
         try:
