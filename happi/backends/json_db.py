@@ -138,27 +138,31 @@ class JSONBackend(_Backend):
             Dictionary to store in JSON.
         """
         temp_path = self._temp_path()
+        try:
+            with open(temp_path, 'w') as fd:
+                json.dump(db, fd, sort_keys=True, indent=4)
 
-        with open(temp_path, 'w') as fd:
-            json.dump(db, fd, sort_keys=True, indent=4)
+            if os.path.exists(self.path):
+                shutil.copymode(self.path, temp_path)
+            shutil.move(temp_path, self.path)
+        except BaseException as ex:
 
-        if os.path.exists(self.path):
-            shutil.copymode(self.path, temp_path)
-        shutil.move(temp_path, self.path)
+            # log that the db move was not executed properly
+            logger.debug('JSON db move failed: %s', ex, exc_info=ex)
+            # remove temporary file
+            if os.path.exists(temp_path):
+                print(f"we are removing {temp_path}")
+                os.remove(temp_path)
 
     def _temp_path(self) -> str:
         """
         Return a temporary path to write the json file to during "store".
 
-        Includes a username and a timestamp for sorting
-        (in the cases where the temp file isn't cleaned up)
-        and a hash for uniqueness
+        Includes a hash for uniqueness
         (in the cases where multiple temp files are written at once).
         """
         directory = os.path.dirname(self.path)
         filename = (
-            f".{getpass.getuser()}"
-            f"_{int(time.time())}"
             f"_{str(uuid.uuid4())[:8]}"
             f"_{os.path.basename(self.path)}"
         )

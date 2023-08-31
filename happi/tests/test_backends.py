@@ -203,17 +203,21 @@ def test_json_tempfile_uniqueness():
     assert len(set(tempfiles)) == len(tempfiles)
 
 def test_json_tempfile_remove(monkeypatch):
-    # Force the function to fail so there will be a temp file to remove
-    monkeypatch.setattr('shutil.move', no_op)
-    def no_op(*args, **kwargs):
-        raise Exception
+    # Set consistent temppath
+    jb = JSONBackend("testing.json", initialize=False)
+    temp_path = jb._temp_path()
+    jb._temp_path = lambda: temp_path
 
-    # Ensure shutil.move raises an exception  
-    with pytest.raises(Exception):
-        jb = JSONBackend("testing.json", initialize=True)
+    # Ensure file is created, then throw error
+    def shutil_move_patch(*args, **kwargs):
+        assert os.path.isfile(os.path.join(os.getcwd(), temp_path))
+        raise RuntimeError('Simulated error.')
 
-    # Ensure the temp file was removed correctly
-    assert os.path.exists(jb._temp_path) == False
+    monkeypatch.setattr('shutil.move', shutil_move_patch)
+
+    # Test, and ensure file is deleted appropriately
+    jb.initialize()
+    assert os.path.exists(temp_path) == False
 
 
 @requires_questionnaire
