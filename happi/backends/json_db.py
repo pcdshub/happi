@@ -2,14 +2,12 @@
 Backend implemenation using the ``simplejson`` package.
 """
 import contextlib
-import getpass
 import logging
 import math
 import os
 import os.path
 import re
 import shutil
-import time
 import uuid
 from typing import Any, Callable, Optional, Union
 
@@ -151,7 +149,6 @@ class JSONBackend(_Backend):
             logger.debug('JSON db move failed: %s', ex, exc_info=ex)
             # remove temporary file
             if os.path.exists(temp_path):
-                print(f"we are removing {temp_path}")
                 os.remove(temp_path)
 
     def _temp_path(self) -> str:
