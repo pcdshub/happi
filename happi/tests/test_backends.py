@@ -202,6 +202,19 @@ def test_json_tempfile_uniqueness():
         tempfiles.append(jb._temp_path())
     assert len(set(tempfiles)) == len(tempfiles)
 
+def test_json_tempfile_remove(monkeypatch):
+    # Force the function to fail so there will be a temp file to remove
+    monkeypatch.setattr('shutil.move', no_op)
+    def no_op(*args, **kwargs):
+        raise Exception
+
+    # Ensure shutil.move raises an exception  
+    with pytest.raises(Exception):
+        jb = JSONBackend("testing.json", initialize=True)
+
+    # Ensure the temp file was removed correctly
+    assert os.path.exists(jb._temp_path) == False
+
 
 @requires_questionnaire
 def test_qs_find(mockqsbackend):
