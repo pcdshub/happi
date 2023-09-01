@@ -202,6 +202,7 @@ def test_json_tempfile_uniqueness():
         tempfiles.append(jb._temp_path())
     assert len(set(tempfiles)) == len(tempfiles)
 
+
 def test_json_tempfile_remove(monkeypatch):
     # Set consistent temppath
     jb = JSONBackend("testing.json", initialize=False)
@@ -217,7 +218,7 @@ def test_json_tempfile_remove(monkeypatch):
 
     # Test, and ensure file is deleted appropriately
     jb.initialize()
-    assert os.path.exists(temp_path) == False
+    assert os.path.exists(temp_path) is False
 
 
 @requires_questionnaire
