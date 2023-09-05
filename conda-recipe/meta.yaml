@@ -27,8 +27,6 @@ requirements:
   - coloredlogs
   - entrypoints
   - jinja2
-  - pcdsutils
-  - pcdsdevices
   - platformdirs
   - prettytable
   - simplejson
@@ -45,6 +43,8 @@ test:
   - pytest
   - ipython
   - line_profiler
+  - pcdsutils
+  - pcdsdevices
 
 about:
   dev_url: https://github.com/pcdshub/happi/
