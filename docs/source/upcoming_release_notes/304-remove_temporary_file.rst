@@ -1,4 +1,4 @@
-304 remove_temporar_file
+304 remove_temporary_file
 #################
 
 API Changes

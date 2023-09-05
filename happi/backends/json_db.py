@@ -150,6 +150,7 @@ class JSONBackend(_Backend):
             # remove temporary file
             if os.path.exists(temp_path):
                 os.remove(temp_path)
+            raise
 
     def _temp_path(self) -> str:
         """
