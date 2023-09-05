@@ -12,7 +12,6 @@ from unittest import mock
 
 import click
 import IPython
-import pcdsutils
 import pytest
 from click.testing import CliRunner
 
