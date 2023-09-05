@@ -27,6 +27,8 @@ requirements:
   - coloredlogs
   - entrypoints
   - jinja2
+  - pcdsutils
+  - pcdsdevices
   - platformdirs
   - prettytable
   - simplejson
