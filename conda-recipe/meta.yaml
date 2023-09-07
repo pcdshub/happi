@@ -43,6 +43,8 @@ test:
   - pytest
   - ipython
   - line_profiler
+  - pcdsutils
+  - pcdsdevices
 
 about:
   dev_url: https://github.com/pcdshub/happi/

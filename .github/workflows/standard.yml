@@ -16,7 +16,7 @@ jobs:
       # automatically if the repository name is the same as the import name.
       package-name: "happi"
       # Extras that will be installed for both conda/pip:
-      testing-extras: "pcdsdevices pcdsutils"
+      testing-extras: ""
       # Extras to be installed only for conda-based testing:
       conda-testing-extras: ""
       # Extras to be installed only for pip-based testing:
