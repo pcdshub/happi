@@ -212,12 +212,13 @@ def test_json_tempfile_remove(monkeypatch):
     # Ensure file is created, then throw error
     def shutil_move_patch(*args, **kwargs):
         assert os.path.isfile(os.path.join(os.getcwd(), temp_path))
-        raise RuntimeError('Simulated error.')
+        raise RuntimeError('Simulated testing error.')
 
     monkeypatch.setattr('shutil.move', shutil_move_patch)
 
     # Test, and ensure file is deleted appropriately
-    jb.initialize()
+    with pytest.raises(BaseException):
+        jb.initialize()
     assert os.path.exists(temp_path) is False
 
 

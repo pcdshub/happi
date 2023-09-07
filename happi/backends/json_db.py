@@ -144,8 +144,6 @@ class JSONBackend(_Backend):
                 shutil.copymode(self.path, temp_path)
             shutil.move(temp_path, self.path)
         except BaseException as ex:
-
-            # log that the db move was not executed properly
             logger.debug('JSON db move failed: %s', ex, exc_info=ex)
             # remove temporary file
             if os.path.exists(temp_path):
