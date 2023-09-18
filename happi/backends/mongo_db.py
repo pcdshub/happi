@@ -5,12 +5,17 @@ import logging
 import re
 from typing import Any, Optional, Union
 
-import bson.regex
 from pymongo import MongoClient
 from pymongo.errors import OperationFailure, ServerSelectionTimeoutError
 
 from ..errors import DatabaseError, DuplicateError, SearchError
 from .core import ItemMeta, ItemMetaGen, _Backend
+
+try:
+    import bson.regex
+except ImportError:
+    raise ImportError('Optional dependency mongodb not found; mongodb backend'
+                      'is not available.  (bson not found)')
 
 logger = logging.getLogger(__name__)
 
