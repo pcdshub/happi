@@ -44,14 +44,14 @@ def trim_split_output(strings: str, delim: str = '\n'):
     """
     date_pattern = r"\[(\d{4})[-](0[1-9]|1[012])[-].*\]"
 
-    ok_substrs = [r"happi.item."]
+    omit_substrs = [r"happi.containers."]
 
     # remove registry items
-    new_out = [
-        st for st in strings.split(delim)
-        if any([re.search(substr, st) for substr in ok_substrs])
-    ]
+    new_out = strings.split(delim)
 
+    # strip registry items from outside entrypoints?
+    new_out = [st for st in new_out
+               if not any([re.search(substr, st) for substr in omit_substrs])]
     # strip date-time from logging messages
     new_out = [re.sub(date_pattern, '', st) for st in new_out]
     return new_out
@@ -252,17 +252,17 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
     },
     "active": true,
     "documentation": null,
-    "prefix": "TST:BASE:PIM2",
-    "_id": "TST_BASE_PIM2",
+    "_id": "tst_base_pim2",
     "beamline": "TST",
     "creation": "Wed Jan 30 09:46:00 2019",
     "last_edit": "Fri Apr 13 14:40:08 2018",
     "macros": null,
     "parent": null,
+    "prefix": "TST:BASE:PIM2",
     "screen": null,
     "stand": "BAS",
     "system": "diagnostic",
-    "type": "OphydItem",
+    "type": "HappiItem",
     "z": 6.0,
     "y": 10.0
   }
@@ -716,10 +716,10 @@ def test_transfer_cli(
         '+---------------+---------------+',
         '',
         '----------Prepare Entries-----------',
-        'OphydItem expects information for entry "prefix" [take default: None]: n',
+        'OphydItem expects information for entry "prefix" [take default: None]: ',
         '',
         '----------Amend Entries-----------',
-        'Save final item? [y/N]: n',
+        'Save final item? [y/N]: ',
         ''], id="transfer_succeeding",
     )])
 def test_transfer_cli_more(
