@@ -449,6 +449,14 @@ def db(tmp_path):
         "type": "HappiItem",
         "z": 6.0,
         "y": 10.0
+    },
+    "tst_minimal": {
+        "_id": "tst_minimal",
+        "creation": "Tue Jan 29 09:46:00 2019",
+        "device_class": "types.SimpleNamespace",
+        "last_edit": "Thu Sep 14 14:40:08 2018",
+        "name": "tst_minimal",
+        "type": "HappiItem"
     }
 }
 """)

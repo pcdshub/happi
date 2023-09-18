@@ -700,6 +700,39 @@ def test_transfer_cli(
     assert_match_expected(results, expected_output)
 
 
+@pytest.mark.parametrize("from_user, expected_output", [
+    pytest.param('\n'.join(['', '']), [
+        'Attempting to transfer tst_minimal to OphydItem...',
+        '+---------------+---------------+',
+        '|  tst_minimal  |   OphydItem   |',
+        '+---------------+---------------+',
+        '|     active    |     active    |',
+        '|      args     |      args     |',
+        '|  device_class |  device_class |',
+        '| documentation | documentation |',
+        '|     kwargs    |     kwargs    |',
+        '|      name     |      name     |',
+        '|       -       |     prefix    |',
+        '+---------------+---------------+',
+        '',
+        '----------Prepare Entries-----------',
+        'OphydItem expects information for entry "prefix" [take default: None]: n',
+        '',
+        '----------Amend Entries-----------',
+        'Save final item? [y/N]: n',
+        ''], id="transfer_succeeding",
+    )])
+def test_transfer_cli_more(
+    from_user: str,
+    expected_output: list[str],
+    happi_cfg: str,
+    runner: CliRunner
+):
+    results = runner.invoke(happi_cli, ['--path', happi_cfg, 'transfer',
+                            'tst_minimal', 'OphydItem'], input=from_user)
+    assert_match_expected(results, expected_output)
+
+
 def arg_variants(variants: tuple[tuple[tuple[str]]]):
     """
     Collapse argument variants into all possible combinations.

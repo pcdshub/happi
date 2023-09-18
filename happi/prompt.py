@@ -183,8 +183,10 @@ def transfer_container(client, item, target):
                           f'entry "{nt}"')
         d = getattr(getattr(target, nt), 'default')
         val = click.prompt(missing_prompt, default=f'take default: {d}')
-        if val != 'take default':
+        if not ('take default' in val):
             edits.update({nt: val})
+        else:
+            edits.update({nt: d})
 
     # Actually apply changes and cast item into new container
     # Enforce conditions are dealt with here
@@ -198,7 +200,8 @@ def transfer_container(client, item, target):
         except TransferError as e:
             print(e)
             fix_prompt = f'New value for "{e.key}"'
-            new_val = click.prompt(fix_prompt)
+            d = getattr(getattr(target, e.key), 'default')
+            new_val = click.prompt(fix_prompt, default=d)
             edits.update({e.key: new_val})
 
     if not new_kwargs:
