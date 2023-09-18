@@ -200,7 +200,7 @@ def transfer_container(client, item, target):
         except TransferError as e:
             print(e)
             fix_prompt = f'New value for "{e.key}"'
-            d = getattr(getattr(target, e.key), 'default')
+            d = getattr(target, e.key).default
             new_val = click.prompt(fix_prompt, default=d)
             edits.update({e.key: new_val})
 
