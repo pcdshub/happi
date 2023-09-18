@@ -44,7 +44,7 @@ def trim_split_output(strings: str, delim: str = '\n'):
     """
     date_pattern = r"\[(\d{4})[-](0[1-9]|1[012])[-].*\]"
 
-    omit_substrs = [r"happi.containers."]
+    omit_substrs = [r"happi.containers.", r"- DEBUG -"]
 
     # remove registry items
     new_out = strings.split(delim)
