@@ -44,14 +44,14 @@ def trim_split_output(strings: str, delim: str = '\n'):
     """
     date_pattern = r"\[(\d{4})[-](0[1-9]|1[012])[-].*\]"
 
-    ok_substrs = [r"happi.item."]
+    omit_substrs = [r"happi.containers.", r"- DEBUG -"]
 
     # remove registry items
-    new_out = [
-        st for st in strings.split(delim)
-        if any([re.search(substr, st) for substr in ok_substrs])
-    ]
+    new_out = strings.split(delim)
 
+    # strip registry items from outside entrypoints?
+    new_out = [st for st in new_out
+               if not any([re.search(substr, st) for substr in omit_substrs])]
     # strip date-time from logging messages
     new_out = [re.sub(date_pattern, '', st) for st in new_out]
     return new_out
@@ -60,7 +60,8 @@ def trim_split_output(strings: str, delim: str = '\n'):
 def assert_match_expected(
     result: click.testing.Result,
     expected_output: Iterable[str],
-    expected_return: int = 0
+    expected_return: int = 0,
+    raise_failures: bool = False
 ):
     """
     standard checks for a cli result, confirms output matches expected
@@ -68,11 +69,17 @@ def assert_match_expected(
     """
     logger.debug(result.output)
     assert result.exit_code == expected_return
-    assert not result.exception or (isinstance(result.exception, SystemExit) and expected_return != 0)
+    assert not result.exception or (isinstance(result.exception, SystemExit)
+                                    and expected_return != 0)
 
     trimmed_output = trim_split_output(result.output)
     for message, expected in zip(trimmed_output, expected_output):
-        assert message == expected
+        if raise_failures:
+            assert message == expected
+        else:
+            if not message == expected:
+                print('Output does not match expected value:\n'
+                      f'- Output: {message}\n- Expected: {expected}')
 
 
 def assert_in_expected(
@@ -252,17 +259,17 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
     },
     "active": true,
     "documentation": null,
-    "prefix": "TST:BASE:PIM2",
-    "_id": "TST_BASE_PIM2",
+    "_id": "tst_base_pim2",
     "beamline": "TST",
     "creation": "Wed Jan 30 09:46:00 2019",
     "last_edit": "Fri Apr 13 14:40:08 2018",
     "macros": null,
     "parent": null,
+    "prefix": "TST:BASE:PIM2",
     "screen": null,
     "stand": "BAS",
     "system": "diagnostic",
-    "type": "OphydItem",
+    "type": "HappiItem",
     "z": 6.0,
     "y": 10.0
   }
@@ -273,7 +280,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
     )
 
     assert result.exit_code == 0
-    assert_match_expected(result, expected_output.split('\n'))
+    assert_match_expected(result, expected_output.split('\n'), raise_failures=True)
 
 
 @pytest.mark.parametrize("from_user, expected_output, expected_return", [
@@ -390,6 +397,13 @@ def test_add_cli(
     result = runner.invoke(happi_cli, ['--path', happi_cfg, 'add'],
                            input=from_user)
     assert_match_expected(result, expected_output, expected_return)
+    # check this has been added
+    dev_name = from_user[1]
+    if '_' not in dev_name:  # special case for errored
+        return
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    item = client.find_item(name=dev_name)
+    assert item["_id"]
 
 
 def test_delete_cli(
@@ -464,6 +478,10 @@ def test_add_clone(
         input=from_user)
 
     assert_match_expected(clone_result, expected_output)
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    item = client.find_item(name="happi_new_name")
+    assert item["type"] == 'HappiItem'
+    assert item["device_class"] == 'device_class'
 
 
 def test_add_clone_item_not_found(happi_cfg: str, runner: CliRunner):
@@ -656,7 +674,7 @@ def test_update_stdin(wrapper: str, happi_cfg: str, runner: CliRunner):
 
 
 @pytest.mark.parametrize("from_user, expected_output", [
-    pytest.param('\n'.join(['n', 'n', 'n', 'n', 'N', 'n', 'n', 'n', '']), [
+    pytest.param('\n'.join(['n', 'n', 'n', 'n', 'N', 'n', 'n', 'n', 'y']), [
         'Attempting to transfer tst_base_pim to OphydItem...',
         '+---------------+---------------+',
         '|  tst_base_pim |   OphydItem   |',
@@ -686,7 +704,11 @@ def test_update_stdin(wrapper: str, happi_cfg: str, runner: CliRunner):
         'Include entry from tst_base_pim: system = "diagnostic"? [Y/n]: n',
         'Include entry from tst_base_pim: y = "40.0"? [Y/n]: n',
         'Include entry from tst_base_pim: z = "3.0"? [Y/n]: n', '',
-        '----------Amend Entries-----------', 'Save final item? [y/N]: ',
+        '----------Amend Entries-----------', 'Save final item? [y/N]: y',
+        ' - INFO -  Attempting to remove OphydItem (name=tst_base_pim) from the collection ...',
+        ' - INFO -  Storing item OphydItem (name=tst_base_pim) ...',
+        ' - INFO -  Adding / Modifying information for tst_base_pim ...',
+        ' - INFO -  HappiItem OphydItem (name=tst_base_pim) has been succesfully added to the database',
         ''], id="transfer_succeeding",
     )])
 def test_transfer_cli(
@@ -698,6 +720,51 @@ def test_transfer_cli(
     results = runner.invoke(happi_cli, ['--path', happi_cfg, 'transfer',
                             'tst_base_pim', 'OphydItem'], input=from_user)
     assert_match_expected(results, expected_output)
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    item = client.find_item(name="tst_base_pim")
+    assert item["type"] == 'OphydItem'
+    assert getattr(item, 'parent', 'DNE') == 'DNE'
+
+
+@pytest.mark.parametrize("from_user, expected_output", [
+    pytest.param('\n'.join(['MY:PREFIX', 'y']), [
+        'Attempting to transfer tst_minimal to OphydItem...',
+        '+---------------+---------------+',
+        '|  tst_minimal  |   OphydItem   |',
+        '+---------------+---------------+',
+        '|     active    |     active    |',
+        '|      args     |      args     |',
+        '|  device_class |  device_class |',
+        '| documentation | documentation |',
+        '|     kwargs    |     kwargs    |',
+        '|      name     |      name     |',
+        '|       -       |     prefix    |',
+        '+---------------+---------------+',
+        '',
+        '----------Prepare Entries-----------',
+        'Enter value for prefix, enforce=str: MY:PREFIX',
+        '',
+        '----------Amend Entries-----------',
+        'Save final item? [y/N]: y',
+        ' - INFO -  Attempting to remove OphydItem (name=tst_minimal) from the collection ...',
+        ' - INFO -  Storing item OphydItem (name=tst_minimal) ...',
+        ' - INFO -  Adding / Modifying information for tst_minimal ...',
+        ' - INFO -  HappiItem OphydItem (name=tst_minimal) has been succesfully added to the database',
+        ''], id="transfer_succeeding",
+    )])
+def test_transfer_cli_more(
+    from_user: str,
+    expected_output: list[str],
+    happi_cfg: str,
+    runner: CliRunner
+):
+    results = runner.invoke(happi_cli, ['--path', happi_cfg, 'transfer',
+                            'tst_minimal', 'OphydItem'], input=from_user)
+    assert_match_expected(results, expected_output)
+    client = happi.client.Client.from_config(cfg=happi_cfg)
+    item = client.find_item(name="tst_minimal")
+    assert item["type"] == 'OphydItem'
+    assert item["prefix"] == 'MY:PREFIX'
 
 
 def arg_variants(variants: tuple[tuple[tuple[str]]]):
