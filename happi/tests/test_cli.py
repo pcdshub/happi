@@ -79,7 +79,7 @@ def assert_match_expected(
         else:
             if not message == expected:
                 print('Output does not match expected value:\n'
-                      f'- Output: ({message}\n- Expected: {expected}')
+                      f'- Output: {message}\n- Expected: {expected}')
 
 
 def assert_in_expected(
@@ -742,7 +742,7 @@ def test_transfer_cli(
         '+---------------+---------------+',
         '',
         '----------Prepare Entries-----------',
-        'OphydItem expects information for entry "prefix" [take default: None]: MY:PREFIX',
+        'Enter value for prefix, enforce=str: MY:PREFIX',
         '',
         '----------Amend Entries-----------',
         'Save final item? [y/N]: y',
