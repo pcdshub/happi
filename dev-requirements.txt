@@ -4,6 +4,10 @@ ipython
 matplotlib >=3.2.0
 ophyd >=1.5.0
 pymongo
+# bson is vendored by pymongo, and should not be installed separately
+# bson
+pcdsutils
+pcdsdevices
 mongomock >=3.22.0
 # Removed temporarily, pip installations fail lacking gssapi libs
 # psdm_qs_cli

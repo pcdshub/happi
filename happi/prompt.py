@@ -6,6 +6,7 @@ import click
 import prettytable
 
 from happi.errors import EnforceError, TransferError
+from happi.item import EntryInfo
 from happi.utils import (OptionalDefault, is_valid_identifier_not_keyword,
                          optional_enforce)
 
@@ -179,12 +180,9 @@ def transfer_container(client, item, target):
 
     # Deal with missing keys in target, deal with validation later
     for nt in target_exclusive:
-        missing_prompt = (f'{target_name} expects information for '
-                          f'entry "{nt}"')
-        d = getattr(getattr(target, nt), 'default')
-        val = click.prompt(missing_prompt, default=f'take default: {d}')
-        if val != 'take default':
-            edits.update({nt: val})
+        einfo: EntryInfo = getattr(target, nt)
+        val = prompt_for_entry(einfo)
+        edits.update({nt: val})
 
     # Actually apply changes and cast item into new container
     # Enforce conditions are dealt with here
@@ -197,8 +195,8 @@ def transfer_container(client, item, target):
             success = True
         except TransferError as e:
             print(e)
-            fix_prompt = f'New value for "{e.key}"'
-            new_val = click.prompt(fix_prompt)
+            einfo = getattr(target, e.key)
+            new_val = prompt_for_entry(einfo)
             edits.update({e.key: new_val})
 
     if not new_kwargs:

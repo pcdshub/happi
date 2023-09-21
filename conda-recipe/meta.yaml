@@ -33,6 +33,7 @@ requirements:
   run-constrained:
   - psdm_qs_cli >=0.3.1
   - pymongo >=4.0.2
+  # - bson  # bson is vendored by pymongo, and should not be installed separately
 
 test:
   commands:
@@ -43,6 +44,8 @@ test:
   - pytest
   - ipython
   - line_profiler
+  - pcdsutils
+  - pcdsdevices
 
 about:
   dev_url: https://github.com/pcdshub/happi/
