@@ -2,6 +2,45 @@ Release History
 ###############
 
 
+v2.4.0 (2023-09-27)
+===================
+
+Features
+--------
+- Added ``happi.audit.audit()`` which can be used to programmatically audit
+  happi items.
+
+Bugfixes
+--------
+- Fixes bug where `happi transfer` was not filling default values properly
+- Fixes conftest.trim_split_output, which was effectively a no-op.  Touches up affected tests
+- Issue 302: Add functionality to happi 'repair' that ensures that the name and id fields of a device are the same.
+- Remove an extra pcdsutils import from test_cli.py that is not properly caught by error handling
+
+Maintenance
+-----------
+- Adds error handling for the temporary file created when initializing a json backend object.
+- Changes format of temporary file name generation to contain only a unique hash.
+- Tests modified to no longer assert stdout matches expected strings.  Rather the effect of the
+  command being tested is verified independently.  The `assert_match_expected` helper is still
+  used, but will now print mismatches instead of asserting them.
+- Allow `happi update` to handle json-backend-type payloads
+- Add pcdsutils and pcdsdevices to environment requirements in conda recipe and dev requirements
+- Remove pcdsutils and pcdsdevices from extra testing requirements in github workflow
+- The ``happi audit`` CLI entrypoint has been modified to use
+  ``happi.audit.audit()``.
+- Update mongo backend to handle authSource, require connection information (host, user, etc)
+- Documents bson dependency.  Bson is vendored by pymongo, which instructs
+  users to not install bson from pypi (`pymongo readme <https://github.com/mongodb/mongo-python-driver/tree/master#installation>`)
+
+Contributors
+------------
+- klauer
+- laura-king
+- tangkong
+
+
+
 v2.3.0 (2023-06-30)
 ===================
 
