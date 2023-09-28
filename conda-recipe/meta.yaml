@@ -30,7 +30,7 @@ requirements:
   - platformdirs
   - prettytable
   - simplejson
-  run-constrained:
+  run_constrained:
   - psdm_qs_cli >=0.3.1
   - pymongo >=4.0.2
   # - bson  # bson is vendored by pymongo, and should not be installed separately
