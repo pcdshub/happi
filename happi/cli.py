@@ -1093,7 +1093,8 @@ def audit(
             term_width = os.get_terminal_size()[0]
             pt._max_width = {'error': max(60, term_width - 40)}
         except OSError:
-            # non-interactive mode (piping results). No max width
+            # non-interactive mode (piping results). default max width
+            pt._max_width = {'error': 100}
             pass
 
         if len(pt.rows) > 0:
