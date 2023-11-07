@@ -1,8 +1,10 @@
 import collections
 import logging
+from typing import Optional
 
 from qtpy import QtCore, QtGui, QtWidgets
 
+from ..client import Client
 from ..utils import get_happi_entry_value
 
 logger = logging.getLogger(__name__)
@@ -10,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class HappiViewMixin:
     """Base class to be used for View widgets."""
-    def __init__(self, client=None, **kwargs):
+    def __init__(self, client: Optional[Client] = None, **kwargs):
         super().__init__(**kwargs)
         self._client = client
         self._entries = []
@@ -60,7 +62,12 @@ class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
         Additional arguments to be passed to the QListView constructor.
     """
 
-    def __init__(self, parent=None, client=None, **kwargs):
+    def __init__(
+        self,
+        parent: Optional[QtWidgets.QWidget] = None,
+        client: Optional[Client] = None,
+        **kwargs
+    ):
         super().__init__(parent=parent, client=client, **kwargs)
         self.model = QtGui.QStandardItemModel()
         self.model.setHorizontalHeaderLabels(["Devices"])
@@ -110,7 +117,12 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
         Additional arguments to be passed to the QListView constructor.
     """
 
-    def __init__(self, parent=None, client=None, **kwargs):
+    def __init__(
+        self,
+        parent: Optional[QtWidgets.QWidget] = None,
+        client: Optional[Client] = None,
+        **kwargs
+    ):
         super().__init__(parent=parent, client=client, **kwargs)
         self.setSortingEnabled(True)
         self._models = dict()
@@ -177,7 +189,7 @@ class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
                 field_val = '[KEY NOT FOUND]'
                 entry_group[field_val].append(entry.item)
 
-        for idx, (key_value, entries) in enumerate(entry_group.items()):
+        for key_value, entries in entry_group.items():
             root = QtGui.QStandardItem(key_value)
             # Disable edit
             root.setFlags(root.flags() & ~QtCore.Qt.ItemIsEditable)
