@@ -1,5 +1,5 @@
-IssueNumber Title
-#################
+337 bld_run_constrained
+#######################
 
 API Breaks
 ----------
@@ -15,8 +15,8 @@ Bugfixes
 
 Maintenance
 -----------
-- N/A
+- Fix conda recipe to use "run_constrained" not "run-constrained"
 
 Contributors
 ------------
-- N/A
+- tangkong
