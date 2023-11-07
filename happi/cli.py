@@ -1082,10 +1082,12 @@ def audit(
                                              test_results['msg']):
             if not success:
                 if name != last_name:
+                    if last_name != '':  # initial condition
+                        pt.add_row(['', '', ''], divider=True)
                     pt.add_row([name, check, msg])
                 else:
                     pt.add_row(['', check, msg])
-            last_name = name
+                last_name = name
 
         try:
             term_width = os.get_terminal_size()[0]
