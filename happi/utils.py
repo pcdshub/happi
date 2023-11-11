@@ -5,12 +5,16 @@ import functools
 import keyword
 import logging
 import os
+import pathlib
 import warnings
 from typing import Callable
 
 from .errors import EnforceError
 
 logger = logging.getLogger(__name__)
+
+
+HAPPI_SOURCE_PATH = pathlib.Path(__file__).parent
 
 
 def create_alias(name):
