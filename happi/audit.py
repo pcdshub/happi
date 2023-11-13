@@ -10,6 +10,7 @@ from __future__ import annotations
 import contextlib
 import inspect
 import io
+import sys
 from typing import Callable, Optional, TypedDict
 
 from jinja2 import DebugUndefined, Environment, meta
@@ -265,7 +266,7 @@ def audit(
 
     try:
         for i, res in enumerate(results):
-            if verbose:
+            if verbose and sys.__stdout__.isatty():
                 print(f"checking device #: {i}", end="\r")
 
             # Capture stdout, stderr for this audit

@@ -1082,16 +1082,19 @@ def audit(
                                              test_results['msg']):
             if not success:
                 if name != last_name:
+                    if last_name != '':  # initial condition
+                        pt.add_row(['', '', ''], divider=True)
                     pt.add_row([name, check, msg])
                 else:
                     pt.add_row(['', check, msg])
-            last_name = name
+                last_name = name
 
         try:
             term_width = os.get_terminal_size()[0]
             pt._max_width = {'error': max(60, term_width - 40)}
         except OSError:
-            # non-interactive mode (piping results). No max width
+            # non-interactive mode (piping results). default max width
+            pt._max_width = {'error': 100}
             pass
 
         if len(pt.rows) > 0:
