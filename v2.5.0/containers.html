@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Containers &mdash; Happi 2.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=3c4615cf"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using the Client" href="client.html" />
+    <link rel="prev" title="HAPPI - Heuristic Access to Positions of Photon Instruments" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Happi
+          </a>
+              <div class="version">
+                2.5.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#entryinfo">EntryInfo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#happi.EntryInfo"><code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#happi.EntryInfo.enforce_value"><code class="docutils literal notranslate"><span class="pre">EntryInfo.enforce_value()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#happiitem">HappiItem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-container">Example Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-your-object">Loading your Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#integrating-with-your-package">Integrating with your package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#built-in-container-conventions">Built-in Container Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#happiitem-entries">HappiItem Entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ophyditem-entries">OphydItem entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lclsitem-entries">LCLSItem entries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Happi API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming_changes.html">Upcoming Changes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Happi</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Containers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/containers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="containers">
+<span id="id1"></span><h1>Containers<a class="headerlink" href="#containers" title="Link to this heading"></a></h1>
+<p>In order to regulate and template the information that gets entered into the
+Happi database, we use the concept of containers. Containers serve two primary
+roles:</p>
+<ul class="simple">
+<li><p>Identifying how to instantiate the object it represents (by way of class
+name, arguments, and keyword arguments).</p></li>
+<li><p>Storing pertinent and structured metadata for the given instance.</p></li>
+</ul>
+<p>Containers are created by instantiating the <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a> class or a
+subclass of it. The metadata associated with the instance is broken up into
+fields or “entries” of type <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>. This allows a developer to
+specify fields that are essential to every instance of a specific container
+type.</p>
+<section id="entryinfo">
+<h2>EntryInfo<a class="headerlink" href="#entryinfo" title="Link to this heading"></a></h2>
+<p>These fields are specified using an instance of <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>. This class
+provides several primary features:</p>
+<ul class="simple">
+<li><p>Mark a field as required (or optional)</p></li>
+<li><p>Add default values when unspecified</p></li>
+<li><p>Enforce - or validate - a certain format for the field</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="happi.EntryInfo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">happi.</span></span><span class="sig-name descname"><span class="pre">EntryInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_doc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_default_as_kwarg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.EntryInfo" title="Link to this definition"></a></dt>
+<dd><p>A piece of information related to a specific device.</p>
+<p>These are entered as class attributes for a given device container. They
+help control the information entered into a device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – A short string to document the device.</p></li>
+<li><p><strong>optional</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – By default all EntryInfo is optional, but in certain cases you may want
+to demand a particular piece of information upon initialization.</p></li>
+<li><p><strong>enforce</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><em>type</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>, </em><em>compiled regex</em><em>, or </em><em>function</em><em>, </em><em>optional</em>) – Specify that all entered information is entered in a specific format.
+This can either by a Python type i.e. int, float e.t.c., a list of
+acceptable values, a compiled regex pattern i.e <code class="docutils literal notranslate"><span class="pre">re.compile(...)</span></code>,
+or custom handling by passing a function that takes in one argument,
+the value. This function must do one of: return the value back as-is,
+return the value back converted to a corrected form, or raise a
+EnforceError.</p></li>
+<li><p><strong>default</strong> (<em>optional</em>) – A default value for the trait to have if the user does not specify.
+Keep in mind that this should be the same type as <code class="docutils literal notranslate"><span class="pre">enforce</span></code> if you
+are demanding a certain type.</p></li>
+<li><p><strong>enforce_doc</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – A human-readable explanation of the enforce field.  Will be printed
+if the entered information does not follow the <code class="docutils literal notranslate"><span class="pre">enforce</span></code> type</p></li>
+<li><p><strong>include_default_as_kwarg</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – Defaults to True.  If a kwargs EntryInfo sets this to False, all kwargs
+will be compared to their corresponding Entries in the item and
+omitted from the kwargs dictionary if their value matches the Entry’s
+default.
+This can also be set on an individual Entry basis.  The setting on
+an individual entry will only be taken into consideration if the
+kwarg EntryInfo has this set to True (default).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ContainerError</strong> – If there is an error with the way the enforced value interacts with its
+    default value, or if the piece of information entered is unenforcable
+    based on the the settings.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyItem</span><span class="p">(</span><span class="n">HappiItem</span><span class="p">):</span>
+    <span class="n">my_field</span> <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;My generated field&#39;</span><span class="p">)</span>
+    <span class="n">number</span>   <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Device number&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                         <span class="n">enforce_doc</span><span class="o">=</span><span class="s1">&#39;This must be a number&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="happi.EntryInfo.enforce_value">
+<span class="sig-name descname"><span class="pre">enforce_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#happi.EntryInfo.enforce_value" title="Link to this definition"></a></dt>
+<dd><p>Enforce the rules of the EntryInfo.</p>
+<p>Accepts a <code class="docutils literal notranslate"><span class="pre">value</span></code>, verifies that it meets the criteria specified in
+the <code class="docutils literal notranslate"><span class="pre">enforce</span></code> attribute, and returns the same value, except that it
+will be converted to the correct type if <code class="docutils literal notranslate"><span class="pre">enforce</span></code> is a type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>EnforceError</strong> – If the value is not the correct type, or does not match the
+    pattern.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="happiitem">
+<h2>HappiItem<a class="headerlink" href="#happiitem" title="Link to this heading"></a></h2>
+<p>In order to ensure that information is entered into the database in an
+organized fashion, the client will only accept classes that inherit from
+<a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>. Each item will have the key information represented as
+class attributes, available to be manipulated like any other regular property</p>
+<p>Editing the information for a container is a simple as:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">HappiItem</span>
+
+<span class="gp">In [2]: </span><span class="n">item</span> <span class="o">=</span> <span class="n">HappiItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">)</span>
+
+<span class="gp">In [3]: </span><span class="n">item</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;new_name&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">happi.Device</span></code> class is <strong>deprecated</strong> due to ambiguous name,
+conflicting with <code class="xref py py-class docutils literal notranslate"><span class="pre">ophyd.Device</span></code>.
+<a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">happi.HappiItem</span></code></a> should be used instead.</p>
+</div>
+</section>
+<section id="example-container">
+<h2>Example Container<a class="headerlink" href="#example-container" title="Link to this heading"></a></h2>
+<p>In order to show the flexibility of the <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> class, we’ll put
+together a new example container. The class can be invoked in the same way you
+would usually handle class inheritance, the only difference is that you specify
+class attributes as EntryInfo objects:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="gp">In [5]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">HappiItem</span><span class="p">,</span> <span class="n">EntryInfo</span>
+
+<span class="gp">In [6]: </span><span class="k">class</span> <span class="nc">MyItem</span><span class="p">(</span><span class="n">HappiItem</span><span class="p">):</span>
+<span class="gp">   ...: </span><span class="w">    </span><span class="sd">&quot;&quot;&quot;My new item, with a known model number.&quot;&quot;&quot;</span>
+<span class="gp">   ...: </span>    <span class="n">model_no</span>      <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Model Number of Item&#39;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">   ...: </span>    <span class="n">count</span>         <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Count of Item&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">   ...: </span>    <span class="n">choices</span>       <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Choice Info&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">   ...: </span>    <span class="n">no_whitespace</span> <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Enforce no whitespace&#39;</span><span class="p">,</span>
+<span class="gp">   ...: </span>                               <span class="n">enforce</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[\S]*$&#39;</span><span class="p">),</span>
+<span class="gp">   ...: </span>                               <span class="n">enforce_doc</span> <span class="o">=</span> <span class="s1">&#39;This item cannot have whitespace&#39;</span><span class="p">)</span>
+<span class="gp">   ...: </span>
+</pre></div>
+</div>
+<p>By default, <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> will create an optional init keyword argument with a
+default of <code class="docutils literal notranslate"><span class="pre">None</span></code> with the same name as the class attribute. A quick way
+to see how this information will be put into the the database is taking a look
+at <code class="docutils literal notranslate"><span class="pre">dict(item)</span></code>:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">item</span> <span class="o">=</span> <span class="n">MyItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_item&quot;</span><span class="p">,</span> <span class="n">model_no</span><span class="o">=</span><span class="s2">&quot;QABC1234&quot;</span><span class="p">)</span>
+
+<span class="gp">In [8]: </span><span class="nb">dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="gh">Out[8]: </span>
+<span class="go">{&#39;name&#39;: &#39;my_item&#39;,</span>
+<span class="go"> &#39;device_class&#39;: None,</span>
+<span class="go"> &#39;args&#39;: [],</span>
+<span class="go"> &#39;kwargs&#39;: {},</span>
+<span class="go"> &#39;active&#39;: True,</span>
+<span class="go"> &#39;documentation&#39;: None,</span>
+<span class="go"> &#39;model_no&#39;: &#39;QABC1234&#39;,</span>
+<span class="go"> &#39;count&#39;: 0,</span>
+<span class="go"> &#39;choices&#39;: None,</span>
+<span class="go"> &#39;no_whitespace&#39;: None}</span>
+</pre></div>
+</div>
+<p>As shown in the example above, using the EntryInfo keywords, you can put a
+short docstring to give a better explanation of the field, and also enforce
+that user enter a specific format of information.</p>
+<p>While the user will always be able to enter <code class="docutils literal notranslate"><span class="pre">None</span></code> for the attribute, if a
+real value is given it will be checked against the specified <code class="docutils literal notranslate"><span class="pre">enforce</span></code>
+keyword, raising <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if invalid. Here is a table for how the
+<a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a> check the type</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Enforce</p></th>
+<th class="head"><p>Method of enforcement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>None</p></td>
+<td><p>Any value will work</p></td>
+</tr>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p>type(value)</p></td>
+</tr>
+<tr class="row-even"><td><p>list</p></td>
+<td><p>list.index(value)</p></td>
+</tr>
+<tr class="row-odd"><td><p>regex</p></td>
+<td><p>regex.match(value) != None</p></td>
+</tr>
+<tr class="row-even"><td><p>function</p></td>
+<td><p>function(value)</p></td>
+</tr>
+</tbody>
+</table>
+<p>If your enforce condition is complicated or obfuscated, you can add a
+docstring using the <code class="docutils literal notranslate"><span class="pre">enforce_doc</span></code> keyword that explains the rule.
+(This may be helpful for regex matches which are difficult for humans
+to read)</p>
+<p>Fields that are important to the item can be marked as mandatory with
+<code class="docutils literal notranslate"><span class="pre">optional=False</span></code> and should have no default value.</p>
+<p>When entering information you will not necessarily see a difference between
+optional and mandatory <a class="reference internal" href="#happi.EntryInfo" title="happi.EntryInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntryInfo</span></code></a>, however the database client will
+reject the item if these fields do not have the requisite values set.</p>
+</section>
+<section id="loading-your-object">
+<h2>Loading your Object<a class="headerlink" href="#loading-your-object" title="Link to this heading"></a></h2>
+<p>A container’s primary role is containing the information necessary to load the
+Python representation of an object.</p>
+<p>Internally, happi keeps track of all containers by way of its registry, the
+<a class="reference internal" href="api.html#happi.containers.HappiRegistry" title="happi.containers.HappiRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiRegistry</span></code></a>.</p>
+<p>This information is stored as a <code class="docutils literal notranslate"><span class="pre">device_class</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>. The
+former stores a string that indicates the Python class of the item, the other
+two indicate the information that is needed to instantiate it. With this
+information both <a class="reference internal" href="api.html#happi.from_container" title="happi.from_container"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_container()</span></code></a> and <code class="xref py py-func docutils literal notranslate"><span class="pre">load_device()</span></code> are able to
+handle importing modules and instantiating your object.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>happi will attach the original metadata with a fixed attribute name <code class="docutils literal notranslate"><span class="pre">.md</span></code>
+to your object.  You can use this to keep track of the container metadata
+used to instantiate your object.</p>
+<p>This can be disabled by setting <code class="docutils literal notranslate"><span class="pre">attach_md</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> in
+<a class="reference internal" href="api.html#happi.from_container" title="happi.from_container"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_container()</span></code></a>.</p>
+</div>
+<p>Often, information contained in the <code class="docutils literal notranslate"><span class="pre">args</span></code> or <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> will be duplicated
+in other parts of the container. For instance, most <code class="docutils literal notranslate"><span class="pre">ophyd</span></code> objects will want
+a <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">prefix</span></code> on initialization. Instead of repeating that
+information you can just use a template and have the information automatically
+populated for you by the container itself. For instance, in the aforementioned
+example, <code class="docutils literal notranslate"><span class="pre">container.args</span> <span class="pre">=</span> <span class="pre">[&quot;{{name}}&quot;]</span></code> would substitute the value of
+<code class="docutils literal notranslate"><span class="pre">container.name</span></code> in as an argument. If the template contains the substituted
+attribute alone, the type will also be converted.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">from_container</span>
+
+<span class="gp">In [10]: </span><span class="n">container</span> <span class="o">=</span> <span class="n">MyItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_item&quot;</span><span class="p">,</span> <span class="n">model_no</span><span class="o">=</span><span class="s2">&quot;QABC1234&quot;</span><span class="p">,</span>
+<span class="gp">   ....: </span>                   <span class="n">device_class</span><span class="o">=</span><span class="s1">&#39;ophyd.sim.SynSignal&#39;</span><span class="p">,</span>
+<span class="gp">   ....: </span>                   <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;{{name}}&#39;</span><span class="p">})</span>
+<span class="gp">   ....: </span>
+
+<span class="gp">In [11]: </span><span class="n">obj</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">attach_md</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="gp">In [12]: </span><span class="n">obj</span>
+<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1703012667.3891716)</span>
+</pre></div>
+</div>
+</section>
+<section id="integrating-with-your-package">
+<h2>Integrating with your package<a class="headerlink" href="#integrating-with-your-package" title="Link to this heading"></a></h2>
+<p>Happi provides some containers for your convenience, but intentionally does
+not support all use cases or control systems in a monolithic fashion.</p>
+<p>The suggested method for supporting your new package would be to make your
+package have a dependency on happi, of course, and subclass <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>
+to make a new container in your own package.</p>
+<p>Then, add an
+<a class="reference external" href="https://packaging.python.org/specifications/entry-points/">entry point</a>
+specified by the <strong>happi.containers</strong> keyword to your package’s <code class="docutils literal notranslate"><span class="pre">setup.py</span></code>.
+Example entry points can be found <a class="reference external" href="https://github.com/pcdshub/pcdsdevices/blob/master/setup.py">here</a>.</p>
+<p><a class="reference internal" href="api.html#happi.containers.HappiRegistry" title="happi.containers.HappiRegistry"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiRegistry</span></code></a> takes care of loading the entry points
+and making them available throughout the library.</p>
+</section>
+<section id="built-in-container-conventions">
+<span id="convention-label"></span><h2>Built-in Container Conventions<a class="headerlink" href="#built-in-container-conventions" title="Link to this heading"></a></h2>
+<p>In order for the database to be as easy to parse as possible we need to
+establish conventions on how information is entered. Please read through this
+before entering any information into the database.</p>
+<section id="happiitem-entries">
+<h3>HappiItem Entries<a class="headerlink" href="#happiitem-entries" title="Link to this heading"></a></h3>
+<p>These are fields that are common to all Happi items.</p>
+<blockquote>
+<div><p><strong>name</strong></p>
+<p>This is simply a short name we can use to refer to the item.</p>
+<p><strong>device_class</strong></p>
+<p>This is the full class name, which lets happi know how to instantiate your
+item.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">device_class</span></code> name remains for backward-compatibility reasons.  Thinking
+of it as <code class="docutils literal notranslate"><span class="pre">class_name</span></code> or <code class="docutils literal notranslate"><span class="pre">creator_callable</span></code> would be more apt.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This may also be the name of a factory function - happi only cares that
+it’s callable.</p>
+</div>
+<p><strong>args</strong></p>
+<p>Argument list to be passed on instantiation.  May contain templated macros such
+as <code class="docutils literal notranslate"><span class="pre">{{name}}</span></code>.</p>
+<p><strong>kwargs</strong></p>
+<p>Keyword argument dictionary to be passed on instantiation.  May contain
+templated macros such as <code class="docutils literal notranslate"><span class="pre">{{name}}</span></code>.</p>
+<p><strong>active</strong></p>
+<p>Is the object actively deployed?</p>
+<p><strong>documentation</strong></p>
+<p>A brief set of information about the object.</p>
+</div></blockquote>
+</section>
+<section id="ophyditem-entries">
+<h3>OphydItem entries<a class="headerlink" href="#ophyditem-entries" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="blueskyproject.io/ophyd/">ophyd</a> has first-class support in happi - but
+not much is required on top of the base HappiItem to support it.</p>
+<blockquote>
+<div><p><strong>prefix</strong></p>
+<p>This should be the prefix for all of the PVs contained within the device. It
+does not matter if this is an invalid record by itself.</p>
+</div></blockquote>
+</section>
+<section id="lclsitem-entries">
+<h3>LCLSItem entries<a class="headerlink" href="#lclsitem-entries" title="Link to this heading"></a></h3>
+<p>This class is now part of <a class="reference external" href="https://github.com/pcdshub/pcdsdevices">pcdsdevices</a>.  It remains documented here as
+PCDS is the original developer and primary user of happi as of the time of
+writing. If you intend to use the same metadata that we do, please copy and
+repurpose the <code class="docutils literal notranslate"><span class="pre">LCLSItem</span></code> class.</p>
+<blockquote>
+<div><p><strong>beamline</strong></p>
+<p>Beamline is required.  While it is expected to be one of the following, it
+is not enforced:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CXI</span>
+<span class="n">HXD</span>
+<span class="n">ICL</span>
+<span class="n">KFE</span>
+<span class="n">LFE</span>
+<span class="n">MEC</span>
+<span class="n">MFX</span>
+<span class="n">PBT</span>
+<span class="n">RIX</span>
+<span class="n">TMO</span>
+<span class="n">TXI</span>
+<span class="n">XCS</span>
+<span class="n">XPP</span>
+</pre></div>
+</div>
+<p><strong>z</strong></p>
+<p>Position of the device on the z-axis in the LCLS coordinates.</p>
+<p><strong>location_group</strong></p>
+<p>The group of this device in terms of its location.  This is primarily
+used for LUCID’s grid.</p>
+<p><strong>functional_group</strong></p>
+<p>The group of this device in terms of its function.  This is primarily
+used for LUCID’s grid.</p>
+<p><strong>stand</strong></p>
+<p>Acronym for stand, must be three alphanumeric characters like an LCLSI stand
+(e.g. DG3) or follow the LCLSII stand naming convention (e.g. L0S04).</p>
+<p><strong>lightpath</strong></p>
+<p>If the device should be included in the LCLS <a class="reference external" href="https://github.com/pcdshub/lightpath">Lightpath</a>.</p>
+<p><strong>embedded_screen</strong></p>
+<p>Path to an embeddable PyDM control screen for this device.</p>
+<p><strong>detailed_screen</strong></p>
+<p>Path to a detailed PyDM control screen for this device.</p>
+<p><strong>engineering_screen</strong></p>
+<p>Path to a detailed engineering PyDM control screen for this device.</p>
+</div></blockquote>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="HAPPI - Heuristic Access to Positions of Photon Instruments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="client.html" class="btn btn-neutral float-right" title="Using the Client" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, SLAC National Accelerator Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
