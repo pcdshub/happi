@@ -2,6 +2,29 @@ Release History
 ###############
 
 
+v2.5.0 (2023-12-19)
+===================
+
+Features
+--------
+- Adds more user-friendly qt search widget
+
+Bugfixes
+--------
+- Fixes audit output table, preventing names from being dropped
+
+Maintenance
+-----------
+- Adjusts cli audit output to work better for file redirects
+- Fix conda recipe to use "run_constrained" not "run-constrained"
+
+Contributors
+------------
+- tangkong
+- klauer
+
+
+
 v2.4.0 (2023-09-27)
 ===================
 

@@ -1,4 +1,4 @@
-339 mnt_audit_out
+326 pre_release_default_editor
 #################
 
 API Breaks
@@ -11,12 +11,12 @@ Features
 
 Bugfixes
 --------
-- Fixes audit output table skipping names
+- N/A
 
 Maintenance
 -----------
-- Adjusts audit output to work better for file redirects
+- Make pre-release notes script default to just using vi if EDITOR env var is not set.
 
 Contributors
 ------------
-- tangkong
+- nstelter-slac
