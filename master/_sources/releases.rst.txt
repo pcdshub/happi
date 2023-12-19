@@ -2,6 +2,52 @@ Release History
 ###############
 
 
+v2.6.0 (2024-12-19)
+===================
+
+Features
+--------
+- Updated `happi load` to support searching and loading in one user-friendly expression. The load function now gathers the results of each search term individually and loads the union of the results.
+
+Maintenance
+-----------
+- Make running happi repair only saves an item if it actually got changed during the repair process
+- Fixes issue in test suite, making tst_base_pim2 a loadable SimpleNamespacce
+- Add example .cfg and some more instructions on using happi cli
+- Make pre-release notes script default to just using vi if EDITOR env var is not set.
+- Fix a few dead links in the docs, add to contributing doc to make 1st time dev instructions bit more clear
+
+Contributors
+------------
+- janeliu-slac
+- nstelter-slac
+- tangkong
+
+
+
+v2.5.0 (2023-12-19)
+===================
+
+Features
+--------
+- Adds more user-friendly qt search widget
+
+Bugfixes
+--------
+- Fixes audit output table, preventing names from being dropped
+
+Maintenance
+-----------
+- Adjusts cli audit output to work better for file redirects
+- Fix conda recipe to use "run_constrained" not "run-constrained"
+
+Contributors
+------------
+- tangkong
+- klauer
+
+
+
 v2.4.0 (2023-09-27)
 ===================
 
