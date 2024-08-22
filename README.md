@@ -8,6 +8,7 @@
   <a href="#motivation">Motivation</a> •
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
+  <a href="#contributing">Contributing/a> •
   <a href="#basic-usage">Basic Usage</a> •
   <a href="https://pcdshub.github.io/happi/">Documentation</a>
 </p>
@@ -33,6 +34,10 @@ data entry where required.
 Install the most recent tagged build: `conda install happi -c pcds-tag -c conda-forge`
 
 Install the most recent development build: `conda install happi -c pcds-dev -c conda-forge`
+
+## Contributing
+
+Developers should check out the [contributing docs](https://github.com/pcdshub/happi/blob/master/CONTRIBUTING.rst).
 
 ## Basic Usage
 

@@ -175,9 +175,9 @@ to make a new container in your own package.
 
 Then, add an
 `entry point <https://packaging.python.org/specifications/entry-points/>`_
-specified by the **happi.containers** keyword to your package's ``setup.py``.
+specified by the **happi.containers** keyword to your package's ``pyproject.toml``.
 Example entry points can be found `here
-<https://github.com/pcdshub/pcdsdevices/blob/master/setup.py>`_.
+<https:://github.com/pcdshub/pcdsdevices/blob/master/pyproject.toml>`_.
 
 :class:`~happi.containers.HappiRegistry` takes care of loading the entry points
 and making them available throughout the library.
@@ -238,7 +238,7 @@ These are fields that are common to all Happi items.
 OphydItem entries
 +++++++++++++++++
 
-`ophyd <blueskyproject.io/ophyd/>`_ has first-class support in happi - but
+`ophyd <https://blueskyproject.io/ophyd>`_ has first-class support in happi - but
 not much is required on top of the base HappiItem to support it.
 
     **prefix**
