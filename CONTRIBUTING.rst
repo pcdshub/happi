@@ -67,28 +67,33 @@ Ready to contribute? Here's how to set up `happi` for local development.
     $ cd happi/
     $ pip install -e .
 
-4. Create a branch for local development::
+4. Install additional packages only needed for development and building the docs::
+
+    $ pip install -r dev-requirements.txt
+    $ pip install -r docs-requirements.txt
+
+5. Create a branch for local development::
 
     $ git checkout -b name-of-your-bugfix-or-feature
 
    Now you can make your changes locally.
 
-5. Install and enable ``pre-commit`` for this repository::
+6. Install and enable ``pre-commit`` for this repository::
 
     $ pip install pre-commit
     $ pre-commit install
 
-6. Add new tests for any additional functionality or bugs you may have discovered.  And, of course, be sure that all previous tests still pass by running::
+7. Add new tests for any additional functionality or bugs you may have discovered.  And, of course, be sure that all previous tests still pass by running::
 
     $ pytest -v
 
-7. Commit your changes and push your branch to GitHub::
+8. Commit your changes and push your branch to GitHub::
 
     $ git add .
     $ git commit -m "Your detailed description of your changes."
     $ git push origin name-of-your-bugfix-or-feature
 
-8. Submit a pull request through the GitHub website.
+9. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
