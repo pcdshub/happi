@@ -29,6 +29,11 @@ pushd "$(dirname "$0")" || exit 1
 sed -e "s/IssueNumber Title/${ISSUE} ${DESCRIPTION}/" \
     "source/upcoming_release_notes/template-short.rst" > "${FILENAME}"
 
+if [ -z "${EDITOR}" ]; then
+    echo "Warning: EDITOR environment variable is not set, defaulting to 'vi'."
+    EDITOR="vi"
+fi
+
 if ${EDITOR} "${FILENAME}"; then
     echo "Adding ${FILENAME} to the git repository..."
     git add "${FILENAME}"
