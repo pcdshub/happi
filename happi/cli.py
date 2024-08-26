@@ -1133,6 +1133,9 @@ def repair(
         results = search_parser(client, True, '*')
 
     for res in results:
+        # don't save if changes not made
+        changes_made = False
+
         # fix mandatory info with missing defaults
         req_info = find_unfilled_mandatory_info(res)
 
@@ -1146,13 +1149,22 @@ def repair(
         for req_field in req_info:
             info = res.item._info_attrs[req_field]
             req_value = prompt_for_entry(info)
-            info.enforce_value(req_value)
-            setattr(res.item, req_field, req_value)
+            curr_value = getattr(res.item, req_field)
+
+            if curr_value != req_value:
+                info.enforce_value(req_value)
+                setattr(res.item, req_field, req_value)
+                changes_made = True
 
         # check name and id parity
         if res['name'] != res_id:
             # set name to match id
             res.item.name = res_id
+            changes_made = True
+
+        if not changes_made:
+            logger.info(f'no actual changes made during repair of {res_id}, not saving...')
+            continue
 
         # re-save after creating container
         try:
