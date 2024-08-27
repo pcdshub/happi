@@ -44,6 +44,7 @@ test:
   - pytest
   - ipython
   - line_profiler
+  - mongomock
   - pcdsutils
   - pcdsdevices
 
