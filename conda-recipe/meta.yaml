@@ -47,6 +47,7 @@ test:
   - mongomock
   - pcdsutils
   - pcdsdevices
+  - pymongo
 
 about:
   dev_url: https://github.com/pcdshub/happi/
