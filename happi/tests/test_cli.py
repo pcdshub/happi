@@ -1,10 +1,8 @@
 # test_cli.py
 
-import cProfile
 import functools
 import itertools
 import logging
-import pstats
 import re
 from collections.abc import Iterable
 from typing import Any
@@ -829,14 +827,11 @@ def test_profile_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
         print("Resetting the line profiler...")
         pcdsutils.profile.reset_profiler()
 
-    with cProfile.Profile() as pr:
-        result = runner.invoke(
-            happi_cli,
-            ['--path', happi_cfg, 'profile'] + list(args),
-        )
+    result = runner.invoke(
+        happi_cli,
+        ['--path', happi_cfg, 'profile'] + list(args),
+    )
 
-    st = pstats.Stats(pr).strip_dirs().sort_stats("tottime")
-    st.print_stats(20)
     assert_in_expected(
         result,
         'Profile completed successfully'
