@@ -44,8 +44,10 @@ test:
   - pytest
   - ipython
   - line_profiler
+  - mongomock
   - pcdsutils
   - pcdsdevices
+  - pymongo
 
 about:
   dev_url: https://github.com/pcdshub/happi/
