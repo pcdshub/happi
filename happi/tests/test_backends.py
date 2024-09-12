@@ -268,6 +268,7 @@ def test_beckoff_axis_device_class(mockqsbackend):
     assert sam_x.__class__.__name__ == 'IMS'
 
 
+@requires_mongo
 def test_multi_backend(mockmulti, item_info, valve_info):
     mm = mockmulti
     assert len(mm.all_items) == 3
