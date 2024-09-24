@@ -97,3 +97,20 @@ specified by the container.
 
    dev.save()
 ```
+
+#### Command Line Interface
+
+You can also view and manipulate device databases using the happi cli:
+
+```
+happi [OPTIONS] COMMAND [ARGS]...
+```
+
+You can try out happi commands on a simple test database as follows _(this assumes you are running from the happi project root dir)_:
+
+```
+happi --path examples/example.cfg COMMAND [ARGS]
+```
+
+The simple test database is located at `happi/examples/db.json`, which is specified in `example./cfg`.
+Please refer to the documentation for a list of possible commands and their arguments.

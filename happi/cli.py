@@ -1122,6 +1122,8 @@ def repair(
     Repair the database.
 
     Repairs all entries matching SEARCH_CRITERIA, repairs entire database otherwise.
+
+    Entries that don't get any fields changed will not get saved (i.e. their last-edit times will not change).
     """
     logger.debug('starting repair block')
 
