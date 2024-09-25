@@ -177,7 +177,7 @@ Then, add an
 `entry point <https://packaging.python.org/specifications/entry-points/>`_
 specified by the **happi.containers** keyword to your package's ``pyproject.toml``.
 Example entry points can be found `here
-<https:://github.com/pcdshub/pcdsdevices/blob/master/pyproject.toml>`_.
+<https://github.com/pcdshub/pcdsdevices/blob/master/pyproject.toml>`_.
 
 :class:`~happi.containers.HappiRegistry` takes care of loading the entry points
 and making them available throughout the library.
