@@ -125,15 +125,20 @@ def test_repair_no_save_if_no_changes(runner: CliRunner, happi_cfg: str):
     # some arbitrary entry
     search_string = '_id=tst_base_pim'
 
-    # run repair, which should find it doesn't neeod to repair the name and so doesn't need to save
+    # get last edit time of item, so can make sure it isn't changed by repair
+    with search.make_context('search', [search_string], obj=happi_cfg) as ctx:
+        res = search.invoke(ctx)
+    pre_repair_edit_time = res[0]['last_edit']
+
+    # run repair, which should find it doesn't need to repair the item's name and so doesn't need to save
     runner.invoke(happi_cli, ['--path', happi_cfg, 'repair', search_string])
 
     with search.make_context('search', [search_string], obj=happi_cfg) as ctx:
         res = search.invoke(ctx)
-    last_edit_time = res[0]['last_edit']
-    # lets assume the starting values in happi_cfg stay the same,
-    # since other tests in this file also rely on it too.
-    assert last_edit_time == 'Thu Apr 12 14:40:08 2018'
+    after_repair_edit_time = res[0]['last_edit']
+
+    # should not have saved, so edit time should be unchanged
+    assert after_repair_edit_time == pre_repair_edit_time
 
 
 def test_search(client: happi.client.Client, happi_cfg: str):
