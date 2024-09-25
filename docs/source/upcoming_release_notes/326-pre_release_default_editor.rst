@@ -15,7 +15,7 @@ Bugfixes
 
 Maintenance
 -----------
-- Make pre-release notes script default to just using vim if EDITOR env var is not set.
+- Make pre-release notes script default to just using vi if EDITOR env var is not set.
 
 Contributors
 ------------
