@@ -427,7 +427,7 @@ def load(
     client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
-    
+
     if len(item_names) < 1:
         raise click.BadArgumentUsage('No item names given')
     logger.info(f'Creating shell with devices {item_names}')
