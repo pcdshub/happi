@@ -406,24 +406,18 @@ def load(
     use_glob: bool,
     search_criteria: list[str]
 ):
-    """ Checks if the search string contains a glob pattern. If so,
-    it's sent to the search_parser() function. """
+
+    final_results = search_parser(
+        client=get_happi_client_from_config(ctx.obj),
+        use_glob=use_glob,
+        search_criteria=search_criteria,
+    )
+    if not final_results:
+        return []
 
     item_names = []
-
-    if '*' not in (' '.join(search_criteria)):
-        item_names = search_criteria
-    else:
-        final_results = search_parser(
-            client=get_happi_client_from_config(ctx.obj),
-            use_glob=use_glob,
-            search_criteria=search_criteria,
-        )
-        if not final_results:
-            return []
-
-        for res in final_results:
-            item_names.append(res['name'])
+    for res in final_results:
+        item_names.append(res['name'])
 
     """Open IPython terminal with ITEM_NAMES loaded."""
 
@@ -432,12 +426,14 @@ def load(
     client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
+    names = " ".join(item_names)
+    names = names.split()
 
-    if len(item_names) < 1:
+    if len(names) < 1:
         raise click.BadArgumentUsage('No item names given')
     logger.info(f'Creating shell with devices {item_names}')
 
-    for name in item_names:
+    for name in names:
         try:
             devices[name] = client.load_device(name=name)
         except SearchError as e:
