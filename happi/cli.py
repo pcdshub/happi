@@ -406,6 +406,9 @@ def load(
     use_glob: bool,
     search_criteria: list[str]
 ):
+    """ Checks if the search string contains a glob pattern. If so,
+    it's sent to the search_parser() function. """
+
     item_names = []
 
     if '*' not in (' '.join(search_criteria)):
