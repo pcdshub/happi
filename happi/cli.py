@@ -406,19 +406,21 @@ def load(
     use_glob: bool,
     search_criteria: list[str]
 ):
-
-    final_results = search_parser(
-        client=get_happi_client_from_config(ctx.obj),
-        use_glob=use_glob,
-        search_criteria=search_criteria,
-    )
-
-    if not final_results:
-        return []
-
     item_names = []
-    for res in final_results:
-        item_names.append(res['name'])
+
+    if '*' not in (' '.join(search_criteria)):
+        item_names = search_criteria
+    else:
+        final_results = search_parser(
+            client=get_happi_client_from_config(ctx.obj),
+            use_glob=use_glob,
+            search_criteria=search_criteria,
+        )
+        if not final_results:
+            return []
+
+        for res in final_results:
+            item_names.append(res['name'])
 
     """Open IPython terminal with ITEM_NAMES loaded."""
 
