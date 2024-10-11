@@ -406,32 +406,39 @@ def load(
     use_glob: bool,
     search_criteria: list[str]
 ):
+    term = []
+    results = set()
 
-    final_results = search_parser(
-        client=get_happi_client_from_config(ctx.obj),
-        use_glob=use_glob,
-        search_criteria=search_criteria,
-    )
-    if not final_results:
-        return []
+    for item in search_criteria:
+        term.append(item)
 
-    item_names = []
-    for res in final_results:
-        item_names.append(res['name'])
+        final_results = search_parser(
+            client=get_happi_client_from_config(ctx.obj),
+            use_glob=use_glob,
+            search_criteria=term,
+        )
+        if not final_results:
+            print('%s was not found.' % item)
+        else:
+            for res in final_results:
+                results.add(res['name'])
 
-    """Open IPython terminal with ITEM_NAMES loaded."""
+        term = []
+
+    # Open IPython terminal with RESULTS loaded
 
     logger.debug('Starting load block')
     # retrieve client
     client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
-    names = " ".join(item_names)
+    names = " ".join(results)
     names = names.split()
+    print(names)
 
     if len(names) < 1:
         raise click.BadArgumentUsage('No item names given')
-    logger.info(f'Creating shell with devices {item_names}')
+    logger.info(f'Creating shell with devices {results}')
 
     for name in names:
         try:
