@@ -434,7 +434,6 @@ def load(
     devices = {}
     names = " ".join(results)
     names = names.split()
-    print(names)
 
     if len(names) < 1:
         raise click.BadArgumentUsage('No item names given')
