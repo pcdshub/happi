@@ -269,9 +269,7 @@ def test_search_json(runner: CliRunner, happi_cfg: str):
   {
     "name": "tst_base_pim2",
     "device_class": "types.SimpleNamespace",
-    "args": [
-      "{{prefix}}"
-    ],
+    "args": [],
     "kwargs": {
       "name": "{{name}}"
     },
