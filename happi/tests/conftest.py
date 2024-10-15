@@ -429,9 +429,6 @@ def db(tmp_path):
     "tst_base_pim2": {
         "_id": "tst_base_pim2",
         "active": true,
-        "args": [
-            "{{prefix}}"
-        ],
         "beamline": "TST",
         "creation": "Wed Jan 30 09:46:00 2019",
         "device_class": "types.SimpleNamespace",
