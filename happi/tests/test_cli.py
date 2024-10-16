@@ -579,7 +579,7 @@ def test_bad_edit(edit_args: list[str], happi_cfg: str, runner: CliRunner):
     assert bad_edit_result.exit_code == 1
 
 
-def test_load(
+def test_load_one_arg(
     caplog: pytest.LogCaptureFixture,
     client: happi.client.Client,
     happi_cfg: str,
@@ -612,6 +612,46 @@ def test_load(
             happi_cli, ['--path', happi_cfg, 'load', 'happi_name']
         )
         m.assert_called_once_with(argv=['--quick'], user_ns=devices)
+    with caplog.at_level(logging.INFO):
+        assert "Creating shell with devices" in caplog.text
+
+
+def test_load_multiple_args(
+    caplog: pytest.LogCaptureFixture,
+    client: happi.client.Client,
+    happi_cfg: str,
+    runner: CliRunner
+):
+    # try to load the item
+    devices = {}
+    devices['tst_base_pim'] = client.load_device(name='tst_base_pim')
+    devices['tst_base_pim2'] = client.load_device(name='tst_base_pim2')
+    with mock.patch.object(IPython, 'start_ipython') as m:
+        _ = runner.invoke(
+            happi_cli, ['--path', happi_cfg, 'load', 'tst_base_pim', 'tst_base_pim2']
+        )
+        m.assert_called_once_with(argv=['--quick'], user_ns=devices)
+    with caplog.at_level(logging.INFO):
+        assert "Creating shell with devices" in caplog.text
+
+
+def test_load_glob_args(
+    caplog: pytest.LogCaptureFixture,
+    client: happi.client.Client,
+    happi_cfg: str,
+    runner: CliRunner
+):
+    # try to load the item
+    results = client.search_regex(name='tst_base_.*')
+
+    devices = {}
+    devices['tst_base_.*'] = [res.item['name'] for res in results]
+
+    with mock.patch.object(IPython, 'start_ipython') as m:
+        _ = runner.invoke(
+            happi_cli, ['--path', happi_cfg, 'load', 'tst_base_.*']
+        )
+        m.assert_called_once_with(argv=['--quick'], user_ns=devices)        
     with caplog.at_level(logging.INFO):
         assert "Creating shell with devices" in caplog.text
 
