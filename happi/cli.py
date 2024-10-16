@@ -406,24 +406,19 @@ def load(
     use_glob: bool,
     search_criteria: list[str]
 ):
-    term = []
     results = set()
 
     for item in search_criteria:
-        term.append(item)
-
         final_results = search_parser(
             client=get_happi_client_from_config(ctx.obj),
             use_glob=use_glob,
-            search_criteria=term,
+            search_criteria=[item],
         )
         if not final_results:
             print('%s was not found.' % item)
         else:
             for res in final_results:
                 results.add(res['name'])
-
-        term = []
 
     # Open IPython terminal with RESULTS loaded
 
