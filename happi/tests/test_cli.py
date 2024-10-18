@@ -642,16 +642,16 @@ def test_load_glob_args(
     runner: CliRunner
 ):
     # try to load the item
-    results = client.search_regex(name='tst_base_.*')
-
     devices = {}
-    devices['tst_base_.*'] = [res.item['name'] for res in results]
+    devices['tst_base_pim'] = client.load_device(name='tst_base_pim')
+    devices['tst_base_pim2'] = client.load_device(name='tst_base_pim2')
+    devices['tst_minimal'] = client.load_device(name='tst_minimal')
 
     with mock.patch.object(IPython, 'start_ipython') as m:
         _ = runner.invoke(
-            happi_cli, ['--path', happi_cfg, 'load', 'tst_base_.*']
+            happi_cli, ['--path', happi_cfg, 'load', 'tst_*']
         )
-        m.assert_called_once_with(argv=['--quick'], user_ns=devices)        
+        m.assert_called_once_with(argv=['--quick'], user_ns=devices)
     with caplog.at_level(logging.INFO):
         assert "Creating shell with devices" in caplog.text
 
