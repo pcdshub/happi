@@ -396,21 +396,43 @@ def edit(ctx, name: str, edits: list[str]):
 
 
 @happi_cli.command()
-@click.argument('item_names', nargs=-1)
+@click.option('--glob/--regex', 'use_glob', default=True,
+              help='use glob style (default) or regex style search terms. '
+              r'Regex requires backslashes to be escaped (eg. at\\d.\\d)')
+@click.argument('search_criteria', nargs=-1)
 @click.pass_context
-def load(ctx, item_names: list[str]):
-    """Open IPython terminal with ITEM_NAMES loaded."""
+def load(
+    ctx: click.Context,
+    use_glob: bool,
+    search_criteria: list[str]
+):
+    results = set()
+
+    for item in search_criteria:
+        final_results = search_parser(
+            client=get_happi_client_from_config(ctx.obj),
+            use_glob=use_glob,
+            search_criteria=[item],
+        )
+        if not final_results:
+            print('%s was not found.' % item)
+        else:
+            for res in final_results:
+                results.add(res['name'])
+
+    # Open IPython terminal with RESULTS loaded
 
     logger.debug('Starting load block')
     # retrieve client
     client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
-    names = " ".join(item_names)
+    names = " ".join(results)
     names = names.split()
+
     if len(names) < 1:
         raise click.BadArgumentUsage('No item names given')
-    logger.info(f'Creating shell with devices {item_names}')
+    logger.info(f'Creating shell with devices {results}')
 
     for name in names:
         try:
