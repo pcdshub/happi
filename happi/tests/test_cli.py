@@ -649,9 +649,10 @@ def test_load_glob_args(
 
     with mock.patch.object(IPython, 'start_ipython') as m:
         _ = runner.invoke(
-            happi_cli, ['--path', happi_cfg, 'load', 'tst_*']
+            happi_cli, ['--path', happi_cfg, 'load', 'tst_*', 'device_class=types*']
         )
         m.assert_called_once_with(argv=['--quick'], user_ns=devices)
+
     with caplog.at_level(logging.INFO):
         assert "Creating shell with devices" in caplog.text
 
