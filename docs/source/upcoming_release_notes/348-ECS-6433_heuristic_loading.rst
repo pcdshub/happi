@@ -15,9 +15,7 @@ Bugfixes
 
 Maintenance
 -----------
-- Cleaned up code by removing stray ``print()`` statements.
-- Added unit tests for the new feature.
-- In the load function of cli.py removed ``term=[]`` and replaced with ``[item]`` for readability.
+- N/A
 
 Contributors
 ------------
