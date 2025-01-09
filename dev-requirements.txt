@@ -11,4 +11,4 @@ pcdsdevices
 mongomock >=3.22.0
 # Removed temporarily, pip installations fail lacking gssapi libs
 # psdm_qs_cli
-line-profiler
+line_profiler
