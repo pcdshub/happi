@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Containers &mdash; Happi 2.5.1.dev55+g798b2f3 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+  <title>Containers &mdash; Happi 2.6.1.dev3+g353edeb documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7ded0d2d"></script>
+      <script src="_static/documentation_options.js?v=aecadc41"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -165,7 +165,7 @@ kwarg EntryInfo has this set to True (default).</p></li>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyItem</span><span class="p">(</span><span class="n">HappiItem</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyItem</span><span class="p">(</span><span class="n">HappiItem</span><span class="p">):</span>
     <span class="n">my_field</span> <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;My generated field&#39;</span><span class="p">)</span>
     <span class="n">number</span>   <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Device number&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                          <span class="n">enforce_doc</span><span class="o">=</span><span class="s1">&#39;This must be a number&#39;</span><span class="p">)</span>
@@ -196,7 +196,7 @@ organized fashion, the client will only accept classes that inherit from
 <a class="reference internal" href="api.html#happi.HappiItem" title="happi.HappiItem"><code class="xref py py-class docutils literal notranslate"><span class="pre">HappiItem</span></code></a>. Each item will have the key information represented as
 class attributes, available to be manipulated like any other regular property</p>
 <p>Editing the information for a container is a simple as:</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">HappiItem</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">happi</span><span class="w"> </span><span class="kn">import</span> <span class="n">HappiItem</span>
 
 <span class="gp">In [2]: </span><span class="n">item</span> <span class="o">=</span> <span class="n">HappiItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_device&#39;</span><span class="p">)</span>
 
@@ -216,11 +216,11 @@ conflicting with <code class="xref py py-class docutils literal notranslate"><sp
 together a new example container. The class can be invoked in the same way you
 would usually handle class inheritance, the only difference is that you specify
 class attributes as EntryInfo objects:</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="kn">import</span> <span class="nn">re</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="gp">In [5]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">HappiItem</span><span class="p">,</span> <span class="n">EntryInfo</span>
+<span class="gp">In [5]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">happi</span><span class="w"> </span><span class="kn">import</span> <span class="n">HappiItem</span><span class="p">,</span> <span class="n">EntryInfo</span>
 
-<span class="gp">In [6]: </span><span class="k">class</span> <span class="nc">MyItem</span><span class="p">(</span><span class="n">HappiItem</span><span class="p">):</span>
+<span class="gp">In [6]: </span><span class="k">class</span><span class="w"> </span><span class="nc">MyItem</span><span class="p">(</span><span class="n">HappiItem</span><span class="p">):</span>
 <span class="gp">   ...: </span><span class="w">    </span><span class="sd">&quot;&quot;&quot;My new item, with a known model number.&quot;&quot;&quot;</span>
 <span class="gp">   ...: </span>    <span class="n">model_no</span>      <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Model Number of Item&#39;</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">   ...: </span>    <span class="n">count</span>         <span class="o">=</span> <span class="n">EntryInfo</span><span class="p">(</span><span class="s1">&#39;Count of Item&#39;</span><span class="p">,</span> <span class="n">enforce</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -319,7 +319,7 @@ populated for you by the container itself. For instance, in the aforementioned
 example, <code class="docutils literal notranslate"><span class="pre">container.args</span> <span class="pre">=</span> <span class="pre">[&quot;{{name}}&quot;]</span></code> would substitute the value of
 <code class="docutils literal notranslate"><span class="pre">container.name</span></code> in as an argument. If the template contains the substituted
 attribute alone, the type will also be converted.</p>
-<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="kn">from</span> <span class="nn">happi</span> <span class="kn">import</span> <span class="n">from_container</span>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [9]: </span><span class="kn">from</span><span class="w"> </span><span class="nn">happi</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_container</span>
 
 <span class="gp">In [10]: </span><span class="n">container</span> <span class="o">=</span> <span class="n">MyItem</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_item&quot;</span><span class="p">,</span> <span class="n">model_no</span><span class="o">=</span><span class="s2">&quot;QABC1234&quot;</span><span class="p">,</span>
 <span class="gp">   ....: </span>                   <span class="n">device_class</span><span class="o">=</span><span class="s1">&#39;ophyd.sim.SynSignal&#39;</span><span class="p">,</span>
@@ -329,7 +329,7 @@ attribute alone, the type will also be converted.</p>
 <span class="gp">In [11]: </span><span class="n">obj</span> <span class="o">=</span> <span class="n">from_container</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">attach_md</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="gp">In [12]: </span><span class="n">obj</span>
-<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1734723668.342633)</span>
+<span class="gh">Out[12]: </span><span class="go">SynSignal(name=&#39;my_item&#39;, value=0, timestamp=1736456422.7245681)</span>
 </pre></div>
 </div>
 </section>
