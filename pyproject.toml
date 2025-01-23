@@ -43,11 +43,17 @@ file = [ "requirements.txt",]
 [tool.setuptools.dynamic.optional-dependencies.gui]
 file = "gui-requirements.txt"
 
+[tool.setuptools.dynamic.optional-dependencies.mongo]
+file = "mongo-requirements.txt"
+
 [tool.setuptools.dynamic.optional-dependencies.test]
-file = ["dev-requirements.txt", "gui-requirements.txt"]
+file = ["dev-requirements.txt", "gui-requirements.txt", "mongo-requirements.txt"]
 
 [tool.setuptools.dynamic.optional-dependencies.doc]
 file = "docs-requirements.txt"
+
+[tool.setuptools.dynamic.optional-dependencies.all]
+file = ["gui-requirements.txt", "mongo-requirements.txt"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=."
