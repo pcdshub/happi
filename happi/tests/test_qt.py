@@ -1,12 +1,16 @@
 import pytest
-from pytestqt.qtbot import QtBot
 
 from happi.client import Client
 
 try:
+    from pytestqt.qtbot import QtBot
+
     from happi.qt.widgets import HappiItemMetadataView, HappiSearchWidget
     qt_missing = False
 except ImportError:
+    class QtBot:
+        pass
+
     HappiSearchWidget = None
     HappiItemMetadataView = None
     qt_missing = True
