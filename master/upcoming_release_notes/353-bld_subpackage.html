@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>352 bld_pip_profiler &mdash; Happi 2.6.2.dev8+gd65979b documentation</title>
+  <title>353 bld_subpackage &mdash; Happi 2.6.2.dev8+gd65979b documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -19,8 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="353 bld_subpackage" href="353-bld_subpackage.html" />
-    <link rel="prev" title="Upcoming Changes" href="../upcoming_changes.html" /> 
+    <link rel="prev" title="352 bld_pip_profiler" href="352-bld_pip_profiler.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,7 +55,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../releases.html">Release History</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../upcoming_changes.html">Upcoming Changes</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">352 bld_pip_profiler</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="352-bld_pip_profiler.html">352 bld_pip_profiler</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">353 bld_subpackage</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#api-breaks">API Breaks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bugfixes">Bugfixes</a></li>
@@ -64,7 +64,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#contributors">Contributors</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="353-bld_subpackage.html">353 bld_subpackage</a></li>
 </ul>
 </li>
 </ul>
@@ -84,9 +83,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../upcoming_changes.html">Upcoming Changes</a></li>
-      <li class="breadcrumb-item active">352 bld_pip_profiler</li>
+      <li class="breadcrumb-item active">353 bld_subpackage</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/upcoming_release_notes/352-bld_pip_profiler.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/upcoming_release_notes/353-bld_subpackage.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -94,8 +93,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="bld-pip-profiler">
-<h1>352 bld_pip_profiler<a class="headerlink" href="#bld-pip-profiler" title="Link to this heading"></a></h1>
+  <section id="bld-subpackage">
+<h1>353 bld_subpackage<a class="headerlink" href="#bld-subpackage" title="Link to this heading"></a></h1>
 <section id="api-breaks">
 <h2>API Breaks<a class="headerlink" href="#api-breaks" title="Link to this heading"></a></h2>
 <ul class="simple">
@@ -117,7 +116,9 @@
 <section id="maintenance">
 <h2>Maintenance<a class="headerlink" href="#maintenance" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Use <code class="xref any docutils literal notranslate"><span class="pre">line_profiler</span></code> in pip dev_requirements instead of <code class="xref any docutils literal notranslate"><span class="pre">line-profiler</span></code> to avoid confusion</p></li>
+<li><p>Splits happi pip package into subpackages (<code class="xref any docutils literal notranslate"><span class="pre">gui</span></code>, <code class="xref any docutils literal notranslate"><span class="pre">mongo</span></code>) for more precise dependency specification.
+The default dependency set has can be installed via <code class="xref any docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">happi[all]</span></code>, and includes
+the <code class="xref any docutils literal notranslate"><span class="pre">gui</span></code> and <code class="xref any docutils literal notranslate"><span class="pre">mongo</span></code> optional dependencies.</p></li>
 </ul>
 </section>
 <section id="contributors">
@@ -132,8 +133,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../upcoming_changes.html" class="btn btn-neutral float-left" title="Upcoming Changes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="353-bld_subpackage.html" class="btn btn-neutral float-right" title="353 bld_subpackage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="352-bld_pip_profiler.html" class="btn btn-neutral float-left" title="352 bld_pip_profiler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
