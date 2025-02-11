@@ -8,7 +8,7 @@
   <a href="#motivation">Motivation</a> •
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
-  <a href="#contributing">Contributing/a> •
+  <a href="#contributing">Contributing</a> •
   <a href="#basic-usage">Basic Usage</a> •
   <a href="https://pcdshub.github.io/happi/">Documentation</a>
 </p>
@@ -117,5 +117,5 @@ You can try out happi commands on a simple test database as follows _(this assum
 happi --path examples/example.cfg COMMAND [ARGS]
 ```
 
-The simple test database is located at `happi/examples/db.json`, which is specified in `example./cfg`.
+The simple test database is located at `happi/examples/db.json`, which is specified in `example.cfg`.
 Please refer to the documentation for a list of possible commands and their arguments.
