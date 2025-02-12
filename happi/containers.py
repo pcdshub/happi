@@ -5,14 +5,14 @@ from typing import ClassVar, Optional
 
 import entrypoints
 
-from .item import HappiItem, OphydItem
+from .item import HappiItem, OphydItem, OphydAsyncItem
 
 logger = logging.getLogger(__name__)
 
 HAPPI_ENTRY_POINT_KEY = "happi.containers"
 
 
-DEFAULT_REGISTRY = {"OphydItem": OphydItem, "HappiItem": HappiItem}
+DEFAULT_REGISTRY = {"OphydItem": OphydItem, "OphydAsyncItem": OphydAsyncItem, "HappiItem": HappiItem}
 
 
 class HappiRegistry:
