@@ -64,12 +64,9 @@ def fill_template(
     # Get the name of the single attribute in the template
     attr_name = info.pop()
 
-    # If the templated variable is in the cache, use it directly.
-    if attr_name in cache:
-        return cache[attr_name]
-
-    # If we are not enforcing types we can just return the rendered template
-    elif not enforce_type:
+    # If we are not enforcing types and the attribute is not in the cache
+    # we can just return the rendered template
+    if not enforce_type and attr_name not in cache:
         return filled
 
     # Get the original attribute back from the item. If this does not exist
@@ -77,6 +74,11 @@ def fill_template(
     try:
         typed_attr = getattr(item, attr_name)
     except AttributeError:
+        # If the templated variable is in the cache, use it directly.
+        if attr_name in cache:
+            logger.info("Attribute not in container, but found in cache.")
+            return cache[attr_name]
+
         logger.warning(
             "Can not enforce type to match attribute %s as it does not "
             "exist on the container.", attr_name
@@ -410,7 +412,7 @@ def load_device(
         """Get the load time information for display."""
         elapsed_time = time.monotonic() - start_time
         if include_load_time and elapsed_time >= load_time_threshold:
-            return f" ({elapsed_time:.1f} s)"
+            return f" ({elapsed_time: .1f} s)"
         return ""
 
     def print_load_message(message: str, elapsed: str) -> None:
