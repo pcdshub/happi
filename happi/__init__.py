@@ -5,12 +5,11 @@ __all__ = [
     "EntryInfo",
     "HappiItem",
     "OphydItem",
-    "OphydAsyncItem",
     "SearchResult",
     "cache",
     "from_container",
     "load_devices",
 ]
 from .client import Client, SearchResult
-from .item import EntryInfo, HappiItem, OphydItem, OphydAsyncItem
+from .item import EntryInfo, HappiItem, OphydItem
 from .loader import cache, from_container, load_devices

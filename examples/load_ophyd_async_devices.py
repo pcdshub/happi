@@ -3,14 +3,12 @@ import happi
 import happi.loader
 from IPython import get_ipython
 from types import SimpleNamespace
-from bluesky.plans import count, scan
 from ophyd_async.plan_stubs import ensure_connected
+from ophyd_async.core import init_devices
 
 ip = get_ipython()
 
 client = happi.Client(path="ophyd_async_db.json")
-
-from ophyd_async.core import init_devices
 
 print("Initializing bluesky RunEngine...")
 RE = RunEngine({})
@@ -27,7 +25,7 @@ happi.loader.load_devices(
 
 print("Initializing Ophyd Async devices...")
 happi.loader.load_devices(
-    *[result.item for result in client.search(type="OphydAsyncItem")],
+    *[result.item for result in client.search(type="OphydItem", async_device=True)],
     pprint=True,
     include_load_time=True,
     post_load=lambda device: RE(ensure_connected(device)),

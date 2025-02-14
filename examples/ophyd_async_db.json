@@ -1,5 +1,5 @@
 {
-    "uuid_filename_provider": {
+    "uuid_fp": {
         "_id": "uuid_fp",
         "active": true,
         "args": [
@@ -13,7 +13,7 @@
         "name": "uuid_fp",
         "type": "HappiItem"
     },
-    "ymd_path_provider": {
+    "ymd_pp": {
         "_id": "ymd_pp",
         "active": true,
         "args": [
@@ -46,7 +46,8 @@
         "last_edit": "Tue Feb 11 12:48:00 2025",
         "name": "manta_cam1",
         "prefix": "XF:31ID1-ES{GigE-Cam:1}",
-        "type": "OphydAsyncItem"
+        "async_device": true,
+        "type": "OphydItem"
     },
     "ophyd_async_sim_motor_1": {
         "_id": "ophyd_async_sim_motor_1",
@@ -63,7 +64,8 @@
         "last_edit": "Tue Feb 11 12:48:00 2025",
         "name": "ophyd_async_sim_motor_1",
         "prefix": "ASYNC-MTR:SIM1:",
-        "type": "OphydAsyncItem"
+        "async_device": true,
+        "type": "OphydItem"
     },
     "ophyd_async_sim_motor_2": {
         "_id": "ophyd_async_sim_motor_2",
@@ -80,6 +82,7 @@
         "last_edit": "Tue Feb 11 12:48:00 2025",
         "name": "ophyd_async_sim_motor_2",
         "prefix": "ASYNC-MTR:SIM2:",
-        "type": "OphydAsyncItem"
+        "async_device": true,
+        "type": "OphydItem"
     }
 }

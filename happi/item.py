@@ -416,11 +416,10 @@ class HappiItem(_HappiItemBase, collections.abc.Mapping):
 class OphydItem(HappiItem):
     prefix = EntryInfo("A base PV for all related records",
                        optional=False, enforce=str)
+    async_device = EntryInfo("Indicates if the device is an ophyd async device",
+                             optional=True, default=False, enforce=bool)
+
     args = copy.copy(HappiItem.args)
     args.default = ['{{prefix}}']
     kwargs = copy.copy(HappiItem.kwargs)
     kwargs.default = {'name': '{{name}}'}
-
-
-class OphydAsyncItem(OphydItem):
-    ...
