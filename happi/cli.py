@@ -156,6 +156,11 @@ def search_parser(
         regex matching.
     search_criteria : list of str
         The user's search selection from the command line.
+
+    Raises
+    ------
+    click.ClickException
+        Thrown if search criteria are invalid.
     """
     # Get search criteria into dictionary for use by client
     client_args = {}
@@ -232,7 +237,7 @@ def search_parser(
         final_results = range_list
     elif range_list and regex_list:
         # find the intersection between regex_list and range_list
-        final_results = set(range_list) & set(regex_list)
+        final_results = list(set(range_list) & set(regex_list))
     else:
         logger.debug('No regex or range items found')
 
@@ -1145,7 +1150,8 @@ def repair(
 
     Repairs all entries matching SEARCH_CRITERIA, repairs entire database otherwise.
 
-    Entries that don't get any fields changed will not get saved (i.e. their last-edit times will not change).
+    Entries that don't get any fields changed will not get saved
+    (i.e. their last-edit times will not change).
     """
     logger.debug('starting repair block')
 
