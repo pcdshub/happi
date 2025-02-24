@@ -164,7 +164,7 @@ def search_parser(
     """
     # Get search criteria into dictionary for use by client
     client_args: Dict[str, Any] = {}
-    range_list = []
+    range_set = set()
     regex_list = []
     range_found = False
 
@@ -193,12 +193,12 @@ def search_parser(
                 if not range_found:
                     # if first range, just replace
                     range_found = True
-                    range_list = new_range_list
+                    range_set = set(new_range_list)
                 else:
                     # subsequent ranges, only take intersection
-                    range_list = list(set(new_range_list) & set(range_list))
+                    range_set = set(new_range_list) & set(range_set)
 
-                if not range_list:
+                if not range_set:
                     # we have searched via a range query.  At this point
                     # no matches, or intesection is empty. abort early
                     logger.error("No items found")
@@ -229,15 +229,15 @@ def search_parser(
 
     # Gather final results
     final_results = []
-    if regex_list and not range_list:
+    if regex_list and not range_set:
         # only matched with one search_regex()
         final_results = regex_list
-    elif range_list and not regex_list:
+    elif range_set and not regex_list:
         # only matched with search_range()
-        final_results = range_list
-    elif range_list and regex_list:
+        final_results = list(range_set)
+    elif range_set and regex_list:
         # find the intersection between regex_list and range_list
-        final_results = list(set(range_list) & set(regex_list))
+        final_results = list(range_set & set(regex_list))
     else:
         logger.debug('No regex or range items found')
 
