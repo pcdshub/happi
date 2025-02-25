@@ -19,7 +19,7 @@ import time
 from contextlib import contextmanager
 from cProfile import Profile
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, Iterable, Optional
 
 import click
 import coloredlogs
@@ -104,7 +104,7 @@ def search(
     show_json: bool,
     names: bool,
     use_glob: bool,
-    search_criteria: list[str]
+    search_criteria: tuple[str]
 ):
     """
     Search the happi database.  SEARCH_CRITERIA take the form: field=value.
@@ -139,7 +139,7 @@ def search(
 def search_parser(
     client: happi.Client,
     use_glob: bool,
-    search_criteria: list[str],
+    search_criteria: Iterable[str],
 ) -> list[happi.SearchResult]:
     """
     Parse the user's search criteria and return the search results.
@@ -156,10 +156,15 @@ def search_parser(
         regex matching.
     search_criteria : list of str
         The user's search selection from the command line.
+
+    Raises
+    ------
+    click.ClickException
+        Thrown if search criteria are invalid.
     """
     # Get search criteria into dictionary for use by client
-    client_args = {}
-    range_list = []
+    client_args: Dict[str, Any] = {}
+    range_set = set()
     regex_list = []
     range_found = False
 
@@ -177,9 +182,9 @@ def search_parser(
                 )
 
             if is_a_range(value):
-                start, stop = value.split(',')
-                start = float(start)
-                stop = float(stop)
+                start_str, stop_str = value.split(',')
+                start = float(start_str)
+                stop = float(stop_str)
                 if start < stop:
                     new_range_list = client.search_range(criteria, start, stop)
                 else:
@@ -188,12 +193,12 @@ def search_parser(
                 if not range_found:
                     # if first range, just replace
                     range_found = True
-                    range_list = new_range_list
+                    range_set = set(new_range_list)
                 else:
                     # subsequent ranges, only take intersection
-                    range_list = set(new_range_list) & set(range_list)
+                    range_set = set(new_range_list) & set(range_set)
 
-                if not range_list:
+                if not range_set:
                     # we have searched via a range query.  At this point
                     # no matches, or intesection is empty. abort early
                     logger.error("No items found")
@@ -224,15 +229,15 @@ def search_parser(
 
     # Gather final results
     final_results = []
-    if regex_list and not range_list:
+    if regex_list and not range_set:
         # only matched with one search_regex()
         final_results = regex_list
-    elif range_list and not regex_list:
+    elif range_set and not regex_list:
         # only matched with search_range()
-        final_results = range_list
-    elif range_list and regex_list:
+        final_results = list(range_set)
+    elif range_set and regex_list:
         # find the intersection between regex_list and range_list
-        final_results = set(range_list) & set(regex_list)
+        final_results = list(range_set & set(regex_list))
     else:
         logger.debug('No regex or range items found')
 
@@ -427,8 +432,7 @@ def load(
     client = get_happi_client_from_config(ctx.obj)
 
     devices = {}
-    names = " ".join(results)
-    names = names.split()
+    names = [res.strip() for res in results]
 
     if len(names) < 1:
         raise click.BadArgumentUsage('No item names given')
@@ -551,9 +555,9 @@ def transfer(ctx, name: str, target: str):
     elif len(target_match) != 1:
         raise click.ClickException(f'Target container name ({target}) not specific enough. Possible matches: {target_match}')
 
-    target = happi.containers.registry._registry[target_match[0]]
+    target_container = happi.containers.registry[target_match[0]]
     # transfer item and prompt for fixes
-    transfer_container(client, item, target)
+    transfer_container(client, item, target_container)
 
 
 benchmark_sort_keys = [
@@ -1046,8 +1050,9 @@ def audit(
         check_pt.hrules = prettytable.ALL
         check_pt.align['description'] = 'l'
         for chk in checks:
-            check_pt.add_row([chk.__name__, inspect.cleandoc(chk.__doc__)])
-        print(check_pt)
+            check_pt.add_row([chk.__name__,
+                              inspect.cleandoc(chk.__doc__ or '(No description)')])
+        click.echo(check_pt)
         return
 
     if details:
@@ -1138,14 +1143,15 @@ def repair(
     ctx,
     fix_optional: bool,
     use_glob: bool,
-    search_criteria: tuple[str, ...]
+    search_criteria: tuple[str, ...],
 ):
     """
     Repair the database.
 
     Repairs all entries matching SEARCH_CRITERIA, repairs entire database otherwise.
 
-    Entries that don't get any fields changed will not get saved (i.e. their last-edit times will not change).
+    Entries that don't get any fields changed will not get saved
+    (i.e. their last-edit times will not change).
     """
     logger.debug('starting repair block')
 

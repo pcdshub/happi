@@ -11,7 +11,7 @@ import contextlib
 import inspect
 import io
 import sys
-from typing import Callable, Optional, TypedDict
+from typing import Callable, List, Optional, TypedDict
 
 from jinja2 import DebugUndefined, Environment, meta
 
@@ -321,6 +321,11 @@ def audit(
     return audit_results
 
 
-checks = [check_instantiation, check_extra_info, check_name_match_id,
-          check_wait_connection, check_args_kwargs_match,
-          check_unfilled_mandatory_info]
+checks: List[Check] = [
+    check_instantiation,
+    check_extra_info,
+    check_name_match_id,
+    check_wait_connection,
+    check_args_kwargs_match,
+    check_unfilled_mandatory_info,
+]
