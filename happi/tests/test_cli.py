@@ -98,8 +98,9 @@ def assert_in_expected(
 
 def test_cli_no_argument(runner: CliRunner):
     result = runner.invoke(happi_cli)
-    assert result.exit_code == 0
-    assert result.exception is None
+    # click >= 8.2.0 returns 2, not 0.
+    # Non-0 with no args the case in other cli's (git), even if help text is shown
+    # to support older versions of click we'll just skip the exit code check
     assert 'Usage:' in result.output
     assert 'Options:' in result.output
     assert 'Commands:' in result.output
