@@ -50,6 +50,7 @@ your database type. By default, the `Client` assumes a `JSON` file database:
 
    import happi
 
+   # Bogus comment
    client = happi.Client(path='path/to/my_db.json')
 ```
 
