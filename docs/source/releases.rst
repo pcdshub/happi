@@ -2,6 +2,25 @@ Release History
 ###############
 
 
+v2.6.2 (2025-05-13)
+===================
+
+Maintenance
+-----------
+- Fixes a variety of typing mistakes
+- Fixes `happi transfer` to use the public `happi.containers.registry` API rather than internals
+- Use `line_profiler` in pip dev_requirements instead of `line-profiler` to avoid confusion
+- Splits happi pip package into subpackages (`gui`, `mongo`) for more precise dependency specification.
+  The default dependency set has can be installed via `pip install happi[all]`, and includes
+  the `gui` and `mongo` optional dependencies.
+- Update test suite to handle no-arg case in cli for click>=8.2.0
+
+Contributors
+------------
+- tangkong
+- jwlodek
+
+
 v2.6.0 (2024-12-19)
 ===================
 
