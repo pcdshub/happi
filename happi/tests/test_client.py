@@ -22,7 +22,7 @@ def xdg_config_home(tmp_path):
 
 
 @pytest.fixture(scope='function')
-def happi_cfg(xdg_config_home):
+def xdg_happi_cfg(xdg_config_home):
     # Store current happi config
     xdg_cfg = os.environ.get("XDG_CONFIG_HOME", '')
     happi_cfg = os.environ.get("HAPPI_CFG", '')
@@ -65,6 +65,11 @@ path=/var/run/db.json
     # Restore environment variables
     os.environ["HAPPI_CFG"] = str(happi_cfg)
     os.environ["XDG_CONFIG_HOME"] = xdg_cfg
+
+
+@pytest.fixture(scope='function')
+def client(happi_cfg: str):
+    return Client.from_config(cfg=happi_cfg)
 
 
 def test_find_document(happi_client: Client, item_info: dict[str, Any]):
@@ -223,6 +228,25 @@ def test_search_regex(
     assert find(prefix='BASE:VGC[23]:PV') == [valve2, valve3]
 
 
+def test_regex_numeric(client: Client):
+    assert len(client) == 3
+
+    def find(**kwargs):
+        return [
+            dict(item) for item in
+            client.search_regex(**kwargs, flags=re.IGNORECASE)
+        ]
+
+    pim = dict(client['tst_base_pim'])
+    pim2 = dict(client['tst_base_pim2'])
+    assert find(z="3.0") == [pim]
+    assert find(z="3.000000") == [pim]
+    assert find(z="3000E-3") == [pim]
+    assert find(y="3.3E-3") == []
+    assert find(y="0.001E4") == [pim2]
+    assert find(y="notanumber0.001E3") == []
+
+
 def test_get_by_id(
     happi_client: Client,
     valve: OphydItem,
@@ -313,20 +337,20 @@ def test_change_container_pass(
         assert i.post()[k] == kw[k]
 
 
-def test_find_cfg(happi_cfg: str):
+def test_find_cfg(xdg_happi_cfg: str):
     # Use our config directory
-    assert happi_cfg == Client.find_config()
+    assert xdg_happi_cfg == Client.find_config()
     # Set the path explicitly using HAPPI env variable
-    os.environ['HAPPI_CFG'] = happi_cfg
-    assert happi_cfg == Client.find_config()
+    os.environ['HAPPI_CFG'] = xdg_happi_cfg
+    assert xdg_happi_cfg == Client.find_config()
 
 
-def test_from_cfg(happi_cfg: str):
+def test_from_cfg(xdg_happi_cfg: str):
     # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
     # Internal db path should be constructed relative to the happi cfg dir
-    expected_db = os.path.abspath(os.path.join(os.path.dirname(happi_cfg), 'db.json'))
-    print(happi_cfg)
+    expected_db = os.path.abspath(os.path.join(os.path.dirname(xdg_happi_cfg), 'db.json'))
+    print(xdg_happi_cfg)
     assert isinstance(client.backend, JSONBackend)
     assert client.backend.path == expected_db
 
