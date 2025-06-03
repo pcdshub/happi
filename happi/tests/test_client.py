@@ -9,6 +9,7 @@ import pytest
 
 from happi import Client, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
+from happi.client import InvalidResult, SearchResult
 from happi.errors import DuplicateError, EntryError, SearchError, TransferError
 
 logger = logging.getLogger(__name__)
@@ -89,6 +90,21 @@ def test_create_item(happi_client: Client, item_info: dict[str, Any]):
     # Invalid Entry
     with pytest.raises(TypeError):
         happi_client.create_item(int)
+
+
+def test_malformed_doc(bad_entry_client: Client):
+    assert isinstance(
+        bad_entry_client.search(name="tst_bad_container")[0],
+        InvalidResult
+    )
+    assert isinstance(
+        bad_entry_client.search(name="tst_extra_info")[0],
+        SearchResult
+    )
+
+    assert len(dict(bad_entry_client)) == 7
+    items = bad_entry_client.all_items
+    assert len(items) == 6  # only valid items returned
 
 
 def test_all_items(happi_client: Client, item: OphydItem):
@@ -353,6 +369,7 @@ def test_searchresults(client_with_three_valves: Client):
     assert valve1['name'] == 'valve1'
     assert valve1['type'] == 'OphydItem'
     assert valve1['z'] == 300
+    assert isinstance(valve1, SearchResult)
     assert isinstance(valve1.get(), types.SimpleNamespace)
 
 
