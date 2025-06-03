@@ -15,6 +15,8 @@ from typing import Callable, List, Optional, TypedDict
 
 from jinja2 import DebugUndefined, Environment, meta
 
+from happi.client import InvalidResult
+
 from . import SearchResult
 
 CLIENT_KEYS = ['_id', 'type', 'creation', 'last_edit']
@@ -269,6 +271,9 @@ def audit(
             if verbose and sys.__stdout__.isatty():
                 print(f"checking device #: {i}", end="\r")
 
+            if isinstance(res, InvalidResult):
+                continue
+
             # Capture stdout, stderr for this audit
             with maybe_redirect():
                 for check_fn in check_list:
@@ -304,7 +309,8 @@ def audit(
         "failed_names": sorted(unique_fails),
         "items": {
             name: {"failed_check": [], "audit_errors": []}
-            for name in [res.item.name for res in results]
+            for name in [res.item.name for res in results
+                         if isinstance(res, SearchResult)]
         },
     }
     item_info = audit_results["items"]

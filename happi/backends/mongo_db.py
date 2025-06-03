@@ -145,7 +145,7 @@ class MongoBackend(_Backend):
         match.update(**to_match)
         yield from self._collection.find(match)
 
-    def get_by_id(self, _id: str) -> ItemMeta:
+    def get_by_id(self, _id: str) -> Optional[ItemMeta]:
         """
         Get an item by ID if it exists, or return None.
 
