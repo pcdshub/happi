@@ -185,6 +185,7 @@ def test_search(
     res = happi_client.search(name=item_info['name'])
     # Single search return
     assert len(res) == 1
+    assert isinstance(res[0], SearchResult)
     loaded_item = res[0].item
     assert loaded_item.prefix == item_info['prefix']
     assert loaded_item.name == item_info['name']
@@ -192,6 +193,7 @@ def test_search(
     assert not happi_client.search(name='not')
     # Returned as dict
     res = happi_client.search(**item_info)
+    assert isinstance(res[0], SearchResult)
     loaded_item = res[0].item
     assert loaded_item['prefix'] == item_info['prefix']
     assert loaded_item['name'] == item_info['name']
@@ -340,6 +342,7 @@ def test_find_cfg(happi_cfg: str):
 def test_from_cfg(happi_cfg: str):
     # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
+    assert isinstance(client, Client)
     # Internal db path should be constructed relative to the happi cfg dir
     expected_db = os.path.abspath(os.path.join(os.path.dirname(happi_cfg), 'db.json'))
     print(happi_cfg)
@@ -350,6 +353,7 @@ def test_from_cfg(happi_cfg: str):
 def test_from_cfg_abs(happi_cfg_abs: str):
     # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
+    assert isinstance(client, Client)
     assert isinstance(client.backend, JSONBackend)
     # Ensure the json backend is using the db that we gave an absolute path to.
     assert client.backend.path == '/var/run/db.json'

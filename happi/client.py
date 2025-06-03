@@ -10,6 +10,7 @@ import re
 import sys
 import time as ttime
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Any, Optional, Union
 
 import platformdirs
@@ -68,7 +69,6 @@ class SearchResult(collections.abc.Mapping):
         return self._item
 
     def get(self, attach_md=True, use_cache=True, threaded=False):
-        '''(get) ''' + from_container.__doc__
         if self._instantiated is None:
             self._instantiated = from_container(
                 self.item, attach_md=attach_md, use_cache=use_cache,
@@ -810,7 +810,7 @@ class Client(collections.abc.Mapping):
         return _id
 
     @classmethod
-    def from_config(cls, cfg=None):
+    def from_config(cls, cfg: Optional[Union[str, os.PathLike]] = None):
         """
         Create a client from a configuration file specification.
 
@@ -836,6 +836,10 @@ class Client(collections.abc.Mapping):
         if not cfg:
             cfg = cls.find_config()
 
+        if cfg is None:
+            raise RuntimeError("No config found or provided")
+
+        cfg = Path(cfg)
         if not os.path.exists(cfg):
             raise RuntimeError(f'happi configuration file not found: {cfg!r}')
 
@@ -872,8 +876,8 @@ class Client(collections.abc.Mapping):
     @staticmethod
     def _get_backend_from_config(
         cfg_section: configparser.SectionProxy,
-        cfg: str
-    ) -> _Backend:
+        cfg: Union[str, os.PathLike]
+    ) -> Optional[_Backend]:
         # If a backend is specified use it, otherwise default
         if 'backend' in cfg_section:
             db_str = cfg_section.pop('backend')
