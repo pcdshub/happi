@@ -4,7 +4,7 @@
 API Breaks
 ----------
 - Client search methods will now return an `InvalidResult` if a container
-  (e.g. `Happifitem`) cannot be created.
+  (e.g. `HappiItem`) cannot be created.
 
 Features
 --------
