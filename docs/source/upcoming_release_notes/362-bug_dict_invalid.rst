@@ -11,7 +11,7 @@ API Breaks
   entries doesn't need special error handling on big searches unless specifically
   the specific search item it needs is invalid.
 
-  - Similarities:
+  - Similarities (between SearchResult and InvalidResult):
 
     - You can still check metadata with key-based access (if it is present)
     - Basic operations such as iteration, length checks still work (and will skip any of the missing data members)
