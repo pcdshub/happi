@@ -40,6 +40,7 @@ directly into the :class:`.Client` itself at ``__init__``. See :ref:`db_choice`
 about how to configure your default backend choice.
 
 .. ipython:: python
+    :okwarning:
 
     from happi import Client, HappiItem
 

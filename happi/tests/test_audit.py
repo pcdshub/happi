@@ -3,14 +3,7 @@ import re
 import pytest
 from click.testing import CliRunner
 
-import happi
 from happi.cli import happi_cli
-
-
-@pytest.fixture(scope='function')
-def client(bad_happi_cfg: str):
-    """ misconfigured database """
-    return happi.client.Client.from_config(cfg=bad_happi_cfg)
 
 
 def number_failed_devices(output: str):
@@ -19,6 +12,9 @@ def number_failed_devices(output: str):
                     if '# devices failed' in line][0]
 
     match = re.search(r'(\d*) / (\d*)', summary_line)
+    if match is None:
+        return 0
+
     return int(match[1])
 
 

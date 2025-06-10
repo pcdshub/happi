@@ -9,6 +9,7 @@ import pytest
 
 from happi import Client, HappiItem, OphydItem
 from happi.backends.json_db import JSONBackend
+from happi.client import InvalidResult, SearchResult
 from happi.errors import DuplicateError, EntryError, SearchError, TransferError
 
 logger = logging.getLogger(__name__)
@@ -91,6 +92,21 @@ def test_create_item(happi_client: Client, item_info: dict[str, Any]):
         happi_client.create_item(int)
 
 
+def test_malformed_doc(bad_entry_client: Client):
+    assert isinstance(
+        bad_entry_client.search(name="tst_bad_container")[0],
+        InvalidResult
+    )
+    assert isinstance(
+        bad_entry_client.search(name="tst_extra_info")[0],
+        SearchResult
+    )
+
+    assert len(dict(bad_entry_client)) == 7
+    items = bad_entry_client.all_items
+    assert len(items) == 6  # only valid items returned
+
+
 def test_all_items(happi_client: Client, item: OphydItem):
     assert happi_client.all_items == [item]
 
@@ -169,6 +185,7 @@ def test_search(
     res = happi_client.search(name=item_info['name'])
     # Single search return
     assert len(res) == 1
+    assert isinstance(res[0], SearchResult)
     loaded_item = res[0].item
     assert loaded_item.prefix == item_info['prefix']
     assert loaded_item.name == item_info['name']
@@ -176,6 +193,7 @@ def test_search(
     assert not happi_client.search(name='not')
     # Returned as dict
     res = happi_client.search(**item_info)
+    assert isinstance(res[0], SearchResult)
     loaded_item = res[0].item
     assert loaded_item['prefix'] == item_info['prefix']
     assert loaded_item['name'] == item_info['name']
@@ -324,6 +342,7 @@ def test_find_cfg(happi_cfg: str):
 def test_from_cfg(happi_cfg: str):
     # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
+    assert isinstance(client, Client)
     # Internal db path should be constructed relative to the happi cfg dir
     expected_db = os.path.abspath(os.path.join(os.path.dirname(happi_cfg), 'db.json'))
     print(happi_cfg)
@@ -334,6 +353,7 @@ def test_from_cfg(happi_cfg: str):
 def test_from_cfg_abs(happi_cfg_abs: str):
     # happi_cfg modifies environment variables to make config discoverable
     client = Client.from_config()
+    assert isinstance(client, Client)
     assert isinstance(client.backend, JSONBackend)
     # Ensure the json backend is using the db that we gave an absolute path to.
     assert client.backend.path == '/var/run/db.json'
@@ -353,6 +373,7 @@ def test_searchresults(client_with_three_valves: Client):
     assert valve1['name'] == 'valve1'
     assert valve1['type'] == 'OphydItem'
     assert valve1['z'] == 300
+    assert isinstance(valve1, SearchResult)
     assert isinstance(valve1.get(), types.SimpleNamespace)
 
 

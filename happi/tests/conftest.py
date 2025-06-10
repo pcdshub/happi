@@ -533,6 +533,17 @@ def bad_db(tmp_path):
         "name": "tst_missing_mandatory",
         "last_edit": "Thu Apr 12 14:40:08 2018",
         "type": "OphydItem"
+    },
+    "tst_bad_container": {
+        "_id": "tst_bad_container",
+        "active": true,
+        "args": ["{{active}}"],
+        "creation": "Mon Jun 2 09:46:00 2025",
+        "device_class": "types.SimpleNamespace",
+        "kwargs": {"creation": "{{creation}}"},
+        "name": "tst_bad_container",
+        "last_edit": "Mon Jun 2 14:40:08 2025",
+        "type": "NotnAnItem"
     }
 }
 """)
@@ -548,6 +559,12 @@ backend=json
 path={bad_db}
 """)
     return str(happi_cfg_path.absolute())
+
+
+@pytest.fixture(scope='function')
+def bad_entry_client(bad_happi_cfg: str):
+    """ misconfigured database """
+    return happi.client.Client.from_config(cfg=bad_happi_cfg)
 
 
 @pytest.fixture(scope='function')

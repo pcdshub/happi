@@ -10,7 +10,8 @@ import re
 import sys
 import time as ttime
 from collections.abc import Sequence
-from typing import Any, Optional
+from pathlib import Path
+from typing import Any, Optional, Union
 
 import platformdirs
 
@@ -68,7 +69,6 @@ class SearchResult(collections.abc.Mapping):
         return self._item
 
     def get(self, attach_md=True, use_cache=True, threaded=False):
-        '''(get) ''' + from_container.__doc__
         if self._instantiated is None:
             self._instantiated = from_container(
                 self.item, attach_md=attach_md, use_cache=use_cache,
@@ -100,6 +100,34 @@ class SearchResult(collections.abc.Mapping):
 
     def __hash__(self) -> int:
         return hash((self.client.backend, self['_id']))
+
+
+class InvalidResult(collections.abc.Mapping):
+    """
+    A result from Client.search that could not be resolved to a valid HappiItem.
+    """
+
+    def __init__(self, doc: dict[str, Any], exc: Exception):
+        self.metadata = doc
+        self.exception = exc
+
+    def __getitem__(self, item):
+        return self.metadata[item]
+
+    def __iter__(self):
+        yield from self.metadata
+
+    def __len__(self):
+        return len(self.metadata)
+
+    def __repr__(self):
+        return (
+            f'{self.__class__.__name__}(metadata={self.metadata}, '
+            f'exception={type(self.exception)})'
+        )
+
+
+GenericResult = Union[SearchResult, InvalidResult]
 
 
 class Client(collections.abc.Mapping):
@@ -484,14 +512,21 @@ class Client(collections.abc.Mapping):
     @property
     def all_items(self):
         """A list of all contained items."""
-        return [res.item for res in self.search()]
+        return [res.item for res in self.search()
+                if isinstance(res, SearchResult)]
 
     def __getitem__(self, key):
         """Get an item ID."""
+        item_doc = self.backend.get_by_id(key)
+
+        if item_doc is None:
+            raise KeyError(key)
+
         try:
-            item = self._get_item_from_document(self.backend.get_by_id(key))
+            item = self._get_item_from_document(item_doc)
         except Exception as ex:
-            raise KeyError(key) from ex
+            # create an InvalidResult, but don't raise
+            return InvalidResult(item_doc, exc=ex)
 
         return SearchResult(client=self, item=item)
 
@@ -509,7 +544,7 @@ class Client(collections.abc.Mapping):
 
     def _get_search_results(
         self, docs: Sequence[dict[str, Any]], *, wrap_cls: Optional[type] = None
-    ) -> list[SearchResult]:
+    ) -> list[GenericResult]:
         """
         Return search results to the user, optionally wrapping with a class.
         """
@@ -530,11 +565,13 @@ class Client(collections.abc.Mapping):
                     "Entry for %s is malformed (%s). Skipping.",
                     doc["name"], exc
                 )
+                results.append(InvalidResult(doc, exc))
+
         return results
 
     def search_range(
         self, key: str, start: float, end: Optional[float] = None, **kwargs
-    ) -> list[SearchResult]:
+    ) -> list[GenericResult]:
         """
         Search the database for an item or items using a numerical range.
 
@@ -568,7 +605,7 @@ class Client(collections.abc.Mapping):
                                         to_match=kwargs)
         return self._get_search_results(items)
 
-    def search(self, **kwargs):
+    def search(self, **kwargs) -> list[GenericResult]:
         """
         Search the database for item(s).
 
@@ -597,7 +634,7 @@ class Client(collections.abc.Mapping):
 
     def search_regex(
         self, flags=re.IGNORECASE, **kwargs
-    ) -> list[SearchResult]:
+    ) -> list[GenericResult]:
         """
         Search the database for items(s).
 
@@ -613,7 +650,7 @@ class Client(collections.abc.Mapping):
 
         Returns
         -------
-        list of SearchResult
+        list of GenericResult
 
         Example
         -------
@@ -627,7 +664,7 @@ class Client(collections.abc.Mapping):
         items = self.backend.find_regex(kwargs, flags=flags)
         return self._get_search_results(items)
 
-    def export(self, path=sys.stdout, sep='\t', attrs=None):
+    def export(self, path=sys.stdout, sep='\t', attrs: Optional[list[str]] = None):
         """
         Export the contents of the database into a text file.
 
@@ -645,6 +682,10 @@ class Client(collections.abc.Mapping):
         devs = self.all_items
         logger.info('Creating file at %s ...', path)
         # Load item information
+        if attrs is None:
+            # TODO: decide how to handle None case, currently no-op
+            attrs = []
+
         with path as f:
             for dev in devs:
                 try:
@@ -655,7 +696,7 @@ class Client(collections.abc.Mapping):
                     logger.error("HappiItem %s was missing attribute %s",
                                  dev.name, e)
 
-    def remove_item(self, item):
+    def remove_item(self, item) -> None:
         """
         Remove an item from the database.
 
@@ -674,7 +715,7 @@ class Client(collections.abc.Mapping):
         _id = getattr(item, self._id_key)
         self.backend.delete(_id)
 
-    def _validate_item(self, item):
+    def _validate_item(self, item) -> None:
         """Validate that an item has all of the mandatory information."""
         logger.debug('Validating item %r ...', item)
 
@@ -769,7 +810,7 @@ class Client(collections.abc.Mapping):
         return _id
 
     @classmethod
-    def from_config(cls, cfg=None):
+    def from_config(cls, cfg: Optional[Union[str, os.PathLike]] = None):
         """
         Create a client from a configuration file specification.
 
@@ -795,6 +836,10 @@ class Client(collections.abc.Mapping):
         if not cfg:
             cfg = cls.find_config()
 
+        if cfg is None:
+            raise RuntimeError("No config found or provided")
+
+        cfg = Path(cfg)
         if not os.path.exists(cfg):
             raise RuntimeError(f'happi configuration file not found: {cfg!r}')
 
@@ -831,8 +876,8 @@ class Client(collections.abc.Mapping):
     @staticmethod
     def _get_backend_from_config(
         cfg_section: configparser.SectionProxy,
-        cfg: str
-    ) -> _Backend:
+        cfg: Union[str, os.PathLike]
+    ) -> Optional[_Backend]:
         # If a backend is specified use it, otherwise default
         if 'backend' in cfg_section:
             db_str = cfg_section.pop('backend')

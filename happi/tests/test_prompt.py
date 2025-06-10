@@ -11,7 +11,7 @@ def test_user_dict(runner: CliRunner):
     default_dict = {'default_key': 'default_value'}
 
     # normal operation
-    with runner.isolation('key1\nvalue1'):
+    with runner.isolation('key1\nvalue1\n\n'):
         result = read_user_dict('prompt', default=default_dict)
 
     assert result == {'key1': 'value1'}
@@ -23,13 +23,13 @@ def test_user_dict(runner: CliRunner):
     assert result == default_dict
 
     # reject keywords
-    with runner.isolation('is\nnotis\n1\n'):
+    with runner.isolation('is\nnotis\n1\n\n'):
         result = read_user_dict('prompt', default=default_dict)
 
     assert result == {'notis': 1}
 
     # replace values
-    with runner.isolation('key\n1\nkey\n2'):
+    with runner.isolation('key\n1\nkey\n2\n\n'):
         result = read_user_dict('prompt', default=default_dict)
 
     assert result == {'key': 2}
