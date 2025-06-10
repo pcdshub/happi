@@ -261,6 +261,10 @@ class JSONBackend(_Backend):
         Find an instance or instances that matches the search criteria,
         using regular expressions.
 
+        Includes some special handling of numerics.  If the search regex can
+        be interpreted as a number, try to compare the values as numbers instead
+        of through regex matching
+
         Parameters
         ----------
         to_match : dict
@@ -268,11 +272,23 @@ class JSONBackend(_Backend):
         """
 
         def comparison(name, doc):
-            return regexes and all(key in doc and regex.match(str(doc[key]))
-                                   for key, regex in regexes.items())
+            float_matches = all(
+                key in doc and float(regex) == doc[key]
+                for key, regex in regexes.items()
+                if isinstance(regex, float)
+            )
+
+            regex_matches = all(
+                key in doc and regex.match(str(doc[key]))
+                for key, regex in regexes.items()
+                if isinstance(regex, re.Pattern)
+            )
+
+            return regexes and float_matches and regex_matches
 
         regexes = {
-            key: re.compile(value, flags=flags)
+            key: (float(value) if utils.is_number(value)
+                  else re.compile(value, flags=flags))
             for key, value in to_match.items()
         }
 
