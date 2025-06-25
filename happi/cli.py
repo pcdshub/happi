@@ -27,7 +27,7 @@ import platformdirs
 import prettytable
 
 import happi
-from happi.client import InvalidResult, SearchResult
+from happi.client import GenericResult, InvalidResult, SearchResult
 from happi.errors import SearchError
 
 from .audit import audit as run_audit
@@ -145,7 +145,7 @@ def search_parser(
     client: happi.Client,
     use_glob: bool,
     search_criteria: Iterable[str],
-) -> list[happi.SearchResult]:
+) -> list[GenericResult]:
     """
     Parse the user's search criteria and return the search results.
 
