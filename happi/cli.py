@@ -27,6 +27,7 @@ import platformdirs
 import prettytable
 
 import happi
+from happi.client import InvalidResult, SearchResult
 from happi.errors import SearchError
 
 from .audit import audit as run_audit
@@ -127,11 +128,15 @@ def search(
         json.dump([dict(res.item) for res in final_results], indent=2,
                   fp=sys.stdout)
     elif names:
-        out = " ".join([res.item.name for res in final_results])
+        out = " ".join([res.item.name for res in final_results
+                        if isinstance(res, SearchResult)])
         click.echo(out)
     else:
         for res in final_results:
-            res.item.show_info()
+            if isinstance(res, SearchResult):
+                res.item.show_info()
+            elif isinstance(res, InvalidResult):
+                click.secho(f"Found an invalid entry: {res}", fg="red")
 
     return final_results
 
