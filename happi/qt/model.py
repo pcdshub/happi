@@ -51,7 +51,7 @@ class HappiViewMixin:
         return itm
 
 
-class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
+class HappiDeviceListView(HappiViewMixin, QtWidgets.QListView):
     """
     QListView which displays Happi entries.
 
@@ -72,13 +72,13 @@ class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
         **kwargs
     ):
         super().__init__(parent=parent, client=client, **kwargs)
-        self.model = QtGui.QStandardItemModel()
-        self.model.setHorizontalHeaderLabels(["Devices"])
+        self._model = QtGui.QStandardItemModel()
+        self._model.setHorizontalHeaderLabels(["Devices"])
 
         self.proxy_model = QtCore.QSortFilterProxyModel()
         self.proxy_model.setFilterKeyColumn(-1)
         self.proxy_model.setDynamicSortFilter(True)
-        self.proxy_model.setSourceModel(self.model)
+        self.proxy_model.setSourceModel(self._model)
         self.setModel(self.proxy_model)
 
     def search(self, *args, **kwargs):
@@ -98,15 +98,15 @@ class HappiDeviceListView(QtWidgets.QListView, HappiViewMixin):
             return
         items = [self.create_item(entry.item) for entry in self.entries()]
 
-        self.model.clear()
+        self._model.clear()
 
         for row, itm in enumerate(items):
-            self.model.setItem(row, itm)
-        self.proxy_model.setSourceModel(self.model)
+            self._model.setItem(row, itm)
+        self.proxy_model.setSourceModel(self._model)
         self.proxy_model.sort(0, QtCore.Qt.AscendingOrder)
 
 
-class HappiDeviceTreeView(QtWidgets.QTreeView, HappiViewMixin):
+class HappiDeviceTreeView(HappiViewMixin, QtWidgets.QTreeView):
     """
     QListView which displays Happi entries.
 
