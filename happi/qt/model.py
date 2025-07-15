@@ -4,7 +4,7 @@ from typing import Optional
 
 from qtpy import QtCore, QtGui, QtWidgets
 
-from ..client import Client
+from ..client import Client, SearchResult
 from ..utils import get_happi_entry_value
 
 logger = logging.getLogger(__name__)
@@ -37,8 +37,11 @@ class HappiViewMixin:
 
         args and kwargs are sent directly to the `happi.Client.search` method.
         """
+        if not isinstance(self._client, Client):
+            return
 
-        self._entries = self._client.search(*args, **kwargs)
+        self._entries = [res for res in self._client.search(*args, **kwargs)
+                         if isinstance(res, SearchResult)]
 
     @staticmethod
     def create_item(entry):
