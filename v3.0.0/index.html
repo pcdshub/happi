@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAPPI - Heuristic Access to Positions of Photon Instruments &mdash; Happi 3.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=acc74ff5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Containers" href="containers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Happi
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Happi API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming_changes.html">Upcoming Changes</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Happi</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">HAPPI - Heuristic Access to Positions of Photon Instruments</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="happi-heuristic-access-to-positions-of-photon-instruments">
+<h1>HAPPI - Heuristic Access to Positions of Photon Instruments<a class="headerlink" href="#happi-heuristic-access-to-positions-of-photon-instruments" title="Link to this heading"></a></h1>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading"></a></h2>
+<p>Happi is a database-backed library that was originally created to hold
+information about devices along SLAC’s Linac Coherent Light Source beamline.
+Though initially purpose-built, happi provides a framework for general indexing
+of devices or <em>things</em> that correspond to Python objects.</p>
+<p>Happi will help you create and index your objects, search through them, and
+provide relevant metadata based on the object type.</p>
+</section>
+<section id="terminology-summary">
+<h2>Terminology Summary<a class="headerlink" href="#terminology-summary" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The happi client communicates with pre-configured database using an internal
+“backend”.  Supported backends include JSON (with a file on disk) and MongoDB
+currently.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">HappiItem</span></code> container class describes metadata about a Python object and
+information on how to instantiate it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HappiItem</span></code> may be customized for your own purposes through subclassing.</p></li>
+<li><p>Container classes have entries - marked by <code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code> instances - that
+define the top-level keys and values of the item.</p></li>
+<li><p>The basic <code class="docutils literal notranslate"><span class="pre">HappiItem</span></code> has entries that tell happi how to import and
+instantiate a specific Python object.  The fields required for this are
+<code class="docutils literal notranslate"><span class="pre">device_class</span></code>, <code class="docutils literal notranslate"><span class="pre">args</span></code>, and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.  In short, the effect of loading
+this device would be to <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">device_class</span></code> and instantiate it by way of
+<code class="docutils literal notranslate"><span class="pre">device_class(*args,</span> <span class="pre">**kwargs)</span></code>.</p></li>
+<li><p>This resulting object is also referred to as a <code class="docutils literal notranslate"><span class="pre">Device</span></code>, borrowing the name
+from the library ophyd.</p></li>
+</ul>
+<blockquote>
+<div><div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#entryinfo">EntryInfo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#happi.EntryInfo"><code class="docutils literal notranslate"><span class="pre">EntryInfo</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#happiitem">HappiItem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#example-container">Example Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#loading-your-object">Loading your Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#integrating-with-your-package">Integrating with your package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="containers.html#built-in-container-conventions">Built-in Container Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#happiitem-entries">HappiItem Entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#ophyditem-entries">OphydItem entries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="containers.html#lclsitem-entries">LCLSItem entries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="client.html">Using the Client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="client.html#creating-a-new-entry">Creating a New Entry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#searching-the-database">Searching the Database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="client.html#working-with-the-searchresult">Working with the SearchResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client.html#searching-for-items-on-a-beamline">Searching for items on a beamline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client.html#searching-a-range">Searching a range</a></li>
+<li class="toctree-l3"><a class="reference internal" href="client.html#searching-with-regular-expressions">Searching with regular expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#editing-item-information">Editing Item Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html#selecting-a-backend">Selecting a Backend</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command Line Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#happi">happi</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-add">add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-audit">audit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-benchmark">benchmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-container-registry">container-registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-copy">copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-delete">delete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-edit">edit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-load">load</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-profile">profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-repair">repair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-search">search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-transfer">transfer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli.html#happi-update">update</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div></blockquote>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Happi API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#client">Client</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#happi.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#happi.SearchResult"><code class="docutils literal notranslate"><span class="pre">SearchResult</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#backends">Backends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#happi.backends.core._Backend"><code class="docutils literal notranslate"><span class="pre">_Backend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.mongo_db.MongoBackend.html">happi.backends.mongo_db.MongoBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.json_db.JSONBackend.html">happi.backends.json_db.JSONBackend</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/happi.backends.qs_db.QSBackend.html">happi.backends.qs_db.QSBackend</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#containers">Containers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#built-ins">Built-ins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#loading">Loading</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#registry">Registry</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="releases.html">Release History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v3-0-0-2025-08-04">v3.0.0 (2025-08-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-6-2-2025-05-13">v2.6.2 (2025-05-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-6-0-2024-12-19">v2.6.0 (2024-12-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-5-0-2023-12-19">v2.5.0 (2023-12-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-4-0-2023-09-27">v2.4.0 (2023-09-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-3-0-2023-06-30">v2.3.0 (2023-06-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-2-0-2023-05-08">v2.2.0 (2023-05-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-1-0-2023-04-03">v2.1.0 (2023-04-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v2-0-0-2022-10-20">v2.0.0 (2022-10-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-14-0-2022-07-06">v1.14.0 (2022-07-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-13-0-2022-06-03">v1.13.0 (2022-06-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-12-0-2022-03-31">v1.12.0 (2022-03-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-11-0-2022-02-07">v1.11.0 (2022-02-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-10-1-2021-11-15">v1.10.1 (2021-11-15)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-10-0-2021-09-27">v1.10.0 (2021-09-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-9-0-2021-02-10">v1.9.0 (2021-02-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-8-4-2021-01-08">v1.8.4 (2021-01-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-8-3-2020-11-17">v1.8.3 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-8-2-2020-10-20">v1.8.2 (2020-10-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-8-1-2020-10-21">v1.8.1 (2020-10-21)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-8-0-2020-10-07">v1.8.0 (2020-10-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-7-2-2020-09-17">v1.7.2 (2020-09-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-7-1-2020-08-20">v1.7.1 (2020-08-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-7-0-2020-08-18">v1.7.0 (2020-08-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-6-1-2020-07-01">v1.6.1 (2020-07-01)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-6-0-2020-04-30">v1.6.0 (2020-04-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-5-0-2020-04-06">v1.5.0 (2020-04-06)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-4-0-2020-03-13">v1.4.0 (2020-03-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-3-0-2019-12-10">v1.3.0 (2019-12-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-2-1-2019-03-07">v1.2.1 (2019-03-07)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-2-0-2018-12-19">v1.2.0 (2018-12-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-2-2018-08-30">v1.1.2 (2018-08-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-1-2018-03-08">v1.1.1 (2018-03-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-1-0-2018-02-13">v1.1.0 (2018-02-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v1-0-0-2018-01-31">v1.0.0 (2018-01-31)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v0-5-0-2017-11-11">v0.5.0 (2017-11-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v0-4-0-2017-04-04">v0.4.0 (2017-04-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="releases.html#v0-3-0-2017-03-22">v0.3.0 (2017-03-22)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="upcoming_changes.html">Upcoming Changes</a><ul class="simple">
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="containers.html" class="btn btn-neutral float-right" title="Containers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, SLAC National Accelerator Laboratory.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
