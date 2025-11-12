@@ -128,7 +128,7 @@ class MultiBackend(_Backend):
             if doc:
                 return doc
 
-        return
+        return None
 
     @prevent_duplicate_ids
     def find_range(
