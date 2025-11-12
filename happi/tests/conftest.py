@@ -1,7 +1,7 @@
 import logging
 import sys
 import tempfile
-from typing import Any
+from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
@@ -204,7 +204,7 @@ def mockjsonclient(item_info: dict[str, Any]):
 @requires_mongo
 def mockmongoclient(item_info: dict[str, Any]):
     with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
-        mc = MongoClient()
+        mc: MongoClient[Dict[str, Any]] = MongoClient()
         mc['test_db'].create_collection('test_collect')
         mock_mongo.return_value = mc
         # Client
@@ -218,15 +218,19 @@ def mockmongoclient(item_info: dict[str, Any]):
 
 if 'mongo' in supported_backends:
     @pytest.fixture(scope='function', params=supported_backends)
-    def happi_client(request, mockmongoclient, mockjsonclient):
+    def both_happi_client(request, mockmongoclient, mockjsonclient):
         if request.param == 'json':
             return mockjsonclient
         if request.param == 'mongo':
             return mockmongoclient
+
+    happi_client = both_happi_client
 else:
     @pytest.fixture(scope='function', params=supported_backends)
-    def happi_client(request, mockjsonclient):
+    def json_happi_client(request, mockmongoclient, mockjsonclient):
         return mockjsonclient
+
+    happi_client = json_happi_client
 
 
 @pytest.fixture(scope='module')
