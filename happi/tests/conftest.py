@@ -200,8 +200,7 @@ def mockjsonclient(item_info: dict[str, Any]):
         # tempfile will be deleted once context manager is resolved
 
 
-@pytest.fixture(scope='function')
-@requires_mongo
+@pytest.fixture(scope='function', params=[pytest.param(None, marks=requires_mongo)])
 def mockmongoclient(item_info: dict[str, Any]):
     with patch('happi.backends.mongo_db.MongoClient') as mock_mongo:
         mc: MongoClient[Dict[str, Any]] = MongoClient()
