@@ -54,7 +54,7 @@ class JSONBackend(_Backend):
         initialize: bool = False,
         cfg_path: Optional[str] = None
     ) -> None:
-        self._load_cache: dict[str, ItemMeta] = None
+        self._load_cache: dict[str, ItemMeta] = {}
         # Determine the cfg dir and build path to json db based on that unless we're initted w/o a config
         if cfg_path is not None:
             cfg_dir = os.path.dirname(cfg_path)
@@ -67,11 +67,11 @@ class JSONBackend(_Backend):
 
     def clear_cache(self) -> None:
         """Clear the loaded cache."""
-        self._load_cache = None
+        self._load_cache = {}
 
-    def _load_or_initialize(self) -> Optional[dict[str, ItemMeta]]:
+    def _load_or_initialize(self) -> dict[str, ItemMeta]:
         """Load an existing database or initialize a new one."""
-        if self._load_cache is None:
+        if not self._load_cache:
             try:
                 self._load_cache = self.load()
             except FileNotFoundError:
@@ -185,10 +185,11 @@ class JSONBackend(_Backend):
             except Exception as ex:
                 logger.debug('Comparison method failed: %s', ex, exc_info=ex)
 
-    def get_by_id(self, id_: str) -> ItemMeta:
+    def get_by_id(self, id_: str) -> Optional[ItemMeta]:
         """Get an item by ID if it exists, or return None."""
         db = self._load_or_initialize()
-        return db.get(id_)
+        if db is not None:
+            return db.get(id_)
 
     def find(self, to_match: dict[str, Any]) -> ItemMetaGen:
         """

@@ -2,8 +2,9 @@
 Base backend database options.
 """
 import logging
+import re
 from collections.abc import Generator
-from typing import Any
+from typing import Any, Optional, Union
 
 logger = logging.getLogger(__name__)
 
@@ -104,5 +105,50 @@ class _Backend:
         ------
         PermissionError
             If the write operation fails due to issues with permissions.
+        """
+        raise NotImplementedError
+
+    def get_by_id(self, id_: str) -> Optional[ItemMeta]:
+        """Get an item by ID if it exists, or return None."""
+        raise NotImplementedError
+
+    def find_regex(
+        self,
+        to_match: dict[str, Any],
+        *,
+        flags=re.IGNORECASE
+    ) -> ItemMetaGen:
+        """
+        Yield all instances that match the given search criteria.
+
+        Parameters
+        ----------
+        to_match : dict
+            Requested information, with each value being a regular expression.
+        """
+        raise NotImplementedError
+
+    def find_range(
+        self,
+        key: str,
+        *,
+        start: Union[int, float],
+        stop: Optional[Union[int, float]] = None,
+        to_match: dict[str, Any]
+    ) -> ItemMetaGen:
+        """
+        Find an instance or instances that matches the search criteria, such
+        that ``start <= entry[key] < stop``.
+
+        Parameters
+        ----------
+        key : str
+            The database key to search.
+        start : int or float
+            Inclusive minimum value to filter ``key`` on.
+        end : float, optional
+            Exclusive maximum value to filter ``key`` on.
+        to_match : dict
+            Requested information, where the values must match exactly.
         """
         raise NotImplementedError
