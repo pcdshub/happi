@@ -2,6 +2,18 @@ Release History
 ###############
 
 
+v3.0.1 (2025-11-24)
+===================
+
+Maintenance
+-----------
+- Adjusted test suite to work with pytest 9.0.0
+
+Contributors
+-----------
+- tangkong
+
+
 v3.0.0 (2025-08-04)
 ===================
 
