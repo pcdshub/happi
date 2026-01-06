@@ -8,11 +8,11 @@ try:
     from happi.qt.widgets import HappiItemMetadataView, HappiSearchWidget
     qt_missing = False
 except ImportError:
-    class QtBot:
+    class QtBot:  # type: ignore
         pass
 
-    HappiSearchWidget = None
-    HappiItemMetadataView = None
+    HappiSearchWidget = None  # type: ignore
+    HappiItemMetadataView = None  # type: ignore
     qt_missing = True
 
 

@@ -31,7 +31,7 @@ class VersionProxy(UserString):
         if (repo_root / ".git").exists() or (repo_root / ".git_archival.txt").exists():
             try:
                 # Git checkout
-                from setuptools_scm import get_version
+                from setuptools_scm import get_version  # type: ignore
                 return get_version(root="..", relative_to=__file__)
             except (ImportError, LookupError):
                 ...
@@ -47,7 +47,7 @@ class VersionProxy(UserString):
         return None
 
     @property
-    def data(self) -> str:
+    def data(self) -> str:  # type: ignore
         # This is accessed by UserString to allow us to lazily fill in the
         # information
         if self._version is None:

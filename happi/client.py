@@ -897,7 +897,7 @@ class Client(collections.abc.Mapping):
 
         if not dict(cfg_section):
             # section is empty, skip
-            return
+            return None
 
         # Create our database with provided kwargs
         try:

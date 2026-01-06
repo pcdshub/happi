@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 from collections import OrderedDict
-from typing import Any, Optional
+from typing import Any, ClassVar, Optional
 
 from prettytable import PrettyTable
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 try:
     from re import Pattern
 except ImportError:
-    from re import _pattern_type as Pattern
+    from re import _pattern_type as Pattern  # type: ignore
 
 
 class EntryInfo:
@@ -84,7 +84,7 @@ class EntryInfo:
         enforce_doc: Optional[str] = None,
         include_default_as_kwarg: bool = True
     ):
-        self.key = None  # Set later by parent class
+        self.key: str = ""  # Set later by parent class
         self.doc = doc
         self.enforce = enforce
         self.optional = optional
@@ -205,6 +205,11 @@ class EntryInfo:
 
 
 class _HappiItemBase:
+    _info_attrs: ClassVar[OrderedDict[str, EntryInfo]]
+    entry_info: ClassVar[list[EntryInfo]]
+    info_names: ClassVar[list[str]]
+    mandatory_info: ClassVar[list[str]]
+
     def __init_subclass__(cls, **kargs):
         # These attributes are not to be overwritten by subclasses
         RESERVED_ATTRS = [

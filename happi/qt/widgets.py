@@ -151,7 +151,7 @@ class HappiSearchWidget(DesignerDisplay, QWidget):
         ):
             items = [
                 idx.data() for idx in selected.indexes()
-                if idx.parent().data() is not None  # skip top-level items
+                if idx.parent() is not None and idx.parent().data() is not None  # skip top-level items
             ]
             self.happi_items_selected.emit(items)
 
@@ -185,7 +185,8 @@ class HappiSearchWidget(DesignerDisplay, QWidget):
                 copy_to_clipboard(index.data())
 
             copy_action = self.menu.addAction(f"&Copy: {index.data()}")
-            copy_action.triggered.connect(copy)
+            if copy_action:
+                copy_action.triggered.connect(copy)
 
         self.menu.exec_(self.happi_tree_view.mapToGlobal(pos))
 
@@ -198,7 +199,8 @@ class HappiSearchWidget(DesignerDisplay, QWidget):
                 copy_to_clipboard(index.data())
 
             copy_action = self.menu.addAction(f"&Copy: {index.data()}")
-            copy_action.triggered.connect(copy)
+            if copy_action:
+                copy_action.triggered.connect(copy)
 
         self.menu.exec_(self.happi_list_view.mapToGlobal(pos))
 
@@ -221,7 +223,9 @@ class HappiSearchWidget(DesignerDisplay, QWidget):
         self._tree_current_category = category
         self.happi_tree_view.group_by(category)
         # Bugfix (?) otherwise this ends up in descending order
-        self.happi_tree_view.model().sort(0, QtCore.Qt.AscendingOrder)
+        model = self.happi_tree_view.model()
+        if model:
+            model.sort(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.radio_by_category.setChecked(True)
         self._select_device_widget()
 
@@ -353,7 +357,8 @@ class HappiItemMetadataView(DesignerDisplay, QtWidgets.QWidget):
                 copy_to_clipboard(index.data())
 
             copy_action = self.menu.addAction(f"&Copy: {index.data()}")
-            copy_action.triggered.connect(copy)
+            if copy_action:
+                copy_action.triggered.connect(copy)
 
         self.menu.exec_(self.table_view.mapToGlobal(pos))
 

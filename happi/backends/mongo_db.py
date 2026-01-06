@@ -56,7 +56,7 @@ class MongoBackend(_Backend):
         pw: str,
         db: str,
         collection: str,
-        timeout: Optional[str] = None,
+        timeout: Optional[float] = None,
         port: Union[str, int] = 27017,
         auth_source: Optional[str] = None,
         **kwargs
@@ -73,8 +73,8 @@ class MongoBackend(_Backend):
         conn_str = conn_str.format(user=user, pw=pw, host=host, db=db)
         logging.debug('Attempting connection using %s', clean_conn_str)
 
-        self._client = MongoClient(conn_str, port=int(port),
-                                   serverSelectionTimeoutMS=timeout)
+        self._client: MongoClient = MongoClient(conn_str, port=int(port),
+                                                serverSelectionTimeoutMS=timeout)
         self._db = self._client[db]
         # Load collection
         try:
@@ -96,7 +96,7 @@ class MongoBackend(_Backend):
         """List of all item sub-dictionaries."""
         return list(self._collection.find())
 
-    def find(self, to_match: dict[str, Any]) -> ItemMetaGen:
+    def find(self, to_match: dict[str, Any], multiples: bool = False, **kwargs: Any) -> ItemMetaGen:
         """
         Yield all instances that match the given search criteria.
 
@@ -156,6 +156,7 @@ class MongoBackend(_Backend):
         """
         for item in self._collection.find({'_id': _id}):
             return item
+        return None
 
     def find_regex(
         self,

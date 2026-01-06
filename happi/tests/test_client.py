@@ -89,7 +89,7 @@ def test_create_item(happi_client: Client, item_info: dict[str, Any]):
     assert item.name == item_info['name']
     # Invalid Entry
     with pytest.raises(TypeError):
-        happi_client.create_item(int)
+        happi_client.create_item(int)  # type: ignore
 
 
 def test_malformed_doc(bad_entry_client: Client):
@@ -139,7 +139,7 @@ def test_find_item(happi_client: Client, item_info: dict[str, Any]):
     assert item.prefix == item_info['prefix']
     assert item.name == item_info['name']
     # Test edit and save
-    item.stand = 'DG3'
+    item.stand = 'DG3'  # type: ignore
     item.save()
     loaded_item = happi_client.find_item(**item_info)
     assert loaded_item.prefix == item_info['prefix']

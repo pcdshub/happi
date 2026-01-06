@@ -15,6 +15,7 @@ from click.testing import CliRunner
 
 import happi
 from happi.cli import happi_cli, search
+from happi.client import SearchResult
 from happi.errors import SearchError
 
 try:
@@ -149,7 +150,8 @@ def test_search(client: happi.client.Client, happi_cfg: str):
     with search.make_context('search', ['beamline=TST'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.item for r in res] == [r.item for r in res_cli]
+    assert [r.item for r in res if isinstance(r, SearchResult)] == [
+        r.item for r in res_cli if isinstance(r, SearchResult)]
 
 
 def test_search_with_name(
@@ -162,7 +164,8 @@ def test_search_with_name(
     with search.make_context('search', ['TST_BASE_PIM2'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.item for r in res] == [r.item for r in res_cli]
+    assert [r.item for r in res if isinstance(r, SearchResult)] == [
+        r.item for r in res_cli if isinstance(r, SearchResult)]
     # test duplicate search parameters
     bad_result = runner.invoke(happi_cli, ['--path', happi_cfg,
                                            'search', 'TST_BASE_PIM2',
@@ -187,7 +190,8 @@ def test_search_z(happi_cfg: str, client: happi.client.Client):
     with search.make_context('search', ['z=6.0'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.item for r in res] == [r.item for r in res_cli]
+    assert [r.item for r in res if isinstance(r, SearchResult)] == [
+        r.item for r in res_cli if isinstance(r, SearchResult)]
 
 
 def test_search_z_range(
@@ -200,7 +204,8 @@ def test_search_z_range(
     with search.make_context('search', ['z=3.0,6.0'], obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.item for r in res] == [r.item for r in res_cli]
+    assert [r.item for r in res if isinstance(r, SearchResult)] == [
+        r.item for r in res_cli if isinstance(r, SearchResult)]
 
     # test range intersection
     result = runner.invoke(happi_cli, ['--path', happi_cfg, 'search',
@@ -263,7 +268,8 @@ def test_both_range_and_regex_search(happi_cfg: str, client: happi.client.Client
                              obj=happi_cfg) as ctx:
         res_cli = search.invoke(ctx)
 
-    assert [r.item for r in res] == [r.item for r in res_cli]
+    assert [r.item for r in res if isinstance(r, SearchResult)] == [
+        r.item for r in res_cli if isinstance(r, SearchResult)]
 
 
 def test_search_json(runner: CliRunner, happi_cfg: str):
@@ -564,7 +570,9 @@ def test_edit(
     # check fields and values have been modifiedj
     # verify fields match expected python types
     for new_field, new_value in zip(fields, values):
-        assert getattr(res[0].item, new_field) == new_value
+        item = res[0]
+        assert isinstance(item, SearchResult)
+        assert getattr(item.item, new_field) == new_value
 
 
 @pytest.mark.parametrize("edit_args", [
@@ -848,7 +856,7 @@ def test_transfer_cli_more(
     assert item["prefix"] == 'MY:PREFIX'
 
 
-def arg_variants(variants: tuple[tuple[tuple[str]]]):
+def arg_variants(variants: Any):
     """
     Collapse argument variants into all possible combinations.
     """
@@ -873,7 +881,7 @@ benchmark_arg_variants = (
 @pytest.mark.parametrize(
     "args", tuple(arg_variants(benchmark_arg_variants))
 )
-def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
+def test_benchmark_cli(runner: CliRunner, happi_cfg: str, args: tuple[str, ...]):
     # Make sure the benchmark can complete in some form with valid inputs
     if "--iterations" not in args:
         # Keep the number of overall iterations reasonable
@@ -900,7 +908,7 @@ profile_arg_variants = (
 @pytest.mark.parametrize(
     "args", tuple(arg_variants(profile_arg_variants))
 )
-def test_profile_cli(runner: CliRunner, happi_cfg: str, args: tuple[str]):
+def test_profile_cli(runner: CliRunner, happi_cfg: str, args: tuple[str, ...]):
     # Make sure the profile can complete in some form with valid inputs
     if "pcdsutils" in args:
         if not test_line_prof:

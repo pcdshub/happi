@@ -83,7 +83,7 @@ def get_clipboard() -> Optional[QtGui.QClipboard]:
     return QtWidgets.QApplication.clipboard()
 
 
-def get_clipboard_modes() -> List[int]:
+def get_clipboard_modes() -> List[QtGui.QClipboard.Mode]:
     """
     Get the clipboard modes for the current platform.
 
@@ -99,11 +99,11 @@ def get_clipboard_modes() -> List[int]:
     if platform.system() == "Linux":
         # Mode selection is only valid for X11.
         return [
-            QtGui.QClipboard.Selection,
-            QtGui.QClipboard.Clipboard
+            QtGui.QClipboard.Mode.Selection,
+            QtGui.QClipboard.Mode.Clipboard
         ]
 
-    return [QtGui.QClipboard.Clipboard]
+    return [QtGui.QClipboard.Mode.Clipboard]
 
 
 def copy_to_clipboard(text: str, *, quiet: bool = False):
@@ -124,7 +124,7 @@ def copy_to_clipboard(text: str, *, quiet: bool = False):
 
     for mode in get_clipboard_modes():
         clipboard.setText(text, mode=mode)
-        event = QtCore.QEvent(QtCore.QEvent.Clipboard)
+        event = QtCore.QEvent(QtCore.QEvent.Type.Clipboard)
         app = QtWidgets.QApplication.instance()
         if app is not None:
             app.sendEvent(clipboard, event)

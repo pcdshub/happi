@@ -19,7 +19,7 @@ import time
 from contextlib import contextmanager
 from cProfile import Profile
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, cast
 
 import click
 import coloredlogs
@@ -125,8 +125,9 @@ def search(
 
     # Final processing for output
     if show_json:
-        json.dump([dict(res.item) for res in final_results], indent=2,
-                  fp=sys.stdout)
+        json.dump([
+            dict(res.item) for res in final_results if isinstance(res, SearchResult)
+        ], indent=2, fp=sys.stdout)
     elif names:
         out = " ".join([res.item.name for res in final_results
                         if isinstance(res, SearchResult)])
@@ -267,6 +268,8 @@ def add(ctx, clone: str):
         clone_source = client.find_item(name=clone)
         # Must use the same container if cloning
         response = registry.entry_for_class(clone_source.__class__)
+        if response is None:
+            raise click.ClickException(f'Could not find container for {clone_source}')
     else:
         clone_source = None
         # Keep Device at registry for backwards compatibility but filter
@@ -285,6 +288,8 @@ def add(ctx, clone: str):
             raise click.ClickException(f'Invalid item container {response}')
 
     container = registry[response]
+    if container is None:
+        raise click.ClickException(f'Could not load container {response}')
     logger.debug(f'Contaner selected: {container.__name__}')
 
     # Collect values for each field
@@ -513,11 +518,13 @@ def update(ctx, json_data: str):
 
     # insert
     if isinstance(items_input, dict):
-        items_input = items_input.values()
+        items_input_list = list(items_input.values())
+    else:
+        items_input_list = items_input
 
-    for item in items_input:
-        item = client.create_item(item["type"], **item)
-        exists = item["_id"] in [c["_id"] for c in client.all_items]
+    for item_dict in items_input_list:
+        item = client.create_item(item_dict["type"], **item_dict)
+        exists = item["_id"] in [c.name for c in client.all_items]
         client._store(item, insert=not exists)
 
 
@@ -635,7 +642,9 @@ def benchmark(
         items = client.search()
     logger.info(f'Done, took {time.monotonic() - start} s')
     for result in items:
-        logger.info(f'Running benchmark on {result["name"]}')
+        if isinstance(result, InvalidResult):
+            continue
+        logger.info(f'Running benchmark on {result.item.name}')
         try:
             stats = Stats.from_search_result(
                 result=result,
@@ -645,7 +654,7 @@ def benchmark(
             )
         except Exception:
             logger.error(
-                f'Error running benchmark on {result["name"]}',
+                f'Error running benchmark on {result.item.name}',
                 exc_info=tracebacks,
             )
         else:
@@ -681,18 +690,20 @@ class Stats:
     @classmethod
     def from_search_result(
         cls,
-        result: happi.SearchResult,
+        result: GenericResult,
         duration: float,
         iterations: int,
         wait_connected: bool,
     ) -> Stats:
+        if isinstance(result, InvalidResult):
+            raise ValueError("Cannot benchmark InvalidResult")
         """
         Create an object using a search result and store benchmarking info.
         """
-        logger.debug(f'Checking stats for {result["name"]}')
+        logger.debug(f'Checking stats for {result.item.name}')
         if not duration and not iterations:
             return Stats(
-                name=result["name"],
+                name=result.item.name,
                 avg_time=0,
                 iterations=0,
                 tot_time=0,
@@ -712,7 +723,7 @@ class Stats:
             )
             counter += 1
         return Stats(
-            name=result["name"],
+            name=result.item.name,
             avg_time=sum(raw_stats) / len(raw_stats),
             iterations=len(raw_stats),
             tot_time=sum(raw_stats),
@@ -731,30 +742,37 @@ class Stats:
 
     @staticmethod
     def run_one_benchmark(
-        result: happi.SearchResult,
+        result: GenericResult,
         wait_connected: bool,
     ) -> float:
+        if isinstance(result, InvalidResult):
+            raise ValueError("Cannot benchmark InvalidResult")
+
+        search_res = cast(SearchResult, result)
         """
         Create one object and time it.
         """
         start = time.monotonic()
-        device = result.get(use_cache=False)
+        device = search_res.get(use_cache=False)
         if wait_connected:
+            # Type ignore required because mypy thinks search_res could be InvalidResult
+            # despite the cast above.
+            item_name = search_res.item.name  # type: ignore[union-attr]
             try:
                 device.wait_for_connection(timeout=10.0)
             except AttributeError:
                 logger.warning(
-                    f'{result["name"]} does not have wait_for_connection.'
+                    f'{item_name} does not have wait_for_connection.'
                 )
             except TimeoutError:
                 logger.warning(
                     'Timeout after 10s while waiting for connection of '
-                    f'{result["name"]}',
+                    f'{item_name}',
                 )
             except Exception:
                 logger.warning(
                     'Unknown exception while waiting for connection of '
-                    f'{result["name"]}',
+                    f'{item_name}',
                 )
         return time.monotonic() - start
 
@@ -895,14 +913,19 @@ def profile(
         output_now=False,
     ):
         for search_result in items:
+            if isinstance(search_result, InvalidResult):
+                continue
+
+            # search_result is guaranteed to be SearchResult here due to check above
+            search_res = cast(SearchResult, search_result)
             try:
                 cls = happi.loader.import_class(
-                    search_result.item.device_class,
+                    search_res.item.device_class,
                 )
                 classes.add(cls)
             except ImportError:
                 logger.warning(
-                    f'Failed to import {search_result.item.device_class}'
+                    f'Failed to import {search_res.item.device_class}'
                 )
     logger.info(
         f'Imported the device classes in {time.monotonic() - start} s'
@@ -940,11 +963,14 @@ def profile(
         output_now=False,
     ):
         for search_result in items:
+            if isinstance(search_result, InvalidResult):
+                continue
             try:
                 search_result.get(use_cache=False)
             except Exception:
+                # search_result is guaranteed to be SearchResult here due to check above
                 logger.warning(
-                    f'Failed to create {search_result["name"]}'
+                    f'Failed to create {search_result.item.name}'  # type: ignore[union-attr]
                 )
     logger.info(
         f'Created the device classes in {time.monotonic() - start} s'
@@ -1168,6 +1194,8 @@ def repair(
         results = search_parser(client, True, '*')
 
     for res in results:
+        if isinstance(res, InvalidResult):
+            continue
         # don't save if changes not made
         changes_made = False
 

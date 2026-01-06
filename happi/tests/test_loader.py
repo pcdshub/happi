@@ -129,16 +129,26 @@ def test_filter_kwargs(item_jinja: OphydItem):
     blanks = ['blank_bool', 'blank_list', 'blank_str', 'blank_none']
 
     # default behavior, allow individuals to decide
+    # _info_attrs is ClassVar, but we are modifying instance dict here?
+    # No, item_jinja is an instance. But _info_attrs is on class.
+    # Wait, accessing it via instance is fine. But modifying it will modify class?
+    # item_jinja fixture likely returns an instance.
+    # happi.item._HappiItemBase defines _info_attrs as ClassVar.
+    # We should access it via item_jinja._info_attrs, but Mypy might complain if we assign to it?
+    # Actually, the errors were about attribute missing.
+    # The previous fix in happi/item.py added _info_attrs to _HappiItemBase.
+    # So Mypy should see it.
+    # But here we are modifying 'kwargs' entry in _info_attrs.
     item_jinja._info_attrs['kwargs'].include_default_as_kwarg = True
     dev = from_container(item_jinja, use_cache=False)
 
     # basic jinja template filling test.
     # only kwargs get attrs in SimpleNamespace
-    assert dev.loc == 'LOC'
+    assert dev.loc == 'LOC'  # type: ignore
 
     # if there is no correspoding EntryInfo, this is a piece of metadata
     # type cannot be matched and value will be returned as string
-    assert dev.blank == 'None'
+    assert dev.blank == 'None'  # type: ignore
     assert getattr(dev, 'blank_exclude', 'DNE') == 'DNE'
     for bl in blanks:
         assert getattr(dev, bl, 'DNE') == item_jinja._info_attrs[bl].default

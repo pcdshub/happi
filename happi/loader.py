@@ -18,7 +18,7 @@ from .utils import create_alias
 
 logger = logging.getLogger(__name__)
 
-cache = dict()
+cache: dict[str, Any] = dict()
 main_event_loop = None
 
 
@@ -184,7 +184,7 @@ def from_container(
     new_kwargs = {}
     kwarg_include = item._info_attrs['kwargs'].include_default_as_kwarg
     for entry, value in kwargs.items():
-        einfo = item._info_attrs.get(entry, False)
+        einfo = item._info_attrs.get(entry)
         # if kwargs are marked as include, let individual entries veto
         if kwarg_include:
             if (not einfo or einfo.include_default_as_kwarg or
@@ -232,15 +232,15 @@ def import_class(device_class: str):
         The class or factory function referred to by the input string.
     """
 
-    mod, cls = device_class.rsplit('.', 1)
+    mod_name, cls = device_class.rsplit('.', 1)
     # Import the module if not already present
     # Otherwise use the stashed version in sys.modules
-    if mod in sys.modules:
-        logger.debug("Using previously imported version of %s", mod)
-        mod = sys.modules[mod]
+    if mod_name in sys.modules:
+        logger.debug("Using previously imported version of %s", mod_name)
+        mod = sys.modules[mod_name]
     else:
-        logger.debug("Importing %s", mod)
-        mod = importlib.import_module(mod)
+        logger.debug("Importing %s", mod_name)
+        mod = importlib.import_module(mod_name)
     # Gather our device class from the given module
     try:
         return getattr(mod, cls)

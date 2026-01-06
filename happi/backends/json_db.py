@@ -191,7 +191,7 @@ class JSONBackend(_Backend):
         if db is not None:
             return db.get(id_)
 
-    def find(self, to_match: dict[str, Any]) -> ItemMetaGen:
+    def find(self, to_match: dict[str, Any], multiples: bool = False, **kwargs: Any) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria.
 

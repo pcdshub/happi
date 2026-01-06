@@ -11,13 +11,11 @@ import contextlib
 import inspect
 import io
 import sys
-from typing import Callable, List, Optional, TypedDict
+from typing import Callable, List, Optional, TypedDict, Union
 
 from jinja2 import DebugUndefined, Environment, meta
 
-from happi.client import InvalidResult
-
-from . import SearchResult
+from happi.client import InvalidResult, SearchResult
 
 CLIENT_KEYS = ['_id', 'type', 'creation', 'last_edit']
 
@@ -128,7 +126,10 @@ def check_args_kwargs_match(result: SearchResult) -> None:
     # Happi fills in values when search result is created, must pull
     # raw document from client level
     cl = result.client
-    doc = cl.find_document(**{cl._id_key: result[cl._id_key]})
+    res_id = result[cl._id_key]
+    if res_id is None:
+        raise ValueError(f"Result {result} has no ID key {cl._id_key}")
+    doc = cl.find_document(**{cl._id_key: res_id})
     # pick out any jinja-like template
     env = Environment(undefined=DebugUndefined)
 
@@ -218,7 +219,7 @@ def verify_result(
 
 
 def audit(
-    results: list[SearchResult],
+    results: list[Union[SearchResult, InvalidResult]],
     redirect: bool = True,
     verbose: bool = False,
     check_list: Optional[CheckList] = None,
@@ -229,7 +230,7 @@ def audit(
 
     Parameters
     ----------
-    results : list[SearchResult]
+    results : list[SearchResult | InvalidResult]
         The search results from the happi client to audit.
     redirect : bool
         During the audit process, capture standard output and standard error to
@@ -268,7 +269,7 @@ def audit(
 
     try:
         for i, res in enumerate(results):
-            if verbose and sys.__stdout__.isatty():
+            if verbose and sys.__stdout__ and sys.__stdout__.isatty():
                 print(f"checking device #: {i}", end="\r")
 
             if isinstance(res, InvalidResult):

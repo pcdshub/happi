@@ -38,7 +38,7 @@ class _Backend:
         Optional implementation may be customized in subclass.
         """
 
-    def find(self, multiples: bool = False, **kwargs) -> ItemMetaGen:
+    def find(self, to_match: dict[str, Any], multiples: bool = False, **kwargs) -> ItemMetaGen:
         """
         Find an instance or instances that matches the search criteria.
 
@@ -47,6 +47,8 @@ class _Backend:
 
         Parameters
         ----------
+        to_match : dict[str, Any]
+            Requested information.
         multiples : bool
             Find a single result or all results matching the provided
             information.

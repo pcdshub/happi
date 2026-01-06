@@ -4,9 +4,12 @@ Backend implementation for parsing the LCLS Questionnaire.
 import functools
 import logging
 import re
-from typing import Optional
+from typing import Any, Optional
 
-from psdm_qs_cli import QuestionnaireClient
+try:
+    from psdm_qs_cli import QuestionnaireClient  # type: ignore
+except ImportError:
+    QuestionnaireClient = Any
 
 from ..errors import DatabaseError
 from .json_db import JSONBackend
@@ -112,7 +115,7 @@ DEFAULT_TRANSLATIONS = {
 class QuestionnaireHelper:
     def __init__(self, client: QuestionnaireClient):
         self._client = client
-        self._experiment = None
+        self._experiment: Optional[str] = None
         self.experiment_to_proposal = client.getExpName2URAWIProposalIDs()
 
     def __repr__(self) -> str:
@@ -126,7 +129,7 @@ class QuestionnaireHelper:
             return f'<{self.__class__.__name__} experiment={self.experiment}>'
 
     @property
-    def experiment(self) -> str:
+    def experiment(self) -> Optional[str]:
         """The experiment name."""
         return self._experiment
 
@@ -139,7 +142,7 @@ class QuestionnaireHelper:
         self.get_run_details.cache_clear()
 
     @property
-    def proposal(self):
+    def proposal(self) -> str:
         """Get the proposal number for the configured experiment."""
         if self.experiment is None:
             raise RuntimeError('Experiment unset')
@@ -148,10 +151,10 @@ class QuestionnaireHelper:
             return self.experiment_to_proposal[self.experiment]
         except KeyError:
             # Rare case for debug/daq experiments, roll with it for now
-            return self.experiment
+            return self.experiment  # type: ignore
 
     @property
-    def run_number(self):
+    def run_number(self) -> str:
         """Get the run number from the experiment."""
         if self.experiment is None or len(self.experiment) <= 2:
             raise RuntimeError(f'Experiment invalid: {self.experiment}')
@@ -160,7 +163,7 @@ class QuestionnaireHelper:
         return f'run{run_number}'
 
     @functools.lru_cache
-    def get_proposal_list(self) -> dict:
+    def get_proposal_list(self) -> dict[str, Any]:
         """
         Get the proposal list (a dict, really) for the configured experiment.
 
@@ -234,7 +237,7 @@ class QuestionnaireHelper:
         )
 
     @staticmethod
-    def _translate_items(run_details: dict, table_name: str) -> dict:
+    def _translate_items(run_details: dict, table_name: str) -> dict[str, dict[str, Any]]:
         """
         Translate flat questionnaire items into nested dictionaries.
 
@@ -253,7 +256,7 @@ class QuestionnaireHelper:
 
         pattern = re.compile(rf'pcdssetup-{table_name}-(\d+)-(\w+)')
 
-        devices = {}
+        devices: dict[str, dict[str, Any]] = {}
         for field, value in run_details.items():
             match = pattern.match(field)
             if match:
@@ -337,7 +340,7 @@ class QuestionnaireHelper:
             The happi JSON-backend-compatible dictionary.
         """
 
-        happi_db = {}
+        happi_db: dict[str, Any] = {}
         if translations is None:
             translations = DEFAULT_TRANSLATIONS
 
@@ -428,7 +431,7 @@ class QSBackend(JSONBackend):
                  pw=None, cfg_path=None):
         # Load cache is unused for this backend, but we have it here for
         # API compatibility with the superclass JSONBackend.
-        self._load_cache = None
+        self._load_cache: dict[str, Any] = {}
         # Create our client and gather the raw information from the client
         self._client = QuestionnaireClient(
             url=url, use_kerberos=use_kerberos, user=user, pw=pw
