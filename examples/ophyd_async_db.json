@@ -1,0 +1,88 @@
+{
+    "uuid_fp": {
+        "_id": "uuid_fp",
+        "active": true,
+        "args": [
+        ],
+        "creation": "Tue Feb 11 12:48:00 2025",
+        "device_class": "ophyd_async.core.UUIDFilenameProvider",
+        "documentation": null,
+        "kwargs": {
+        },
+        "last_edit": "Tue Feb 11 12:48:00 2025",
+        "name": "uuid_fp",
+        "type": "HappiItem"
+    },
+    "ymd_pp": {
+        "_id": "ymd_pp",
+        "active": true,
+        "args": [
+            "{{uuid_fp}}",
+            "/tmp"
+        ],
+        "creation": "Tue Feb 11 12:48:00 2025",
+        "device_class": "ophyd_async.core.YMDPathProvider",
+        "documentation": null,
+        "kwargs": {
+            "create_dir_depth": -4
+        },
+        "last_edit": "Tue Feb 11 12:48:00 2025",
+        "name": "ymd_pp",
+        "type": "HappiItem"
+    },
+    "manta_cam1": {
+        "_id": "manta_cam1",
+        "active": true,
+        "args": [
+            "{{prefix}}",
+            "{{ymd_pp}}"
+        ],
+        "creation": "Tue Feb 11 12:48:00 2025",
+        "device_class": "ophyd_async.epics.advimba.VimbaDetector",
+        "documentation": null,
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Feb 11 12:48:00 2025",
+        "name": "manta_cam1",
+        "prefix": "XF:31ID1-ES{GigE-Cam:1}",
+        "async_device": true,
+        "type": "OphydItem"
+    },
+    "ophyd_async_sim_motor_1": {
+        "_id": "ophyd_async_sim_motor_1",
+        "active": true,
+        "args": [
+
+        ],
+        "creation": "Tue Feb 11 12:48:00 2025",
+        "device_class": "ophyd_async.sim.SimMotor",
+        "documentation": null,
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Feb 11 12:48:00 2025",
+        "name": "ophyd_async_sim_motor_1",
+        "prefix": "ASYNC-MTR:SIM1:",
+        "async_device": true,
+        "type": "OphydItem"
+    },
+    "ophyd_async_sim_motor_2": {
+        "_id": "ophyd_async_sim_motor_2",
+        "active": true,
+        "args": [
+
+        ],
+        "creation": "Tue Feb 11 12:48:00 2025",
+        "device_class": "ophyd_async.sim.SimMotor",
+        "documentation": null,
+        "kwargs": {
+            "name": "{{name}}"
+        },
+        "last_edit": "Tue Feb 11 12:48:00 2025",
+        "name": "ophyd_async_sim_motor_2",
+        "prefix": "ASYNC-MTR:SIM2:",
+        "async_device": true,
+        "type": "OphydItem"
+    }
+}
