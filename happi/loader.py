@@ -48,22 +48,37 @@ def fill_template(
         string-rendered template if ``enforce_type`` is False, or if happi is
         unable to cast the rendered value to the given type.
     """
+
     # Create a template and render our happi information inside it
     env = Environment().from_string(template)
     filled = env.render(**item.post())
     # Find which variable we used in the template, get the type and convert our
     # rendered template to agree with this
     info = meta.find_undeclared_variables(env.environment.parse(template))
-    if len(info) != 1 or not enforce_type:
-        # Enforcing types only works with 1 attribute name in the template
+
+    # If we have 0 or more than 1 variables in template, cannot enforce type
+    # or replace with cached item
+    if len(info) != 1:
+        return filled
+
+    # Get the name of the single attribute in the template
+    attr_name = info.pop()
+
+    # If we are not enforcing types and the attribute is not in the cache
+    # we can just return the rendered template
+    if not enforce_type and attr_name not in cache:
         return filled
 
     # Get the original attribute back from the item. If this does not exist
     # there is a possibility it is a piece of metadata e.t.c
-    attr_name = info.pop()
     try:
         typed_attr = getattr(item, attr_name)
     except AttributeError:
+        # If the templated variable is in the cache, use it directly.
+        if attr_name in cache:
+            logger.info("Attribute not in container, but found in cache.")
+            return cache[attr_name]
+
         logger.warning(
             "Can not enforce type to match attribute %s as it does not "
             "exist on the container.", attr_name
@@ -397,7 +412,7 @@ def load_device(
         """Get the load time information for display."""
         elapsed_time = time.monotonic() - start_time
         if include_load_time and elapsed_time >= load_time_threshold:
-            return f" ({elapsed_time:.1f} s)"
+            return f" ({elapsed_time: .1f} s)"
         return ""
 
     def print_load_message(message: str, elapsed: str) -> None:
